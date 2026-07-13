@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="cc-form-engine">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#12101d"/><stop offset="1" stop-color="#1c1533"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8b7cf6"/><stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .check { transform-box: fill-box; transform-origin: center; animation: pop 2.8s ease-in-out infinite; }
+    .active { stroke-dasharray: 6 4; animation: dash 3s linear infinite; }
+    .cursorbar { animation: fill 3.2s ease-in-out infinite alternate; }
+    @keyframes pop { 0%, 100% { transform: scale(1); } 12% { transform: scale(1.35); } 24% { transform: scale(1); } }
+    @keyframes dash { to { stroke-dashoffset: -60; } }
+    @keyframes fill { from { width: 90px; } to { width: 230px; } }
+  </style>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="690" cy="80" r="180" fill="#8b7cf6" opacity="0.12"/>
+  <g transform="translate(130 110)">
+    <rect class="active" x="0" y="0" width="540" height="64" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <rect class="cursorbar" x="20" y="24" width="230" height="16" rx="8" fill="#8b7cf6" opacity="0.85"/>
+    <rect x="0" y="100" width="540" height="64" rx="14" fill="none" stroke="#4c4370" stroke-width="2"/>
+    <rect x="20" y="124" width="320" height="16" rx="8" fill="#4c4370"/>
+    <rect x="0" y="200" width="256" height="64" rx="14" fill="none" stroke="#4c4370" stroke-width="2"/>
+    <rect x="284" y="200" width="256" height="64" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <g class="check">
+      <circle cx="520" cy="32" r="10" fill="#34d399"/>
+      <path d="M515 32l4 4 7-8" stroke="#0d1017" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    </g>
+  </g>
+  <text x="130" y="428" font-family="Georgia, serif" font-size="34" fill="#e9e6f7" font-style="italic">formularios, con ingeniería</text>
+</svg>

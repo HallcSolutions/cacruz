@@ -1,0 +1,345 @@
+{
+  "slug": "ship-a-feature-in-hours",
+  "date": "2026-07-13",
+  "title": {
+    "es": "Cómo entrego un feature completo en horas: especificación, TDD y mutation testing",
+    "en": "How I ship a complete feature in hours: specification, TDD and mutation testing"
+  },
+  "summary": {
+    "es": "El flujo real que uso a diario: equipar el proyecto en 30 segundos, convertir una historia de usuario en requisitos verificables y llegar al código con tests que se prueban a sí mismos. Con gráficos de todo el proceso.",
+    "en": "The real flow I use every day: equip the project in 30 seconds, turn a user story into verifiable requirements, and reach the code with tests that test themselves. With diagrams of the whole process."
+  },
+  "tags": ["chalc", "sdd", "tdd", "mutation-testing", "ia"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Si trabajas con IA y sientes que a veces entrega código que se ve bien pero no hace lo que pediste, este es el método que me sacó de ese problema. No es teoría: es lo que ejecuto cada día, y por lo que un feature completo —planeado, implementado, probado y verificado— sale en horas en vez de días. La herramienta que lo orquesta se llama [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter) y la construí precisamente para dejar de repetir el mismo trabajo en cada proyecto."
+      },
+      {
+        "kind": "quote",
+        "text": "La idea de fondo: tus reglas, skills y método deberían viajar con el proyecto, no vivir en tu memoria ni en una sesión de chat que se evapora."
+      },
+
+      { "kind": "heading", "text": "Paso 1 · Equipar el proyecto (30 segundos, cero tokens)" },
+      {
+        "kind": "paragraph",
+        "text": "Equipar significa darle al proyecto —y al asistente que trabajará en él— todo lo que necesita saber antes de escribir la primera línea: qué stack se usa, qué convenciones seguimos, qué herramientas puede consultar y bajo qué método vamos a trabajar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Por qué importa? Porque un asistente sin ese contexto adivina. Y adivinar es exactamente el origen de los problemas que todos conocemos:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Inventa rutas y archivos que no existen, o crea estructuras que no encajan con el proyecto.",
+          "Ignora las convenciones del equipo, así que el código pasa la revisión técnica pero no la del estilo.",
+          "Repites las mismas instrucciones en cada sesión de chat… y las pierdes al cerrarla.",
+          "Cada repositorio termina configurado distinto, según lo que recordaste ese día."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "El contexto no debería depender de tu memoria ni de una conversación que se evapora: debe vivir en el proyecto, versionado y explícito."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso es lo que hace este primer paso. Entro a la carpeta y ejecuto un comando. chalc lee las señales del repositorio —el package.json, los archivos raíz, la estructura— y deduce el stack. No usa IA para esto: aplica reglas explícitas de un catálogo, así que es determinista, instantáneo y no gasta un solo token."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd mi-proyecto",
+          "chalc",
+          "→ detect: angular 20 · typescript",
+          "→ skills: angular-component, angular-signals, testing…",
+          "→ mcp: servidores de base de datos y documentación",
+          "→ método: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "En ese momento mi asistente (Claude Code, Copilot, Cursor o Gemini) recibe todo en su formato nativo: qué skills tiene, qué servidores MCP puede usar, qué reglas debe respetar y con qué método vamos a trabajar. Deja de adivinar cómo se hacen las cosas aquí."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El resultado práctico: lo que antes eran dos horas de decidir estructura, configurar linters y explicarle el proyecto a la IA —en cada repositorio, una y otra vez— ahora son 30 segundos. Y como la configuración queda versionada en el proyecto, el siguiente que llegue (persona o agente) arranca con el mismo contexto que yo."
+      },
+
+      { "kind": "heading", "text": "Paso 2 · La idea se convierte en especificación" },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está el cambio de fondo. Antes le pedía a la IA \"hazme una pantalla de login\" y aceptaba lo que saliera. Hoy lo primero que producimos no es código: es un contrato."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-flow.es.svg",
+        "caption": "Del deseo del usuario al código: cada etapa deja un artefacto que la siguiente puede verificar."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Escribo la historia de usuario como la diría el negocio: \"quiero entrar con mi correo y contraseña\".",
+          "Sale spec.md con los requisitos numerados (R1, R2, R3…) en notación EARS: WHEN el usuario envía credenciales inválidas THE SYSTEM SHALL mostrar el error junto al campo. Si una frase no se puede convertir en test, no es un requisito.",
+          "Sale plan.md: arquitectura, contratos y decisiones. El CÓMO, aprobado antes de escribir una línea.",
+          "Sale tasks.md: tareas atómicas, cada una apuntando a su requisito (T1 → R1). Nada de código huérfano.",
+          "Recién ahí empieza el código — y siempre con un test que primero falla."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo mejor: no redacto todo eso a mano. Si la historia de usuario ya existe —en un Word, en Jira, en Azure DevOps— chalc la lee y la convierte en los tres archivos, con los requisitos ya trazados. Pasar la información dejó de ser trabajo de transcripción."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc spec-ia --from historia-login.docx",
+          "→ specs/004-login/spec.md   (R1…R7)",
+          "→ specs/004-login/plan.md",
+          "→ specs/004-login/tasks.md (T1→R1, T2→R2…)"
+        ]
+      },
+
+      { "kind": "heading", "text": "Paso 3 · Test-First: el código nace en rojo" },
+      {
+        "kind": "paragraph",
+        "text": "El método se llama Spec-Driven Development, y su regla más dura es esta: ninguna línea de implementación existe antes de un test que falle. El test se deriva del criterio de aceptación, no de mi intuición. Escribo el test, lo veo fallar (Red), escribo el mínimo código para pasarlo (Green) y solo entonces refactorizo con la red de seguridad puesta."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/tdd-cycle.es.svg",
+        "caption": "El ciclo completo: Red → Green → Refactor, y encima el mutation testing que audita a los propios tests."
+      },
+      {
+        "kind": "quote",
+        "text": "Un test que pasa no prueba nada por sí solo. La pregunta real es: ¿este test detectaría el error si el código estuviera mal?"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí entra el mutation testing, la pieza que casi nadie usa y que a mí me cambió la vara de calidad. La herramienta introduce errores artificiales en el código —cambia un `>` por un `>=`, convierte un `return x` en `return null`— y ejecuta mis tests. Si el test sigue pasando con el código roto, ese test era decorativo: lo refuerzo hasta que atrape al mutante."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aunque suene a moda reciente, no lo es: la idea la propuso Richard Lipton siendo estudiante en 1971, y la formalizaron Richard DeMillo, Richard Lipton y Frederick Sayward en 1978, en un artículo de IEEE Computer con un título que ya lo decía todo: \"Hints on Test Data Selection: Help for the Practicing Programmer\". La primera herramienta la construyó Timothy Budd en su tesis doctoral de Yale, en 1980."
+      },
+      {
+        "kind": "quote",
+        "text": "Parten de la hipótesis del programador competente: el código con defectos suele estar muy cerca del código correcto. Los errores reales son pequeños — y por eso los mutantes pequeños son la mejor forma de cazarlos.",
+        "source": "DeMillo, Lipton y Sayward · IEEE Computer, 1978",
+        "sourceUrl": "https://ieeexplore.ieee.org/document/1646911"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese es el punto que me convenció: si los defectos reales son desviaciones mínimas del código correcto, entonces un test que no distingue el código correcto de una desviación mínima no te está protegiendo de nada. Si quieres leerlo de la fuente: el artículo original está en [IEEE Computer (1978)](https://ieeexplore.ieee.org/document/1646911), y la herramienta que uso en este proyecto es [Stryker Mutator](https://stryker-mutator.io/docs/), que corre sobre JavaScript, TypeScript, C# y Scala."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npm run test:mutation",
+          "→ mutantes generados: 133",
+          "→ muertos: 128   sobrevivientes: 5",
+          "→ mutation score: 96.2%   (meta ≥ 80%)"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cobertura al 100% con tests débiles es un número bonito que no protege a nadie. El mutation score, en cambio, responde a la única pregunta que importa: si mañana alguien rompe esto, ¿me voy a enterar?"
+      },
+
+      { "kind": "heading", "text": "Qué mejora de verdad" },
+      {
+        "kind": "steps",
+        "items": [
+          "La IA deja de improvisar: implementa contra una especificación aprobada, no contra un prompt ambiguo.",
+          "Reviso el código sin adivinar qué debía hacer, porque cada línea apunta a un R#.",
+          "Cuando el alcance cambia —siempre cambia— actualizo la spec primero y el código después. Nunca al revés.",
+          "El equipo mide el avance con evidencia (tests en verde, mutantes muertos), no con estimaciones optimistas.",
+          "Y el arranque, que antes costaba dos horas por proyecto, hoy cuesta 30 segundos."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Este mismo sitio nació así: su especificación tiene 56 requisitos numerados, cada test apunta a uno, ninguna línea se escribió sin un test que primero fallara y los mutantes se cazan en cada cambio. Si quieres ver el resto de lo que construyo, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI que equipa el proyecto, genera las specs y orquesta el método. Documentación completa en su README.",
+          "[Hints on Test Data Selection: Help for the Practicing Programmer](https://ieeexplore.ieee.org/document/1646911) — DeMillo, Lipton y Sayward, IEEE Computer, 1978. El artículo que fundó el mutation testing.",
+          "[Mutation testing (visión general)](https://en.wikipedia.org/wiki/Mutation_testing): historia, hipótesis del programador competente y estado del arte.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): la herramienta de mutation testing que uso aquí (JavaScript, TypeScript, C# y Scala).",
+          "[Notación EARS](https://alistairmavin.com/ears/) — Alistair Mavin: cómo escribir requisitos que se pueden convertir en tests.",
+          "[Test-Driven Development by Example](https://www.oreilly.com/library/view/test-driven-development/0321146530/) — Kent Beck: la fuente del ciclo Red → Green → Refactor."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "If you work with AI and sometimes feel it delivers code that looks right but doesn't do what you asked, this is the method that got me out of that problem. It isn't theory: it's what I run every day, and it's why a complete feature — planned, implemented, tested and verified — takes hours instead of days. The tool that orchestrates it is called [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), and I built it precisely to stop repeating the same setup work in every project."
+      },
+      {
+        "kind": "quote",
+        "text": "The core idea: your rules, skills and method should travel with the project, not live in your memory or in a chat session that evaporates."
+      },
+
+      { "kind": "heading", "text": "Step 1 · Equip the project (30 seconds, zero tokens)" },
+      {
+        "kind": "paragraph",
+        "text": "Equipping means giving the project — and the assistant that will work on it — everything it needs to know before the first line is written: which stack is used, which conventions we follow, which tools it may consult and under which method we work."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why does it matter? Because an assistant without that context guesses. And guessing is exactly where the familiar problems come from:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "It invents paths and files that don't exist, or creates structures that don't fit the project.",
+          "It ignores the team's conventions, so the code passes the technical review but not the style one.",
+          "You repeat the same instructions in every chat session… and lose them when you close it.",
+          "Every repository ends up configured differently, depending on what you remembered that day."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Context shouldn't depend on your memory or on a conversation that evaporates: it should live in the project, versioned and explicit."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's what this first step does. I go into the folder and run one command. chalc reads the repository signals — package.json, root files, structure — and infers the stack. It doesn't use AI for this: it applies explicit catalog rules, so it is deterministic, instant and costs not a single token."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd my-project",
+          "chalc",
+          "→ detect: angular 20 · typescript",
+          "→ skills: angular-component, angular-signals, testing…",
+          "→ mcp: database and documentation servers",
+          "→ method: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "At that point my assistant (Claude Code, Copilot, Cursor or Gemini) receives everything in its native format: which skills it has, which MCP servers it can use, which rules it must respect and the method we will follow. It stops guessing how things are done here."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The practical result: what used to be two hours of deciding structure, configuring linters and explaining the project to the AI — in every repository, over and over — is now 30 seconds. And since the configuration is versioned inside the project, whoever comes next (person or agent) starts with the same context I have."
+      },
+
+      { "kind": "heading", "text": "Step 2 · The idea becomes a specification" },
+      {
+        "kind": "paragraph",
+        "text": "This is the real shift. I used to ask the AI \"build me a login screen\" and accept whatever came out. Today the first thing we produce is not code: it's a contract."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-flow.en.svg",
+        "caption": "From the user's wish to the code: every stage leaves an artifact the next one can verify."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "I write the user story the way the business would say it: \"I want to sign in with my email and password\".",
+          "Out comes spec.md with numbered requirements (R1, R2, R3…) in EARS notation: WHEN the user submits invalid credentials THE SYSTEM SHALL show the error next to the field. If a sentence can't become a test, it isn't a requirement.",
+          "Out comes plan.md: architecture, contracts and decisions. The HOW, approved before a single line is written.",
+          "Out comes tasks.md: atomic tasks, each pointing at its requirement (T1 → R1). No orphan code.",
+          "Only then does the code start — always with a test that fails first."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The best part: I don't write all of that by hand. If the user story already exists — in a Word doc, in Jira, in Azure DevOps — chalc reads it and turns it into the three files, with requirements already traced. Passing the information stopped being transcription work."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc spec-ia --from login-story.docx",
+          "→ specs/004-login/spec.md   (R1…R7)",
+          "→ specs/004-login/plan.md",
+          "→ specs/004-login/tasks.md (T1→R1, T2→R2…)"
+        ]
+      },
+
+      { "kind": "heading", "text": "Step 3 · Test-First: code is born red" },
+      {
+        "kind": "paragraph",
+        "text": "The method is called Spec-Driven Development, and its hardest rule is this: no implementation line exists before a failing test. The test derives from the acceptance criterion, not from my intuition. I write the test, watch it fail (Red), write the minimum code to pass it (Green), and only then refactor with the safety net in place."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/tdd-cycle.en.svg",
+        "caption": "The full cycle: Red → Green → Refactor, and on top of it mutation testing auditing the tests themselves."
+      },
+      {
+        "kind": "quote",
+        "text": "A passing test proves nothing on its own. The real question is: would this test catch the bug if the code were wrong?"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's where mutation testing comes in — the piece almost nobody uses, and the one that raised my quality bar. The tool injects artificial bugs into the code — swaps a `>` for a `>=`, turns a `return x` into `return null` — and runs my tests. If a test still passes against broken code, that test was decorative: I strengthen it until it kills the mutant."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And although it sounds like a recent trend, it isn't: Richard Lipton proposed the idea as a student in 1971, and Richard DeMillo, Richard Lipton and Frederick Sayward formalized it in 1978 in an IEEE Computer paper whose title already said it all: \"Hints on Test Data Selection: Help for the Practicing Programmer\". The first tool was built by Timothy Budd in his 1980 PhD thesis at Yale."
+      },
+      {
+        "kind": "quote",
+        "text": "They start from the competent programmer hypothesis: buggy code is usually very close to correct code. Real defects are small — and that's exactly why small mutants are the best way to hunt them.",
+        "source": "DeMillo, Lipton & Sayward · IEEE Computer, 1978",
+        "sourceUrl": "https://ieeexplore.ieee.org/document/1646911"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's the point that convinced me: if real defects are minimal deviations from correct code, then a test that can't tell correct code from a minimal deviation is protecting you from nothing. If you want it from the source: the original paper is in [IEEE Computer (1978)](https://ieeexplore.ieee.org/document/1646911), and the tool I use in this project is [Stryker Mutator](https://stryker-mutator.io/docs/), which runs on JavaScript, TypeScript, C# and Scala."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npm run test:mutation",
+          "→ mutants generated: 133",
+          "→ killed: 128   survived: 5",
+          "→ mutation score: 96.2%   (target ≥ 80%)"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "100% coverage with weak tests is a pretty number that protects nobody. The mutation score, on the other hand, answers the only question that matters: if someone breaks this tomorrow, will I find out?"
+      },
+
+      { "kind": "heading", "text": "What actually improves" },
+      {
+        "kind": "steps",
+        "items": [
+          "The AI stops improvising: it implements against an approved specification, not an ambiguous prompt.",
+          "I review code without guessing what it was supposed to do, because every line points to an R#.",
+          "When scope changes — it always changes — I update the spec first and the code after. Never the other way around.",
+          "The team measures progress with evidence (green tests, killed mutants), not optimistic estimates.",
+          "And the start-up cost, which used to be two hours per project, is now 30 seconds."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This very site was born that way: its specification holds 56 numbered requirements, every test points to one, no line was written without a failing test first, and mutants get hunted on every change. If you want to see the rest of what I build, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI that equips the project, generates the specs and orchestrates the method. Full documentation in its README.",
+          "[Hints on Test Data Selection: Help for the Practicing Programmer](https://ieeexplore.ieee.org/document/1646911) — DeMillo, Lipton & Sayward, IEEE Computer, 1978. The paper that founded mutation testing.",
+          "[Mutation testing (overview)](https://en.wikipedia.org/wiki/Mutation_testing): history, the competent programmer hypothesis and the state of the art.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): the mutation testing tool I use here (JavaScript, TypeScript, C# and Scala).",
+          "[EARS notation](https://alistairmavin.com/ears/) — Alistair Mavin: how to write requirements that can be turned into tests.",
+          "[Test-Driven Development by Example](https://www.oreilly.com/library/view/test-driven-development/0321146530/) — Kent Beck: the source of the Red → Green → Refactor cycle."
+        ]
+      }
+    ]
+  }
+}

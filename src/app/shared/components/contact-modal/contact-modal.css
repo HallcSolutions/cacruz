@@ -1,0 +1,842 @@
+:host {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.2rem;
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(4, 4, 6, 0.78);
+  backdrop-filter: blur(6px);
+  animation: fade-in 0.3s ease;
+}
+
+.terminal {
+  position: relative;
+  width: min(38rem, 100%);
+  max-height: 90svh;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface) 94%, transparent);
+  box-shadow: 0 40px 90px -40px rgba(0, 0, 0, 0.95);
+  animation: modal-in 0.45s cubic-bezier(0.2, 0.9, 0.3, 1.15);
+}
+
+.terminal__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: inherit;
+}
+
+.terminal__dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.terminal__bar .terminal__dot:first-child {
+  background: var(--accent);
+}
+
+.terminal__file {
+  margin-left: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+.terminal__close {
+  margin-left: auto;
+  background: none;
+  border: 0;
+  color: var(--text-muted);
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.4rem;
+  transition: color 0.25s ease, background-color 0.25s ease;
+}
+
+.terminal__close:hover {
+  color: var(--text);
+  background: var(--accent-soft);
+}
+
+.terminal__body {
+  padding: 1.4rem 1.5rem 1.7rem;
+  font-family: var(--font-mono);
+}
+
+.terminal__intro {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.6rem;
+}
+
+.terminal__avatar {
+  width: 4.2rem;
+  height: 4.2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 1px solid color-mix(in srgb, var(--accent) 45%, transparent);
+  filter: drop-shadow(0 0 20px color-mix(in srgb, var(--accent) 30%, transparent));
+  animation: avatar-pop 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.4) 0.1s both;
+}
+
+.terminal__line {
+  margin: 0;
+  font-size: 0.95rem;
+  overflow: hidden;
+  white-space: nowrap;
+  border-right: 2px solid var(--accent);
+  width: 0;
+  animation:
+    type-line 1.1s steps(26) 0.25s forwards,
+    caret-blink 0.9s steps(2) infinite;
+}
+
+.terminal__hint {
+  margin: 0.4rem 0 0;
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  opacity: 0;
+  animation: fade-in 0.5s ease 1.3s forwards;
+}
+
+.terminal__prompt {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+/* Mensajero robot dibujado en CSS que corre y entrega el sobre (R52) */
+.delivery {
+  text-align: center;
+  padding: 1.4rem 0 0.4rem;
+}
+
+.delivery__track {
+  position: relative;
+  height: 7.5rem;
+  border-bottom: 2px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.delivery__target {
+  position: absolute;
+  right: 0;
+  bottom: 0.4rem;
+  width: 4.2rem;
+  height: 4.2rem;
+  border-radius: 50%;
+  object-fit: cover;
+  object-position: top center;
+  border: 2px solid color-mix(in srgb, var(--accent) 45%, transparent);
+}
+
+/* Polvo bajo los pies mientras corre */
+.delivery__dust {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 2rem;
+  height: 3px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text-muted) 50%, transparent);
+  animation:
+    robot-run-across 2.6s linear infinite,
+    dust-puff 0.35s ease-out infinite;
+}
+
+/* ── El robot ── */
+.robot {
+  --metal-light: #f0eef8;
+  --metal: #cdc9dd;
+  --metal-dark: #8d88a6;
+  --metal-shade: #6b6683;
+  --step: 0.42s;
+
+  position: absolute;
+  bottom: 0.15rem;
+  left: 0;
+  width: 3.6rem;
+  height: 5.2rem;
+  animation: robot-run-across 2.8s linear infinite;
+}
+
+/* Sombra en el suelo, se aplasta con cada zancada */
+.robot__shadow {
+  position: absolute;
+  bottom: -0.2rem;
+  left: 0.35rem;
+  width: 2.9rem;
+  height: 0.42rem;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(0, 0, 0, 0.55), transparent 70%);
+  animation: shadow-squash var(--step) ease-in-out infinite;
+}
+
+/* El cuerpo entero rebota; la sombra se queda en el suelo */
+.robot__rig {
+  position: absolute;
+  inset: 0;
+  animation: robot-bob var(--step) ease-in-out infinite;
+}
+
+.robot__antenna {
+  position: absolute;
+  top: -0.35rem;
+  left: 1.05rem;
+  width: 2px;
+  height: 0.6rem;
+  background: linear-gradient(180deg, var(--metal-dark), var(--metal-shade));
+  transform: rotate(-12deg);
+  transform-origin: bottom center;
+}
+
+.robot__antenna::after {
+  content: '';
+  position: absolute;
+  top: -0.34rem;
+  left: -0.17rem;
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 12px var(--accent);
+  animation: antenna-blink 0.85s steps(2) infinite;
+}
+
+.robot__head {
+  position: absolute;
+  top: 0.2rem;
+  left: 0.5rem;
+  width: 2.4rem;
+  height: 1.85rem;
+  border-radius: 0.75rem 0.75rem 0.55rem 0.55rem;
+  background: linear-gradient(155deg, var(--metal-light) 12%, var(--metal) 55%, var(--metal-dark));
+  box-shadow:
+    inset 0 -0.18rem 0.3rem rgba(0, 0, 0, 0.25),
+    inset 0 0.14rem 0 rgba(255, 255, 255, 0.55),
+    0 0.25rem 0.6rem rgba(0, 0, 0, 0.35);
+}
+
+/* Visor de vidrio oscuro con los ojos dentro */
+.robot__visor {
+  position: absolute;
+  top: 0.45rem;
+  left: 0.28rem;
+  width: 1.85rem;
+  height: 0.95rem;
+  border-radius: 0.45rem;
+  background: linear-gradient(160deg, #2b2740, #17141f);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  overflow: hidden;
+}
+
+.robot__eye {
+  width: 0.36rem;
+  height: 0.36rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: eye-blink 2.6s steps(1) infinite;
+}
+
+.robot__glare {
+  position: absolute;
+  top: -0.35rem;
+  left: -0.5rem;
+  width: 1.1rem;
+  height: 1.6rem;
+  background: linear-gradient(120deg, rgba(255, 255, 255, 0.35), transparent 60%);
+  transform: rotate(18deg);
+}
+
+.robot__ear {
+  position: absolute;
+  top: 0.6rem;
+  right: -0.2rem;
+  width: 0.28rem;
+  height: 0.6rem;
+  border-radius: 0.2rem;
+  background: var(--metal-shade);
+}
+
+.robot__neck {
+  position: absolute;
+  top: 1.95rem;
+  left: 1.45rem;
+  width: 0.5rem;
+  height: 0.3rem;
+  background: var(--metal-shade);
+}
+
+.robot__torso {
+  position: absolute;
+  top: 2.2rem;
+  left: 0.7rem;
+  width: 2rem;
+  height: 1.8rem;
+  border-radius: 0.55rem 0.55rem 0.35rem 0.35rem;
+  background: linear-gradient(155deg, var(--metal) 10%, var(--metal-dark) 65%, var(--metal-shade));
+  box-shadow:
+    inset 0 0.12rem 0 rgba(255, 255, 255, 0.4),
+    inset 0 -0.2rem 0.3rem rgba(0, 0, 0, 0.3),
+    0 0.25rem 0.5rem rgba(0, 0, 0, 0.35);
+}
+
+/* Núcleo de energía en el pecho */
+.robot__core {
+  position: absolute;
+  top: 0.42rem;
+  left: 0.72rem;
+  width: 0.56rem;
+  height: 0.56rem;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow:
+    0 0 10px var(--accent),
+    inset 0 0 0.15rem #fff;
+  animation: core-pulse 1.1s ease-in-out infinite;
+}
+
+.robot__vent {
+  position: absolute;
+  bottom: 0.3rem;
+  left: 0.5rem;
+  width: 1rem;
+  height: 0.42rem;
+  border-radius: 0.1rem;
+  background: repeating-linear-gradient(
+    90deg,
+    var(--metal-shade) 0 2px,
+    transparent 2px 4px
+  );
+  opacity: 0.7;
+}
+
+/* Brazos con antebrazo articulado */
+.robot__arm {
+  position: absolute;
+  top: 2.4rem;
+  width: 0.4rem;
+  height: 0.85rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--metal), var(--metal-dark));
+  transform-origin: top center;
+}
+
+.robot__arm::before {
+  content: '';
+  position: absolute;
+  top: -0.16rem;
+  left: -0.1rem;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-radius: 50%;
+  background: var(--metal-dark);
+  box-shadow: inset 0 0.1rem 0 rgba(255, 255, 255, 0.35);
+}
+
+.robot__forearm {
+  position: absolute;
+  top: 0.75rem;
+  left: 0;
+  width: 0.4rem;
+  height: 0.8rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--metal-dark), var(--metal-shade));
+  transform-origin: top center;
+}
+
+.robot__arm--back {
+  left: 0.62rem;
+  filter: brightness(0.72);
+  animation: arm-swing-back var(--step) ease-in-out infinite;
+}
+
+.robot__arm--back .robot__forearm {
+  transform: rotate(-30deg);
+}
+
+.robot__arm--front {
+  left: 2.35rem;
+  animation: arm-hold var(--step) ease-in-out infinite;
+}
+
+.robot__arm--front .robot__forearm {
+  transform: rotate(-62deg);
+}
+
+/* Piernas con muslo, espinilla y pie */
+.robot__leg {
+  position: absolute;
+  top: 3.85rem;
+  width: 0.48rem;
+  height: 0.75rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--metal), var(--metal-dark));
+  transform-origin: top center;
+}
+
+.robot__shin {
+  position: absolute;
+  top: 0.62rem;
+  left: 0;
+  width: 0.48rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, var(--metal-dark), var(--metal-shade));
+  transform-origin: top center;
+}
+
+.robot__foot {
+  position: absolute;
+  bottom: -0.14rem;
+  left: -0.16rem;
+  width: 0.85rem;
+  height: 0.3rem;
+  border-radius: 0.16rem 0.28rem 0.1rem 0.1rem;
+  background: var(--metal-shade);
+}
+
+.robot__leg--back {
+  left: 0.95rem;
+  filter: brightness(0.72);
+  animation: leg-run-back var(--step) ease-in-out infinite;
+}
+
+.robot__leg--back .robot__shin {
+  animation: shin-run-back var(--step) ease-in-out infinite;
+}
+
+.robot__leg--front {
+  left: 1.95rem;
+  animation: leg-run-front var(--step) ease-in-out infinite;
+}
+
+.robot__leg--front .robot__shin {
+  animation: shin-run-front var(--step) ease-in-out infinite;
+}
+
+/* El sobre que carga en la mano */
+.envelope {
+  position: absolute;
+  top: 0.5rem;
+  left: -0.5rem;
+  width: 1.35rem;
+  height: 0.95rem;
+  border-radius: 0.15rem;
+  background: linear-gradient(160deg, #ffffff, #ddd9ea);
+  border: 1px solid #a9a4c0;
+  box-shadow: 0 0.2rem 0.5rem rgba(0, 0, 0, 0.5);
+  transform: rotate(62deg);
+  animation: envelope-shake var(--step) ease-in-out infinite;
+}
+
+.envelope__flap {
+  position: absolute;
+  inset: 0;
+  border-top: 0.5rem solid #cfcae0;
+  border-left: 0.67rem solid transparent;
+  border-right: 0.67rem solid transparent;
+  box-sizing: border-box;
+}
+
+/* ── Entregado: el robot llega, suelta el sobre y celebra ── */
+.delivery--done .robot {
+  animation: robot-arrive 0.5s ease-out forwards;
+}
+
+.delivery--done .robot__rig {
+  animation: robot-cheer 0.75s ease-in-out 0.55s infinite;
+}
+
+.delivery--done .delivery__dust,
+.delivery--done .robot__shadow,
+.delivery--done .robot__leg--back,
+.delivery--done .robot__leg--front,
+.delivery--done .robot__leg--back .robot__shin,
+.delivery--done .robot__leg--front .robot__shin,
+.delivery--done .robot__arm--back {
+  animation: none;
+}
+
+.delivery--done .robot__leg--back,
+.delivery--done .robot__leg--front {
+  transform: rotate(0);
+}
+
+.delivery--done .robot__leg--back .robot__shin,
+.delivery--done .robot__leg--front .robot__shin {
+  transform: rotate(0);
+}
+
+.delivery--done .robot__arm--front {
+  animation: arm-raise 0.6s ease forwards;
+}
+
+.delivery--done .envelope {
+  animation: envelope-handoff 0.75s cubic-bezier(0.3, -0.2, 0.4, 1.4) forwards;
+}
+
+.delivery--done .delivery__target {
+  animation: target-pop 0.7s cubic-bezier(0.2, 0.9, 0.3, 1.5) 0.55s;
+  box-shadow: 0 0 34px color-mix(in srgb, var(--accent) 55%, transparent);
+}
+
+.delivery__status {
+  margin: 0 0 1.2rem;
+  font-size: 0.95rem;
+}
+
+.delivery__dots::after {
+  content: '';
+  animation: dots 1.2s steps(4, end) infinite;
+}
+
+.delivery__ok {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.send-error {
+  margin: 0 0 1rem;
+  font-size: 0.85rem;
+  color: var(--accent-3);
+}
+
+@keyframes robot-run-across {
+  from { left: 0; }
+  to { left: calc(100% - 7.8rem); }
+}
+
+@keyframes robot-arrive {
+  to { left: calc(100% - 7.8rem); }
+}
+
+@keyframes robot-bob {
+  0%, 100% { transform: translateY(0) rotate(2deg); }
+  50% { transform: translateY(-4px) rotate(0deg); }
+}
+
+@keyframes shadow-squash {
+  0%, 100% { transform: scaleX(1); opacity: 0.85; }
+  50% { transform: scaleX(0.82); opacity: 0.6; }
+}
+
+@keyframes robot-cheer {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  35% { transform: translateY(-10px) rotate(-7deg); }
+  70% { transform: translateY(0) rotate(5deg); }
+}
+
+/* Ciclo de carrera: muslo adelante-atrás, espinilla flexionando */
+@keyframes leg-run-front {
+  0%, 100% { transform: rotate(30deg); }
+  50% { transform: rotate(-28deg); }
+}
+
+@keyframes shin-run-front {
+  0%, 100% { transform: rotate(-8deg); }
+  30% { transform: rotate(-52deg); }
+  60% { transform: rotate(4deg); }
+}
+
+@keyframes leg-run-back {
+  0%, 100% { transform: rotate(-28deg); }
+  50% { transform: rotate(30deg); }
+}
+
+@keyframes shin-run-back {
+  0%, 100% { transform: rotate(4deg); }
+  30% { transform: rotate(-8deg); }
+  60% { transform: rotate(-52deg); }
+}
+
+@keyframes arm-swing-back {
+  0%, 100% { transform: rotate(28deg); }
+  50% { transform: rotate(-26deg); }
+}
+
+@keyframes arm-hold {
+  0%, 100% { transform: rotate(-52deg); }
+  50% { transform: rotate(-44deg); }
+}
+
+@keyframes arm-raise {
+  to { transform: rotate(-128deg); }
+}
+
+@keyframes envelope-shake {
+  0%, 100% { transform: rotate(58deg); }
+  50% { transform: rotate(67deg); }
+}
+
+@keyframes envelope-handoff {
+  0% { transform: translate(0, 0) rotate(62deg) scale(1); opacity: 1; }
+  55% { transform: translate(2.4rem, -2rem) rotate(160deg) scale(1.12); opacity: 1; }
+  100% { transform: translate(4.2rem, 0.6rem) rotate(300deg) scale(0.2); opacity: 0; }
+}
+
+@keyframes dust-puff {
+  0% { opacity: 0.5; transform: scaleX(1); }
+  100% { opacity: 0; transform: scaleX(2); }
+}
+
+@keyframes antenna-blink {
+  50% { opacity: 0.25; }
+}
+
+@keyframes core-pulse {
+  0%, 100% { box-shadow: 0 0 8px var(--accent), inset 0 0 0.15rem #fff; }
+  50% { box-shadow: 0 0 18px var(--accent), inset 0 0 0.15rem #fff; }
+}
+
+@keyframes eye-blink {
+  0%, 92% { transform: scaleY(1); }
+  95% { transform: scaleY(0.15); }
+  98%, 100% { transform: scaleY(1); }
+}
+
+@keyframes target-pop {
+  0% { transform: scale(1); }
+  45% { transform: scale(1.18) rotate(4deg); }
+  100% { transform: scale(1); }
+}
+
+@keyframes dots {
+  0% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75% { content: '...'; }
+}
+
+/* Consola en vivo (R50) */
+.console {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.7rem;
+  padding: 0.9rem 1rem;
+  margin-bottom: 1.4rem;
+  font-size: 0.85rem;
+  line-height: 1.75;
+  min-height: 5.4rem;
+}
+
+.console__line {
+  margin: 0;
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+  overflow-wrap: anywhere;
+  animation: line-slide 0.28s ease;
+}
+
+.console__text {
+  flex: 1;
+}
+
+.console__line--command .console__text {
+  color: var(--text);
+}
+
+.console__line--echo .console__text {
+  color: var(--text-muted);
+}
+
+.console__arrow {
+  color: var(--accent-2);
+}
+
+.console__line--ready .console__text {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.console__check {
+  color: var(--accent);
+}
+
+.console__line--waiting .console__text,
+.console__dots {
+  color: color-mix(in srgb, var(--text-muted) 70%, transparent);
+}
+
+.console__caret {
+  width: 8px;
+  height: 1em;
+  flex: none;
+  background: var(--accent);
+  animation: caret-blink 1s steps(2) infinite;
+}
+
+@keyframes line-slide {
+  from {
+    opacity: 0;
+    transform: translateX(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.field__label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+}
+
+.field__input {
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  padding: 0.7rem 0.9rem;
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.field__input:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+.field__input--area {
+  resize: vertical;
+  min-height: 6rem;
+}
+
+.field__input--error {
+  border-color: var(--accent-3);
+}
+
+.field__error {
+  font-size: 0.76rem;
+  color: var(--accent-3);
+}
+
+.submit {
+  margin-top: 0.4rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: flex-start;
+  font-family: var(--font-mono);
+  font-size: 0.95rem;
+  color: var(--bg);
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  padding: 0.65rem 1.6rem;
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, background-color 0.25s ease;
+}
+
+.submit .terminal__prompt {
+  color: var(--bg);
+}
+
+.submit:hover:not(:disabled) {
+  transform: translateY(-2px);
+  background: var(--accent-2);
+  box-shadow: 0 16px 34px -14px color-mix(in srgb, var(--accent) 80%, transparent);
+}
+
+.submit:disabled {
+  background: transparent;
+  border-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+}
+
+.submit:disabled .terminal__prompt {
+  color: var(--text-muted);
+}
+
+.submit:disabled .submit__cursor {
+  background: var(--text-muted);
+}
+
+.submit__cursor {
+  width: 8px;
+  height: 1em;
+  background: var(--bg);
+  animation: caret-blink 1s steps(2) infinite;
+}
+
+@keyframes modal-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes type-line {
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes avatar-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

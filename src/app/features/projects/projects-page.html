@@ -1,0 +1,3 @@
+@if (profile.content.value(); as content) {
+  <app-project-list [projects]="content.projects" [githubProfileUrl]="content.githubProfileUrl" />
+}

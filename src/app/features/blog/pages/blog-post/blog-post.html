@@ -1,0 +1,131 @@
+<article class="section post">
+  @if (post.error()) {
+    <div class="post__not-found">
+      <h1 class="post__title">{{ 'blog.notFound.title' | t }}</h1>
+      <p class="post__summary">{{ 'blog.notFound.body' | t }}</p>
+      <a class="post__back" routerLink="/daily">← {{ 'blog.back' | t }}</a>
+    </div>
+  } @else if (post.value(); as entry) {
+    <a class="post__back" routerLink="/daily">← {{ 'blog.back' | t }}</a>
+
+    <div class="md">
+      <div class="md__bar">
+        <span class="md__dot"></span>
+        <span class="md__dot"></span>
+        <span class="md__dot"></span>
+        <span class="md__file">{{ entry.slug }}.md</span>
+        <span class="md__date">{{ formatDate(entry.date) }}</span>
+      </div>
+
+      <div class="md__body">
+        <div class="md__line md__line--title">
+          <span class="md__gutter">1</span>
+          <h1 class="post__title"><span class="md__mark">#</span> {{ entry.title[i18n.language()] }}</h1>
+        </div>
+
+        <div class="md__line">
+          <span class="md__gutter">2</span>
+          <ul class="post__tags">
+            @for (tag of entry.tags; track tag) {
+              <li>#{{ tag }}</li>
+            }
+          </ul>
+        </div>
+
+        @for (block of entry.body[i18n.language()]; track $index) {
+          <div class="md__line" appRevealOnScroll [revealDelay]="($index % 3) * 70">
+            <span class="md__gutter">{{ $index + 3 }}</span>
+
+            <div class="md__content">
+              @switch (block.kind) {
+                @case ('heading') {
+                  <h2 class="post__heading"><span class="md__mark">##</span> {{ block.text }}</h2>
+                }
+                @case ('quote') {
+                  <blockquote class="post__quote">
+                    <span class="md__mark md__mark--quote" aria-hidden="true">&gt;</span>
+                    {{ block.text }}
+                    @if (block.source) {
+                      <cite class="post__cite">
+                        —
+                        @if (block.sourceUrl) {
+                          <a [href]="block.sourceUrl" target="_blank" rel="noopener">{{
+                            block.source
+                          }}</a>
+                        } @else {
+                          {{ block.source }}
+                        }
+                      </cite>
+                    }
+                  </blockquote>
+                }
+                @case ('steps') {
+                  <ol class="post__steps">
+                    @for (item of block.items; track $index) {
+                      <li class="post__step" [style.--i]="$index">
+                        @for (span of spans(item); track $index) {
+                          @if (span.kind === 'link') {
+                            <a
+                              [href]="span.url"
+                              [attr.target]="isExternal(span.url) ? '_blank' : null"
+                              [attr.rel]="isExternal(span.url) ? 'noopener' : null"
+                              >{{ span.text }}</a
+                            >
+                          } @else {
+                            <span>{{ span.text }}</span>
+                          }
+                        }
+                      </li>
+                    }
+                  </ol>
+                }
+                @case ('terminal') {
+                  <div class="post__terminal">
+                    @for (line of block.lines; track $index) {
+                      <p class="post__terminal-line" [style.--i]="$index">
+                        <span class="post__terminal-prompt">$</span>{{ line }}
+                      </p>
+                    }
+                  </div>
+                }
+                @case ('image') {
+                  <figure class="post__figure">
+                    <img [src]="block.src" [alt]="block.caption" loading="lazy" />
+                    <figcaption>
+                      <span class="md__mark">!</span>[{{ block.caption }}]
+                    </figcaption>
+                  </figure>
+                }
+                @default {
+                  <p class="post__paragraph">
+                    @for (span of spans(block.text); track $index) {
+                      @if (span.kind === 'link') {
+                        <a
+                          [href]="span.url"
+                          [attr.target]="isExternal(span.url) ? '_blank' : null"
+                          [attr.rel]="isExternal(span.url) ? 'noopener' : null"
+                          >{{ span.text }}</a
+                        >
+                      } @else {
+                        <span>{{ span.text }}</span>
+                      }
+                    }
+                  </p>
+                }
+              }
+            </div>
+          </div>
+        }
+
+        <div class="md__line md__line--end">
+          <span class="md__gutter">{{ entry.body[i18n.language()].length + 3 }}</span>
+          <span class="md__caret" aria-hidden="true"></span>
+        </div>
+      </div>
+    </div>
+
+    <a class="post__back post__back--foot" routerLink="/daily">← {{ 'blog.back' | t }}</a>
+  } @else {
+    <p class="post__loading">{{ 'blog.loading' | t }}</p>
+  }
+</article>

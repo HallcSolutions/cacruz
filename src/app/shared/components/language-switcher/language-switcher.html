@@ -1,0 +1,13 @@
+<div class="switcher" role="group" [attr.aria-label]="i18n.t('a11y.changeLanguage')">
+  @for (language of languages; track language) {
+    <button
+      type="button"
+      class="switcher__option"
+      [class.switcher__option--active]="i18n.language() === language"
+      [attr.aria-pressed]="i18n.language() === language"
+      (click)="i18n.setLanguage(language)"
+    >
+      {{ language }}
+    </button>
+  }
+</div>

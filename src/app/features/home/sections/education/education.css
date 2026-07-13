@@ -1,0 +1,104 @@
+.degrees {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.degree {
+  display: flex;
+  gap: 1.4rem;
+  align-items: flex-start;
+  padding: 1.7rem 0.4rem;
+  border-top: 1px solid var(--border);
+  transition: padding-left 0.35s ease;
+}
+
+.degree:last-child {
+  border-bottom: 1px solid var(--border);
+}
+
+.degree:hover {
+  padding-left: 1.4rem;
+}
+
+.degree:hover .degree__title {
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.degree__icon {
+  font-size: 2.1rem;
+  line-height: 1;
+  filter: drop-shadow(0 6px 14px color-mix(in srgb, var(--accent) 45%, transparent));
+  animation: degree-float 5s ease-in-out infinite alternate;
+}
+
+.degree:nth-child(2n) .degree__icon {
+  animation-delay: -2.4s;
+}
+
+.degree__period {
+  display: inline-block;
+  font-size: 0.75rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.degree__title {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.8rem);
+  margin: 0.3rem 0 0.1rem;
+  transition: color 0.35s ease;
+}
+
+.degree__institution {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.courses {
+  margin-top: 2.6rem;
+}
+
+.courses__title {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--text-muted);
+  margin: 0 0 1rem;
+}
+
+.courses__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.courses__item {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.9rem;
+  transition: color 0.3s ease, border-color 0.3s ease, transform 0.3s ease;
+}
+
+.courses__item:hover {
+  color: var(--text);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+}
+
+@keyframes degree-float {
+  from {
+    transform: translateY(0) rotate(-4deg);
+  }
+  to {
+    transform: translateY(-8px) rotate(5deg);
+  }
+}

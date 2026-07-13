@@ -1,0 +1,27 @@
+<section class="section" id="education">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'education.subtitle' | t }}</p>
+    <h2 class="section__title">{{ 'education.title' | t }}</h2>
+  </header>
+  <ul class="degrees">
+    @for (entry of entries(); track entry.institution + entry.period) {
+      <li class="degree" appRevealOnScroll [revealDelay]="($index % 2) * 120">
+        <span class="degree__icon" aria-hidden="true">🎓</span>
+        <div class="degree__body">
+          <p class="degree__period">{{ entry.period }} · {{ entry.location }}</p>
+          <h3 class="degree__title">{{ entry.degree }}</h3>
+          <p class="degree__institution">{{ entry.institution }}</p>
+        </div>
+      </li>
+    }
+  </ul>
+
+  <div class="courses" appRevealOnScroll>
+    <h3 class="courses__title">{{ 'education.courses' | t }}</h3>
+    <ul class="courses__list">
+      @for (course of courses(); track course) {
+        <li class="courses__item" [style.--i]="$index">{{ course }}</li>
+      }
+    </ul>
+  </div>
+</section>

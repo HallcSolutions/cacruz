@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" role="img" aria-label="El harness contiene skills, reglas, MCP y la verificación">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .shell { animation: glow 4s ease-in-out infinite; }
+    .core { transform-box: fill-box; transform-origin: center; animation: pulse 3s ease-in-out infinite; }
+    .ring { transform-origin: 500px 300px; animation: spin 24s linear infinite; }
+    .feed { transform-box: fill-box; transform-origin: center; animation: float 5s ease-in-out infinite; }
+    .f2 { animation-delay: -1.2s } .f3 { animation-delay: -2.4s } .f4 { animation-delay: -3.6s }
+    .wire { stroke-dasharray: 5 8; animation: flow 1.8s linear infinite; }
+    .check { transform-box: fill-box; transform-origin: center; animation: beat 2.6s ease-in-out infinite; }
+    @keyframes glow { 0%,100% { stroke-opacity:.55 } 50% { stroke-opacity:1 } }
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity:.9 } 50% { transform: scale(1.06); opacity:1 } }
+    @keyframes spin { to { transform: rotate(360deg) } }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+    @keyframes flow { to { stroke-dashoffset: -52 } }
+    @keyframes beat { 0%,100% { transform: scale(1); opacity:.85 } 50% { transform: scale(1.08); opacity:1 } }
+  </style>
+
+  <rect width="1000" height="520" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="27" fill="#ece7fb">El harness es el todo: lo que gobierna al modelo</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">skills + reglas + MCP + verificación · el modelo trabaja DENTRO</text>
+
+  <!-- Entrada -->
+  <text x="40" y="300" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">tarea</text>
+  <line x1="40" y1="312" x2="86" y2="312" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- CONTENEDOR: EL HARNESS -->
+  <rect class="shell" x="96" y="96" width="800" height="384" rx="24" fill="rgba(52,211,153,0.035)" stroke="#34d399" stroke-width="2.5"/>
+  <rect x="116" y="82" width="150" height="28" rx="8" fill="#0d0b16" stroke="#34d399" stroke-width="1.5"/>
+  <text x="191" y="101" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">🦺 HARNESS</text>
+
+  <!-- órbita interna + modelo -->
+  <circle class="ring" cx="500" cy="300" r="104" fill="none" stroke="#332a52" stroke-width="1.5" stroke-dasharray="4 10"/>
+  <g class="core">
+    <circle cx="500" cy="300" r="60" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="500" y="296" text-anchor="middle" font-family="ui-monospace, monospace" font-size="15" fill="#ece7fb">LLM</text>
+    <text x="500" y="318" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">el modelo</text>
+  </g>
+
+  <!-- lo que el harness le entrega -->
+  <g class="feed">
+    <rect x="126" y="136" width="176" height="80" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="144" y="164" font-size="16">📚</text>
+    <text x="168" y="166" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">SKILLS</text>
+    <text x="144" y="186" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">cómo se hacen</text>
+    <text x="144" y="202" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">las cosas aquí</text>
+  </g>
+  <line x1="308" y1="188" x2="440" y2="262" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <g class="feed f2">
+    <rect x="126" y="356" width="176" height="80" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="144" y="384" font-size="16">📐</text>
+    <text x="168" y="386" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">REGLAS</text>
+    <text x="144" y="406" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">los límites: qué</text>
+    <text x="144" y="422" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">NO puede tocar</text>
+  </g>
+  <line x1="308" y1="396" x2="440" y2="338" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <g class="feed f3">
+    <rect x="694" y="136" width="176" height="80" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="712" y="164" font-size="16">🔌</text>
+    <text x="736" y="166" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">MCP</text>
+    <text x="712" y="186" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">datos y herramientas</text>
+    <text x="712" y="202" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">reales del proyecto</text>
+  </g>
+  <line x1="688" y1="188" x2="560" y2="262" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <g class="feed f4">
+    <rect x="694" y="356" width="176" height="80" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="712" y="384" font-size="16">📋</text>
+    <text x="736" y="386" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">MÉTODO</text>
+    <text x="712" y="406" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">spec · plan · tareas</text>
+    <text x="712" y="422" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">una orden a la vez</text>
+  </g>
+  <line x1="688" y1="396" x2="560" y2="338" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- verificación: también dentro del harness -->
+  <g class="check">
+    <rect x="356" y="418" width="288" height="46" rx="12" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text x="500" y="447" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#34d399">✓ VERIFICACIÓN con evidencia → [x]</text>
+  </g>
+  <line x1="500" y1="366" x2="500" y2="412" class="wire" stroke="#34d399" stroke-width="2" marker-end="url(#ag)"/>
+
+  <!-- salida -->
+  <line x1="906" y1="312" x2="958" y2="312" class="wire" stroke="#34d399" stroke-width="2" marker-end="url(#ag)"/>
+  <text x="920" y="300" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">hecho</text>
+</svg>

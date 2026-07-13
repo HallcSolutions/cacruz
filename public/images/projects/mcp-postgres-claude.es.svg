@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="mcp-postgres-claude">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#130d20"/><stop offset="1" stop-color="#1e1336"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#c084fc"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .pipe { animation: flowdata 1.8s linear infinite; }
+    .brain { transform-box: fill-box; transform-origin: center; animation: breathe 4s ease-in-out infinite; }
+    .db { transform-box: fill-box; transform-origin: center; animation: breathe 4s ease-in-out infinite reverse; }
+    @keyframes flowdata { to { stroke-dashoffset: -28; } }
+    @keyframes breathe { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.04); } }
+  </style>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="680" cy="420" r="180" fill="#a78bfa" opacity="0.08"/>
+  <g fill="none" stroke-width="2.5">
+    <g class="db">
+      <ellipse cx="230" cy="150" rx="90" ry="32" stroke="url(#ac)"/>
+      <path d="M140 150 v140 a90 32 0 0 0 180 0 v-140" stroke="url(#ac)"/>
+      <path d="M140 220 a90 32 0 0 0 180 0" stroke="#453768"/>
+    </g>
+    <path class="pipe" d="M370 220 h120" stroke="#a78bfa" stroke-dasharray="4 10" stroke-linecap="round"/>
+    <g class="brain">
+      <circle cx="580" cy="220" r="64" stroke="url(#ac)"/>
+      <path d="M556 244c10-18 8-30 6-48m18 48c8-22 8-34 4-50m20 46c6-16 4-28 2-40" stroke="#c4b0fd" stroke-linecap="round"/>
+    </g>
+  </g>
+  <text x="140" y="428" font-family="Georgia, serif" font-size="34" fill="#ece3fd" font-style="italic">Claude, conoce tu base de datos</text>
+</svg>

@@ -1,0 +1,213 @@
+/* El shell ocupa toda la altura: el footer queda siempre abajo (nunca flotando a media página) */
+:host {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+}
+
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  z-index: 20;
+  background: var(--gradient);
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+}
+
+@supports (animation-timeline: scroll()) {
+  .scroll-progress {
+    animation: grow-progress linear forwards;
+    animation-timeline: scroll();
+  }
+}
+
+@keyframes grow-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.shell__header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  padding: 1.1rem clamp(1.2rem, 5vw, 4rem);
+  background: color-mix(in srgb, var(--bg) 78%, transparent);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+}
+
+.shell__brand {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  letter-spacing: 0.02em;
+}
+
+.shell__logo {
+  height: 2.2rem;
+  width: auto;
+  border-radius: 0.45rem;
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.shell__brand:hover .shell__logo {
+  transform: rotate(-4deg) scale(1.08);
+  box-shadow: 0 8px 22px -8px rgba(167, 139, 250, 0.5);
+}
+
+.shell__dot {
+  color: var(--accent);
+}
+
+/* Botón hamburguesa: solo en pantallas angostas */
+.shell__burger {
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 2.6rem;
+  height: 2.6rem;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.6rem;
+  background: transparent;
+  cursor: pointer;
+  transition: border-color 0.3s ease;
+}
+
+.shell__burger span {
+  display: block;
+  width: 1.1rem;
+  height: 2px;
+  margin: 0 auto;
+  background: var(--text);
+  border-radius: 2px;
+  transition: transform 0.3s ease, opacity 0.25s ease;
+}
+
+.shell__burger:hover {
+  border-color: var(--accent);
+}
+
+.shell__burger--open span:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.shell__burger--open span:nth-child(2) {
+  opacity: 0;
+}
+
+.shell__burger--open span:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.shell__lang-mobile {
+  display: none;
+}
+
+.shell__nav {
+  display: flex;
+  gap: 1.6rem;
+}
+
+.shell__nav a {
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  padding-bottom: 0.2rem;
+  border-bottom: 2px solid transparent;
+  transition:
+    color 0.3s ease,
+    border-color 0.3s ease;
+}
+
+.shell__nav a:hover {
+  color: var(--text);
+}
+
+.shell__nav a.is-active {
+  color: var(--text);
+  border-color: var(--accent);
+}
+
+.shell__main {
+  flex: 1;
+  width: 100%;
+  max-width: 88rem;
+  margin: 0 auto;
+  padding: 0 clamp(1.2rem, 4vw, 4rem);
+}
+
+.shell__footer {
+  margin-top: 4rem;
+  padding: 2.2rem clamp(1.2rem, 5vw, 4rem);
+  border-top: 1px solid var(--border);
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  text-align: center;
+}
+
+/* Navegación colapsada bajo el botón de menú (R57) */
+@media (max-width: 900px) {
+  .shell__burger {
+    display: flex;
+  }
+
+  .shell__lang-desktop {
+    display: none;
+  }
+
+  .shell__lang-mobile {
+    display: block;
+    margin-top: 0.6rem;
+  }
+
+  .shell__nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    padding: 0 clamp(1.2rem, 5vw, 4rem);
+    background: color-mix(in srgb, var(--bg) 96%, transparent);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid transparent;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transition:
+      max-height 0.4s cubic-bezier(0.2, 0.7, 0.2, 1),
+      opacity 0.3s ease,
+      padding 0.3s ease,
+      border-color 0.3s ease;
+  }
+
+  .shell__nav--open {
+    max-height: 26rem;
+    opacity: 1;
+    padding: 1rem clamp(1.2rem, 5vw, 4rem) 1.4rem;
+    border-bottom-color: var(--border);
+  }
+
+  .shell__nav a {
+    width: 100%;
+    padding: 0.75rem 0;
+    font-size: 1.05rem;
+    border-bottom: 1px solid transparent;
+  }
+
+  .shell__nav a.is-active {
+    border-bottom-color: transparent;
+    color: var(--accent);
+  }
+}

@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="cacode">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#191308"/><stop offset="1" stop-color="#2a1e0c"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#e8b059"/><stop offset="1" stop-color="#fbbf24"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .ring { transform-box: fill-box; transform-origin: center; animation: spin 7s linear infinite; }
+    .line { animation: typeline 3.6s ease-in-out infinite; }
+    .l2 { animation-delay: 0.5s; } .l3 { animation-delay: 1s; } .l4 { animation-delay: 1.5s; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @keyframes typeline { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+  </style>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="120" cy="420" r="200" fill="#e8b059" opacity="0.08"/>
+  <g font-family="ui-monospace, monospace" font-size="26" fill="#66583d">
+    <text class="line" x="120" y="150">const review = await</text>
+    <text class="line l2" x="120" y="195" fill="url(#ac)">analyze(project)</text>
+    <text class="line l3" x="120" y="240">// quality · security</text>
+    <text class="line l4" x="120" y="285">// performance · db</text>
+  </g>
+  <g transform="translate(520 120)">
+    <circle cx="80" cy="80" r="78" fill="none" stroke="#48381d" stroke-width="14"/>
+    <path class="ring" d="M80 2 a78 78 0 0 1 67 117" fill="none" stroke="url(#ac)" stroke-width="14" stroke-linecap="round"/>
+    <text x="80" y="92" text-anchor="middle" font-family="Georgia, serif" font-size="34" fill="#fbf0d9">A+</text>
+  </g>
+  <text x="120" y="428" font-family="Georgia, serif" font-size="34" fill="#fbf0d9" font-style="italic">código revisado por IA</text>
+</svg>

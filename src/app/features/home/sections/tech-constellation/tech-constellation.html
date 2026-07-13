@@ -1,0 +1,5 @@
+<div class="constellation" appRevealOnScroll>
+  @for (item of items(); track item) {
+    <span class="constellation__star" [style.--i]="$index">{{ item }}</span>
+  }
+</div>

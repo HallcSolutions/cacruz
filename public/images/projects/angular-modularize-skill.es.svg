@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="angular-modularize-skill">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#170f12"/><stop offset="1" stop-color="#2a1218"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#f43f5e"/><stop offset="1" stop-color="#fb7185"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .mod { animation: modpulse 3.4s ease-in-out infinite; }
+    .m2 { animation-delay: 0.7s; } .m3 { animation-delay: 1.4s; }
+    .wire { stroke-dasharray: 5 7; animation: flow 2.4s linear infinite; }
+    @keyframes modpulse { 0%, 100% { opacity: 0.55; } 50% { opacity: 1; } }
+    @keyframes flow { to { stroke-dashoffset: -48; } }
+  </style>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="110" cy="100" r="160" fill="#f43f5e" opacity="0.08"/>
+  <g stroke-width="2.5" fill="none">
+    <rect class="mod" x="150" y="120" width="150" height="110" rx="14" stroke="url(#ac)"/>
+    <rect class="mod m2" x="330" y="120" width="150" height="110" rx="14" stroke="#5c2733"/>
+    <rect class="mod m3" x="510" y="120" width="150" height="110" rx="14" stroke="#5c2733"/>
+    <rect class="mod m2" x="240" y="270" width="150" height="110" rx="14" stroke="#5c2733"/>
+    <rect class="mod" x="420" y="270" width="150" height="110" rx="14" stroke="url(#ac)"/>
+    <path class="wire" d="M300 175 h30 M480 175 h30 M315 270 v-40 M495 270 v-40" stroke="#f43f5e" opacity="0.7"/>
+  </g>
+  <text x="225" y="185" text-anchor="middle" font-family="ui-monospace, monospace" font-size="20" fill="#fbd5dc">core</text>
+  <text x="405" y="185" text-anchor="middle" font-family="ui-monospace, monospace" font-size="20" fill="#8a5560">shared</text>
+  <text x="585" y="185" text-anchor="middle" font-family="ui-monospace, monospace" font-size="20" fill="#8a5560">features</text>
+  <text x="150" y="440" font-family="Georgia, serif" font-size="34" fill="#fde8ec" font-style="italic">módulos enseñados a agentes de IA</text>
+</svg>

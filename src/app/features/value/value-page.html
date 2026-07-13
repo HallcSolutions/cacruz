@@ -1,0 +1,54 @@
+<section class="section" id="value">
+  <header class="section__head" appRevealOnScroll>
+    <h2 class="section__title">{{ 'value.title' | t }}</h2>
+  </header>
+
+  <p class="value__pitch" appRevealOnScroll>{{ 'value.pitch' | t }}</p>
+
+  <dl class="credentials" appRevealOnScroll>
+    @for (stat of stats; track stat.labelKey) {
+      <div class="credential" [style.--i]="$index">
+        <dt class="credential__value">{{ stat.value }}</dt>
+        <dd class="credential__label">{{ stat.labelKey | t }}</dd>
+      </div>
+    }
+  </dl>
+
+  <ol class="cases">
+    @for (item of items; track item.titleKey) {
+      <li class="case" appRevealOnScroll>
+        <div class="case__aside">
+          <span class="case__number">{{ indexLabel($index) }}</span>
+          <p class="case__where">
+            <span class="case__label">{{ 'value.proof' | t }}</span>
+            <span class="case__companies">{{ item.proofKey | t }}</span>
+          </p>
+        </div>
+        <div class="case__main">
+          <h3 class="case__title">{{ item.titleKey | t }}</h3>
+          <p class="case__action">{{ item.bodyKey | t }}</p>
+          <p class="case__result">
+            <span class="case__result-label">{{ 'value.result' | t }}</span>
+            <span class="case__result-text">{{ item.resultKey | t }}</span>
+          </p>
+        </div>
+      </li>
+    }
+  </ol>
+
+  <div class="value__cta" appRevealOnScroll>
+    <h3 class="value__cta-title">{{ 'value.cta.title' | t }}</h3>
+    <p class="value__cta-body">{{ 'value.cta.body' | t }}</p>
+    <div class="value__actions">
+      <button type="button" class="value__action value__action--primary" (click)="contactOpen.set(true)">
+        {{ 'value.cta.email' | t }} →
+      </button>
+      <a class="value__action" [href]="linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
+      <a class="value__action" [href]="githubUrl" target="_blank" rel="noopener">GitHub</a>
+    </div>
+  </div>
+</section>
+
+@if (contactOpen()) {
+  <app-contact-modal (closed)="contactOpen.set(false)" />
+}

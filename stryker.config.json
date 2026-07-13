@@ -1,0 +1,27 @@
+{
+  "$schema": "./node_modules/@stryker-mutator/core/schema/stryker-schema.json",
+  "testRunner": "karma",
+  "karma": {
+    "projectType": "angular-cli",
+    "ngConfig": {
+      "testArguments": { "project": "cacruz" }
+    }
+  },
+  "mutate": [
+    "src/app/core/i18n/translation.service.ts",
+    "src/app/core/i18n/language-options.ts",
+    "src/app/core/content/profile-content-url.ts",
+    "src/app/features/home/sections/hero/typewriter.ts",
+    "src/app/features/stack/sections/stack-code/build-stack-lines.ts",
+    "src/app/shared/components/contact-modal/build-mailto-url.ts",
+    "src/app/shared/components/contact-modal/build-console-lines.ts",
+    "src/app/features/blog/services/blog-content-urls.ts",
+    "src/app/features/blog/services/sort-posts.ts",
+    "src/app/features/blog/services/format-post-date.ts",
+    "src/app/shared/directives/reveal-on-scroll.directive.ts"
+  ],
+  "thresholds": { "high": 90, "low": 80, "break": 80 },
+  "reporters": ["clear-text", "progress"],
+  "concurrency": 2,
+  "coverageAnalysis": "perTest"
+}

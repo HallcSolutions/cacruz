@@ -1,0 +1,168 @@
+{
+  "experience": [
+    {
+      "company": "Think Us — IT Staff Augmentation",
+      "role": "Senior Full-Stack Developer",
+      "period": "Nov 2025 — present",
+      "location": "Remote · Colombia",
+      "summary": "Web applications with Angular and .NET: scalable, maintainable, high-performance solutions. Refactoring with best practices and AI (LLMs, MCP, skills) to optimize development and planning."
+    },
+    {
+      "company": "Raddar Studios",
+      "role": "Development Lead",
+      "period": "May 2025 — Oct 2025",
+      "location": "Remote · Bogotá",
+      "summary": "Angular and .NET architecture under Clean Architecture. CI/CD with Azure DevOps and GitHub Actions, plus code generation and review automation."
+    },
+    {
+      "company": "SG Tech",
+      "role": "Senior Full-Stack",
+      "period": "Oct 2024 — Mar 2025",
+      "location": "Remote · Bilbao, Spain",
+      "summary": "End-to-end platform for Energy Saving Certificates (CAE) with Angular + NestJS, structured with DDD and Clean Architecture."
+    },
+    {
+      "company": "Indra (Minsait)",
+      "role": "Software Engineer 3",
+      "period": "Jul 2022 — Sep 2024",
+      "location": "Remote · Spain",
+      "summary": "Angular migrations, microfrontends (Angular Elements and Web Components), NgRx, PrimeNG, JSON-driven configurable systems and CI/CD with Jenkins."
+    },
+    {
+      "company": "Datatools (MinTransporte)",
+      "role": "Full-Stack Developer",
+      "period": "Jun 2023 — Aug 2024",
+      "location": "Remote · Bogotá",
+      "summary": ".NET microservices integrated with Angular. DevOps with Azure, SQL Server and xUnit testing."
+    },
+    {
+      "company": "Asesoftware",
+      "role": "Senior Systems Analyst",
+      "period": "Jan 2022 — Jul 2022",
+      "location": "Remote · Bogotá",
+      "summary": "Hybrid apps with Ionic + Angular, business logic in C# and optimized SQL queries."
+    },
+    {
+      "company": "Andina Seguridad del Valle",
+      "role": "Development Coordinator",
+      "period": "Sep 2019 — Dec 2022",
+      "location": "Cali · On-site",
+      "summary": "Led multi-platform solutions: Angular, Flutter, Laravel and real-time maps with Node.js + WebSockets."
+    },
+    {
+      "company": "CMSolutions",
+      "role": "Support Engineer 2",
+      "period": "Mar 2017 — May 2018",
+      "location": "Colombia · On-site",
+      "summary": "Full-stack Angular + .NET, IIS deployments, support and SQL administration for Ecopetrol's management systems."
+    },
+    {
+      "company": "Constructora Bolívar",
+      "role": "Systems Assistant",
+      "period": "Sep 2014 — Aug 2015",
+      "location": "Colombia",
+      "summary": ".NET + SQL development, technical support and equipment maintenance."
+    },
+    {
+      "company": "Carvajal Tecnología y Servicios",
+      "role": "E-Business Applications Technician",
+      "period": "Jun 2012 — Aug 2014",
+      "location": "Colombia",
+      "summary": ".NET + SQL development and support for e-business applications."
+    }
+  ],
+  "education": [
+    {
+      "institution": "Universidad Isabel I",
+      "degree": "Master's in AI-Driven Development",
+      "period": "In progress",
+      "location": "Spain · Online"
+    },
+    {
+      "institution": "Founderz — Digital Business School",
+      "degree": "Online Master's in Artificial Intelligence and Innovation",
+      "period": "2025 — 2026",
+      "location": "Online"
+    },
+    {
+      "institution": "UNAD Colombia",
+      "degree": "Systems Engineering",
+      "period": "2016 — 2019",
+      "location": "Colombia"
+    },
+    {
+      "institution": "SENA",
+      "degree": "Technologist in Analysis and Development of Information Systems",
+      "period": "2015 — 2017",
+      "location": "Colombia"
+    }
+  ],
+  "courses": [
+    "Mobile App Development — Google Activate & Complutense University of Madrid",
+    "ITIL 4 Foundations — UniversiK",
+    "Scrum Master — UniversiK",
+    "Product Owner — UniversiK",
+    "Customer Service over the Phone — SENA Virtual",
+    "Computer Maintenance — SENA Virtual"
+  ],
+  "tech": [
+    { "name": "Frontend", "icon": "🖥️", "items": ["Angular", "TypeScript", "Angular Material", "PrimeNG", "Tailwind CSS", "RxJS", "NgRx", "Signals", "Microfrontends", "Web Components", "Vue.js"] },
+    { "name": "Backend", "icon": "⚙️", "items": [".NET (Framework & Core)", "NestJS", "Node.js", "Laravel (PHP)", "REST APIs + Swagger", "WebSockets", "Firebase"] },
+    { "name": "Mobile", "icon": "📱", "items": ["Flutter (Dart)", "Ionic"] },
+    { "name": "Data", "icon": "🗄️", "items": ["SQL Server", "MySQL", "MongoDB", "SQLite", "Entity Framework", "Dapper"] },
+    { "name": "Applied AI", "icon": "🤖", "items": ["LLMs", "MCP", "Agents & skills", "Spec-Driven Development", "Ollama", "OpenAI / Claude APIs"] },
+    { "name": "Quality & DevOps", "icon": "🚀", "items": ["TDD", "xUnit · Jest · Jasmine", "Mutation testing", "Playwright", "SonarQube", "Docker", "Azure DevOps", "GitHub Actions", "Jenkins", "GitLab CI", "Jira"] }
+  ],
+  "projects": [
+    {
+      "name": "chalc-cli-adapter",
+      "description": "chalc: a local CLI that creates and equips projects from minute zero. It detects your stack without spending tokens, applies a rules catalog and hands your assistant (Claude Code, Copilot, Cursor or Gemini) skills, MCP servers, rules and the Spec-Driven Development method in its native format — configuration that travels with the project, explicit and repeatable.",
+      "language": "JavaScript · Node.js · AI",
+      "imageUrl": "images/projects/chalc-cli-adapter.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter"
+    },
+    {
+      "name": "cc-form-engine",
+      "description": "Advanced Angular library for reactive form generation and management: dynamic validation, change tracking and customizable error messages.",
+      "language": "TypeScript · Angular",
+      "imageUrl": "images/projects/cc-form-engine.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/cc-form-engine"
+    },
+    {
+      "name": "cacode",
+      "description": "AI-powered project reviewer: code quality, best practices, performance, security, architecture and database issues. Connects to any LLM, discovers MCP servers and generates an interactive HTML report.",
+      "language": "TypeScript · Node.js",
+      "imageUrl": "images/projects/cacode.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/cacode"
+    },
+    {
+      "name": "cc-dynamic-voice-forms",
+      "description": "Describe the form you need with your voice and AI generates it automatically. Angular + Ollama in action.",
+      "language": "TypeScript · Angular · Ollama",
+      "imageUrl": "images/projects/cc-dynamic-voice-forms.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/cc-dynamic-voice-forms"
+    },
+    {
+      "name": "whatsapp-openai-bot-service",
+      "description": "NestJS microservice integrating WhatsApp Web, Redis and OpenAI to build a virtual assistant with conversation history and dynamic replies.",
+      "language": "TypeScript · NestJS",
+      "imageUrl": "images/projects/whatsapp-openai-bot-service.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/whatsapp-openai-bot-service"
+    },
+    {
+      "name": "angular-modularize-skill",
+      "description": "Angular modularization skill for AI agents (Claude Code, Cursor, Copilot): Core/Shared/Features pattern, lazy loading and standalone migration.",
+      "language": "Markdown · AI Skill",
+      "imageUrl": "images/projects/angular-modularize-skill.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/angular-modularize-skill"
+    },
+    {
+      "name": "mcp-postgres-claude",
+      "description": "MCP server that connects Claude straight to PostgreSQL databases.",
+      "language": "JavaScript · MCP",
+      "imageUrl": "images/projects/mcp-postgres-claude.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/mcp-postgres-claude"
+    }
+  ],
+  "githubProfileUrl": "https://github.com/ChristianCruzArango?tab=repositories"
+}

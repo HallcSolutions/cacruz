@@ -1,0 +1,34 @@
+{
+  "target": "claude",
+  "stacks": [
+    "angular"
+  ],
+  "skills": [
+    "angular-component",
+    "angular-di",
+    "angular-directives",
+    "angular-forms",
+    "angular-http",
+    "angular-routing",
+    "angular-signals",
+    "angular-ssr",
+    "angular-testing",
+    "angular-tooling",
+    "tailwind-best-practices",
+    "responsive-design",
+    "interface-design",
+    "angular-migration",
+    "clean-code",
+    "minimal-implementation",
+    "solid-principles",
+    "modular-architecture",
+    "mutation-testing"
+  ],
+  "mcp": [
+    "angular-cli"
+  ],
+  "methods": [
+    "sdd:lite"
+  ],
+  "generatedAt": "2026-07-13T17:21:18.232Z"
+}

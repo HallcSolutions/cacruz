@@ -1,0 +1,119 @@
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  position: relative;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.4rem;
+  bottom: 0;
+  width: 2px;
+  background: linear-gradient(180deg, var(--accent), var(--accent-2), var(--accent-3), transparent);
+}
+
+.timeline__item {
+  position: relative;
+  padding: 0 0 3.2rem 2.2rem;
+}
+
+.timeline__item::before {
+  content: '';
+  position: absolute;
+  left: -0.36rem;
+  top: 0.42rem;
+  width: 0.8rem;
+  height: 0.8rem;
+  border-radius: 50%;
+  background: var(--bg);
+  border: 2px solid var(--accent);
+  transition: background-color 0.3s ease;
+}
+
+.timeline__item:hover::before {
+  background: var(--accent);
+  animation: dot-pulse 1.6s ease-out infinite;
+}
+
+/* Revelado tipo rueda (R25): cada lado entra girando hacia su posición */
+.timeline__item.reveal:not(.is-visible) {
+  transform: translateY(46px) rotate(-6deg) scale(0.96);
+}
+
+.timeline__item--flip.reveal:not(.is-visible) {
+  transform: translateY(46px) rotate(6deg) scale(0.96);
+}
+
+.timeline__period {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  background: var(--accent-soft);
+  border-radius: 999px;
+  padding: 0.2rem 0.8rem;
+}
+
+.timeline__role {
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+  margin: 0.55rem 0 0.15rem;
+}
+
+.timeline__company {
+  font-weight: 600;
+  font-size: 0.98rem;
+  background: var(--gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  display: inline-block;
+}
+
+.timeline__summary {
+  margin-top: 0.55rem;
+  color: var(--text-muted);
+  line-height: 1.7;
+}
+
+/* Serpentina a dos lados de la línea central (R25) */
+@media (min-width: 880px) {
+  .timeline::before {
+    left: 50%;
+    margin-left: -1px;
+  }
+
+  .timeline__item {
+    width: 50%;
+    padding: 0 3rem 3.6rem 0;
+    text-align: right;
+    transform-origin: right center;
+  }
+
+  .timeline__item::before {
+    left: auto;
+    right: -0.44rem;
+  }
+
+  .timeline__item--flip {
+    margin-left: 50%;
+    padding: 0 0 3.6rem 3rem;
+    text-align: left;
+    transform-origin: left center;
+  }
+
+  .timeline__item--flip::before {
+    right: auto;
+    left: -0.44rem;
+  }
+}
+
+@keyframes dot-pulse {
+  from { box-shadow: 0 0 0 0 color-mix(in srgb, var(--accent) 50%, transparent); }
+  to { box-shadow: 0 0 0 14px transparent; }
+}

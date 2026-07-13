@@ -1,0 +1,72 @@
+<section class="section blog">
+  <div class="editor">
+    <div class="editor__bar">
+      <span class="editor__dot"></span>
+      <span class="editor__dot"></span>
+      <span class="editor__dot"></span>
+      <span class="editor__tab">diario.md</span>
+      <span class="editor__meta">{{ blog.posts().length }} {{ 'blog.count' | t }}</span>
+    </div>
+
+    <div class="editor__body">
+      <div class="row row--comment" [style.--i]="0">
+        <span class="row__gutter">1</span>
+        <span class="row__code">&lt;!-- {{ 'blog.subtitle' | t }} --&gt;</span>
+      </div>
+
+      <div class="row" [style.--i]="1">
+        <span class="row__gutter">2</span>
+        <h1 class="row__title"><span class="row__hash">#</span> {{ 'blog.title' | t }}</h1>
+      </div>
+
+      <div class="row" [style.--i]="2">
+        <span class="row__gutter">3</span>
+        <span class="row__code"></span>
+      </div>
+
+      @if (blog.isLoading()) {
+        <div class="row" [style.--i]="3">
+          <span class="row__gutter">4</span>
+          <span class="row__code">{{ 'blog.loading' | t }}</span>
+        </div>
+      }
+
+      <!-- Cada entrada es una línea del markdown, y se abre desde aquí -->
+      <ul class="entries">
+        @for (post of blog.posts(); track post.slug) {
+          <li class="entry" [style.--i]="$index + 3">
+            <a class="entry__link" [routerLink]="['/daily', post.slug]">
+              <span class="row__gutter">{{ $index + 4 }}</span>
+
+              <span class="entry__body">
+                <span class="entry__line">
+                  <span class="entry__bullet">-</span>
+                  <span class="entry__bracket">[</span
+                  ><span class="entry__title">{{ post.title[i18n.language()] }}</span
+                  ><span class="entry__bracket">]</span>
+                  <span class="entry__url">({{ post.date }})</span>
+                  <span class="entry__arrow" aria-hidden="true">→</span>
+                </span>
+
+                <span class="entry__detail">
+                  <span class="entry__summary">{{ post.summary[i18n.language()] }}</span>
+                  <span class="entry__tags">
+                    <span class="entry__date">{{ formatDate(post.date) }}</span>
+                    @for (tag of post.tags; track tag) {
+                      <span class="entry__tag">#{{ tag }}</span>
+                    }
+                  </span>
+                </span>
+              </span>
+            </a>
+          </li>
+        }
+      </ul>
+
+      <div class="row row--cursor" [style.--i]="blog.posts().length + 4">
+        <span class="row__gutter">{{ blog.posts().length + 4 }}</span>
+        <span class="row__code"><span class="row__caret"></span></span>
+      </div>
+    </div>
+  </div>
+</section>

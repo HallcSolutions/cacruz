@@ -1,0 +1,48 @@
+<section class="section" id="projects">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'projects.subtitle' | t }}</p>
+    <h2 class="section__title">{{ 'projects.title' | t }}</h2>
+  </header>
+  <div class="projects">
+    @for (project of projects(); track project.name) {
+      <article class="project" [class.project--flip]="$index % 2 === 1" appRevealOnScroll>
+        <div class="project__media">
+          @if (!failedImages().has(project.name)) {
+            <img
+              class="project__image"
+              [src]="project.imageUrl"
+              [alt]="project.name"
+              loading="lazy"
+              (error)="markImageAsFailed(project.name)"
+            />
+          } @else {
+            <div class="project__placeholder" aria-hidden="true">
+              {{ project.name.charAt(0) }}
+            </div>
+          }
+          <span class="project__shine" aria-hidden="true"></span>
+        </div>
+        <div class="project__body">
+          <p class="project__meta">
+            <span class="project__number">{{ indexLabel($index) }}</span>
+            <span class="project__language">{{ project.language }}</span>
+          </p>
+          <h3 class="project__name">{{ project.name }}</h3>
+          <p class="project__description">{{ project.description }}</p>
+          <a class="project__link" [href]="project.repoUrl" target="_blank" rel="noopener">
+            {{ 'projects.viewRepo' | t }} →
+          </a>
+        </div>
+      </article>
+    }
+  </div>
+  <a
+    class="projects__all"
+    [href]="githubProfileUrl()"
+    target="_blank"
+    rel="noopener"
+    appRevealOnScroll
+  >
+    {{ 'projects.viewAll' | t }} →
+  </a>
+</section>

@@ -1,0 +1,46 @@
+<app-hero />
+
+@if (highlights().length) {
+  <app-tech-constellation [items]="highlights()" />
+}
+
+@if (profile.content.value(); as content) {
+  <app-education [entries]="content.education" [courses]="content.courses" />
+}
+
+<nav class="explore">
+  <a class="explore__link" routerLink="/experience" appRevealOnScroll>
+    <span class="explore__label">{{ 'nav.experience' | t }}</span>
+    <span class="explore__arrow" aria-hidden="true">→</span>
+  </a>
+  <a class="explore__link" routerLink="/stack" appRevealOnScroll [revealDelay]="100">
+    <span class="explore__label">{{ 'nav.stack' | t }}</span>
+    <span class="explore__arrow" aria-hidden="true">→</span>
+  </a>
+  <a class="explore__link" routerLink="/projects" appRevealOnScroll [revealDelay]="200">
+    <span class="explore__label">{{ 'nav.projects' | t }}</span>
+    <span class="explore__arrow" aria-hidden="true">→</span>
+  </a>
+  <a class="explore__link" routerLink="/for-companies" appRevealOnScroll [revealDelay]="300">
+    <span class="explore__label">{{ 'nav.value' | t }}</span>
+    <span class="explore__arrow" aria-hidden="true">→</span>
+  </a>
+  <a class="explore__link" routerLink="/daily" appRevealOnScroll [revealDelay]="400">
+    <span class="explore__label">{{ 'nav.blog' | t }}</span>
+    <span class="explore__arrow" aria-hidden="true">→</span>
+  </a>
+</nav>
+
+<section class="contact" id="contact" appRevealOnScroll>
+  <h2 class="contact__title">{{ 'contact.section.title' | t }}</h2>
+  <p class="contact__body">{{ 'contact.section.body' | t }}</p>
+  <button type="button" class="contact__cta" (click)="contactOpen.set(true)">
+    <span class="contact__prompt" aria-hidden="true">$</span>
+    {{ 'contact.section.cta' | t }}
+    <span class="contact__caret" aria-hidden="true"></span>
+  </button>
+</section>
+
+@if (contactOpen()) {
+  <app-contact-modal (closed)="contactOpen.set(false)" />
+}

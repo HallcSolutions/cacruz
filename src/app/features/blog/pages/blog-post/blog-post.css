@@ -1,0 +1,326 @@
+.post {
+  width: 100%;
+  padding-top: 3rem;
+}
+
+/* La entrada se lee como un archivo .md abierto en el editor */
+.md {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  box-shadow: 0 30px 70px -40px rgba(0, 0, 0, 0.9);
+  overflow: hidden;
+}
+
+.md__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.7rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.md__dot {
+  width: 0.62rem;
+  height: 0.62rem;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.md__bar .md__dot:first-child {
+  background: var(--accent);
+}
+
+.md__file {
+  margin-left: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 0.45rem;
+  padding: 0.2rem 0.8rem;
+}
+
+.md__date {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  color: var(--text-muted);
+}
+
+.md__body {
+  position: relative;
+  padding: 2rem clamp(1rem, 3vw, 2.4rem) 2.4rem;
+}
+
+/* Guía de la columna de numeración */
+.md__body::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 3.6rem;
+  width: 1px;
+  background: var(--border);
+}
+
+.md__line {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.6rem;
+}
+
+.md__gutter {
+  flex: none;
+  width: 1.8rem;
+  padding-top: 0.35rem;
+  text-align: right;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--text-muted) 40%, transparent);
+  user-select: none;
+}
+
+.md__content {
+  min-width: 0;
+  flex: 1;
+}
+
+.md__mark {
+  font-family: var(--font-mono);
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.md__mark--quote {
+  margin-right: 0.4rem;
+}
+
+.md__caret {
+  display: inline-block;
+  width: 8px;
+  height: 1.1rem;
+  margin-top: 0.4rem;
+  background: var(--accent);
+  animation: md-caret 1s steps(2) infinite;
+}
+
+@keyframes md-caret {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* En móvil el gutter estorba: se oculta y el contenido gana el ancho */
+@media (max-width: 640px) {
+  .md__body::before {
+    display: none;
+  }
+
+  .md__gutter {
+    display: none;
+  }
+
+  .md__line {
+    gap: 0;
+  }
+}
+
+.post__back {
+  display: inline-block;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 2rem;
+  transition: transform 0.3s ease;
+}
+
+.post__back:hover {
+  transform: translateX(-4px);
+}
+
+.post__back--foot {
+  margin-top: 3rem;
+}
+
+.post__title {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  line-height: 1.15;
+  margin: 0 0 1rem;
+}
+
+.post__tags {
+  list-style: none;
+  margin: 0 0 2.5rem;
+  padding: 0;
+  display: flex;
+  gap: 0.8rem;
+  color: var(--text-muted);
+  font-size: 0.85rem;
+}
+
+.post__paragraph {
+  color: var(--text-muted);
+  line-height: 1.85;
+  font-size: 1.05rem;
+  margin-bottom: 1.4rem;
+  max-width: 58rem;
+}
+
+.post__paragraph:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.2em;
+  float: left;
+  line-height: 0.85;
+  padding-right: 0.12em;
+  color: var(--accent);
+}
+
+.post__body a {
+  color: var(--text);
+  border-bottom: 1px solid var(--accent);
+  transition: color 0.3s ease, background-color 0.3s ease;
+}
+
+.post__body a:hover {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Subtítulos */
+.post__heading {
+  font-family: var(--font-display);
+  font-size: clamp(1.5rem, 3.4vw, 2rem);
+  margin: 2.6rem 0 1.1rem;
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--border);
+}
+
+/* Cita markdown */
+.post__quote {
+  margin: 2rem 0;
+  padding: 0.4rem 0 0.4rem 1.2rem;
+  border-left: 3px solid var(--accent);
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.6vw, 1.5rem);
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Autoría de la cita */
+.post__cite {
+  display: block;
+  margin-top: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.8rem;
+  font-style: normal;
+  color: var(--text-muted);
+}
+
+.post__cite a {
+  color: var(--text-muted);
+  border-bottom: 1px solid color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+.post__cite a:hover {
+  color: var(--accent);
+}
+
+/* Pasos numerados con entrada escalonada */
+.post__steps {
+  list-style: none;
+  margin: 1.6rem 0 2.2rem;
+  padding: 0;
+  counter-reset: step;
+}
+
+.post__step {
+  counter-increment: step;
+  position: relative;
+  padding: 0.65rem 0 0.65rem 3.1rem;
+  color: var(--text-muted);
+  line-height: 1.75;
+  animation: step-in 0.5s ease both;
+  animation-delay: calc(var(--i) * 90ms);
+}
+
+.post__step::before {
+  content: counter(step, decimal-leading-zero);
+  position: absolute;
+  left: 0;
+  top: 0.6rem;
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent);
+  border: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  border-radius: 999px;
+  padding: 0.1rem 0.45rem;
+}
+
+/* Bloque de terminal */
+.post__terminal {
+  margin: 1.6rem 0 2.2rem;
+  padding: 1rem 1.2rem;
+  border: 1px solid var(--border);
+  border-radius: 0.8rem;
+  background: var(--surface);
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  overflow-x: auto;
+}
+
+.post__terminal-line {
+  margin: 0;
+  white-space: pre;
+  color: var(--text);
+  line-height: 1.8;
+  animation: step-in 0.4s ease both;
+  animation-delay: calc(var(--i) * 110ms);
+}
+
+.post__terminal-prompt {
+  color: var(--accent);
+  font-weight: 700;
+  margin-right: 0.6rem;
+}
+
+/* Figuras con pie */
+.post__figure {
+  margin: 2.4rem 0;
+}
+
+.post__figure img {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  display: block;
+}
+
+.post__figure figcaption {
+  margin-top: 0.7rem;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: center;
+}
+
+@keyframes step-in {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.post__not-found {
+  padding: 4rem 0;
+}
+
+.post__summary,
+.post__loading {
+  color: var(--text-muted);
+}

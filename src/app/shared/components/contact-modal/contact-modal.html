@@ -1,0 +1,175 @@
+<div class="backdrop" (click)="close()"></div>
+
+<div class="terminal" role="dialog" aria-modal="true" [attr.aria-label]="'contact.title' | t">
+  <div class="terminal__bar">
+    <span class="terminal__dot"></span>
+    <span class="terminal__dot"></span>
+    <span class="terminal__dot"></span>
+    <span class="terminal__file">contact.sh</span>
+    <button type="button" class="terminal__close" (click)="close()" aria-label="Cerrar">✕</button>
+  </div>
+
+  <div class="terminal__body">
+    <div class="terminal__intro">
+      <img class="terminal__avatar" src="images/avatar.png" alt="" />
+      <div>
+        <p class="terminal__line">
+          <span class="terminal__prompt">$</span> {{ 'contact.command' | t }}
+        </p>
+        <p class="terminal__hint">{{ 'contact.hint' | t }}</p>
+      </div>
+    </div>
+
+    @if (status() === 'sending' || status() === 'sent') {
+      <!-- El agente mensajero lleva el sobre hasta Christian (R52) -->
+      <div class="delivery" [class.delivery--done]="status() === 'sent'" aria-live="polite">
+        <div class="delivery__track">
+          <div class="robot" aria-hidden="true">
+            <span class="robot__shadow"></span>
+            <span class="robot__rig">
+              <span class="robot__antenna"></span>
+
+              <span class="robot__head">
+                <span class="robot__visor">
+                  <span class="robot__eye"></span>
+                  <span class="robot__eye"></span>
+                  <span class="robot__glare"></span>
+                </span>
+                <span class="robot__ear"></span>
+              </span>
+
+              <span class="robot__neck"></span>
+
+              <span class="robot__torso">
+                <span class="robot__core"></span>
+                <span class="robot__vent"></span>
+              </span>
+
+              <span class="robot__arm robot__arm--back">
+                <span class="robot__forearm"></span>
+              </span>
+              <span class="robot__arm robot__arm--front">
+                <span class="robot__forearm">
+                  <span class="envelope">
+                    <span class="envelope__flap"></span>
+                  </span>
+                </span>
+              </span>
+
+              <span class="robot__leg robot__leg--back">
+                <span class="robot__shin"><span class="robot__foot"></span></span>
+              </span>
+              <span class="robot__leg robot__leg--front">
+                <span class="robot__shin"><span class="robot__foot"></span></span>
+              </span>
+            </span>
+          </div>
+          <div class="delivery__dust" aria-hidden="true"></div>
+          <img class="delivery__target" src="images/avatar.png" alt="" />
+        </div>
+        <p class="delivery__status">
+          @if (status() === 'sending') {
+            <span class="delivery__dots">{{ 'contact.sending' | t }}</span>
+          } @else {
+            <span class="delivery__ok">{{ 'contact.sent' | t }}</span>
+          }
+        </p>
+        @if (status() === 'sent') {
+          <button type="button" class="submit" (click)="close()">
+            <span class="terminal__prompt">$</span> {{ 'contact.done' | t }}
+          </button>
+        }
+      </div>
+    } @else {
+      <!-- Consola en vivo: refleja lo que el visitante escribe (R50) -->
+      <div class="console" aria-live="polite">
+        @for (line of consoleLines(); track $index) {
+          <p class="console__line console__line--{{ line.kind }}">
+            @switch (line.kind) {
+              @case ('command') {
+                <span class="terminal__prompt">$</span>
+              }
+              @case ('echo') {
+                <span class="console__arrow">›</span>
+              }
+              @case ('ready') {
+                <span class="console__check">✓</span>
+              }
+              @default {
+                <span class="console__dots">…</span>
+              }
+            }
+            <span class="console__text">{{ line.text }}</span>
+            @if ($last) {
+              <span class="console__caret" aria-hidden="true"></span>
+            }
+          </p>
+        }
+      </div>
+
+      @if (status() === 'failed') {
+        <p class="send-error" role="alert">⚠️ {{ 'contact.error.send' | t }}</p>
+      }
+
+      <form class="form" (submit)="send($event)" novalidate>
+        <label class="field">
+          <span class="field__label">
+            <span class="terminal__prompt">›</span> {{ 'contact.name' | t }}
+          </span>
+          <input
+            class="field__input"
+            type="text"
+            name="name"
+            autocomplete="name"
+            [class.field__input--error]="nameInvalid()"
+            [value]="name()"
+            (input)="update('name', $event)"
+          />
+          @if (nameInvalid()) {
+            <span class="field__error">{{ 'contact.error.required' | t }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">
+            <span class="terminal__prompt">›</span> {{ 'contact.email' | t }}
+          </span>
+          <input
+            class="field__input"
+            type="email"
+            name="email"
+            autocomplete="email"
+            [class.field__input--error]="emailInvalid()"
+            [value]="email()"
+            (input)="update('email', $event)"
+          />
+          @if (emailInvalid()) {
+            <span class="field__error">{{ 'contact.error.email' | t }}</span>
+          }
+        </label>
+
+        <label class="field">
+          <span class="field__label">
+            <span class="terminal__prompt">›</span> {{ 'contact.message' | t }}
+          </span>
+          <textarea
+            class="field__input field__input--area"
+            name="message"
+            rows="4"
+            [class.field__input--error]="messageInvalid()"
+            [value]="message()"
+            (input)="update('message', $event)"
+          ></textarea>
+          @if (messageInvalid()) {
+            <span class="field__error">{{ 'contact.error.required' | t }}</span>
+          }
+        </label>
+
+        <button class="submit" type="submit" [disabled]="!canSend()">
+          <span class="terminal__prompt">$</span> {{ 'contact.send' | t }}
+          <span class="submit__cursor" aria-hidden="true"></span>
+        </button>
+      </form>
+    }
+  </div>
+</div>

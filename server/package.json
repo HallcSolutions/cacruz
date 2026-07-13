@@ -1,0 +1,18 @@
+{
+  "name": "cacruz-contact-api",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Servicio de contacto de ccruz.dev: recibe el formulario y envía el correo a Christian.",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "node src/main.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "nodemailer": "^6.9.14"
+  }
+}

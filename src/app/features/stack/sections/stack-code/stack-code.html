@@ -1,0 +1,24 @@
+<div class="editor" appRevealOnScroll>
+  <div class="editor__bar">
+    <span class="editor__dot"></span>
+    <span class="editor__dot"></span>
+    <span class="editor__dot"></span>
+    <span class="editor__tab">stack.ts</span>
+    <span class="editor__hint">TypeScript</span>
+  </div>
+  <ol class="editor__body">
+    @for (line of lines(); track $index) {
+      <li
+        class="editor__line"
+        [class.editor__line--key]="line.kind === 'key'"
+        [class.editor__line--item]="line.kind === 'item'"
+        [class.editor__line--shell]="line.kind === 'open' || line.kind === 'end'"
+        [style.--i]="$index"
+        [style.--indent]="line.indent"
+      >
+        <span class="editor__code">{{ line.text }}</span>
+      </li>
+    }
+  </ol>
+  <span class="editor__caret" aria-hidden="true"></span>
+</div>

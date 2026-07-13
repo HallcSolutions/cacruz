@@ -1,0 +1,87 @@
+<section class="hero">
+  <div class="hero__glow" aria-hidden="true"></div>
+  <span class="hero__glyph hero__glyph--1" aria-hidden="true">&lt;/&gt;</span>
+  <span class="hero__glyph hero__glyph--2" aria-hidden="true">&#123;&nbsp;&#125;</span>
+  <span class="hero__glyph hero__glyph--3" aria-hidden="true">$_</span>
+
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <p class="hero__kicker hero-enter">{{ 'hero.kicker' | t }}</p>
+      <h1 class="hero__name hero-enter">
+        Christian<br />
+        <span class="hero__accent">Cruz Arango</span>
+      </h1>
+      <p class="hero__role hero-enter">{{ 'hero.role' | t }}</p>
+      <p class="hero__degree hero-enter">🎓 {{ 'hero.degree' | t }}</p>
+      <p class="hero__typing hero-enter">
+        <span class="hero__prompt" aria-hidden="true">❯</span>
+        <span class="hero__typed">{{ typed() }}</span><span class="hero__caret" aria-hidden="true"></span>
+      </p>
+
+      <div class="terminal hero-enter" aria-hidden="true">
+        <div class="terminal__bar">
+          <span class="terminal__dot"></span>
+          <span class="terminal__dot"></span>
+          <span class="terminal__dot"></span>
+          <span class="terminal__title">christian@dev ~ zsh</span>
+        </div>
+        <div class="terminal__body">
+          <p class="terminal__line"><span class="terminal__prompt">$</span> whoami</p>
+          <p class="terminal__line terminal__line--out">christian.cruz — senior full-stack developer</p>
+          <p class="terminal__line"><span class="terminal__prompt">$</span> stack --top</p>
+          <p class="terminal__line terminal__line--out">angular · .net · nestjs · flutter · ai</p>
+          <p class="terminal__line">
+            <span class="terminal__prompt">$</span> status
+            <span class="terminal__cursor"></span>
+          </p>
+          <p class="terminal__line terminal__line--out">
+            <span class="terminal__pulse"></span> open to build
+          </p>
+        </div>
+      </div>
+
+      <div class="hero__stats hero-enter">
+        <div class="stat">
+          <span class="stat__value">12+</span>
+          <span class="stat__label">{{ 'hero.stats.years' | t }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">57</span>
+          <span class="stat__label">{{ 'hero.stats.repos' | t }}</span>
+        </div>
+        <div class="stat">
+          <span class="stat__value">2</span>
+          <span class="stat__label">{{ 'hero.stats.masters' | t }}</span>
+        </div>
+      </div>
+
+      <ul class="hero__contact hero-enter">
+        <li><span aria-hidden="true">📍</span> {{ 'hero.location' | t }}</li>
+        <li>
+          <span aria-hidden="true">✉️</span>
+          <a [href]="emailUrl">{{ email }}</a>
+        </li>
+        <li>
+          <span aria-hidden="true">📱</span>
+          <a [href]="phoneUrl">{{ phone }}</a>
+        </li>
+      </ul>
+
+      <nav class="hero__links hero-enter">
+        <a [href]="githubUrl" target="_blank" rel="noopener">GitHub</a>
+        <a [href]="linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
+      </nav>
+    </div>
+
+    <div class="hero__portrait">
+      <span class="hero__ring hero__ring--solid" aria-hidden="true"></span>
+      <span class="hero__ring hero__ring--dashed" aria-hidden="true"></span>
+      <img
+        class="hero__avatar"
+        src="images/avatar.png"
+        alt="Avatar de Christian Cruz Arango"
+        fetchpriority="high"
+      />
+    </div>
+  </div>
+</section>

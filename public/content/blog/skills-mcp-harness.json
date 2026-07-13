@@ -1,0 +1,307 @@
+{
+  "slug": "skills-mcp-harness",
+  "date": "2026-07-10",
+  "title": {
+    "es": "Por qué tu IA falla: le faltan skills, MCP y —sobre todo— un harness",
+    "en": "Why your AI fails: it's missing skills, MCP and — above all — a harness"
+  },
+  "summary": {
+    "es": "Tres piezas explican la diferencia entre una IA que inventa y una que entrega. Qué son las skills, qué resuelve MCP, y por qué el harness es la que casi nadie tiene y la que más importa.",
+    "en": "Three pieces explain the gap between an AI that makes things up and one that delivers. What skills are, what MCP solves, and why the harness is the one almost nobody has — and the one that matters most."
+  },
+  "tags": ["ia", "mcp", "skills", "harness", "agentes"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Casi todas las quejas que escucho sobre la IA —\"inventa rutas\", \"dice que terminó y no hizo nada\", \"no conoce mi base de datos\"— no son fallas del modelo. Son fallas de lo que hay alrededor del modelo. Y ese alrededor tiene un nombre: el harness."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aclaremos la jerarquía desde el principio, porque casi todo el mundo la dibuja mal: el harness no es una pieza más al lado de las skills y de MCP. **El harness es el todo**: es el programa que gobierna al modelo y que le entrega —cuando corresponde— las skills, las reglas, las herramientas de MCP y el método de trabajo. El modelo trabaja *dentro* del harness, no al lado."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-stack.es.svg",
+        "caption": "El harness contiene todo: skills, reglas, MCP, método y la verificación. El modelo trabaja dentro."
+      },
+      {
+        "kind": "quote",
+        "text": "El modelo es el motor. El harness es el vehículo entero: el que le da el manual (skills), los límites (reglas), las manos (MCP) y el que al final revisa si el trabajo se hizo."
+      },
+
+      { "kind": "heading", "text": "Skills · el saber-hacer que el modelo no trae puesto" },
+      {
+        "kind": "paragraph",
+        "text": "Un modelo sabe programar en general, pero no sabe cómo se programa aquí: qué convenciones seguimos, qué arquitectura usamos, qué está prohibido. Una skill es exactamente eso escrito en un archivo: una carpeta con un `SKILL.md` que arranca con su nombre y una descripción de cuándo usarla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo elegante es cómo se cargan. No se le mete todo el manual en la cabeza al modelo: se usa divulgación progresiva. Al arrancar solo ve los nombres y descripciones; cuando una tarea encaja con una skill, entonces lee sus instrucciones completas; y solo si las necesita, abre los archivos o scripts que esa skill trae. Anthropic lo documenta en tres etapas: descubrimiento, activación y ejecución."
+      },
+      {
+        "kind": "quote",
+        "text": "La divulgación progresiva es el principio de diseño que hace que las Agent Skills sean flexibles y escalables: el agente conoce todas las skills, pero solo carga en contexto la que la tarea activa.",
+        "source": "Anthropic · Equipping agents for the real world with Agent Skills",
+        "sourceUrl": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Por qué importa esto de verdad? Porque el contexto es un recurso escaso. Meterle 50 mil tokens de reglas a una tarea de 10 líneas no lo hace más listo: hace que la instrucción que sí importa compita contra el ruido. Menos contexto, pero el correcto, siempre gana."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "skills/",
+          "  angular-component/SKILL.md    → cómo escribo componentes aquí",
+          "  mutation-testing/SKILL.md     → cómo verifico que los tests sirven",
+          "  dev-note/SKILL.md             → cómo se publica una nota en este blog"
+        ]
+      },
+
+      { "kind": "heading", "text": "MCP · las manos del modelo (y el fin de los N conectores)" },
+      {
+        "kind": "paragraph",
+        "text": "Una skill le dice al modelo cómo hacer las cosas. MCP le da con qué hacerlas: leer tu base de datos, consultar un ticket de Jira, abrir un repositorio, navegar la documentación. Sin eso, el modelo solo puede hablar de tu sistema; con eso, puede mirarlo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El Model Context Protocol es un estándar abierto que Anthropic publicó en noviembre de 2024, y que hoy usan también OpenAI y Google. En diciembre de 2025 fue donado a la Agentic AI Foundation, bajo la Linux Foundation: dejó de ser de una empresa para ser de la industria."
+      },
+      {
+        "kind": "quote",
+        "text": "Antes de MCP, cada fuente de datos necesitaba su propio conector a medida: el problema N×M. MCP lo convierte en un solo protocolo: cualquier asistente habla con cualquier herramienta.",
+        "source": "Anthropic · Introducing the Model Context Protocol (nov. 2024)",
+        "sourceUrl": "https://www.anthropic.com/news/model-context-protocol"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En la práctica, esto es lo que cambia en mi día: en vez de copiar y pegar el esquema de la base de datos en el chat, el asistente lo consulta él mismo por MCP. En vez de describirle el ticket, lo lee. Deja de trabajar con mi resumen del mundo y trabaja con el mundo."
+      },
+
+      { "kind": "heading", "text": "Harness · el todo que casi nadie construye" },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está el corazón de la nota. Un harness (en español, un arnés: lo que sujeta al escalador) es el código determinista que **envuelve** al modelo y contiene todo lo anterior. Es quien decide qué skill se carga y cuándo, quién le abre o le cierra el acceso a MCP, quién le impone las reglas, quién le entrega la orden, y quién —esto es lo importante— comprueba con evidencia si lo que el modelo dice que hizo, realmente pasó."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso las skills y MCP no funcionan solos: sin harness no hay nadie que decida cuál skill aplica a esta tarea, ni que limite qué herramienta puede tocar el modelo, ni que verifique el resultado. Son piezas excelentes… dentro de un arnés que las administre."
+      },
+      {
+        "kind": "quote",
+        "text": "El harness —no el modelo— marca la casilla. Un modelo nunca califica su propio trabajo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Suena obvio y casi nadie lo hace. La mayoría de los flujos con IA terminan con el modelo diciendo \"listo ✓\" y el humano creyéndole. Pero \"listo\" es una afirmación del modelo, no un hecho: puede haber escrito el archivo en otra ruta, haber dejado el test rojo, o simplemente haber alucinado el resultado."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-loop.es.svg",
+        "caption": "El bucle del harness: la tarea solo se marca como hecha cuando existe evidencia verificable."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así funciona el harness que uso en [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), paso a paso:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El harness entrega UNA orden a la vez, con el archivo exacto, las APIs permitidas y el criterio de aceptación. El modelo no ve el proyecto entero: ve su tarea.",
+          "El modelo actúa: escribe, edita, ejecuta. Y afirma que terminó.",
+          "El harness comprueba con hechos, no con promesas: ¿el archivo existe y cambió?, ¿el comando salió con código 0?, ¿los tests están en verde?",
+          "Si hay evidencia, marca `[x]` en el plan. Si no la hay, la tarea sigue pendiente y se reintenta pasándole el error real, no una regañina genérica.",
+          "Todo queda escrito en archivos del proyecto (plan y bitácora de revisión), así que si el proceso se cae en la tarea 4 de 7, se reanuda ahí — sin volver a pagar el análisis."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El efecto es doble. Primero, la calidad: el error aparece en el pipeline y no en la llamada del cliente. Segundo, la confianza: puedo supervisar el trabajo de la IA igual que supervisaría a un equipo humano —órdenes escritas, avance con evidencia y un registro auditable— en vez de leer un chat gigante intentando adivinar qué pasó."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "plan.md",
+          "  [x] 1. Crear la interfaz en models/employee.ts      ← archivo verificado",
+          "  [x] 2. Crear el servicio con signals                ← archivo verificado",
+          "  [ ] 3. Escribir el test primero (TDD Red)           ← sin evidencia: pendiente"
+        ]
+      },
+
+      { "kind": "heading", "text": "Todo junto" },
+      {
+        "kind": "steps",
+        "items": [
+          "Sin skills, el modelo sabe programar pero no sabe programar aquí: reinventa la estructura y rompe las convenciones.",
+          "Sin MCP, trabaja a ciegas sobre tu resumen del mundo en vez del mundo: por eso inventa campos, tablas y rutas.",
+          "Sin reglas, no hay límites: toca lo que no debía tocar y nadie se entera hasta el code review.",
+          "Y sin harness no existe nada de lo anterior: no hay quién decida qué skill cargar, qué herramienta permitir ni cómo verificar. Te queda un asistente elocuente diciendo \"hecho\" sin que nadie lo compruebe.",
+          "Con el harness completo, la IA deja de ser una apuesta y pasa a ser un colaborador auditable — la única forma en que un profesional puede firmar el trabajo."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si te interesa cómo aterrizo esto en el día a día, lo cuento en detalle en la nota sobre [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours), y el código de mi harness está abierto en [mis proyectos](/projects)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — Anthropic: el artículo que explica las skills y la divulgación progresiva.",
+          "[Agent Skills — documentación oficial](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview): el formato `SKILL.md` y cómo se cargan en tres etapas.",
+          "[Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — Anthropic, noviembre de 2024: el anuncio original del estándar.",
+          "[Model Context Protocol (visión general)](https://en.wikipedia.org/wiki/Model_Context_Protocol): historia, adopción por OpenAI y Google, y la donación a la Linux Foundation.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): el harness del que hablo, con su plan verificable y su bitácora de revisión."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "Almost every complaint I hear about AI — \"it invents paths\", \"it says it's done and nothing happened\", \"it doesn't know my database\" — isn't a failure of the model. It's a failure of what surrounds the model. And that surrounding has a name: the harness."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Let's fix the hierarchy from the start, because almost everyone draws it wrong: the harness is not one more piece sitting next to skills and MCP. **The harness is the whole thing**: it's the program that governs the model and hands it — when appropriate — the skills, the rules, the MCP tools and the working method. The model works *inside* the harness, not beside it."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-stack.en.svg",
+        "caption": "The harness contains everything: skills, rules, MCP, method and verification. The model works inside it."
+      },
+      {
+        "kind": "quote",
+        "text": "The model is the engine. The harness is the entire vehicle: it hands over the manual (skills), the limits (rules), the hands (MCP), and it is the one that checks at the end whether the work was actually done."
+      },
+
+      { "kind": "heading", "text": "Skills · the know-how the model doesn't arrive with" },
+      {
+        "kind": "paragraph",
+        "text": "A model knows how to code in general, but not how we code here: which conventions we follow, which architecture we use, what is forbidden. A skill is exactly that, written down: a folder with a `SKILL.md` that starts with its name and a description of when to use it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The elegant part is how they load. You don't shove the whole manual into the model's head: you use progressive disclosure. At startup it only sees names and descriptions; when a task matches a skill, it reads that skill's full instructions; and only if needed does it open the files or scripts the skill bundles. Anthropic documents it in three stages: discovery, activation and execution."
+      },
+      {
+        "kind": "quote",
+        "text": "Progressive disclosure is the core design principle that makes Agent Skills flexible and scalable: the agent knows about every skill, but only loads into context the one the task activates.",
+        "source": "Anthropic · Equipping agents for the real world with Agent Skills",
+        "sourceUrl": "https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why does this really matter? Because context is a scarce resource. Feeding 50k tokens of rules into a 10-line task doesn't make the model smarter: it makes the instruction that matters compete against the noise. Less context — but the right context — always wins."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "skills/",
+          "  angular-component/SKILL.md    → how I write components here",
+          "  mutation-testing/SKILL.md     → how I verify the tests are worth anything",
+          "  dev-note/SKILL.md             → how a note gets published on this blog"
+        ]
+      },
+
+      { "kind": "heading", "text": "MCP · the model's hands (and the end of N connectors)" },
+      {
+        "kind": "paragraph",
+        "text": "A skill tells the model how to do things. MCP gives it what to do them with: read your database, look up a Jira ticket, open a repository, browse the docs. Without it, the model can only talk about your system; with it, it can look at it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The Model Context Protocol is an open standard Anthropic published in November 2024, now used by OpenAI and Google too. In December 2025 it was donated to the Agentic AI Foundation, under the Linux Foundation: it stopped belonging to one company and became the industry's."
+      },
+      {
+        "kind": "quote",
+        "text": "Before MCP, every data source needed its own custom connector: the N×M problem. MCP turns it into a single protocol: any assistant talks to any tool.",
+        "source": "Anthropic · Introducing the Model Context Protocol (Nov 2024)",
+        "sourceUrl": "https://www.anthropic.com/news/model-context-protocol"
+      },
+      {
+        "kind": "paragraph",
+        "text": "In practice, here's what changes in my day: instead of copy-pasting the database schema into the chat, the assistant queries it itself over MCP. Instead of describing the ticket, it reads it. It stops working from my summary of the world and starts working with the world."
+      },
+
+      { "kind": "heading", "text": "Harness · the whole thing almost nobody builds" },
+      {
+        "kind": "paragraph",
+        "text": "Here is the heart of this note. A harness — like the one that holds a climber — is the deterministic code that **wraps** the model and contains everything above. It decides which skill gets loaded and when, it opens or closes access to MCP, it enforces the rules, it hands over the order, and it — this is the important part — checks with evidence whether what the model claims it did actually happened."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why skills and MCP don't work on their own: without a harness there's nobody deciding which skill applies to this task, nobody limiting which tool the model may touch, nobody verifying the result. They're excellent pieces… inside a harness that administers them."
+      },
+      {
+        "kind": "quote",
+        "text": "The harness — not the model — ticks the box. A model never grades its own work."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It sounds obvious and almost nobody does it. Most AI workflows end with the model saying \"done ✓\" and the human believing it. But \"done\" is a claim by the model, not a fact: it may have written the file in the wrong path, left the test red, or simply hallucinated the result."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-loop.en.svg",
+        "caption": "The harness loop: a task is only marked done when verifiable evidence exists."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is how the harness I use in [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter) works, step by step:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The harness hands over ONE order at a time, with the exact file, the allowed APIs and the acceptance criterion. The model doesn't see the whole project: it sees its task.",
+          "The model acts: it writes, edits, runs. And claims it's finished.",
+          "The harness checks with facts, not promises: does the file exist and did it change? did the command exit with code 0? are the tests green?",
+          "If there's evidence, it ticks `[x]` in the plan. If not, the task stays pending and gets retried with the real error, not a generic scolding.",
+          "Everything lands in files inside the project (plan and review ledger), so if the run dies at task 4 of 7, it resumes right there — without paying for the analysis again."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The effect is twofold. First, quality: the bug shows up in the pipeline, not in the customer call. Second, trust: I can supervise AI work the same way I'd supervise a human team — written orders, evidence-based progress and an auditable ledger — instead of reading a giant chat trying to guess what happened."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "plan.md",
+          "  [x] 1. Create the interface in models/employee.ts   ← file verified",
+          "  [x] 2. Create the service with signals              ← file verified",
+          "  [ ] 3. Write the test first (TDD Red)               ← no evidence: pending"
+        ]
+      },
+
+      { "kind": "heading", "text": "All of it together" },
+      {
+        "kind": "steps",
+        "items": [
+          "Without skills, the model knows how to code but not how to code here: it reinvents the structure and breaks the conventions.",
+          "Without MCP, it works blind on your summary of the world instead of the world: that's why it invents fields, tables and paths.",
+          "Without rules, there are no limits: it touches what it shouldn't and nobody notices until code review.",
+          "And without a harness, none of the above even exists: nobody decides which skill to load, which tool to allow, or how to verify. You're left with an eloquent assistant saying \"done\" while nobody checks.",
+          "With the full harness, AI stops being a gamble and becomes an auditable collaborator — the only way a professional can sign off on the work."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want to see how this lands day to day, I tell it in detail in the note about [how I ship a complete feature in hours](/daily/ship-a-feature-in-hours), and my harness code is open in [my projects](/projects)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Equipping agents for the real world with Agent Skills](https://www.anthropic.com/engineering/equipping-agents-for-the-real-world-with-agent-skills) — Anthropic: the article explaining skills and progressive disclosure.",
+          "[Agent Skills — official documentation](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview): the `SKILL.md` format and the three loading stages.",
+          "[Introducing the Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — Anthropic, November 2024: the original announcement of the standard.",
+          "[Model Context Protocol (overview)](https://en.wikipedia.org/wiki/Model_Context_Protocol): history, adoption by OpenAI and Google, and the donation to the Linux Foundation.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the harness I'm talking about, with its verifiable plan and review ledger."
+        ]
+      }
+    ]
+  }
+}

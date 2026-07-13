@@ -1,0 +1,28 @@
+[
+  {
+    "slug": "ship-a-feature-in-hours",
+    "date": "2026-07-13",
+    "title": {
+      "es": "Cómo entrego un feature completo en horas: especificación, TDD y mutation testing",
+      "en": "How I ship a complete feature in hours: specification, TDD and mutation testing"
+    },
+    "summary": {
+      "es": "El flujo real que uso a diario: equipar el proyecto en 30 segundos, convertir una historia de usuario en requisitos verificables y llegar al código con tests que se prueban a sí mismos. Con gráficos de todo el proceso.",
+      "en": "The real flow I use every day: equip the project in 30 seconds, turn a user story into verifiable requirements, and reach the code with tests that test themselves. With diagrams of the whole process."
+    },
+    "tags": ["chalc", "sdd", "tdd", "mutation-testing", "ia"]
+  },
+  {
+    "slug": "skills-mcp-harness",
+    "date": "2026-07-10",
+    "title": {
+      "es": "Por qué tu IA falla: le faltan skills, MCP y —sobre todo— un harness",
+      "en": "Why your AI fails: it's missing skills, MCP and — above all — a harness"
+    },
+    "summary": {
+      "es": "Tres piezas explican la diferencia entre una IA que inventa y una que entrega. Qué son las skills, qué resuelve MCP, y por qué el harness es la que casi nadie tiene y la que más importa.",
+      "en": "Three pieces explain the gap between an AI that makes things up and one that delivers. What skills are, what MCP solves, and why the harness is the one almost nobody has — and the one that matters most."
+    },
+    "tags": ["ia", "mcp", "skills", "harness", "agentes"]
+  }
+]

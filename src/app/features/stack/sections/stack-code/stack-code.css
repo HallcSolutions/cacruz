@@ -1,0 +1,131 @@
+.editor {
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: color-mix(in srgb, var(--surface) 88%, transparent);
+  backdrop-filter: blur(6px);
+  overflow: hidden;
+  box-shadow: 0 30px 80px -40px rgba(0, 0, 0, 0.9);
+  position: relative;
+}
+
+.editor__bar {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.editor__dot {
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--border);
+}
+
+.editor__bar .editor__dot:first-child {
+  background: var(--accent);
+}
+
+.editor__tab {
+  margin-left: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-color: transparent;
+  border-radius: 0.5rem 0.5rem 0 0;
+  padding: 0.25rem 0.9rem;
+  background: var(--bg);
+}
+
+.editor__hint {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  color: var(--text-muted);
+}
+
+.editor__body {
+  list-style: none;
+  margin: 0;
+  padding: 1rem 0 1.2rem;
+  font-family: var(--font-mono);
+  font-size: 0.9rem;
+  line-height: 1.75;
+  max-height: 30rem;
+  overflow-y: auto;
+  counter-reset: line;
+}
+
+.editor__line {
+  counter-increment: line;
+  display: flex;
+  align-items: baseline;
+  padding-right: 1.2rem;
+  opacity: 0;
+  transform: translateX(-10px);
+}
+
+.editor.is-visible .editor__line {
+  animation: line-in 0.35s ease forwards;
+  animation-delay: calc(var(--i) * 55ms);
+}
+
+.editor__line::before {
+  content: counter(line);
+  width: 3rem;
+  flex: none;
+  text-align: right;
+  padding-right: 1.1rem;
+  color: color-mix(in srgb, var(--text-muted) 45%, transparent);
+  font-size: 0.78rem;
+  user-select: none;
+}
+
+.editor__code {
+  padding-left: calc(var(--indent) * 1.4rem);
+  color: var(--text-muted);
+  white-space: pre;
+}
+
+.editor__line--shell .editor__code {
+  color: var(--accent);
+  font-weight: 600;
+}
+
+.editor__line--key .editor__code {
+  color: var(--text);
+  font-weight: 600;
+}
+
+.editor__line--item .editor__code {
+  color: color-mix(in srgb, var(--accent-2) 80%, var(--text-muted));
+}
+
+.editor__line:hover {
+  background: var(--accent-soft);
+}
+
+.editor__caret {
+  position: absolute;
+  bottom: 1.35rem;
+  left: 4.4rem;
+  width: 8px;
+  height: 1.05rem;
+  background: var(--accent);
+  animation: caret-blink 1s steps(2) infinite;
+}
+
+@keyframes line-in {
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes caret-blink {
+  50% {
+    opacity: 0;
+  }
+}

@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-label="The harness loop">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+    <marker id="arj" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .box { transform-box: fill-box; transform-origin: center; animation: beat 4s ease-in-out infinite; }
+    .b2 { animation-delay: .8s } .b3 { animation-delay: 1.6s } .b4 { animation-delay: 2.4s }
+    .wire { stroke-dasharray: 5 8; animation: flow 1.6s linear infinite; }
+    .stamp { animation: stamp 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .reject { animation: shake 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes beat { 0%,100% { opacity:.82; transform: translateY(0) } 50% { opacity:1; transform: translateY(-3px) } }
+    @keyframes flow { to { stroke-dashoffset: -52 } }
+    @keyframes stamp { 0%,60% { opacity:.4; transform: scale(.9) } 70% { opacity:1; transform: scale(1.15) } 100% { opacity:1; transform: scale(1) } }
+    @keyframes shake { 0%,70%,100% { transform: translateX(0) } 75% { transform: translateX(-4px) } 80% { transform: translateX(4px) } 85% { transform: translateX(-3px) } }
+  </style>
+
+  <rect width="1000" height="480" fill="url(#bg)"/>
+  <text x="40" y="48" font-family="Georgia, serif" font-size="28" fill="#ece7fb">The harness: the model doesn't get to say "done"</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">order → execution → evidence → verification → [x]</text>
+
+  <g class="box">
+    <rect x="40" y="130" width="200" height="96" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="140" y="164" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">1 · THE ORDER</text>
+    <text x="140" y="190" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">one task · one requirement</text>
+    <text x="140" y="208" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">exact file · allowed APIs</text>
+  </g>
+  <line x1="246" y1="178" x2="292" y2="178" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#av)"/>
+
+  <g class="box b2">
+    <rect x="298" y="130" width="200" height="96" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="398" y="164" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">2 · THE MODEL ACTS</text>
+    <text x="398" y="190" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">writes · edits · runs</text>
+    <text x="398" y="208" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">claims: "done ✓"</text>
+  </g>
+  <line x1="504" y1="178" x2="550" y2="178" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#av)"/>
+
+  <g class="box b3">
+    <rect x="556" y="118" width="404" height="120" rx="14" fill="none" stroke="#34d399" stroke-width="2.5"/>
+    <text x="758" y="150" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">3 · THE HARNESS CHECKS</text>
+    <text x="578" y="180" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">does the file exist and did it change?</text>
+    <text x="578" y="200" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">did the command exit with code 0?</text>
+    <text x="578" y="220" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">are the tests green?</text>
+  </g>
+
+  <path d="M758 244 v46 h-190" class="wire" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <text x="700" y="266" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">with evidence</text>
+
+  <path d="M860 244 v96 h-100" class="wire" stroke="#fb7185" stroke-width="2" fill="none" marker-end="url(#arj)"/>
+  <text x="874" y="300" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">no evidence</text>
+
+  <g class="box b4">
+    <rect x="330" y="270" width="230" height="80" rx="12" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text class="stamp" x="445" y="308" text-anchor="middle" font-family="ui-monospace, monospace" font-size="15" fill="#34d399">[x] task completed</text>
+    <text x="445" y="330" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">recorded, resumable</text>
+  </g>
+
+  <g class="reject">
+    <rect x="530" y="368" width="230" height="80" rx="12" fill="none" stroke="#fb7185" stroke-width="2"/>
+    <text x="645" y="404" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" fill="#fb7185">[ ] still pending</text>
+    <text x="645" y="428" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">retried with the real error</text>
+  </g>
+
+  <path d="M330 310 h-190 v-84" class="wire" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#av)"/>
+  <text x="150" y="336" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">next order</text>
+
+  <text x="40" y="452" font-family="Georgia, serif" font-size="20" fill="#ece7fb" font-style="italic">A model never grades its own work.</text>
+</svg>

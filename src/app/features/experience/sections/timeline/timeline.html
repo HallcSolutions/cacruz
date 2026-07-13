@@ -1,0 +1,21 @@
+<section class="section" id="experience">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'experience.subtitle' | t }}</p>
+    <h2 class="section__title">{{ 'experience.title' | t }}</h2>
+  </header>
+  <ol class="timeline">
+    @for (entry of entries(); track entry.company + entry.period) {
+      <li
+        class="timeline__item"
+        [class.timeline__item--flip]="$odd"
+        appRevealOnScroll
+        [revealDelay]="($index % 2) * 120"
+      >
+        <p class="timeline__period">{{ entry.period }} · {{ entry.location }}</p>
+        <h3 class="timeline__role">{{ entry.role }}</h3>
+        <p class="timeline__company">{{ entry.company }}</p>
+        <p class="timeline__summary">{{ entry.summary }}</p>
+      </li>
+    }
+  </ol>
+</section>

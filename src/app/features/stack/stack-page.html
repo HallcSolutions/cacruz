@@ -1,0 +1,10 @@
+<section class="section" id="stack">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'tech.subtitle' | t }}</p>
+    <h2 class="section__title">{{ 'tech.title' | t }}</h2>
+  </header>
+
+  @if (profile.content.value(); as content) {
+    <app-stack-code [categories]="content.tech" />
+  }
+</section>

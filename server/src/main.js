@@ -3,7 +3,7 @@ import { stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { buildEmail, validateContactMessage } from './contact-message.js';
+import { buildAckEmail, buildEmail, validateContactMessage } from './contact-message.js';
 import { createMailer } from './mailer.js';
 import { contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
 
@@ -46,11 +46,19 @@ async function handleContact(request, response) {
 
   try {
     await mailer.send(buildEmail(payload, TO));
-    return json(response, 200, { status: 'sent' });
   } catch (error) {
     console.error('[contact] send failed:', error.message);
     return json(response, 502, { error: 'send_failed' });
   }
+
+  // El acuse al visitante no debe tumbar la petición: el mensaje ya llegó a Christian.
+  try {
+    await mailer.send(buildAckEmail(payload, TO));
+  } catch (error) {
+    console.error('[contact] ack failed:', error.message);
+  }
+
+  return json(response, 200, { status: 'sent' });
 }
 
 async function serveStatic(request, response) {

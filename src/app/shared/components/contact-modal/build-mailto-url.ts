@@ -18,7 +18,7 @@ export function isCompleteMessage(message: ContactMessage): boolean {
 
 export function buildMailtoUrl(message: ContactMessage): string {
   const name = message.name.trim();
-  const subject = encodeURIComponent(`Contacto desde ccruz.dev — ${name}`);
+  const subject = encodeURIComponent(`Contacto desde cacruz.com — ${name}`);
   const body = encodeURIComponent(
     [`Nombre: ${name}`, `Correo: ${message.email.trim()}`, '', message.message.trim()].join('\n'),
   );

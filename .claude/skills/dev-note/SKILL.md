@@ -1,6 +1,6 @@
 ---
 name: dev-note
-description: Escribe una nota nueva para "Notas de desarrollo" (/daily) de ccruz.dev. Úsala cuando Christian pida crear, redactar o publicar una nota, entrada, post o artículo del blog. Define el formato de bloques tipo .md, el tono, los gráficos SVG y los pasos de publicación.
+description: Escribe una nota nueva para "Notas de desarrollo" (/daily) de cacruz.com. Úsala cuando Christian pida crear, redactar o publicar una nota, entrada, post o artículo del blog. Define el formato de bloques tipo .md, el tono, los gráficos SVG y los pasos de publicación.
 ---
 
 # Nota de desarrollo (entrada del blog)

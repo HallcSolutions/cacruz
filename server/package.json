@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Servicio de contacto de ccruz.dev: recibe el formulario y envía el correo a Christian.",
+  "description": "Servicio de contacto de cacruz.com: recibe el formulario y envía el correo a Christian.",
   "main": "src/main.js",
   "scripts": {
     "start": "node src/main.js",

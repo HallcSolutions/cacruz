@@ -1,0 +1,11 @@
+node_modules
+server/node_modules
+dist
+.angular
+.git
+.stryker-tmp
+reports
+specs
+docs
+.claude
+.chalc

@@ -1,4 +1,4 @@
-# Servicio web — ccruz.dev
+# Servicio web — cacruz.com
 
 Servicio único (Node puro, sin frameworks) que **sirve el sitio Angular compilado** y expone el
 **endpoint de contacto**. Un solo despliegue, un solo dominio, sin CORS.

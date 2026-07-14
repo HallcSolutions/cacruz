@@ -1,5 +1,5 @@
 /**
- * URL pública del servicio de contacto desplegado en Railway (carpeta `server/`).
- * Se obtiene con `railway domain`; hasta entonces apunta al servidor local.
+ * Endpoint del servicio de contacto. El mismo servicio de Railway sirve el sitio
+ * y expone `/contact`, así que la ruta es relativa: sin CORS ni dominios cruzados.
  */
-export const CONTACT_API_URL = 'http://localhost:8080/contact';
+export const CONTACT_API_URL = '/contact';

@@ -1,16 +1,18 @@
-# Servicio de contacto — ccruz.dev
+# Servicio web — ccruz.dev
 
-Backend mínimo (Node puro + nodemailer) que recibe el formulario del modal y envía el correo a Christian.
-Pensado para desplegarse en **Railway** con root directory `server/`.
+Servicio único (Node puro, sin frameworks) que **sirve el sitio Angular compilado** y expone el
+**endpoint de contacto**. Un solo despliegue, un solo dominio, sin CORS.
 
-## Endpoints
+## Rutas
 
-| Método | Ruta | Respuesta |
+| Método | Ruta | Qué hace |
 |---|---|---|
-| `POST` | `/contact` | `200 {status:"sent"}` · `400 {error}` si el mensaje es inválido · `502 {error:"send_failed"}` si el SMTP falla |
-| `GET` | `/health` | `200 {status:"ok"}` |
+| `GET` | `/health` | Healthcheck de Railway → `{status:"ok"}` |
+| `POST` | `/contact` | Recibe `{name, email, message}`, valida y envía el correo a Christian |
+| `GET` | `/*` | Sirve `dist/cacruz/browser`; las rutas del SPA caen en `index.html` |
 
-Body esperado: `{ "name": "...", "email": "...", "message": "..." }`
+Respuestas de `/contact`: `200 {status:"sent"}` · `400 {error}` si el mensaje es inválido ·
+`502 {error:"send_failed"}` si el SMTP falla.
 
 ## Variables de entorno (Railway → Variables)
 
@@ -19,25 +21,31 @@ Body esperado: `{ "name": "...", "email": "...", "message": "..." }`
 | `SMTP_HOST` | `smtp.gmail.com` | |
 | `SMTP_PORT` | `587` | |
 | `SMTP_USER` | `christiancruzarango@gmail.com` | |
-| `SMTP_PASS` | *(contraseña de aplicación de Google)* | **No** es la contraseña normal de Gmail: se genera en https://myaccount.google.com/apppasswords con verificación en dos pasos activa |
-| `CONTACT_TO` | `christiancruzarango@gmail.com` | opcional (por defecto ya apunta ahí) |
-| `ALLOWED_ORIGIN` | `https://ccruz.dev` | dominio del sitio; usar `*` mientras se prueba |
+| `SMTP_PASS` | *(contraseña de aplicación de Google)* | **No** es la contraseña de Gmail: se genera en https://myaccount.google.com/apppasswords con verificación en dos pasos activa |
+| `CONTACT_TO` | `christiancruzarango@gmail.com` | opcional (ya apunta ahí por defecto) |
 
-## Comandos
+**Sin `SMTP_USER`/`SMTP_PASS` el servicio arranca en modo prueba**: valida el mensaje y lo registra
+en consola, pero no lo envía. Útil en local; en producción hay que configurarlas.
 
-```bash
-npm install
-npm test     # valida el contrato del mensaje
-npm start    # levanta en :8080
-```
-
-## Despliegue en Railway
+## Local
 
 ```bash
-railway login
-railway init          # o: railway link  (si el proyecto ya existe)
-railway up            # despliega esta carpeta
-railway domain        # genera la URL pública
+npm run build            # (en la raíz) compila el sitio a dist/cacruz/browser
+npm --prefix server ci
+npm --prefix server test # 12 tests
+node server/src/main.js  # http://localhost:8080
 ```
 
-Luego pega esa URL en `src/app/core/config/contact-api.ts` del frontend.
+## Railway
+
+El despliegue lo describe `railway.json` en la raíz:
+
+- **build**: `npm ci && npm run build && npm ci --prefix server --omit=dev`
+- **start**: `node server/src/main.js`
+- **healthcheck**: `/health`
+
+```bash
+railway up          # despliega
+railway logs        # ver logs
+railway domain      # dominio público
+```

@@ -1,0 +1,13 @@
+# El sitio no se sirve como estático: lo sirve nuestro propio servicio Node (server/),
+# que además expone /contact. Por eso forzamos el proveedor Node y desactivamos
+# la detección automática de Angular (que intentaría copiar dist/browser a Caddy).
+providers = ["node"]
+
+[phases.install]
+cmds = ["npm ci", "npm ci --prefix server --omit=dev"]
+
+[phases.build]
+cmds = ["npm run build"]
+
+[start]
+cmd = "node server/src/main.js"

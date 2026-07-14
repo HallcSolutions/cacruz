@@ -1,10 +1,11 @@
 import { createReadStream } from 'node:fs';
-import { stat } from 'node:fs/promises';
+import { readFile, stat } from 'node:fs/promises';
 import { createServer } from 'node:http';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildAckEmail, buildEmail, validateContactMessage } from './contact-message.js';
 import { createMailer } from './mailer.js';
+import { injectSocialMeta, originFrom, socialMetaFor } from './social-meta.js';
 import { contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
 
 const PORT = Number(process.env.PORT ?? 8080);
@@ -14,7 +15,14 @@ const MAX_BODY_BYTES = 20_000;
 /** El sitio compilado por Angular, servido por este mismo servicio. */
 const STATIC_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..', 'dist', 'cacruz', 'browser');
 
+const SITE = {
+  title: 'Christian Cruz Arango — Senior Full-Stack Developer',
+  description:
+    'Portafolio y notas de desarrollo de Christian Cruz Arango: arquitectura de software, Angular, .NET e ingeniería aumentada con IA.',
+};
+
 const mailer = createMailer(process.env);
+const notes = await loadNotes();
 
 const server = createServer(async (request, response) => {
   if (request.method === 'POST' && request.url === '/contact') {
@@ -72,11 +80,38 @@ async function serveStatic(request, response) {
     return json(response, 404, { error: 'not_found' });
   }
 
+  if (file.endsWith('index.html')) {
+    return serveShell(file, request, response);
+  }
+
   response.writeHead(200, {
     'Content-Type': contentTypeFor(file),
-    'Cache-Control': file.endsWith('index.html') ? 'no-cache' : 'public, max-age=31536000',
+    'Cache-Control': 'public, max-age=31536000',
   });
   createReadStream(file).pipe(response);
+}
+
+/**
+ * El HTML se personaliza por ruta: los bots que arman la vista previa de un
+ * enlace no ejecutan JavaScript, así que la nota debe viajar ya en el head.
+ */
+async function serveShell(file, request, response) {
+  const pathname = new URL(request.url ?? '/', 'http://localhost').pathname;
+  const meta = socialMetaFor(pathname, originFrom(request.headers), notes, SITE);
+  const html = injectSocialMeta(await readFile(file, 'utf8'), meta);
+
+  response.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache' });
+  response.end(html);
+}
+
+/** El índice de notas vive con el sitio compilado; si falta, se comparte la portada. */
+async function loadNotes() {
+  try {
+    return JSON.parse(await readFile(join(STATIC_ROOT, 'content', 'blog', 'index.json'), 'utf8'));
+  } catch {
+    console.warn('[web] sin índice de notas: los enlaces compartirán la portada del sitio');
+    return [];
+  }
 }
 
 /** Los archivos se sirven tal cual; las rutas del SPA caen en index.html. */

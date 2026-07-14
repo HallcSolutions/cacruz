@@ -134,6 +134,11 @@ con un diseño editorial (sin cards) y animaciones memorables.
 ### Citas con autoría _(enmienda 2026-07-13 o: "citar quién lo dijo")_
 - **R58** — WHERE una cita tenga fuente THE SYSTEM SHALL mostrar la autoría bajo el texto, enlazada a la referencia original cuando exista.
 
+### Vista previa al compartir un enlace _(enmienda 2026-07-14 p: "cuando comparto el link debería salir mi avatar y la noticia, no la presentación del portafolio")_
+- **R59** — WHEN se comparte la URL de una nota THE SYSTEM SHALL entregar en el HTML servido las etiquetas Open Graph con el título y el resumen **de esa nota**, en el idioma de la ruta, para que la vista previa muestre la nota y no la presentación del sitio.
+- **R60** — WHEN se comparte cualquier URL del sitio THE SYSTEM SHALL declarar como imagen de vista previa una portada apaisada (1200×630) con el avatar de Christian, en URL absoluta derivada del host de la petición.
+- **R61** — WHERE la ruta no corresponda a una nota conocida THE SYSTEM SHALL usar el título y la descripción del sitio, sin fallar.
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

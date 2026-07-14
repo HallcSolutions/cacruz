@@ -48,9 +48,9 @@ export const ES_TRANSLATIONS: Record<string, string> = {
   'contact.sending': 'Enviando mensajero',
   'contact.sent': '¡Entregado! Christian te responderá pronto.',
   'contact.done': 'cerrar',
-  'value.title': 'Impacto en el negocio',
+  'value.title': 'Cómo te puedo ayudar',
   'value.pitch':
-    'Llevo 12 años haciendo lo mismo: entiendo qué necesita el negocio, construyo el software que lo resuelve y lo dejo funcionando en producción.',
+    'Llevo 12 años escribiendo software en plataformas de energía, transporte y seguridad, entre Colombia y España. Si algo aprendí en el camino es que un feature no empieza en el código: empieza en la prueba. Las pruebas unitarias son las que dicen si algo funciona de verdad. También son la red que deja volver a ese código meses después, cambiar lo que haga falta y saber en segundos si algo se rompió. Cada proyecto me enseña algo nuevo, y esa curiosidad es lo que más disfruto de este oficio. Ojalá el próximo sea con ustedes.',
   'value.proof': 'Dónde',
   'value.result': 'Resultado',
 

@@ -24,5 +24,18 @@
       "en": "Three pieces explain the gap between an AI that makes things up and one that delivers. What skills are, what MCP solves, and why the harness is the one almost nobody has — and the one that matters most."
     },
     "tags": ["ia", "mcp", "skills", "harness", "agentes"]
+  },
+  {
+    "slug": "what-is-an-ai-agent",
+    "date": "2026-07-05",
+    "title": {
+      "es": "Qué es realmente un agente de IA (y por qué dos agentes trabajan mejor que uno)",
+      "en": "What an AI agent really is (and why two agents beat one)"
+    },
+    "summary": {
+      "es": "Un chat no es un agente. Explico el bucle que lo convierte en uno, por qué necesita herramientas y un límite, y cómo hacer que varios agentes trabajen juntos sin pisarse: roles, artefactos y un revisor que nunca es el autor.",
+      "en": "A chat is not an agent. I explain the loop that turns it into one, why it needs tools and a stopping condition, and how to make several agents work together without stepping on each other: roles, artifacts, and a reviewer who is never the author."
+    },
+    "tags": ["ia", "agentes", "arquitectura", "harness"]
   }
 ]

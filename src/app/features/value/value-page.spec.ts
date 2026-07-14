@@ -85,6 +85,6 @@ describe('ValuePage', () => {
 
   // R13 — la página cambia de idioma
   it('renders in Spanish by default (R13, R15)', () => {
-    expect(render().textContent).toContain('Impacto en el negocio');
+    expect(render().textContent).toContain('Cómo te puedo ayudar');
   });
 });

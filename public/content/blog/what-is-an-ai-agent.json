@@ -1,0 +1,407 @@
+{
+  "slug": "what-is-an-ai-agent",
+  "date": "2026-07-05",
+  "title": {
+    "es": "Qué es realmente un agente de IA (y por qué dos agentes trabajan mejor que uno)",
+    "en": "What an AI agent really is (and why two agents beat one)"
+  },
+  "summary": {
+    "es": "Un chat no es un agente. Explico el bucle que lo convierte en uno, por qué necesita herramientas y un límite, y cómo hacer que varios agentes trabajen juntos sin pisarse: roles, artefactos y un revisor que nunca es el autor.",
+    "en": "A chat is not an agent. I explain the loop that turns it into one, why it needs tools and a stopping condition, and how to make several agents work together without stepping on each other: roles, artifacts, and a reviewer who is never the author."
+  },
+  "tags": ["ia", "agentes", "arquitectura", "harness"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "\"Estoy usando un agente de IA\". Lo escucho todos los días, y nueve de cada diez veces lo que la persona tiene abierto es un chat. La diferencia no es marketing: es arquitectura, y explica por qué a unos la IA les entrega trabajo terminado y a otros les devuelve texto bonito."
+      },
+      {
+        "kind": "quote",
+        "text": "Un chat responde una vez. Un agente decide, actúa, mira el resultado y vuelve a decidir — hasta cumplir el objetivo."
+      },
+
+      { "kind": "heading", "text": "Qué es un agente (y qué no)" },
+      {
+        "kind": "paragraph",
+        "text": "Un modelo de lenguaje, solo, hace una cosa: recibe texto y devuelve texto. No puede abrir tu proyecto, ni ejecutar un test, ni enterarse de si lo que propuso funcionó. Es una conversación, y termina cuando dejas de escribir."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un agente es ese mismo modelo, pero metido en un bucle y con herramientas de verdad: puede leer un archivo, escribir código, ejecutar un comando, consultar la base de datos. Y —esto es lo clave— **ve el resultado de lo que hizo** y ajusta el siguiente paso con esa información."
+      },
+      {
+        "kind": "quote",
+        "text": "Los agentes son, básicamente, modelos usando herramientas en un bucle, guiados por la retroalimentación del entorno. Reciben una tarea, planifican solos, actúan, observan y continúan hasta que se cumple una condición de parada.",
+        "source": "Anthropic · Building Effective Agents",
+        "sourceUrl": "https://www.anthropic.com/engineering/building-effective-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese mismo artículo hace una distinción que a mí me ordenó la cabeza: **flujo de trabajo** (workflow) es cuando el camino está escrito en código y el modelo solo rellena los huecos; **agente** es cuando el modelo decide el camino. Uno es predecible; el otro es flexible. No son rivales: son herramientas distintas, y elegir mal es la primera fuente de frustración."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-loop.es.svg",
+        "caption": "El bucle: decide → actúa → observa → ajusta. Sin condición de parada, el agente da vueltas para siempre."
+      },
+
+      { "kind": "heading", "text": "Las tres cosas que un agente necesita para no ser un desastre" },
+      {
+        "kind": "steps",
+        "items": [
+          "**Un objetivo verificable.** \"Mejora el código\" no sirve: no hay forma de saber si terminó. \"Haz que pase el test R3\" sí, porque el propio test responde.",
+          "**Herramientas reales.** Sin poder leer archivos ni ejecutar comandos, el agente adivina. El entorno al que puede acceder define, literalmente, lo que es capaz de hacer.",
+          "**Una condición de parada.** Un bucle sin freno es un bucle infinito: agentes gastando tokens buscando un archivo que no existe, o reintentando lo mismo veinte veces. El límite lo pone el código, no la buena voluntad del modelo."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esas tres cosas no las trae el modelo: las pone el **harness**, el programa que lo envuelve. Lo conté en detalle en la nota sobre [skills, MCP y harness](/daily/skills-mcp-harness), y es la pieza que separa un agente útil de un generador de excusas."
+      },
+
+      { "kind": "heading", "text": "Y entonces… ¿por qué dos agentes?" },
+      {
+        "kind": "quote",
+        "text": "Cuatro ojos ven más que dos.",
+        "source": "Dicho popular — y resulta que también aplica a los modelos"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El refrán lo dice mejor que cualquier paper: por la misma razón por la que no revisas tu propio texto, un autor no ve sus propios vicios. Si el modelo que escribió el código es el mismo que juzga si el código está bien, la respuesta será siempre \"está bien\". No miente — es que mira con los mismos ojos con los que escribió."
+      },
+      {
+        "kind": "quote",
+        "text": "Un modelo nunca califica su propio trabajo. Por eso el revisor es otro modelo, distinto a propósito."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay una segunda razón, más práctica: el contexto. Un modelo reparte su atención entre todo lo que le metes. Si le das 50 mil tokens del proyecto entero para una tarea de diez líneas, la instrucción que importa compite contra el ruido. Separar el trabajo en agentes permite que **cada uno vea solo lo suyo**."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/two-agents.es.svg",
+        "caption": "Los agentes no conversan entre sí: se dejan artefactos auditables. El plan, el diff, el veredicto."
+      },
+
+      { "kind": "heading", "text": "Mi experimento: modelos caros y modelos baratos, trabajando juntos" },
+      {
+        "kind": "paragraph",
+        "text": "El experimento lo corrí en mi propia herramienta, [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter): puse tres modelos distintos a repartirse una misma feature — uno planea, otro escribe el código, otro lo revisa. Quería responder dos preguntas, y en ese orden: **¿se puede guiar a un modelo local, pequeño y gratis, para que escriba código de calidad?** Y si se puede, **¿cuánto me ahorro trabajando así?** Guiarlo, en el sentido en que se guía a alguien que acaba de entrar al equipo: con la spec delante, una tarea a la vez y una revisión al final."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Porque no todas las tareas son iguales. Diseñar la arquitectura de un feature es un trabajo de criterio: ahí quiero el mejor modelo disponible. Pero escribir la interfaz `Employee` con cuatro campos, siguiendo una orden explícita, no exige genialidad — exige obedecer. Y medí los tokens: la mayoría no se gastan pensando, **se gastan ejecutando**."
+      },
+      {
+        "kind": "quote",
+        "text": "El modelo caro piensa una vez. El barato ejecuta muchas veces. El revisor cierra. No pago precio premium por cada línea escrita."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así lo repartí, con estos modelos exactos. Y aquí está la gracia: **puedes jugar con los modelos para que los tokens no te devoren y termines pagando un platal**. No se trata de gastar poco porque sí, sino de saber en qué se va cada peso — sobre todo si eres extremadamente ahorrativo, como yo, jajajaja:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/model-mix.es.svg",
+        "caption": "Los tres roles de mi prueba en chalc, con el modelo que ejecuta cada uno y dónde se van realmente los tokens."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El líder → Claude Opus 4.8** (nube, el más caro). Se llama **una sola vez** por tarea: recibe el proyecto completo —la spec, la arquitectura, las reglas— y produce el plan: una lista de órdenes verificables, cada una atada a un requisito (T1 → R1).",
+          "**El desarrollador → qwen3-coder:30b en Ollama** (local, en mi propia máquina, **$0**). Hace el grueso del trabajo, pero recibe UNA orden a la vez, con el archivo exacto y el criterio de aceptación. No ve el resto del proyecto: no lo necesita, y verlo solo lo distraería.",
+          "**El revisor → GPT-5.5** (nube, centavos). Deliberadamente **distinto** al que escribió el código. Recibe la spec y el diff, y responde una sola pregunta: ¿esto cumple R1, R2, R3? Sus hallazgos son trazables (\"R2 sin cumplir, en este archivo, por esta causa\"), y quien corrige es siempre el desarrollador.",
+          "**El veredicto no lo da ningún modelo — y tampoco lo da el build.** Que compile solo prueba que compila. Un diff puede pasar todos los tests y aun así romper la arquitectura que acordamos para el proyecto: un feature importando a otro, la lógica de negocio metida en el componente, un servicio que nadie puede probar aislado. Por eso el revisor no juzga con su criterio, sino contra lo que está escrito: la spec (¿cumple R1, R2?), las reglas de arquitectura del proyecto, y el mutation testing, que dice si esas pruebas de verdad atrapan errores. El último filtro sigo siendo yo, leyendo el diff.",
+          "**Nada de esto vive en un chat: todo queda escrito en `.chalc/`.** El plan con sus tareas y su estado, el diff que produjo cada una, y el veredicto del revisor con el hallazgo exacto (qué requisito, qué archivo, por qué). Si mañana pregunto por qué el servicio quedó así, no busco en una conversación de 300 mensajes: abro el archivo. Eso es trazabilidad, no memoria."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El hallazgo que no esperaba: darle **menos** contexto al modelo pequeño lo hace **mejor**. La orden que funciona es **detallada pero corta** — qué archivo tocar, qué debe cumplir, cómo sabemos que quedó bien — y **una a la vez**. Si le entrego las diez tareas de golpe, mezcla las dos primeras y se inventa la tercera. Si le entrego la tarea 1, la termina, la reviso, y solo entonces le paso la 2, el mismo modelo que se perdía ahora acierta. No necesitaba un modelo más listo — necesitaba una orden más clara y un paso a la vez."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y la segunda pregunta, la del ahorro, se responde sola cuando miras dónde se van los tokens: no se gastan pensando, **se gastan ejecutando**. Escribir el código, corregir el test, repetir. Esa parte —la más pesada, la que más llamadas hace— ahora corre en mi máquina y cuesta **$0**. Lo único que pago es planear (una llamada por tarea) y revisar (una llamada por diff). Y ojo, que aquí no se trata de buscar \"el mejor modelo\": **ese modelo no existe**. Uno razona mejor cuando le pones el proyecto entero encima; otro escribe código rápido y sin cobrarte; otro es buen crítico justamente porque no escribió ni una línea. El trabajo no es elegir el mejor, es poner a cada uno donde rinde."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y hay una regla que hace que todo esto funcione: **los agentes no se hablan entre ellos, se dejan artefactos**. El plan es un archivo. La revisión es un archivo. Y una tarea solo se marca como hecha cuando **hay evidencia de que se verificó**: los tests corrieron, el criterio se cumple. Esa verificación la ejecuta un agente, pero dentro de las reglas que le impone el **harness**, que es quien exige la evidencia y no acepta un simple \"listo\" como prueba. Así, cuando algo falla, no reviso un chat de 300 mensajes: leo dos archivos y sé exactamente qué pasó."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          ".chalc/",
+          "├── plan.md      ← el líder escribió las órdenes",
+          "│     [x] 1. Crear la interfaz en models/employee.ts",
+          "│     [x] 2. Crear el servicio con signals",
+          "│     [ ] 3. Escribir el test primero (TDD Red)",
+          "└── review.md    ← el revisor dejó su veredicto",
+          "      ✗ R2: el template usa ngModel, la spec exige formularios reactivos"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese ejemplo del final es real, de una de mis sesiones: el desarrollador \"obedeció\" usando formularios reactivos en el `.ts`… mientras colaba un `ngModel` en el template. Un revisor con los mismos ojos lo habría aprobado. Otro modelo lo cazó en segundos."
+      },
+
+      { "kind": "heading", "text": "Lo que hay que saber antes de emocionarse" },
+      {
+        "kind": "paragraph",
+        "text": "Los sistemas multiagente no son gratis. Anthropic reporta que su sistema de investigación con varios agentes mejora un 90,2% sobre un solo agente en sus evaluaciones internas… pero consume alrededor de **15 veces más tokens** que una conversación normal. Y sus primeros agentes hacían cosas absurdas: lanzar cincuenta subagentes para una consulta trivial, o buscar sin descanso fuentes que no existen."
+      },
+      {
+        "kind": "quote",
+        "text": "Cada subagente necesita un objetivo, un formato de salida, una guía sobre qué herramientas usar y límites claros de su tarea.",
+        "source": "Anthropic · How we built our multi-agent research system",
+        "sourceUrl": "https://www.anthropic.com/engineering/multi-agent-research-system"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Traducido a mi realidad: varios agentes valen la pena cuando el trabajo se puede **partir de verdad** en piezas independientes y verificables. Si no puedes decir con precisión qué debe entregar cada uno y cómo se comprueba, no necesitas más agentes — necesitas una mejor especificación."
+      },
+
+      { "kind": "heading", "text": "La IA no decide: decidimos nosotros" },
+      {
+        "kind": "paragraph",
+        "text": "Quiero dejar esto muy claro, porque con tanto ruido se está perdiendo: **aquí ningún modelo decide nada**. Todo arranca en un documento humano — una historia de usuario, un requerimiento del negocio, algo escrito y validado por personas. De ahí sale la spec, y yo la contrasto contra ese documento antes de que exista una sola línea de código. La IA redacta, ejecuta y propone; las decisiones vienen del negocio y del desarrollador, y esa responsabilidad no se delega a nadie."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**La spec no la inventa un modelo: nace de una HU.** La fuente de verdad es lo que el negocio escribió y validó. La IA puede redactar la spec a partir de ese documento, pero soy yo quien la compara con el original y la aprueba. Si el requisito quedó mal entendido ahí, el código saldrá mal por muy listo que sea el modelo: un agente amplifica lo que le entregas, claridad o desorden.",
+          "**Las reglas de arquitectura las pongo yo.** Qué capa puede importar a cuál, qué va en cada carpeta, qué debe ser testeable. El modelo las obedece; no las inventa ni las negocia.",
+          "**Leo todo el código que entra.** Línea por línea, como revisaría el PR de un compañero. Que los tests pasen no me exime de entender qué se escribió y por qué.",
+          "**Nunca la dejo trabajar sola.** Ni merge automático, ni \"seguro salió bien\". La IA no va a responder por ese código en producción un domingo a las 2 de la mañana: respondo yo."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí está la parte incómoda, la que casi nadie dice: **para guiar bien a un modelo hay que saber hacer el trabajo**. No puedes escribir el criterio de aceptación de algo que no entiendes, ni darte cuenta de que el revisor dejó pasar una violación de arquitectura si no conoces tu arquitectura. La IA no reemplaza al que sabe: multiplica al que sabe, y deja en evidencia al que no. Por eso sigo estudiando — mi ventaja nunca fue el modelo que uso, sino entender bien lo que le estoy pidiendo."
+      },
+
+      { "kind": "heading", "text": "Qué mejora, en concreto" },
+      {
+        "kind": "steps",
+        "items": [
+          "**Calidad**: el error lo caza un modelo que no tiene el orgullo de haberlo escrito.",
+          "**Costo**: el modelo caro piensa una vez (el plan); el barato ejecuta muchas veces. No pago precio premium por cada línea escrita.",
+          "**Trazabilidad**: reviso el trabajo como revisaría el de un equipo humano — órdenes escritas, avance con evidencia y un registro auditable — en vez de leer un chat gigante.",
+          "**Reanudable**: si el proceso muere en la tarea 4 de 7, se retoma ahí, sin volver a pagar el análisis."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto no es teoría: es como trabajo hoy, en proyectos reales y con código que termina en producción. Si quieres ver el flujo completo de una feature —de la historia de usuario al código verificado—, lo conté en [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) — Anthropic: la distinción entre flujos y agentes, y los patrones que de verdad se usan en producción. Empieza por aquí.",
+          "[How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) — Anthropic: el patrón orquestador-trabajadores, sus resultados y, sobre todo, los errores que cometieron por el camino.",
+          "[Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — el estándar que le da manos al agente: bases de datos, repos, documentación.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): mi harness con líder, desarrollador y revisor, cada uno en su modelo, comunicándose por artefactos.",
+          "[Skills, MCP y harness](/daily/skills-mcp-harness): la nota previa, donde explico qué rodea al modelo y por qué sin harness nada de esto se sostiene."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "\"I'm using an AI agent.\" I hear it every day, and nine times out of ten what the person has open is a chat. The difference isn't marketing: it's architecture, and it explains why some people get finished work out of AI while others get pretty text."
+      },
+      {
+        "kind": "quote",
+        "text": "A chat answers once. An agent decides, acts, looks at the result and decides again — until the goal is met."
+      },
+
+      { "kind": "heading", "text": "What an agent is (and what it isn't)" },
+      {
+        "kind": "paragraph",
+        "text": "A language model, on its own, does one thing: it takes text and returns text. It cannot open your project, run a test, or find out whether what it proposed actually worked. It's a conversation, and it ends when you stop typing."
+      },
+      {
+        "kind": "paragraph",
+        "text": "An agent is that same model, but placed inside a loop and given real tools: it can read a file, write code, run a command, query the database. And — this is the key — it **sees the result of what it did** and adjusts the next step with that information."
+      },
+      {
+        "kind": "quote",
+        "text": "Agents are typically just LLMs using tools based on environmental feedback in a loop. They receive a task, plan on their own, take actions, observe results and continue until a stopping condition fires.",
+        "source": "Anthropic · Building Effective Agents",
+        "sourceUrl": "https://www.anthropic.com/engineering/building-effective-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That same article draws a distinction that sorted my head out: a **workflow** is when the path is written in code and the model just fills the gaps; an **agent** is when the model decides the path. One is predictable; the other is flexible. They're not rivals: they're different tools, and picking the wrong one is the first source of frustration."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-loop.en.svg",
+        "caption": "The loop: decide → act → observe → adjust. Without a stopping condition, the agent loops forever."
+      },
+
+      { "kind": "heading", "text": "The three things an agent needs to not be a disaster" },
+      {
+        "kind": "steps",
+        "items": [
+          "**A verifiable goal.** \"Improve the code\" is useless: there's no way to know when it's finished. \"Make test R3 pass\" works, because the test itself answers.",
+          "**Real tools.** Without reading files or running commands, the agent guesses. The environment it can reach literally defines what it is able to do.",
+          "**A stopping condition.** A loop with no brake is an infinite loop: agents burning tokens hunting for a file that doesn't exist, or retrying the same thing twenty times. The limit comes from the code, not the model's good will."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Those three things don't come with the model: the **harness** provides them — the program that wraps it. I covered it in detail in the note on [skills, MCP and the harness](/daily/skills-mcp-harness), and it's the piece that separates a useful agent from an excuse generator."
+      },
+
+      { "kind": "heading", "text": "So… why two agents?" },
+      {
+        "kind": "quote",
+        "text": "Two heads are better than one.",
+        "source": "Popular saying — and it turns out it applies to models too"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The old proverb says it better than any paper: for the same reason you don't proofread your own writing, an author can't see their own habits. If the model that wrote the code is the one judging whether the code is good, the answer will always be \"it's good\". It isn't lying — it's looking with the very eyes that wrote it."
+      },
+      {
+        "kind": "quote",
+        "text": "A model never grades its own work. That's why the reviewer is a different model, deliberately."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's a second, more practical reason: context. A model spreads its attention across everything you feed it. Give it 50k tokens of the whole project for a ten-line task, and the instruction that matters competes against the noise. Splitting the work across agents lets **each one see only its own part**."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/two-agents.en.svg",
+        "caption": "Agents don't chat with each other: they leave auditable artifacts. The plan, the diff, the verdict."
+      },
+
+      { "kind": "heading", "text": "My experiment: expensive and cheap models, working together" },
+      {
+        "kind": "paragraph",
+        "text": "I ran the experiment in my own tool, [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter): three different models splitting one single feature — one plans, one writes the code, one reviews it. I wanted to answer two questions, in this order: **can a small, free, local model be guided into writing quality code?** And if it can, **how much do I save working this way?** Guided in the sense you guide someone who just joined the team: with the spec in front of them, one task at a time, and a review at the end."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Because not all tasks are equal. Designing a feature's architecture is a judgment call: there I want the best model available. But writing the `Employee` interface with four fields, following an explicit order, doesn't require brilliance — it requires obedience. And I measured the tokens: most of them aren't spent thinking, **they're spent executing**."
+      },
+      {
+        "kind": "quote",
+        "text": "The expensive model thinks once. The cheap one executes many times. The reviewer closes. I don't pay premium price for every line written."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is how I split it, with these exact models. And here is the fun part: **you can play with the models so the tokens don't eat you alive and leave you paying a fortune**. It isn't about spending little for the sake of it, but about knowing where every cent goes — especially if you are extremely thrifty, like me, hahahaha:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/model-mix.en.svg",
+        "caption": "The three roles from my chalc experiment, with the model running each one and where the tokens actually go."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The leader → Claude Opus 4.8** (cloud, the expensive one). Called **only once** per task: it receives the whole project — the spec, the architecture, the rules — and produces the plan: a list of verifiable orders, each tied to a requirement (T1 → R1).",
+          "**The developer → qwen3-coder:30b on Ollama** (local, on my own machine, **$0**). It does the bulk of the work, but receives ONE order at a time, with the exact file and the acceptance criterion. It doesn't see the rest of the project: it doesn't need to, and seeing it would only distract it.",
+          "**The reviewer → GPT-5.5** (cloud, cents). Deliberately **different** from the model that wrote the code. It receives the spec and the diff, and answers one question: does this meet R1, R2, R3? Its findings are traceable (\"R2 unmet, in this file, for this reason\"), and the one who fixes it is always the developer.",
+          "**The verdict comes from no model — and not from the build either.** Compiling only proves that it compiles. A diff can pass every test and still break the architecture we agreed on for the project: one feature importing another, business logic buried in the component, a service nobody can test in isolation. That is why the reviewer doesn't judge by taste, but against what is written down: the spec (does it meet R1, R2?), the project's architecture rules, and mutation testing, which tells us whether those tests actually catch errors. The last filter is still me, reading the diff.",
+          "**None of this lives in a chat: it is all written down in `.chalc/`.** The plan with its tasks and their status, the diff each one produced, and the reviewer's verdict with the exact finding (which requirement, which file, why). If tomorrow I ask why the service ended up like that, I don't dig through a 300-message conversation: I open the file. That is traceability, not memory."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The finding I didn't expect: giving the small model **less** context makes it **better**. The order that works is **detailed but short** — which file to touch, what it must satisfy, how we know it's done — and **one at a time**. Hand it all ten tasks at once and it blends the first two and invents the third. Hand it task 1, let it finish, review it, and only then pass it task 2, and the very model that was getting lost now gets it right. I didn't need a smarter model — I needed a clearer order and one step at a time."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the second question, the one about saving, answers itself once you look at where the tokens go: they aren't spent thinking, **they're spent executing**. Writing the code, fixing the test, doing it again. That part — the heaviest, the one making most of the calls — now runs on my machine and costs **$0**. The only thing I pay for is planning (one call per task) and reviewing (one call per diff). And careful here: this is not about hunting for \"the best model\" — **that model doesn't exist**. One reasons better when you hand it the whole project; another writes code fast and charges you nothing; another is a good critic precisely because it didn't write a single line. The job isn't picking the best one, it's putting each one where it performs."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And there's one rule that makes all of this work: **agents don't talk to each other, they leave artifacts**. The plan is a file. The review is a file. And a task is only marked as done when **there is evidence that it was verified**: the tests ran, the criterion holds. An agent performs that verification, but inside the rules the **harness** imposes on it — the harness is what demands the evidence and refuses to take a plain \"done\" as proof. So when something breaks, I don't read a 300-message chat: I read two files and know exactly what happened."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          ".chalc/",
+          "├── plan.md      ← the leader wrote the orders",
+          "│     [x] 1. Create the interface in models/employee.ts",
+          "│     [x] 2. Create the service with signals",
+          "│     [ ] 3. Write the test first (TDD Red)",
+          "└── review.md    ← the reviewer left its verdict",
+          "      ✗ R2: the template uses ngModel, the spec requires reactive forms"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That last example is real, from one of my sessions: the developer \"obeyed\" by using reactive forms in the `.ts`… while smuggling an `ngModel` into the template. A reviewer with the same eyes would have approved it. A different model caught it in seconds."
+      },
+
+      { "kind": "heading", "text": "What to know before getting excited" },
+      {
+        "kind": "paragraph",
+        "text": "Multi-agent systems aren't free. Anthropic reports that its multi-agent research system improves 90.2% over a single agent on internal evaluations… but burns around **15 times more tokens** than a normal conversation. And their early agents did absurd things: spawning fifty subagents for a trivial query, or endlessly scouring the web for sources that don't exist."
+      },
+      {
+        "kind": "quote",
+        "text": "Each subagent needs an objective, an output format, guidance on the tools and sources to use, and clear task boundaries.",
+        "source": "Anthropic · How we built our multi-agent research system",
+        "sourceUrl": "https://www.anthropic.com/engineering/multi-agent-research-system"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Translated to my reality: several agents pay off when the work can **genuinely be split** into independent, verifiable pieces. If you can't say precisely what each one must deliver and how it gets checked, you don't need more agents — you need a better specification."
+      },
+
+      { "kind": "heading", "text": "AI doesn't decide: we do" },
+      {
+        "kind": "paragraph",
+        "text": "I want to be very clear about this, because it's getting lost in the noise: **no model decides anything here**. Everything starts in a human document — a user story, a business requirement, something written and validated by people. The spec comes out of that, and I check it against that document before a single line of code exists. The AI drafts, executes and proposes; the decisions come from the business and from the developer, and that responsibility is delegated to no one."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The spec isn't invented by a model: it comes from a user story.** The source of truth is what the business wrote and validated. The AI can draft the spec from that document, but I am the one who compares it against the original and approves it. If the requirement was misunderstood there, the code will be wrong no matter how smart the model is: an agent amplifies what you hand it, clarity or chaos.",
+          "**I set the architecture rules.** Which layer may import which, what belongs in each folder, what must be testable. The model obeys them; it doesn't invent or negotiate them.",
+          "**I read every line of code that comes in.** Line by line, the way I'd review a teammate's PR. Passing tests don't excuse me from understanding what was written and why.",
+          "**I never let it work alone.** No automatic merges, no \"it probably came out fine\". The AI won't answer for that code in production on a Sunday at 2 a.m.: I will."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's the uncomfortable part, the one hardly anyone says out loud: **to guide a model well you have to know how to do the work**. You can't write the acceptance criterion for something you don't understand, nor notice that the reviewer let an architecture violation slip through if you don't know your own architecture. AI doesn't replace the one who knows: it multiplies the one who knows, and exposes the one who doesn't. That's why I keep studying — my edge was never the model I use, it's understanding exactly what I'm asking it for."
+      },
+
+      { "kind": "heading", "text": "What actually improves" },
+      {
+        "kind": "steps",
+        "items": [
+          "**Quality**: the bug is caught by a model that has no pride in having written it.",
+          "**Cost**: the expensive model thinks once (the plan); the cheap one executes many times. I don't pay premium price for every line written.",
+          "**Traceability**: I review the work the way I'd review a human team's — written orders, evidence-based progress and an auditable ledger — instead of reading a giant chat.",
+          "**Resumable**: if the run dies at task 4 of 7, it picks up right there, without paying for the analysis again."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This isn't theory: it's how I work today, on real projects, with code that ends up in production. If you want the full flow of a feature — from the user story to verified code — I told it in [how I ship a complete feature in hours](/daily/ship-a-feature-in-hours)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Building Effective Agents](https://www.anthropic.com/engineering/building-effective-agents) — Anthropic: the workflow-vs-agent distinction and the patterns actually used in production. Start here.",
+          "[How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) — Anthropic: the orchestrator-worker pattern, its results and, above all, the mistakes they made along the way.",
+          "[Model Context Protocol](https://www.anthropic.com/news/model-context-protocol) — the standard that gives the agent hands: databases, repos, documentation.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): my harness with leader, developer and reviewer, each on its own model, communicating through artifacts.",
+          "[Skills, MCP and the harness](/daily/skills-mcp-harness): the previous note, where I explain what surrounds the model and why none of this stands without a harness."
+        ]
+      }
+    ]
+  }
+}

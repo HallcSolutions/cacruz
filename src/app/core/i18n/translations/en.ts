@@ -48,9 +48,9 @@ export const EN_TRANSLATIONS: Record<string, string> = {
   'contact.sending': 'Dispatching courier',
   'contact.sent': 'Delivered! Christian will reply soon.',
   'contact.done': 'close',
-  'value.title': 'Business impact',
+  'value.title': 'How I can help you',
   'value.pitch':
-    "I've spent 12 years doing the same thing: understanding what the business needs, building the software that solves it, and leaving it running in production.",
+    "I've spent 12 years writing software for energy, transport and security platforms, between Colombia and Spain. If there is one thing I learned along the way, it is that a feature doesn't start in the code: it starts in the test. Unit tests are what tell you something really works. They are also the safety net that lets you come back to that code months later, change whatever is needed, and know within seconds whether something broke. Every project teaches me something new, and that curiosity is the part I enjoy most about this craft. I would love the next one to be with you.",
   'value.proof': 'Where',
   'value.result': 'Result',
 

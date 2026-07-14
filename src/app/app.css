@@ -47,9 +47,154 @@
   display: flex;
   align-items: center;
   gap: 0.7rem;
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  letter-spacing: 0.02em;
+}
+
+/* Pipeline en miniatura: el commit viaja hasta producción, una y otra vez */
+.shell__pipeline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.shell__deploy {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.shell__deploy-track {
+  position: relative;
+  width: 5.4rem;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--border);
+}
+
+.shell__deploy-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 2px;
+  background: linear-gradient(90deg, var(--accent), #34d399);
+  animation: deploy-fill 6s ease-in-out infinite;
+}
+
+.shell__deploy-commit {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-radius: 1.5px;
+  background: var(--accent);
+  box-shadow: 0 0 8px var(--accent);
+  animation: deploy-commit 6s ease-in-out infinite;
+}
+
+.shell__deploy-word {
+  position: relative;
+  width: 3.2rem;
+  height: 0.7rem;
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.1em;
+  color: var(--text-muted);
+}
+
+.shell__deploy-word span {
+  position: absolute;
+  inset: 0 auto auto 0;
+  opacity: 0;
+  animation: deploy-word 6s linear infinite;
+}
+
+.shell__deploy-word span:nth-child(2) {
+  animation-delay: 1.2s;
+}
+.shell__deploy-word span:nth-child(3) {
+  animation-delay: 2.4s;
+}
+.shell__deploy-word span:nth-child(4) {
+  animation-delay: 3.6s;
+}
+.shell__deploy-word span:nth-child(5) {
+  animation-delay: 4.8s;
+}
+
+.shell__deploy-live {
+  color: #34d399;
+}
+
+/* Los archivos del repo desfilan por el pipeline, uno por segundo */
+.shell__files {
+  --file-row: 0.82rem;
+  display: block;
+  width: 9.5rem;
+  height: var(--file-row);
+  overflow: hidden;
+}
+
+.shell__files-list {
+  display: flex;
+  flex-direction: column;
+  animation: files-scroll 6s steps(6) infinite;
+}
+
+.shell__file {
+  display: flex;
+  align-items: center;
+  height: var(--file-row);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.04em;
+  color: var(--accent-3);
+  white-space: nowrap;
+}
+
+.shell__file::before {
+  content: '›';
+  margin-right: 0.3rem;
+  color: var(--accent);
+}
+
+@keyframes deploy-fill {
+  0% {
+    width: 0;
+  }
+  75%,
+  100% {
+    width: 100%;
+  }
+}
+
+@keyframes deploy-commit {
+  0% {
+    left: 0;
+  }
+  75%,
+  100% {
+    left: calc(100% - 6px);
+  }
+}
+
+@keyframes deploy-word {
+  0%,
+  1% {
+    opacity: 0;
+  }
+  3%,
+  17% {
+    opacity: 1;
+  }
+  20%,
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes files-scroll {
+  to {
+    transform: translateY(calc(var(--file-row) * -6));
+  }
 }
 
 .shell__logo {
@@ -62,10 +207,6 @@
 .shell__brand:hover .shell__logo {
   transform: rotate(-4deg) scale(1.08);
   box-shadow: 0 8px 22px -8px rgba(167, 139, 250, 0.5);
-}
-
-.shell__dot {
-  color: var(--accent);
 }
 
 /* Botón hamburguesa: solo en pantallas angostas */

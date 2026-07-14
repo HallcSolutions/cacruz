@@ -3,7 +3,29 @@
 <header class="shell__header" [class.shell__header--open]="menuOpen()">
   <a routerLink="/" class="shell__brand" (click)="closeMenu()">
     <img class="shell__logo" src="images/logo.png" alt="Logo DC — Christian Cruz" />
-    <span>cacruz<span class="shell__dot">.</span>com</span>
+    <span class="shell__pipeline" aria-hidden="true">
+      <span class="shell__deploy">
+        <span class="shell__deploy-track">
+          <span class="shell__deploy-fill"></span>
+          <span class="shell__deploy-commit"></span>
+        </span>
+        <span class="shell__deploy-word">
+          <span>commit</span>
+          <span>push</span>
+          <span>build</span>
+          <span>tests</span>
+          <span class="shell__deploy-live">live</span>
+        </span>
+      </span>
+
+      <span class="shell__files">
+        <span class="shell__files-list">
+          @for (file of pipelineFiles; track file) {
+            <span class="shell__file">{{ file }}</span>
+          }
+        </span>
+      </span>
+    </span>
   </a>
 
   <button

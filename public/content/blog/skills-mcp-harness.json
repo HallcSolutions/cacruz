@@ -82,7 +82,7 @@
       { "kind": "heading", "text": "Harness · el todo que casi nadie construye" },
       {
         "kind": "paragraph",
-        "text": "Aquí está el corazón de la nota. Un harness (en español, un arnés: lo que sujeta al escalador) es el código determinista que **envuelve** al modelo y contiene todo lo anterior. Es quien decide qué skill se carga y cuándo, quién le abre o le cierra el acceso a MCP, quién le impone las reglas, quién le entrega la orden, y quién —esto es lo importante— comprueba con evidencia si lo que el modelo dice que hizo, realmente pasó."
+        "text": "Aquí está el corazón de la nota. Un harness (en español, un arnés: lo que sujeta al escalador) es el código determinista que **envuelve** al modelo y contiene todo lo anterior. Es quien decide qué skill se carga y cuándo, quién le abre o le cierra el acceso a MCP, quién le impone las reglas, quién le entrega la orden, y quién —esto es lo importante— **exige la evidencia**: manda a verificar lo que el modelo dice que hizo, y no da nada por hecho hasta que la prueba existe."
       },
       {
         "kind": "paragraph",
@@ -90,7 +90,7 @@
       },
       {
         "kind": "quote",
-        "text": "El harness —no el modelo— marca la casilla. Un modelo nunca califica su propio trabajo."
+        "text": "La casilla no se marca con un \"listo\" del modelo: se marca con evidencia, y el harness es quien la exige. Un modelo nunca califica su propio trabajo."
       },
       {
         "kind": "paragraph",
@@ -228,7 +228,7 @@
       { "kind": "heading", "text": "Harness · the whole thing almost nobody builds" },
       {
         "kind": "paragraph",
-        "text": "Here is the heart of this note. A harness — like the one that holds a climber — is the deterministic code that **wraps** the model and contains everything above. It decides which skill gets loaded and when, it opens or closes access to MCP, it enforces the rules, it hands over the order, and it — this is the important part — checks with evidence whether what the model claims it did actually happened."
+        "text": "Here is the heart of this note. A harness — like the one that holds a climber — is the deterministic code that **wraps** the model and contains everything above. It decides which skill gets loaded and when, it opens or closes access to MCP, it enforces the rules, it hands over the order, and it — this is the important part — **demands the evidence**: it sends what the model claims it did to be verified, and takes nothing as done until the proof exists."
       },
       {
         "kind": "paragraph",
@@ -236,7 +236,7 @@
       },
       {
         "kind": "quote",
-        "text": "The harness — not the model — ticks the box. A model never grades its own work."
+        "text": "The box isn't ticked by a model saying \"done\": it's ticked with evidence, and the harness is what demands it. A model never grades its own work."
       },
       {
         "kind": "paragraph",

@@ -106,12 +106,12 @@
     "Mantenimiento de Computadores — SENA Virtual"
   ],
   "tech": [
-    { "name": "Frontend", "icon": "🖥️", "items": ["Angular", "TypeScript", "Angular Material", "PrimeNG", "Tailwind CSS", "RxJS", "NgRx", "Signals", "Microfrontends", "Web Components", "Vue.js"] },
+    { "name": "Frontend", "icon": "🖥️", "items": ["Angular", "TypeScript", "PrimeNG", "Tailwind CSS", "RxJS", "NgRx", "Signals", "Microfrontends", "Web Components", "Vue.js"] },
     { "name": "Backend", "icon": "⚙️", "items": [".NET (Framework y Core)", "NestJS", "Node.js", "Laravel (PHP)", "APIs REST + Swagger", "WebSockets", "Firebase"] },
     { "name": "Móvil", "icon": "📱", "items": ["Flutter (Dart)", "Ionic"] },
     { "name": "Datos", "icon": "🗄️", "items": ["SQL Server", "MySQL", "MongoDB", "SQLite", "Entity Framework", "Dapper"] },
     { "name": "IA aplicada", "icon": "🤖", "items": ["LLMs", "MCP", "Agentes y skills", "Spec-Driven Development", "Ollama", "OpenAI / Claude APIs"] },
-    { "name": "Calidad y DevOps", "icon": "🚀", "items": ["TDD", "xUnit · Jest · Jasmine", "Mutation testing", "Playwright", "SonarQube", "Docker", "Azure DevOps", "GitHub Actions", "Jenkins", "GitLab CI", "Jira"] }
+    { "name": "Calidad y DevOps", "icon": "🚀", "items": ["TDD", "xUnit · Jest · Jasmine · Vitest", "Mutation testing", "Playwright", "SonarQube", "Docker", "Azure DevOps", "GitHub Actions", "Jenkins", "GitLab CI", "Jira"] }
   ],
   "projects": [
     {

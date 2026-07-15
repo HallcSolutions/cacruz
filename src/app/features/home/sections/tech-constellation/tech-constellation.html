@@ -1,5 +1,12 @@
 <div class="constellation" appRevealOnScroll>
   @for (item of items(); track item) {
-    <span class="constellation__star" [style.--i]="$index">{{ item }}</span>
+    <span class="constellation__star" [style.--i]="$index">
+      <span class="constellation__kw">import</span>
+      <span class="constellation__brace">{{ '{' }}</span>
+      <span class="constellation__name">{{ item }}</span>
+      <span class="constellation__brace">{{ '}' }}</span>
+      <span class="constellation__kw">from</span>
+      <span class="constellation__from">'stack'</span>
+    </span>
   }
 </div>

@@ -5,7 +5,9 @@ import {
   CONTACT_PHONE,
   CONTACT_PHONE_URL,
   GITHUB_PROFILE_URL,
+  INSTAGRAM_PROFILE_URL,
   LINKEDIN_PROFILE_URL,
+  YOUTUBE_PROFILE_URL,
 } from './hero-links';
 import { INITIAL_TYPEWRITER_STATE, nextTypewriterState, typewriterText } from './typewriter';
 
@@ -34,6 +36,8 @@ const TYPE_TICK_MS = 80;
 export class Hero {
   protected readonly githubUrl = GITHUB_PROFILE_URL;
   protected readonly linkedinUrl = LINKEDIN_PROFILE_URL;
+  protected readonly youtubeUrl = YOUTUBE_PROFILE_URL;
+  protected readonly instagramUrl = INSTAGRAM_PROFILE_URL;
   protected readonly email = CONTACT_EMAIL;
   protected readonly emailUrl = `mailto:${CONTACT_EMAIL}`;
   protected readonly phone = CONTACT_PHONE;

@@ -250,23 +250,110 @@
 
 .hero__links {
   display: flex;
-  gap: 0.8rem;
+  flex-wrap: wrap;
+  gap: 0.7rem;
 }
 
-.hero__links a {
+/* Botones tipo etiqueta HTML: <github/> con logo, corchetes y cursor */
+.tag {
+  --tag-accent: var(--accent);
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.9rem;
   border: 1px solid var(--border);
-  border-radius: 999px;
-  padding: 0.55rem 1.3rem;
-  font-size: 0.9rem;
-  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 10px;
+  overflow: hidden;
+  font-family: var(--font-mono, ui-monospace, "SFMono-Regular", monospace);
+  font-size: 0.86rem;
+  color: var(--text, #ece7fb);
+  transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
-.hero__links a:hover {
-  border-color: var(--accent);
-  background: var(--accent-soft);
-  transform: translateY(-2px);
-  box-shadow: 0 12px 30px -12px rgba(167, 139, 250, 0.45);
+/* barrido de luz que cruza el botón al pasar el mouse */
+.tag::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    120deg,
+    transparent 0%,
+    color-mix(in srgb, var(--tag-accent) 22%, transparent) 50%,
+    transparent 100%
+  );
+  transform: translateX(-130%);
+  transition: transform 0.6s ease;
+  pointer-events: none;
 }
+
+.tag__b {
+  color: var(--muted, #8a7fb0);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.tag__icon {
+  width: 1.05rem;
+  height: 1.05rem;
+  fill: currentColor;
+  transition: transform 0.55s cubic-bezier(0.18, 0.9, 0.24, 1.15), color 0.3s ease;
+}
+
+.tag__name {
+  letter-spacing: 0.02em;
+  transition: color 0.3s ease;
+}
+
+/* cursor que aparece al hover, como si estuviera escribiendo */
+.tag__caret {
+  width: 0.5ch;
+  height: 1em;
+  margin-left: -0.1rem;
+  background: var(--tag-accent);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.tag:hover,
+.tag:focus-visible {
+  border-color: var(--tag-accent);
+  background: color-mix(in srgb, var(--tag-accent) 12%, transparent);
+  transform: translateY(-3px);
+  box-shadow: 0 14px 30px -14px color-mix(in srgb, var(--tag-accent) 60%, transparent);
+  color: var(--tag-accent);
+}
+
+.tag:hover::before,
+.tag:focus-visible::before {
+  transform: translateX(130%);
+}
+
+.tag:hover .tag__b,
+.tag:focus-visible .tag__b {
+  color: var(--tag-accent);
+}
+.tag:hover .tag__b:first-of-type { transform: translateX(-3px); }
+.tag:hover .tag__b:last-of-type { transform: translateX(3px); }
+
+.tag:hover .tag__icon,
+.tag:focus-visible .tag__icon {
+  transform: rotate(360deg) scale(1.12);
+}
+
+.tag:hover .tag__caret,
+.tag:focus-visible .tag__caret {
+  opacity: 1;
+  animation: tag-blink 1s steps(1) infinite;
+}
+
+/* cada red brilla con su color de marca */
+.tag--github { --tag-accent: #a78bfa; }
+.tag--linkedin { --tag-accent: #4aa3f0; }
+.tag--youtube { --tag-accent: #ff4d4d; }
+.tag--instagram { --tag-accent: #e2749e; }
+
+@keyframes tag-blink { 50% { opacity: 0; } }
 
 /* Avatar central con anillos (R34) */
 .hero__portrait {

@@ -1,5 +1,10 @@
 import { TestBed } from '@angular/core/testing';
-import { GITHUB_PROFILE_URL, LINKEDIN_PROFILE_URL } from './hero-links';
+import {
+  GITHUB_PROFILE_URL,
+  INSTAGRAM_PROFILE_URL,
+  LINKEDIN_PROFILE_URL,
+  YOUTUBE_PROFILE_URL,
+} from './hero-links';
 import { Hero } from './hero';
 
 describe('Hero', () => {
@@ -24,10 +29,12 @@ describe('Hero', () => {
     expect(host.textContent).toContain('Senior Full-Stack Developer');
   });
 
-  it('links to GitHub and LinkedIn (R1)', () => {
+  it('links to GitHub, LinkedIn, YouTube and Instagram (R1)', () => {
     const links = Array.from(render().querySelectorAll('a')).map((a) => a.getAttribute('href'));
     expect(links).toContain(GITHUB_PROFILE_URL);
     expect(links).toContain(LINKEDIN_PROFILE_URL);
+    expect(links).toContain(YOUTUBE_PROFILE_URL);
+    expect(links).toContain(INSTAGRAM_PROFILE_URL);
   });
 
   // R2 — animación de entrada de alto impacto (hook de animación presente)

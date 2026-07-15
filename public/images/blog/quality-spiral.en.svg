@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="The vicious cycle of aimless AI">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="mr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .box { transform-box: fill-box; transform-origin: center; animation: breathe 4s ease-in-out infinite; }
+    .b2 { animation-delay: 1s } .b3 { animation-delay: 2s } .b4 { animation-delay: 3s }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    .warn { animation: warnpulse 2.2s ease-in-out infinite; }
+    .spin { transform-box: fill-box; transform-origin: center; animation: spin 9s linear infinite; }
+    @keyframes breathe { 0%,100% { opacity:.85 } 50% { opacity:1 } }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes warnpulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @keyframes spin { to { transform: rotate(360deg) } }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="48" font-family="Georgia, serif" font-size="27" fill="#ece7fb">The vicious cycle of aimless AI</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">fast isn't finished · every loop, the code gets worse</text>
+
+  <!-- 1 -->
+  <g class="box">
+    <rect x="80" y="120" width="340" height="96" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="104" y="152" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">1 · THE PROMISE</text>
+    <text x="104" y="178" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">"enterprise software in minutes"</text>
+    <text x="104" y="198" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">feed the template and click a button</text>
+  </g>
+  <line x1="428" y1="168" x2="572" y2="168" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <!-- 2 -->
+  <g class="box b2">
+    <rect x="580" y="120" width="340" height="96" rx="14" fill="none" stroke="#8f7ad6" stroke-width="2.5"/>
+    <text x="604" y="152" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">2 · AIMLESS AI</text>
+    <text x="604" y="178" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">"build me the system" → whatever comes</text>
+    <text x="604" y="198" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">no spec, no architecture, no review</text>
+  </g>
+  <line x1="750" y1="224" x2="750" y2="352" class="flow" stroke="#d98aa0" stroke-width="2" marker-end="url(#mr)"/>
+
+  <!-- 3 -->
+  <g class="box b3">
+    <rect x="580" y="360" width="340" height="96" rx="14" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="604" y="392" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">3 · CODE WITH NO QUALITY</text>
+    <text x="604" y="418" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">duplicated · insecure · untested</text>
+    <text x="604" y="438" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">ships in minutes, paid for in months</text>
+  </g>
+  <line x1="572" y1="408" x2="428" y2="408" class="flow" stroke="#fb7185" stroke-width="2" marker-end="url(#mr)"/>
+
+  <!-- 4 -->
+  <g class="box b4">
+    <rect x="80" y="360" width="340" height="96" rx="14" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="104" y="392" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">4 · IT FEEDS THE NEXT ONE</text>
+    <text x="104" y="418" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">base of the next project</text>
+    <text x="104" y="438" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">and training data for the next model</text>
+  </g>
+
+  <!-- dangerous feedback: 4 -> 1 -->
+  <line x1="250" y1="352" x2="250" y2="224" class="flow warn" stroke="#fb7185" stroke-width="2" marker-end="url(#mr)"/>
+  <text x="236" y="278" text-anchor="end" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185" class="warn">with no</text>
+  <text x="236" y="294" text-anchor="end" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185" class="warn">one</text>
+  <text x="236" y="310" text-anchor="end" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185" class="warn">reviewing</text>
+
+  <!-- center -->
+  <text x="500" y="286" text-anchor="middle" font-size="30" class="spin">🌀</text>
+  <text x="500" y="318" text-anchor="middle" font-family="Georgia, serif" font-size="17" fill="#ece7fb" font-style="italic">every loop, worse</text>
+  <circle cx="468" cy="340" r="6" fill="#34d399"/>
+  <circle cx="500" cy="340" r="6" fill="#fbbf24"/>
+  <circle cx="532" cy="340" r="6" fill="#fb7185"/>
+
+  <text x="40" y="536" font-family="Georgia, serif" font-size="18" fill="#ece7fb" font-style="italic">Garbage in, garbage learned, and out comes more garbage — in an authoritative tone.</text>
+</svg>

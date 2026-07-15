@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-label="AI imitates the bad practices you feed it">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mr" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: flow 1.5s linear infinite; }
+    .warn { transform-box: fill-box; transform-origin: center; animation: warn 3s ease-in-out infinite; }
+    .ai { transform-box: fill-box; transform-origin: center; animation: breathe 3.4s ease-in-out infinite; }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes warn { 0%,100% { opacity:.9 } 50% { opacity:1; transform: scale(1.012) } }
+    @keyframes breathe { 0%,100% { opacity:.85 } 50% { opacity:1 } }
+  </style>
+
+  <rect width="1000" height="480" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="27" fill="#ece7fb">AI imitates, it doesn't judge</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">bad practices in = bad practices out, multiplied</text>
+
+  <!-- INPUT: your code -->
+  <g>
+    <rect x="60" y="120" width="280" height="250" rx="14" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="82" y="152" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">📥 YOUR CODE</text>
+    <text x="82" y="171" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">with bad practices</text>
+    <line x1="82" y1="184" x2="318" y2="184" stroke="#3a2f52" stroke-width="1"/>
+    <text x="82" y="214" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ no tests</text>
+    <text x="82" y="246" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ duplicated code</text>
+    <text x="82" y="278" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ one class does it all</text>
+    <text x="82" y="310" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ logic in the view</text>
+    <text x="82" y="342" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ no architecture</text>
+  </g>
+
+  <line x1="340" y1="245" x2="404" y2="245" class="flow" stroke="#fb7185" stroke-width="2" marker-end="url(#mr)"/>
+
+  <!-- AI -->
+  <g class="ai">
+    <rect x="410" y="195" width="180" height="100" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="500" y="238" text-anchor="middle" font-size="26">🤖</text>
+    <text x="500" y="268" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">imitates, doesn't judge</text>
+  </g>
+
+  <line x1="590" y1="245" x2="654" y2="245" class="flow" stroke="#fb7185" stroke-width="2" marker-end="url(#mr)"/>
+
+  <!-- OUTPUT: what it generates -->
+  <g class="warn">
+    <rect x="660" y="120" width="280" height="250" rx="14" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="682" y="152" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">📤 WHAT IT GENERATES</text>
+    <text x="682" y="171" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the same flaws, at scale</text>
+    <line x1="682" y1="184" x2="918" y2="184" stroke="#3a2f52" stroke-width="1"/>
+    <text x="682" y="214" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ no tests ×N</text>
+    <text x="682" y="246" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ duplicated all over</text>
+    <text x="682" y="278" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ another god class</text>
+    <text x="682" y="310" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ same logic in the view</text>
+    <text x="682" y="342" font-family="ui-monospace, monospace" font-size="11.5" fill="#fb7185">✗ the same chaos, bigger</text>
+  </g>
+
+  <text x="40" y="452" font-family="Georgia, serif" font-size="18" fill="#ece7fb" font-style="italic">It doesn't fix your mistakes: it learns them, repeats them and multiplies them.</text>
+</svg>

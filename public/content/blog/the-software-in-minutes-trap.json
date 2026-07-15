@@ -1,0 +1,369 @@
+{
+  "slug": "the-software-in-minutes-trap",
+  "date": "2026-07-15",
+  "title": {
+    "es": "Software en minutos: la promesa que ya vi fallar, y por qué la IA sin rumbo la repite",
+    "en": "Software in minutes: the promise I watched fail, and why aimless AI repeats it"
+  },
+  "summary": {
+    "es": "Trabajé en una empresa que prometía sistemas en minutos con solo pasar plantillas. Nunca entregó calidad. Hoy la IA vende la misma promesa a mayor escala: cuento por qué 'rápido' no es 'terminado', qué dicen los datos sobre el código que genera sin supervisión, y por qué entrenar máquinas con software malo solo agranda el problema.",
+    "en": "I worked at a company that promised systems in minutes just by feeding it templates. It never delivered quality. Today AI sells the same promise at scale: I explain why 'fast' isn't 'finished', what the data says about the code it generates unsupervised, and why training machines on bad software only makes the problem bigger."
+  },
+  "tags": ["ia", "calidad", "supervisión", "arquitectura"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Hay empresas que venden una promesa irresistible: software empresarial completo en minutos. Yo la viví por dentro. Trabajé en una que aseguraba entregar sistemas enteros con solo rellenar unas plantillas y apretar un botón. Sonaba a magia, y como toda magia, el truco estaba en lo que no te mostraban: el sistema salía en minutos, sí, pero no servía. Hoy son empresas —muchas— las que venden esa misma promesa, ahora envuelta en IA y a mayor escala. Quiero contar por qué ya la vi fallar una vez, y por qué la IA sin rumbo la repite igual."
+      },
+      {
+        "kind": "quote",
+        "text": "Rápido no es lo mismo que terminado. Un sistema que sale en minutos y no sirve no te ahorró tiempo: te lo va a cobrar entero, con intereses, cuando toque arreglarlo."
+      },
+
+      { "kind": "heading", "text": "La empresa que prometía sistemas en minutos" },
+      {
+        "kind": "paragraph",
+        "text": "La idea era simple, casi seductora: teníamos unas plantillas —formularios, pantallas, reportes— y bastaba con rellenarlas y apretar un botón para que la herramienta generara el sistema. En la demo funcionaba de maravilla. El problema empezaba al día siguiente: en cuanto el cliente pedía algo que la plantilla no había previsto —una regla de negocio distinta, un caso raro, una integración— no había por dónde meterle mano. El código generado no lo había pensado nadie: no tenía arquitectura, no tenía pruebas, y no había forma de cambiarlo sin romper otras tres cosas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo vendíamos como velocidad, pero lo que entregábamos era deuda. Cada \"sistema en minutos\" se convertía en meses de parches. Y lo más incómodo: nadie en el equipo podía explicar del todo por qué el código hacía lo que hacía, porque no lo había escrito una persona razonando un problema — lo había escupido una plantilla. Ahí aprendí, a los golpes, algo que no se me olvidó: la parte difícil del software nunca fue teclear. Fue entender el problema, saber guiar la herramienta, tener una arquitectura definida y poder explicar por qué doy cada paso. Eso una plantilla no lo hace por ti — y una IA, tampoco: por sí sola no entiende tu negocio, solo te devuelve la probabilidad más alta de lo que le pediste. Y una probabilidad, cuando no sabes hacia dónde vas, se parece muchísimo a una respuesta correcta… hasta que llega a producción."
+      },
+
+      { "kind": "heading", "text": "Por qué \"en minutos\" es la señal de alarma" },
+      {
+        "kind": "paragraph",
+        "text": "Hay una razón de fondo, y la explicó Fred Brooks hace casi cuarenta años. Brooks partió el trabajo de hacer software en dos: lo accidental —escribir la sintaxis, pelear con las herramientas, teclear— y lo esencial —entender el problema, decidir cómo se estructura, pensar los casos que nadie mencionó. Las herramientas, decía, solo pueden acelerar lo accidental. Lo esencial, lo verdaderamente difícil, no se automatiza."
+      },
+      {
+        "kind": "quote",
+        "text": "No hay un solo avance, ni en la tecnología ni en la gestión, que por sí mismo prometa siquiera una mejora de un orden de magnitud en productividad, fiabilidad o simplicidad.",
+        "source": "Fred Brooks · No Silver Bullet, 1986",
+        "sourceUrl": "https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Traducido a hoy: la IA es buenísima con lo accidental. Teclea rapidísimo, conoce la sintaxis de cualquier lenguaje, rellena lo repetitivo en segundos. Por eso impresiona en las demos. Pero \"software empresarial en minutos\" promete resolver lo esencial —el problema real de un negocio— con una herramienta que solo domina lo accidental. Por eso sale rápido y por eso no sirve: es la plantilla otra vez, con mejor marketing."
+      },
+
+      { "kind": "heading", "text": "La IA sin rumbo: velocidad que no es avance" },
+      {
+        "kind": "paragraph",
+        "text": "Y hoy quien la vende no siempre sabe de qué habla. Aparecieron empresas y \"expertos\" que ofrecen justo esto —sistemas completos a golpe de prompt— pero les preguntas qué arquitectura manejan, cómo separan las capas, cómo prueban lo que entregan… y no hay respuesta. Creen que basta con escribir un prompt y que, por arte de magia, todo sale perfecto. El problema es que la magia no existe: el que paga la factura es el cliente que se queda con un sistema que nadie sabe sostener."
+      },
+      {
+        "kind": "paragraph",
+        "text": "\"Sin rumbo\" es cuando le sueltas a la IA \"hazme el sistema\" y aceptas lo que salga: sin una spec, sin arquitectura, sin nadie leyendo lo que produce. Va rapidísimo — hacia cualquier lado. Y esto ya no es opinión mía: hay datos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "GitClear analizó millones de líneas de código y encontró un patrón que preocupa desde que se popularizaron los asistentes de IA: el código duplicado se disparó —bloques clonados que se multiplicaron varias veces— mientras que el refactor, el trabajo de limpiar y reorganizar, se desplomó. En 2024, por primera vez, se copió y pegó más código del que se reordenó. Es decir: se escribe más, se piensa menos, y el resultado es una pila de código repetido que alguien tendrá que mantener."
+      },
+      {
+        "kind": "quote",
+        "text": "La IA no escribe código malo porque sea tonta. Lo escribe malo porque le pediste velocidad, no criterio — y te dio exactamente lo que pediste."
+      },
+
+      { "kind": "heading", "text": "Le metes mil fallas, te devuelve otras mil" },
+      {
+        "kind": "paragraph",
+        "text": "Una IA aprende de lo que ve. Si le das como ejemplo un proyecto lleno de malas prácticas —sin pruebas, con código duplicado por todas partes, una sola clase que hace de todo, la lógica de negocio metida dentro de la pantalla— no lo corrige. No tiene criterio para saber que está mal; tiene imitación. Lo toma como \"la forma en que aquí se hacen las cosas\" y genera más código igual, con los mismos vicios repetidos y multiplicados. Le metes mil fallas y te devuelve otras mil — esta vez más rápido y con más confianza. La IA no limpia tu desorden: lo escala."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/garbage-in-garbage-out.es.svg",
+        "caption": "La IA no juzga tu código: lo imita. Le entran malas prácticas y devuelve las mismas fallas, propagadas por todo el proyecto."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí viene la parte que casi nadie mira, la que de verdad me preocupa: qué pasa cuando ese código —rápido, duplicado, sin pensar— se vuelve la base de lo siguiente. Porque no se queda quieto: se copia al próximo proyecto, se sube a internet, y termina siendo el material con el que se entrena la próxima generación de modelos."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/quality-spiral.es.svg",
+        "caption": "El círculo vicioso: prometes minutos, la IA genera sin rumbo, entregas código sin calidad… y ese código alimenta lo siguiente. Cada vuelta, peor."
+      },
+
+      { "kind": "heading", "text": "El círculo vicioso: entrenar la IA con basura" },
+      {
+        "kind": "paragraph",
+        "text": "En 2024, un equipo publicó en Nature algo que suena a ciencia ficción pero está medido: si entrenas un modelo de IA con datos generados por otra IA, generación tras generación, el modelo colapsa. Pierde el contacto con la realidad y empieza a producir sinsentidos. En uno de sus experimentos, un texto que arrancaba hablando de arquitectura medieval terminó, nueve generaciones después, convertido en una lista de liebres."
+      },
+      {
+        "kind": "quote",
+        "text": "Entrenar de forma indiscriminada con contenido generado por IA provoca un colapso del modelo: pierde la capacidad de generar salidas diversas y de calidad.",
+        "source": "Shumailov et al. · Nature, 2024",
+        "sourceUrl": "https://www.nature.com/articles/s41586-024-07566-y"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cambia \"texto\" por \"código\" y tienes el retrato exacto del problema. Si el software que se entrega en minutos —sin arquitectura, duplicado, sin revisar— se vuelve el ejemplo con el que aprende la siguiente herramienta, la calidad no se estanca: baja. La basura entra, la basura se aprende, y sale más basura con acento de autoridad. Por eso me importa tanto lo que dejo en un repositorio: no es solo mi problema de hoy, es material de entrenamiento de mañana."
+      },
+
+      { "kind": "heading", "text": "Por qué la IA no puede trabajar sin supervisión" },
+      {
+        "kind": "paragraph",
+        "text": "Nada de esto significa que la IA sea inútil — la uso todos los días y me cambió la forma de trabajar. Significa que la IA es un motor, no un conductor. Y hay tres razones concretas por las que dejarla sola no funciona:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**No sabe cuándo terminó.** Un modelo no tiene forma de saber si su código de verdad resuelve el problema del negocio; solo sabe si \"se parece\" a código que ha visto. Alguien que entienda el problema tiene que decir \"esto sí, esto no\". Sin ese juicio, \"listo\" no significa nada.",
+          "**Te hace sentir seguro justo cuando no deberías.** Un estudio de Stanford encontró que quienes programaban con un asistente de IA escribían código *menos* seguro… y a la vez estaban *más* convencidos de que era seguro. La herramienta no solo introduce fallos: te quita las ganas de buscarlos. → [el estudio de Stanford](https://arxiv.org/abs/2211.03622)",
+          "**Rápido en la demo no es rápido en la realidad.** En un experimento controlado de 2025, desarrolladores experimentados tardaron un 19% *más* usando IA en sus propios proyectos — aunque ellos creían haber ido más rápido. La sensación de velocidad y la velocidad real no son lo mismo. → [el experimento de METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/)"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "La IA no responde por el código un domingo a las dos de la mañana. Respondes tú. Y no puedes responder por algo que nunca revisaste."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso, en mi trabajo, la IA nunca decide sola. Hay una especificación que nace de un problema real y que yo valido; hay una arquitectura que yo pongo; hay pruebas que dicen si algo funciona de verdad; y hay una revisión que contrasta cada cambio contra la spec y la arquitectura antes de que una sola línea llegue a producción — a veces la primera pasada la hace otro modelo, pero la última palabra la tengo yo, leyendo el diff línea por línea. No es más lento: es la diferencia entre entregar algo en minutos y entregar algo que sirva."
+      },
+
+      { "kind": "heading", "text": "No todo software necesita IA" },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí hablé de usar la IA para escribir software. Pero hay otra confusión igual de común: creer que todo producto tiene que llevar IA por dentro. Son cosas distintas —una es la herramienta con la que construyes; la otra es una función que le agregas al producto— y las dos sufren del mismo mal cuando se hacen sin rumbo: se mete IA porque está de moda, no porque el problema la necesite."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Chip Huyen, en su libro *AI Engineering*, lo pone como el primer error que ve una y otra vez: usar IA generativa cuando no hace falta. Muchos problemas se resuelven mejor con algo más simple, más barato y más confiable —una regla, una consulta, un poco de lógica— que con un modelo. Su ejemplo favorito: un equipo quería un LLM para decidir cuándo encender los electrodomésticos según el precio de la luz… cuando bastaba con programarlos para la hora más barata."
+      },
+      {
+        "kind": "quote",
+        "text": "\"Resolvemos el problema\" y \"usamos IA generativa\" son dos titulares muy distintos.",
+        "source": "Chip Huyen · AI Engineering (O'Reilly, 2025)",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y si tu producto de verdad necesita IA, el libro es claro en algo que conecta con todo lo que vengo diciendo: un modelo es probabilístico, no determinista. No siempre responde igual, y a veces se equivoca con total seguridad. Por eso construir con IA no es \"llamar a la API y listo\": exige empezar simple, no complicarse de entrada, poner evaluación —con personas, no solo métricas automáticas— y guardarraíles antes de ponerlo frente a un usuario. Meter IA sin eso no es un producto con IA: es una demo con suerte."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Es la misma lección, en otro nivel. Un software que escupe sistemas en minutos y un producto que le cuelga IA para parecer moderno cometen el mismo error de fondo: confunden usar una tecnología con resolver un problema. La pregunta nunca es \"¿le meto IA?\", sino \"¿el problema que estoy resolviendo de verdad necesita IA?\"."
+      },
+
+      { "kind": "heading", "text": "El código no se escribe para ti, se escribe para el que llega" },
+      {
+        "kind": "paragraph",
+        "text": "Hay una idea que me ordenó la forma de trabajar: escribir código no es lograr que la máquina te entienda —eso es lo fácil—, es lograr que la próxima persona te entienda. Ese \"próximo\" casi nunca eres tú: es el compañero que hereda el proyecto, o tú mismo dentro de seis meses, cuando ya no te acuerdas de nada. Por eso las malas prácticas no son un pecado estético: son una carta que le dejas al que viene, escrita en un idioma que no va a poder leer."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí está el giro que casi nadie ve: hoy \"el que llega\" también es la IA. Cuando le pides que modifique tu proyecto, trabaja sobre el contexto que le dejaste — el mismo que le dejarías a un humano. Si el código está claro, con una arquitectura que se entiende y decisiones explicadas, la IA rinde. Si es un desorden sin rumbo, hereda ese desorden y lo amplifica, como ya vimos. Escribir para el que llega dejó de ser solo cortesía con tus colegas: es, literalmente, lo que permite que la IA pueda ayudarte."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso trabajo dejando rastro: una spec que dice qué se pidió y por qué, una arquitectura que cualquiera puede seguir, y el porqué de cada decisión escrito donde se pueda encontrar. No lo hago por burocracia. Lo hago porque un software vive años y pasa por muchas manos —humanas y ahora también artificiales—, y el que llega, sea quien sea, solo puede trabajar bien con lo que le dejaste."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y quizá lo más importante: nada de esto va de sabérselas todas. Yo no me las sé, y llevo años en esto. Va de estudiar, de leer, y —sobre todo— de no tragarse las cosas enteras: preguntarse si lo que estás aprendiendo tiene un porqué, cuestionarlo, y salir de la zona de confort aunque incomode, porque es la única forma de crecer un poco cada día. Va de que el código de hoy sea mejor que el de ayer, y de mirar los propios errores de frente — porque cada fallo que entiendes de verdad es una trampa en la que no vuelves a caer. La IA no te ahorra ese camino: lo hace más importante. Te da velocidad, pero el criterio para distinguir lo que está bien de lo que no solo se construye estudiando, equivocándose y corrigiendo. Por eso sigo aprendiendo, y por eso escribo estas notas."
+      },
+
+      { "kind": "heading", "text": "Lo que sí funciona" },
+      {
+        "kind": "paragraph",
+        "text": "El antídoto contra la IA sin rumbo no es dejar de usar IA — es darle rumbo. Un problema entendido, una spec como fuente de verdad, una tarea a la vez, y evidencia de que cada paso quedó bien antes de seguir. La velocidad aparece sola cuando el camino está claro; forzarla desde el principio es lo que produce basura. Lo conté en detalle en [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours) y en [por qué dos agentes trabajan mejor que uno](/daily/what-is-an-ai-agent)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si algo me dejó aquella empresa de las plantillas, fue una vacuna: cada vez que escucho \"software en minutos, sin esfuerzo\", sé exactamente cómo termina esa película. La IA es la herramienta más potente que he tenido en las manos. Pero una herramienta potente sin rumbo no te lleva más lejos — te lleva al mismo muro, más rápido. Si quieres ver cómo trabajo cuando el rumbo importa, te dejo [mis proyectos](/projects) y [en qué te puedo ayudar](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[No Silver Bullet](https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf) — Fred Brooks, 1986: la distinción entre lo esencial y lo accidental del software. Casi cuarenta años después, sigue explicando por qué no hay atajos mágicos.",
+          "[AI Copilot Code Quality](https://www.gitclear.com/ai_assistant_code_quality_2025_research) — GitClear: el análisis de millones de líneas que mide el aumento del código duplicado y la caída del refactor desde la llegada de los asistentes.",
+          "[AI models collapse when trained on recursively generated data](https://www.nature.com/articles/s41586-024-07566-y) — Shumailov et al., Nature 2024: la demostración del colapso del modelo cuando la IA se entrena con su propia salida.",
+          "[Do Users Write More Insecure Code with AI Assistants?](https://arxiv.org/abs/2211.03622) — Perry et al., Stanford: el estudio del código menos seguro y la falsa sensación de seguridad.",
+          "[Measuring the Impact of Early-2025 AI on Developer Productivity](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — METR: el experimento controlado donde la IA hizo a los desarrolladores un 19% más lentos, sin que se dieran cuenta.",
+          "[AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/) — Chip Huyen, O'Reilly 2025: cómo se construye software sobre modelos de fundación de verdad —evaluación, guardarraíles y cuándo NO usar IA. La versión seria y completa de esta nota. ([Los errores más comunes](https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html), gratis, son un buen aperitivo.)"
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "There are companies selling an irresistible promise: complete enterprise software in minutes. I lived it from the inside. I worked at one that claimed to deliver entire systems just by filling in a few templates and pressing a button. It sounded like magic, and like all magic, the trick was in what they didn't show you: the system did come out in minutes — but it didn't work. Today it's companies —plenty of them— selling that same promise, now wrapped in AI and at a bigger scale. I want to tell you why I already watched it fail once, and why aimless AI repeats it all the same."
+      },
+      {
+        "kind": "quote",
+        "text": "Fast is not the same as finished. A system that ships in minutes and doesn't work didn't save you time: it will charge you in full, with interest, when you have to fix it."
+      },
+
+      { "kind": "heading", "text": "The company that promised systems in minutes" },
+      {
+        "kind": "paragraph",
+        "text": "The idea was simple, almost seductive: we had templates —forms, screens, reports— and you just filled them in and pressed a button for the tool to generate the system. In the demo it worked beautifully. The trouble started the next day: the moment a client asked for something the template hadn't foreseen —a different business rule, an odd case, an integration— there was no way in. Nobody had thought the generated code through: it had no architecture, no tests, and no way to change it without breaking three other things."
+      },
+      {
+        "kind": "paragraph",
+        "text": "We sold it as speed, but what we delivered was debt. Every \"system in minutes\" turned into months of patches. And the most uncomfortable part: nobody on the team could fully explain why the code did what it did, because no person had written it reasoning about a problem — a template had spat it out. That's where I learned, the hard way, something I never forgot: the hard part of software was never the typing. It was understanding the problem, knowing how to steer the tool, having a defined architecture, and being able to explain why I take each step. A template doesn't do that for you — and neither does an AI: on its own it doesn't understand your business, it just hands you the highest-probability version of what you asked for. And a probability, when you don't know where you're headed, looks an awful lot like a correct answer… until it reaches production."
+      },
+
+      { "kind": "heading", "text": "Why \"in minutes\" is the alarm bell" },
+      {
+        "kind": "paragraph",
+        "text": "There's a deeper reason, and Fred Brooks explained it almost forty years ago. Brooks split the work of building software in two: the accidental —writing the syntax, wrestling with the tools, typing— and the essential —understanding the problem, deciding how it's structured, thinking through the cases nobody mentioned. Tools, he said, can only speed up the accidental. The essential, the genuinely hard part, doesn't automate."
+      },
+      {
+        "kind": "quote",
+        "text": "There is no single development, in either technology or management technique, which by itself promises even one order of magnitude improvement in productivity, in reliability, in simplicity.",
+        "source": "Fred Brooks · No Silver Bullet, 1986",
+        "sourceUrl": "https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Translated to today: AI is brilliant at the accidental. It types blazingly fast, knows the syntax of any language, fills in the repetitive stuff in seconds. That's why it dazzles in demos. But \"enterprise software in minutes\" promises to solve the essential —the real problem of a business— with a tool that only masters the accidental. That's why it comes out fast and that's why it doesn't work: it's the template again, with better marketing."
+      },
+
+      { "kind": "heading", "text": "Aimless AI: speed that isn't progress" },
+      {
+        "kind": "paragraph",
+        "text": "And today the people selling it don't always know what they're talking about. Companies and \"experts\" have popped up offering exactly this —complete systems at the flick of a prompt— but you ask them what architecture they use, how they separate the layers, how they test what they deliver… and there's no answer. They believe writing a prompt is enough and that, as if by magic, everything comes out perfect. The trouble is that magic doesn't exist: the one who foots the bill is the client left with a system nobody knows how to maintain."
+      },
+      {
+        "kind": "paragraph",
+        "text": "\"Aimless\" is when you throw \"build me the system\" at the AI and accept whatever comes out: no spec, no architecture, nobody reading what it produces. It moves blazingly fast — in every direction. And this is no longer just my opinion: there's data."
+      },
+      {
+        "kind": "paragraph",
+        "text": "GitClear analyzed millions of lines of code and found a worrying pattern since AI assistants went mainstream: duplicated code shot up —cloned blocks that multiplied several times over— while refactoring, the work of cleaning up and reorganizing, collapsed. In 2024, for the first time, more code was copy-pasted than reorganized. In other words: more is written, less is thought through, and the result is a pile of repeated code someone will have to maintain."
+      },
+      {
+        "kind": "quote",
+        "text": "AI doesn't write bad code because it's dumb. It writes it badly because you asked for speed, not judgment — and it gave you exactly what you asked for."
+      },
+
+      { "kind": "heading", "text": "Feed it a thousand flaws, it hands back another thousand" },
+      {
+        "kind": "paragraph",
+        "text": "An AI learns from what it sees. If you hand it as an example a project full of bad practices —no tests, duplicated code everywhere, a single class that does everything, business logic buried inside the screen— it doesn't fix it. It has no judgment to know it's wrong; it has imitation. It takes it as \"the way things are done here\" and generates more code just like it, with the same flaws repeated and multiplied. Feed it a thousand flaws and it hands back another thousand — this time faster and with more confidence. AI doesn't clean up your mess: it scales it."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/garbage-in-garbage-out.en.svg",
+        "caption": "AI doesn't judge your code: it imitates it. Bad practices go in and the same flaws come back, spread across the whole project."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here comes the part almost nobody looks at, the one that really worries me: what happens when that code —fast, duplicated, unconsidered— becomes the basis for what comes next. Because it doesn't sit still: it gets copied into the next project, uploaded to the internet, and ends up as the material the next generation of models is trained on."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/quality-spiral.en.svg",
+        "caption": "The vicious cycle: you promise minutes, the AI generates without direction, you ship code with no quality… and that code feeds the next one. Every loop, worse."
+      },
+
+      { "kind": "heading", "text": "The vicious cycle: training AI on garbage" },
+      {
+        "kind": "paragraph",
+        "text": "In 2024, a team published in Nature something that sounds like science fiction but is measured: if you train an AI model on data generated by another AI, generation after generation, the model collapses. It loses contact with reality and starts producing nonsense. In one of their experiments, a text that started out about medieval architecture ended up, nine generations later, turned into a list of jackrabbits."
+      },
+      {
+        "kind": "quote",
+        "text": "Indiscriminately training on AI-generated content leads to model collapse: it loses the ability to generate diverse, high-quality output.",
+        "source": "Shumailov et al. · Nature, 2024",
+        "sourceUrl": "https://www.nature.com/articles/s41586-024-07566-y"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Swap \"text\" for \"code\" and you have the exact portrait of the problem. If the software shipped in minutes —no architecture, duplicated, unreviewed— becomes the example the next tool learns from, quality doesn't plateau: it drops. Garbage in, garbage learned, and out comes more garbage in an authoritative tone. That's why I care so much about what I leave in a repository: it's not just my problem today, it's tomorrow's training data."
+      },
+
+      { "kind": "heading", "text": "Why AI can't work without supervision" },
+      {
+        "kind": "paragraph",
+        "text": "None of this means AI is useless — I use it every day and it changed the way I work. It means AI is an engine, not a driver. And there are three concrete reasons why leaving it alone doesn't work:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**It doesn't know when it's done.** A model has no way of knowing whether its code actually solves the business problem; it only knows whether it \"looks like\" code it has seen. Someone who understands the problem has to say \"this yes, this no\". Without that judgment, \"done\" means nothing.",
+          "**It makes you feel safe exactly when you shouldn't.** A Stanford study found that people coding with an AI assistant wrote *less* secure code… while being *more* convinced it was secure. The tool doesn't just introduce flaws: it takes away your urge to look for them. → [the Stanford study](https://arxiv.org/abs/2211.03622)",
+          "**Fast in the demo isn't fast in reality.** In a 2025 controlled experiment, experienced developers took 19% *longer* using AI on their own projects — even though they believed they'd gone faster. The feeling of speed and actual speed are not the same thing. → [the METR experiment](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/)"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "AI won't answer for the code on a Sunday at two in the morning. You will. And you can't answer for something you never reviewed."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why, in my work, AI never decides alone. There's a specification born from a real problem that I validate; there's an architecture that I set; there are tests that say whether something actually works; and there's a review that checks every change against the spec and the architecture before a single line reaches production — sometimes another model does the first pass, but the final word is mine, reading the diff line by line. It isn't slower: it's the difference between shipping something in minutes and shipping something that works."
+      },
+
+      { "kind": "heading", "text": "Not every piece of software needs AI" },
+      {
+        "kind": "paragraph",
+        "text": "So far I've talked about using AI to write software. But there's another equally common confusion: believing every product has to carry AI inside. They're different things —one is the tool you build with; the other is a feature you add to the product— and both suffer the same illness when done without direction: AI gets bolted on because it's trendy, not because the problem needs it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Chip Huyen, in her book AI Engineering, names it as the first mistake she sees over and over: using generative AI when you don't need it. Many problems are better solved with something simpler, cheaper and more reliable —a rule, a query, a bit of logic— than with a model. Her favorite example: a team wanted an LLM to decide when to run household appliances based on electricity prices… when simply scheduling them for the cheapest hour would do."
+      },
+      {
+        "kind": "quote",
+        "text": "\"We solve the problem\" and \"We use generative AI\" are two very different headlines.",
+        "source": "Chip Huyen · AI Engineering (O'Reilly, 2025)",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And if your product genuinely needs AI, the book is clear on something that ties into everything I've been saying: a model is probabilistic, not deterministic. It doesn't always answer the same way, and sometimes it's confidently wrong. That's why building with AI isn't \"call the API and done\": it demands starting simple, not over-complicating from the outset, adding evaluation —with people, not just automatic metrics— and guardrails before it ever faces a user. Bolting on AI without that isn't a product with AI: it's a demo running on luck."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It's the same lesson, at another level. Software that spits out systems in minutes and a product that straps on AI to look modern make the same underlying mistake: they confuse using a technology with solving a problem. The question is never \"should I add AI?\", but \"does the problem I'm solving actually need AI?\"."
+      },
+
+      { "kind": "heading", "text": "Code isn't written for you, it's written for whoever comes next" },
+      {
+        "kind": "paragraph",
+        "text": "There's an idea that reshaped the way I work: writing code isn't about getting the machine to understand you —that's the easy part—, it's about getting the next person to understand you. That \"next person\" is almost never you: it's the teammate who inherits the project, or you yourself six months from now, when you remember nothing. That's why bad practices aren't an aesthetic sin: they're a letter you leave for whoever comes, written in a language they won't be able to read."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's the twist almost nobody sees: today \"whoever comes next\" is also the AI. When you ask it to modify your project, it works from the context you left behind — the very same you'd leave a human. If the code is clear, with an architecture that makes sense and decisions that are explained, the AI performs. If it's aimless chaos, it inherits that chaos and amplifies it, as we already saw. Writing for whoever comes next stopped being just a courtesy to your colleagues: it's, quite literally, what lets the AI help you at all."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why I work leaving a trail: a spec that says what was asked and why, an architecture anyone can follow, and the reasoning behind each decision written where it can be found. I don't do it out of bureaucracy. I do it because software lives for years and passes through many hands —human, and now artificial too—, and whoever comes next, whoever they are, can only work well with what you left them."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And maybe the most important thing: none of this is about knowing everything. I don't, and I've been at this for years. It's about studying, reading, and —above all— not swallowing things whole: asking whether what you're learning has a reason behind it, questioning it, and stepping out of your comfort zone even when it stings, because that's the only way to grow a little every day. It's about today's code being better than yesterday's, and about looking your own mistakes in the eye — because every bug you truly understand is a trap you won't fall into again. AI doesn't spare you that path: it makes it matter more. It gives you speed, but the judgment to tell what's good from what isn't is only built by studying, getting it wrong and fixing it. That's why I keep learning, and why I write these notes."
+      },
+
+      { "kind": "heading", "text": "What actually works" },
+      {
+        "kind": "paragraph",
+        "text": "The antidote to aimless AI isn't to stop using AI — it's to give it direction. A problem understood, a spec as the source of truth, one task at a time, and evidence that each step is right before moving on. Speed shows up on its own when the path is clear; forcing it from the start is what produces garbage. I told it in detail in [how I ship a complete feature in hours](/daily/ship-a-feature-in-hours) and in [why two agents beat one](/daily/what-is-an-ai-agent)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If that template company left me anything, it was a vaccine: every time I hear \"software in minutes, effortless\", I know exactly how that movie ends. AI is the most powerful tool I've ever had in my hands. But a powerful tool with no direction doesn't take you further — it takes you to the same wall, faster. If you want to see how I work when direction matters, here are [my projects](/projects) and [how I can help you](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[No Silver Bullet](https://worrydream.com/refs/Brooks_1986_-_No_Silver_Bullet.pdf) — Fred Brooks, 1986: the distinction between the essential and the accidental in software. Almost forty years on, it still explains why there are no magic shortcuts.",
+          "[AI Copilot Code Quality](https://www.gitclear.com/ai_assistant_code_quality_2025_research) — GitClear: the analysis of millions of lines measuring the rise in duplicated code and the fall in refactoring since assistants arrived.",
+          "[AI models collapse when trained on recursively generated data](https://www.nature.com/articles/s41586-024-07566-y) — Shumailov et al., Nature 2024: the demonstration of model collapse when AI is trained on its own output.",
+          "[Do Users Write More Insecure Code with AI Assistants?](https://arxiv.org/abs/2211.03622) — Perry et al., Stanford: the study on less secure code and the false sense of security.",
+          "[Measuring the Impact of Early-2025 AI on Developer Productivity](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — METR: the controlled experiment where AI made developers 19% slower, without them noticing.",
+          "[AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/) — Chip Huyen, O'Reilly 2025: how software is really built on top of foundation models —evaluation, guardrails and when NOT to use AI. The serious, complete version of this note. ([The common pitfalls](https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html), free, are a good appetizer.)"
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,18 @@
 [
   {
+    "slug": "the-software-in-minutes-trap",
+    "date": "2026-07-15",
+    "title": {
+      "es": "Software en minutos: la promesa que ya vi fallar, y por qué la IA sin rumbo la repite",
+      "en": "Software in minutes: the promise I watched fail, and why aimless AI repeats it"
+    },
+    "summary": {
+      "es": "Trabajé en una empresa que prometía sistemas en minutos con solo pasar plantillas. Nunca entregó calidad. Hoy la IA vende la misma promesa a mayor escala: cuento por qué 'rápido' no es 'terminado', qué dicen los datos sobre el código que genera sin supervisión, y por qué entrenar máquinas con software malo solo agranda el problema.",
+      "en": "I worked at a company that promised systems in minutes just by feeding it templates. It never delivered quality. Today AI sells the same promise at scale: I explain why 'fast' isn't 'finished', what the data says about the code it generates unsupervised, and why training machines on bad software only makes the problem bigger."
+    },
+    "tags": ["ia", "calidad", "supervisión", "arquitectura"]
+  },
+  {
     "slug": "what-is-an-ai-agent",
     "date": "2026-07-14",
     "title": {

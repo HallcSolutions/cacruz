@@ -5,9 +5,21 @@
       class="switcher__option"
       [class.switcher__option--active]="i18n.language() === language"
       [attr.aria-pressed]="i18n.language() === language"
-      (click)="i18n.setLanguage(language)"
+      (click)="select(language)"
     >
       {{ language }}
     </button>
+  }
+
+  @if (pr(); as phase) {
+    <span class="switcher__pr" [class.switcher__pr--merged]="phase === 'merged'" aria-hidden="true">
+      @if (phase === 'checks') {
+        <span class="switcher__spinner"></span>
+        <span>checks…</span>
+      } @else {
+        <span class="switcher__check">✓</span>
+        <span>merged</span>
+      }
+    </span>
   }
 </div>

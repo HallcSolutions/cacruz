@@ -1,6 +1,13 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '@angular/core';
 import { SUPPORTED_LANGUAGES } from '../../../core/i18n/language-options';
+import { Language } from '../../../core/i18n/language.model';
 import { TranslationService } from '../../../core/i18n/translation.service';
+
+/** Fases del "pull request" que simula el cambio de idioma. */
+type PrPhase = 'checks' | 'merged' | null;
+
+const CHECKS_MS = 650;
+const MERGED_MS = 1500;
 
 @Component({
   selector: 'app-language-switcher',
@@ -11,4 +18,34 @@ import { TranslationService } from '../../../core/i18n/translation.service';
 export class LanguageSwitcher {
   protected readonly i18n = inject(TranslationService);
   protected readonly languages = SUPPORTED_LANGUAGES;
+
+  /** Fase visible del PR; el idioma ya cambió, esto es la animación. */
+  protected readonly pr = signal<PrPhase>(null);
+
+  private timers: ReturnType<typeof setTimeout>[] = [];
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.clearTimers());
+  }
+
+  protected select(language: Language): void {
+    if (this.i18n.language() === language) {
+      return;
+    }
+    // El cambio es inmediato; el flujo de PR es la capa visual que lo acompaña.
+    this.i18n.setLanguage(language);
+    this.runPullRequest();
+  }
+
+  private runPullRequest(): void {
+    this.clearTimers();
+    this.pr.set('checks');
+    this.timers.push(setTimeout(() => this.pr.set('merged'), CHECKS_MS));
+    this.timers.push(setTimeout(() => this.pr.set(null), MERGED_MS));
+  }
+
+  private clearTimers(): void {
+    this.timers.forEach(clearTimeout);
+    this.timers = [];
+  }
 }

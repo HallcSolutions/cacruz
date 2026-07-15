@@ -225,6 +225,10 @@
 }
 
 .value__action--primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  font-family: var(--font-mono);
   background: var(--accent);
   border-color: var(--accent);
   color: var(--bg);
@@ -233,6 +237,23 @@
 .value__action--primary:hover {
   background: var(--accent-2);
   border-color: var(--accent-2);
+}
+
+.value__prompt {
+  font-weight: 700;
+}
+
+.value__caret {
+  width: 8px;
+  height: 1em;
+  background: var(--bg);
+  animation: value-caret 1s steps(2) infinite;
+}
+
+@keyframes value-caret {
+  50% {
+    opacity: 0;
+  }
 }
 
 @media (max-width: 760px) {

@@ -9,7 +9,11 @@ import {
   LINKEDIN_PROFILE_URL,
   YOUTUBE_PROFILE_URL,
 } from './hero-links';
-import { INITIAL_TYPEWRITER_STATE, nextTypewriterState, typewriterText } from './typewriter';
+import {
+  INITIAL_TYPEWRITER_STATE,
+  nextTypewriterState,
+  typewriterText,
+} from '../../../../shared/utils/typewriter';
 
 const TYPE_WORDS = [
   'Angular',

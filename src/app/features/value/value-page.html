@@ -40,11 +40,16 @@
     <h3 class="value__cta-title">{{ 'value.cta.title' | t }}</h3>
     <p class="value__cta-body">{{ 'value.cta.body' | t }}</p>
     <div class="value__actions">
-      <button type="button" class="value__action value__action--primary" (click)="contactOpen.set(true)">
-        {{ 'value.cta.email' | t }} →
+      <button
+        type="button"
+        class="value__action value__action--primary"
+        [attr.aria-label]="'value.cta.email' | t"
+        (click)="contactOpen.set(true)"
+      >
+        <span class="value__prompt" aria-hidden="true">$</span>
+        <span class="value__typed">{{ typedCta() }}</span>
+        <span class="value__caret" aria-hidden="true"></span>
       </button>
-      <a class="value__action" [href]="linkedinUrl" target="_blank" rel="noopener">LinkedIn</a>
-      <a class="value__action" [href]="githubUrl" target="_blank" rel="noopener">GitHub</a>
     </div>
   </div>
 </section>

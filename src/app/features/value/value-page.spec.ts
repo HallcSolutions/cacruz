@@ -63,12 +63,12 @@ describe('ValuePage', () => {
     expect(values).toEqual(['12+', '10', '2', '3']);
   });
 
-  // R45 — llamado a la acción con contacto
-  it('closes with a contact call to action (R45)', () => {
+  // R45 — llamado a la acción con contacto (un único CTA, como el inicio)
+  it('closes with a single contact call to action (R45)', () => {
     const host = render();
-    const links = Array.from(host.querySelectorAll('a')).map((a) => a.getAttribute('href'));
-    expect(links).toContain('https://www.linkedin.com/in/christian-alexis-cruz-arango/');
-    expect(links).toContain('https://github.com/ChristianCruzArango');
+    const actions = host.querySelectorAll('.value__actions .value__action');
+    expect(actions.length).toBe(1);
+    expect(host.querySelector('.value__action--primary')).toBeTruthy();
   });
 
   // R46 — el CTA abre el modal de contacto

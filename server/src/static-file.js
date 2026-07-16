@@ -16,6 +16,18 @@ export function contentTypeFor(filePath) {
   return CONTENT_TYPES[extname(filePath).toLowerCase()] ?? 'application/octet-stream';
 }
 
+/** Angular compila con `outputHashing: all`: `main-BY5G54AD.js`, `styles-4PSDNNBK.css`. */
+const HASHED_BUILD_OUTPUT = /-[A-Z0-9]{8}\.(js|css)$/;
+
+/**
+ * Solo lo que cambia de nombre al cambiar de contenido puede cachearse para siempre.
+ * El resto (contenido e imágenes conservan su nombre entre despliegues) debe revalidarse,
+ * o el visitante seguiría viendo la versión anterior del sitio.
+ */
+export function cacheControlFor(filePath) {
+  return HASHED_BUILD_OUTPUT.test(filePath) ? 'public, max-age=31536000, immutable' : 'no-cache';
+}
+
 /**
  * Traduce la URL pedida a una ruta dentro de la carpeta publicada.
  * Devuelve null si la ruta intenta salirse (path traversal).

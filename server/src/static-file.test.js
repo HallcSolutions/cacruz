@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
+import { cacheControlFor, contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
 
 const ROOT = join('D:', 'app', 'dist', 'browser');
 
@@ -36,4 +36,26 @@ test('asigna el content-type correcto', () => {
   assert.equal(contentTypeFor('/images/spec.svg'), 'image/svg+xml');
   assert.equal(contentTypeFor('/content/blog/index.json'), 'application/json; charset=utf-8');
   assert.equal(contentTypeFor('/raro.xyz'), 'application/octet-stream');
+});
+
+test('los archivos con hash de Angular se cachean para siempre', () => {
+  assert.equal(cacheControlFor('/main-BY5G54AD.js'), 'public, max-age=31536000, immutable');
+  assert.equal(cacheControlFor('/styles-4PSDNNBK.css'), 'public, max-age=31536000, immutable');
+  assert.equal(cacheControlFor('/chunk-2JRDSQTZ.js'), 'public, max-age=31536000, immutable');
+  assert.equal(cacheControlFor('/polyfills-5CFQRCPP.js'), 'public, max-age=31536000, immutable');
+});
+
+test('el contenido y las imágenes se revalidan en cada visita', () => {
+  assert.equal(cacheControlFor('/content/blog/index.json'), 'no-cache');
+  assert.equal(cacheControlFor('/content/profile.es.json'), 'no-cache');
+  assert.equal(cacheControlFor('/images/blog/agent-loop.es.svg'), 'no-cache');
+  assert.equal(cacheControlFor('/images/avatar.png'), 'no-cache');
+  assert.equal(cacheControlFor('/favicon.ico'), 'no-cache');
+});
+
+test('un nombre sin hash no se confunde con uno hasheado', () => {
+  assert.equal(cacheControlFor('/main.js'), 'no-cache');
+  assert.equal(cacheControlFor('/styles.css'), 'no-cache');
+  assert.equal(cacheControlFor('/images/mi-foto-DE-VIAJE.png'), 'no-cache');
+  assert.equal(cacheControlFor('/content/blog/ONE-CONTRACT.json'), 'no-cache');
 });

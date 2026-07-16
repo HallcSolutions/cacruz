@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 import { buildAckEmail, buildEmail, validateContactMessage } from './contact-message.js';
 import { createMailer } from './mailer.js';
 import { injectSocialMeta, originFrom, socialMetaFor } from './social-meta.js';
-import { contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
+import { cacheControlFor, contentTypeFor, isSpaRoute, resolveStaticPath } from './static-file.js';
 
 const PORT = Number(process.env.PORT ?? 8080);
 const TO = process.env.CONTACT_TO ?? 'christiancruzarango@gmail.com';
@@ -86,7 +86,7 @@ async function serveStatic(request, response) {
 
   response.writeHead(200, {
     'Content-Type': contentTypeFor(file),
-    'Cache-Control': 'public, max-age=31536000',
+    'Cache-Control': cacheControlFor(file),
   });
   createReadStream(file).pipe(response);
 }

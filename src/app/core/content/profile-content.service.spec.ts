@@ -30,7 +30,7 @@ describe('ProfileContentService', () => {
     const http = TestBed.inject(HttpTestingController);
 
     TestBed.tick();
-    http.expectOne('content/profile.es.json').flush(FAKE_CONTENT);
+    http.expectOne('content/profile.es.json?v=2').flush(FAKE_CONTENT);
     await TestBed.inject(ApplicationRef).whenStable();
 
     expect(service.content.value()).toEqual(FAKE_CONTENT);
@@ -40,13 +40,13 @@ describe('ProfileContentService', () => {
     const service = TestBed.inject(ProfileContentService);
     const http = TestBed.inject(HttpTestingController);
     TestBed.tick();
-    http.expectOne('content/profile.es.json').flush(FAKE_CONTENT);
+    http.expectOne('content/profile.es.json?v=2').flush(FAKE_CONTENT);
     await TestBed.inject(ApplicationRef).whenStable();
 
     TestBed.inject(TranslationService).setLanguage('en');
     TestBed.tick();
 
-    http.expectOne('content/profile.en.json').flush(FAKE_CONTENT);
+    http.expectOne('content/profile.en.json?v=2').flush(FAKE_CONTENT);
     await TestBed.inject(ApplicationRef).whenStable();
     expect(service.content.value()).toEqual(FAKE_CONTENT);
   });

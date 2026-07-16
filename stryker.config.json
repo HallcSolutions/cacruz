@@ -10,7 +10,9 @@
   "mutate": [
     "src/app/core/i18n/translation.service.ts",
     "src/app/core/i18n/language-options.ts",
+    "src/app/core/content/content-version.ts",
     "src/app/core/content/profile-content-url.ts",
+    "src/app/features/software/software-content-url.ts",
     "src/app/features/home/sections/hero/typewriter.ts",
     "src/app/features/stack/sections/stack-code/build-stack-lines.ts",
     "src/app/shared/components/contact-modal/build-mailto-url.ts",

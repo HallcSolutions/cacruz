@@ -29,7 +29,7 @@ describe('BlogService', () => {
 
     TestBed.tick();
     http
-      .expectOne('content/blog/index.json')
+      .expectOne('content/blog/index.json?v=2')
       .flush([meta('viejo', '2024-05-01'), meta('nuevo', '2026-07-13')]);
     await TestBed.inject(ApplicationRef).whenStable();
 
@@ -43,8 +43,8 @@ describe('BlogService', () => {
 
     const post = service.postResource(() => 'mi-entrada');
     TestBed.tick();
-    http.expectOne('content/blog/index.json').flush([]);
-    http.expectOne('content/blog/mi-entrada.json').flush({
+    http.expectOne('content/blog/index.json?v=2').flush([]);
+    http.expectOne('content/blog/mi-entrada.json?v=2').flush({
       ...meta('mi-entrada', '2026-07-13'),
       body: {
         es: [{ kind: 'paragraph', text: 'hola' }],
@@ -64,9 +64,9 @@ describe('BlogService', () => {
 
     const post = service.postResource(() => 'no-existe');
     TestBed.tick();
-    http.expectOne('content/blog/index.json').flush([]);
+    http.expectOne('content/blog/index.json?v=2').flush([]);
     http
-      .expectOne('content/blog/no-existe.json')
+      .expectOne('content/blog/no-existe.json?v=2')
       .flush('not found', { status: 404, statusText: 'Not Found' });
     await TestBed.inject(ApplicationRef).whenStable();
 

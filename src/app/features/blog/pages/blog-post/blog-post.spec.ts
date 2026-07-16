@@ -43,14 +43,14 @@ describe('BlogPostPage', () => {
     const fixture = TestBed.createComponent(BlogPostPage);
     fixture.componentRef.setInput('slug', slug);
     fixture.detectChanges();
-    TestBed.inject(HttpTestingController).expectOne('content/blog/index.json').flush([]);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/index.json?v=2').flush([]);
     return fixture;
   }
 
   // R10 — detalle completo en el idioma activo
   it('renders the full post in the active language (R10)', async () => {
     const fixture = create('mi-entrada');
-    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json').flush(POST);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json?v=2').flush(POST);
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -63,7 +63,7 @@ describe('BlogPostPage', () => {
   // R54 — la entrada renderiza todos los tipos de bloque
   it('renders headings, steps, terminal blocks, images and quotes (R54)', async () => {
     const fixture = create('mi-entrada');
-    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json').flush(POST);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json?v=2').flush(POST);
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -81,7 +81,7 @@ describe('BlogPostPage', () => {
   // R58 — la cita muestra su autoría, enlazada a la referencia original
   it('shows the attribution of a quote, linked to its source (R58)', async () => {
     const fixture = create('mi-entrada');
-    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json').flush(POST);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json?v=2').flush(POST);
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -95,7 +95,7 @@ describe('BlogPostPage', () => {
   // R55 — los enlaces del texto se renderizan y los externos abren en pestaña nueva
   it('renders inline links, opening external ones in a new tab (R55)', async () => {
     const fixture = create('mi-entrada');
-    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json').flush(POST);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json?v=2').flush(POST);
     await fixture.whenStable();
     fixture.detectChanges();
 
@@ -111,7 +111,7 @@ describe('BlogPostPage', () => {
   it('shows a not-found state with a way back for missing posts (R12)', async () => {
     const fixture = create('no-existe');
     TestBed.inject(HttpTestingController)
-      .expectOne('content/blog/no-existe.json')
+      .expectOne('content/blog/no-existe.json?v=2')
       .flush('nope', { status: 404, statusText: 'Not Found' });
     await fixture.whenStable();
     fixture.detectChanges();

@@ -35,7 +35,7 @@ describe('SoftwareContentService', () => {
     const http = TestBed.inject(HttpTestingController);
 
     TestBed.tick();
-    http.expectOne('content/software.es.json').flush(FAKE_PRODUCTS);
+    http.expectOne('content/software.es.json?v=2').flush(FAKE_PRODUCTS);
     await TestBed.inject(ApplicationRef).whenStable();
 
     expect(service.products.value()).toEqual(FAKE_PRODUCTS);
@@ -45,13 +45,13 @@ describe('SoftwareContentService', () => {
     const service = TestBed.inject(SoftwareContentService);
     const http = TestBed.inject(HttpTestingController);
     TestBed.tick();
-    http.expectOne('content/software.es.json').flush(FAKE_PRODUCTS);
+    http.expectOne('content/software.es.json?v=2').flush(FAKE_PRODUCTS);
     await TestBed.inject(ApplicationRef).whenStable();
 
     TestBed.inject(TranslationService).setLanguage('en');
     TestBed.tick();
 
-    http.expectOne('content/software.en.json').flush(FAKE_PRODUCTS);
+    http.expectOne('content/software.en.json?v=2').flush(FAKE_PRODUCTS);
     await TestBed.inject(ApplicationRef).whenStable();
     expect(service.products.value()).toEqual(FAKE_PRODUCTS);
   });

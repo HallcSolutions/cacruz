@@ -39,7 +39,7 @@ describe('SoftwarePage', () => {
   // R62 — la página presenta la consola con los productos del contenido
   it('renders the deploy console with the loaded products (R62)', async () => {
     TestBed.tick();
-    TestBed.inject(HttpTestingController).expectOne('content/software.es.json').flush(PRODUCTS);
+    TestBed.inject(HttpTestingController).expectOne('content/software.es.json?v=2').flush(PRODUCTS);
     await fixture.whenStable();
     fixture.detectChanges();
 

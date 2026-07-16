@@ -1,7 +1,9 @@
+import { withContentVersion } from '../../../core/content/content-version';
+
 export function blogIndexUrl(): string {
-  return 'content/blog/index.json';
+  return withContentVersion('content/blog/index.json');
 }
 
 export function blogPostUrl(slug: string): string {
-  return `content/blog/${slug}.json`;
+  return withContentVersion(`content/blog/${slug}.json`);
 }

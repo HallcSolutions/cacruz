@@ -36,7 +36,7 @@ describe('BlogListPage', () => {
   async function render() {
     const fixture = TestBed.createComponent(BlogListPage);
     fixture.detectChanges();
-    TestBed.inject(HttpTestingController).expectOne('content/blog/index.json').flush(INDEX);
+    TestBed.inject(HttpTestingController).expectOne('content/blog/index.json?v=2').flush(INDEX);
     await fixture.whenStable();
     fixture.detectChanges();
     return fixture;

@@ -1,0 +1,127 @@
+<div class="console">
+  <p class="console__counter">
+    <span class="console__prompt" aria-hidden="true">❯</span>
+    {{ 'software.services' | t }} — {{ onlineCount() }}/{{ products().length }}
+    {{ 'software.online' | t }}
+  </p>
+
+  <ol class="console__services">
+    @for (product of products(); track product.id) {
+      <li
+        class="console__service"
+        [class.console__service--online]="stateOf(product.id).status === 'online'"
+      >
+        <div class="console__row">
+          <span
+            class="console__status"
+            [class.console__status--online]="stateOf(product.id).status === 'online'"
+            aria-hidden="true"
+          ></span>
+          <img class="console__logo" [src]="product.logo" [alt]="product.name" />
+          <span class="console__name">{{ product.name }}</span>
+          <span class="console__tagline">{{ product.tagline }}</span>
+          @if (stateOf(product.id).status === 'offline') {
+            <button type="button" class="console__deploy" (click)="deploy(product)">
+              <span class="console__angle" aria-hidden="true">&lt;</span>{{ 'software.deploy' | t
+              }}<span class="console__angle" aria-hidden="true">/&gt;</span>
+            </button>
+          }
+          @if (stateOf(product.id).status === 'online') {
+            <button
+              type="button"
+              class="console__toggle"
+              [attr.aria-expanded]="!stateOf(product.id).collapsed"
+              [attr.aria-label]="
+                (stateOf(product.id).collapsed ? 'software.expand' : 'software.collapse') | t
+              "
+              (click)="toggle(product)"
+            >
+              {{ stateOf(product.id).collapsed ? '[+]' : '[–]' }}
+            </button>
+          }
+        </div>
+
+        @if (stateOf(product.id).status !== 'offline') {
+          <div
+            class="console__details"
+            [class.console__details--closed]="stateOf(product.id).collapsed"
+          >
+            <div class="console__details-inner">
+              <div class="console__terminal">
+                @for (line of stateOf(product.id).lines; track $index) {
+                  <p class="console__log">{{ line }}</p>
+                }
+              </div>
+
+              @if (stateOf(product.id).status === 'online') {
+                <article class="console__card">
+                  <img class="console__card-logo" [src]="product.logo" [alt]="product.name" />
+                  <div class="console__card-body">
+                    <p class="console__description">{{ product.description }}</p>
+                    <ul class="console__highlights">
+                      @for (highlight of product.highlights; track highlight) {
+                        <li>{{ highlight }}</li>
+                      }
+                    </ul>
+                    <p class="console__built">
+                      <span class="console__built-label"
+                        >$ {{ 'software.builtWith' | t }}:</span
+                      >
+                      @for (tech of product.stack; track tech) {
+                        <span class="console__badge">{{ tech }}</span>
+                      }
+                    </p>
+                    <div class="console__actions">
+                      @if (product.url) {
+                        <a
+                          class="console__visit"
+                          [href]="product.url"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <span class="console__angle" aria-hidden="true">&lt;</span
+                          >{{ 'software.visit' | t }}
+                          {{ product.url.replace('https://', '')
+                          }}<span class="console__angle" aria-hidden="true">/&gt;</span>
+                        </a>
+                      }
+                      @if (product.appStoreUrl) {
+                        <a
+                          class="console__store"
+                          [href]="product.appStoreUrl"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <span class="console__angle" aria-hidden="true">&lt;</span
+                          >App Store<span class="console__angle" aria-hidden="true">/&gt;</span>
+                        </a>
+                      }
+                      @if (product.playStoreUrl) {
+                        <a
+                          class="console__store"
+                          [href]="product.playStoreUrl"
+                          target="_blank"
+                          rel="noopener"
+                        >
+                          <span class="console__angle" aria-hidden="true">&lt;</span
+                          >Google Play<span class="console__angle" aria-hidden="true">/&gt;</span>
+                        </a>
+                      }
+                      @if (!product.url && !product.appStoreUrl && !product.playStoreUrl) {
+                        <span class="console__soon">⏳ {{ 'software.soon' | t }}</span>
+                      }
+                    </div>
+                  </div>
+                </article>
+              }
+            </div>
+          </div>
+        }
+      </li>
+    }
+  </ol>
+
+  @if (allOnline()) {
+    <p class="console__achievement">🏆 {{ 'software.achievement' | t }}</p>
+  }
+</div>

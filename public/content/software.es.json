@@ -1,0 +1,94 @@
+[
+  {
+    "id": "craftiva",
+    "name": "Craftiva",
+    "tagline": "Gestión empresarial con IA",
+    "description": "Plataforma de gestión con app móvil en iOS y Android: administra ventas, inventario, citas, nómina y clientes desde el celular, con una capa de IA que trabaja sobre los datos reales del negocio.",
+    "highlights": [
+      "App móvil publicada en App Store y Google Play, pensada para restaurantes, salones, tiendas y clínicas",
+      "POS con scanner, inventario fraccionado (kg → gramos) y tickets directo a cocina",
+      "WhatsApp integrado: recordatorios de citas, avisos al cliente y bot que agenda solo",
+      "Asistente de IA que responde con los datos del negocio, y multi-empresa con roles por módulo"
+    ],
+    "stack": [
+      "Angular 20",
+      "NestJS 11",
+      "PostgreSQL",
+      "Redis · BullMQ",
+      "OpenRouter",
+      "Railway"
+    ],
+    "url": "https://appcraftiva.com",
+    "logo": "images/software/craftiva.png",
+    "appStoreUrl": "https://apps.apple.com/app/id6751239627",
+    "playStoreUrl": "https://play.google.com/store/apps/details?id=com.hallcsolutions.craftiva"
+  },
+  {
+    "id": "hallcyon-analyst",
+    "name": "Hallcyon Analyst",
+    "tagline": "BI conversacional y privado",
+    "description": "Business Intelligence que responde en lenguaje natural: conectas tus archivos, hojas de cálculo o bases de datos, preguntas, y devuelve análisis con gráficos y reportes — sin guardar tus datos: el análisis vive en memoria y se destruye al cerrar la sesión.",
+    "highlights": [
+      "Funciona como un RAG: recibe tu información y la convierte en el contexto del modelo — la IA no responde de memoria, consulta tus datos reales y contesta con esa evidencia",
+      "Chat que convierte preguntas en SQL, gráficos y narrativa, en streaming por WebSocket",
+      "9 agentes de negocio: anomalías, churn, margen real, riesgo de cartera, inventario dormido…",
+      "Conecta CSV, Excel, Google Sheets, PostgreSQL, MySQL, SQL Server y MongoDB",
+      "Privacy-first: los datos crudos nunca se persisten; reportes PDF listos para compartir"
+    ],
+    "stack": [
+      "Angular 21",
+      "NestJS 11",
+      "DuckDB",
+      "PostgreSQL",
+      "Stripe",
+      "OpenRouter"
+    ],
+    "url": "https://hallacyon.com",
+    "logo": "images/software/hallcyon-analyst.png"
+  },
+  {
+    "id": "craftball",
+    "name": "CraftBall",
+    "tagline": "Fútbol en tiempo real y pronósticos",
+    "description": "Plataforma de fútbol: la app móvil para el juego amateur —canchas, partidos con marcador en vivo, equipos, torneos y matchmaking— y, en la web, el pronóstico del Mundial 2026 sin instalar nada.",
+    "highlights": [
+      "App publicada en App Store y Google Play, con partidos en vivo vía WebSocket",
+      "Rating ELO y carta de jugador estilo FIFA que evoluciona con tus estadísticas reales",
+      "Matchmaking entre capitanes, torneos y gestión de equipos con invitación por QR",
+      "Pronósticos del Mundial 2026: predice los 104 partidos, arma tu bracket y compite en grupos privados con tu gente"
+    ],
+    "stack": [
+      "Flutter",
+      "Riverpod",
+      "NestJS 11",
+      "PostgreSQL",
+      "Redis",
+      "Socket.IO"
+    ],
+    "url": "https://craftball.up.railway.app",
+    "logo": "images/software/craftball.png",
+    "appStoreUrl": "https://apps.apple.com/co/app/craftball/id6760432828",
+    "playStoreUrl": "https://play.google.com/store/apps/details?id=com.hallcsolutions.craftball"
+  },
+  {
+    "id": "craftdish",
+    "name": "CraftDish",
+    "tagline": "Restaurantes, de la mesa a la cocina",
+    "description": "SaaS multi-tenant para operar un restaurante completo: pedidos por mesa, pantalla de cocina en tiempo real, menú público por código QR e inventario — con IA que genera el contenido del menú y un mesero virtual que atiende al comensal.",
+    "highlights": [
+      "Cocina y bandeja de mesero en tiempo real por WebSocket",
+      "Menú público por QR con mesero virtual conversacional",
+      "Funciona sin internet: modo offline y malla local entre los dispositivos del restaurante (WebRTC)",
+      "RRHH con IA: contratos, validación de ley laboral colombiana y análisis de equidad salarial"
+    ],
+    "stack": [
+      "Angular 21",
+      "NestJS 11",
+      "PostgreSQL",
+      "Socket.IO",
+      "PWA",
+      "OpenRouter"
+    ],
+    "logo": "images/software/craftdish.png"
+  }
+]

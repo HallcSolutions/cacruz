@@ -20,6 +20,11 @@ export const routes: Routes = [
     loadChildren: () => import('./features/stack/stack.routes').then((m) => m.STACK_ROUTES),
   },
   {
+    path: 'software',
+    loadChildren: () =>
+      import('./features/software/software.routes').then((m) => m.SOFTWARE_ROUTES),
+  },
+  {
     path: 'for-companies',
     loadChildren: () => import('./features/value/value.routes').then((m) => m.VALUE_ROUTES),
   },

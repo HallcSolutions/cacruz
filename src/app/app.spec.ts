@@ -31,6 +31,7 @@ describe('App', () => {
     expect(links).toContain('/experience');
     expect(links).toContain('/stack');
     expect(links).toContain('/projects');
+    expect(links).toContain('/software');
     expect(links).toContain('/for-companies');
     expect(links).toContain('/daily');
   });

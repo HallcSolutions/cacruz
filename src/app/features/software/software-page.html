@@ -1,0 +1,10 @@
+<section class="section" id="software">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'software.subtitle' | t }}</p>
+    <h2 class="section__title">{{ 'software.title' | t }}</h2>
+  </header>
+
+  @if (content.products.value(); as products) {
+    <app-deploy-console [products]="products" appRevealOnScroll />
+  }
+</section>

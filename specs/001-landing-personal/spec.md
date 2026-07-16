@@ -139,6 +139,23 @@ con un diseño editorial (sin cards) y animaciones memorables.
 - **R60** — WHEN se comparte cualquier URL del sitio THE SYSTEM SHALL declarar como imagen de vista previa una portada apaisada (1200×630) con el avatar de Christian, en URL absoluta derivada del host de la petición.
 - **R61** — WHERE la ruta no corresponda a una nota conocida THE SYSTEM SHALL usar el título y la descripción del sitio, sin fallar.
 
+### Página Software: consola de despliegue de productos _(enmienda 2026-07-15 q: "una nueva ruta con el software que he elaborado, tipo juego: el usuario hace click y se va mostrando cada uno, bien explicado y con su link; algo diferente, como de código")_
+- **R62** — WHEN el visitante navega a `/software` THE SYSTEM SHALL mostrar una consola de despliegue con los productos reales de Christian como servicios fuera de línea (`○ nombre [deploy]`) y un contador de estado `X/N en línea`, con contenido bilingüe versionado en `public/content`.
+- **R63** — WHEN el visitante activa el despliegue de un producto THE SYSTEM SHALL reproducir en una terminal la secuencia de despliegue tecleada línea a línea (clone → install → build → tests → deploy) y, al terminar, revelar la ficha del producto: qué es, funcionalidades destacadas, stack y enlace a su URL pública.
+- **R64** — WHERE un producto aún no tenga URL pública THE SYSTEM SHALL mostrarlo desplegado con estado "próximamente" en lugar de enlace.
+- **R65** — WHEN todos los productos quedan en línea THE SYSTEM SHALL celebrarlo mostrando el contador completo (`N/N en producción`) con una animación de logro.
+- **R66** — WHERE se muestre la navegación THE SYSTEM SHALL incluir la entrada "Software" hacia `/software` en ambos idiomas.
+
+### Logos reales en la consola _(enmienda 2026-07-16 r: "coloca el logo de cada uno al lado del texto; retírale los tags de con qué está hecho")_
+- **R67** — WHEN la consola lista o revela un producto THE SYSTEM SHALL mostrar el logo real del producto junto a su nombre, y la ficha prescinde de los chips de stack. _(Ajusta R62 y R63.)_
+
+### Ficha con imagen, tecnologías y botones etiqueta _(enmienda 2026-07-16 s: "la imagen también al lado del texto; sí decir en qué se realizó; botones con <>; FutGol Pro en realidad se llama CraftBall")_
+- **R68** — WHEN la ficha de un producto se revela THE SYSTEM SHALL mostrar el logo en grande junto al texto y las tecnologías reales como insignias amigables, y los botones de la consola se visten como etiquetas de código (`<desplegar/>`, `<visitar/>`). _(Matiza la enmienda r: las tecnologías vuelven, con estética cuidada.)_
+
+### Cierre animado y descarga de las apps _(enmienda 2026-07-16 t: "si abro el contenedor no lo puedo cerrar, debería tener animación; Craftiva y CraftBall tienen app móvil con enlace de descarga")_
+- **R69** — WHEN un producto está en línea THE SYSTEM SHALL permitir plegar y volver a abrir su detalle con una transición suave, sin apagar el servicio ni alterar el contador.
+- **R70** — WHERE un producto tenga app publicada THE SYSTEM SHALL mostrar en su ficha los enlaces de descarga reales (App Store y Google Play).
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

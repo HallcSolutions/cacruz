@@ -1,0 +1,94 @@
+[
+  {
+    "id": "craftiva",
+    "name": "Craftiva",
+    "tagline": "AI-powered business management",
+    "description": "Management platform with a mobile app on iOS and Android: run sales, inventory, appointments, payroll and customers from your phone, with an AI layer that works on the business's real data.",
+    "highlights": [
+      "Mobile app published on the App Store and Google Play, built for restaurants, salons, stores and clinics",
+      "POS with scanner, fractional inventory (kg → grams) and tickets straight to the kitchen",
+      "WhatsApp built in: appointment reminders, customer updates and a bot that books on its own",
+      "AI assistant that answers with the business's own data, and multi-company with per-module roles"
+    ],
+    "stack": [
+      "Angular 20",
+      "NestJS 11",
+      "PostgreSQL",
+      "Redis · BullMQ",
+      "OpenRouter",
+      "Railway"
+    ],
+    "url": "https://appcraftiva.com",
+    "logo": "images/software/craftiva.png",
+    "appStoreUrl": "https://apps.apple.com/app/id6751239627",
+    "playStoreUrl": "https://play.google.com/store/apps/details?id=com.hallcsolutions.craftiva"
+  },
+  {
+    "id": "hallcyon-analyst",
+    "name": "Hallcyon Analyst",
+    "tagline": "Private, conversational BI",
+    "description": "Business Intelligence that answers in natural language: connect your files, spreadsheets or databases, ask, and get analysis with charts and reports — without storing your data: the analysis lives in memory and is destroyed when the session ends.",
+    "highlights": [
+      "Works like a RAG: it takes your information and turns it into the model's context — the AI doesn't answer from memory, it queries your real data and replies with that evidence",
+      "Chat that turns questions into SQL, charts and narrative, streamed over WebSocket",
+      "9 business agents: anomalies, churn, real margin, receivables risk, dormant inventory…",
+      "Connects CSV, Excel, Google Sheets, PostgreSQL, MySQL, SQL Server and MongoDB",
+      "Privacy-first: raw data is never persisted; PDF reports ready to share"
+    ],
+    "stack": [
+      "Angular 21",
+      "NestJS 11",
+      "DuckDB",
+      "PostgreSQL",
+      "Stripe",
+      "OpenRouter"
+    ],
+    "url": "https://hallacyon.com",
+    "logo": "images/software/hallcyon-analyst.png"
+  },
+  {
+    "id": "craftball",
+    "name": "CraftBall",
+    "tagline": "Real-time football and predictions",
+    "description": "A football platform: the mobile app for the amateur game —pitches, matches with live scores, teams, tournaments and matchmaking— plus the 2026 World Cup predictions on the web, no install needed.",
+    "highlights": [
+      "App published on the App Store and Google Play, with live matches over WebSocket",
+      "ELO rating and a FIFA-style player card that evolves with your real stats",
+      "Matchmaking between captains, tournaments and team management with QR invitations",
+      "2026 World Cup predictions: forecast all 104 matches, build your bracket and compete in private groups with your people"
+    ],
+    "stack": [
+      "Flutter",
+      "Riverpod",
+      "NestJS 11",
+      "PostgreSQL",
+      "Redis",
+      "Socket.IO"
+    ],
+    "url": "https://craftball.up.railway.app",
+    "logo": "images/software/craftball.png",
+    "appStoreUrl": "https://apps.apple.com/co/app/craftball/id6760432828",
+    "playStoreUrl": "https://play.google.com/store/apps/details?id=com.hallcsolutions.craftball"
+  },
+  {
+    "id": "craftdish",
+    "name": "CraftDish",
+    "tagline": "Restaurants, from table to kitchen",
+    "description": "Multi-tenant SaaS to run a whole restaurant: table orders, real-time kitchen display, public QR menu and inventory — with AI that generates the menu content and a virtual waiter that serves the guest.",
+    "highlights": [
+      "Real-time kitchen and waiter tray over WebSocket",
+      "Public QR menu with a conversational virtual waiter",
+      "Works without internet: offline mode and a local mesh between the restaurant's devices (WebRTC)",
+      "AI-powered HR: contracts, Colombian labor-law validation and pay-equity analysis"
+    ],
+    "stack": [
+      "Angular 21",
+      "NestJS 11",
+      "PostgreSQL",
+      "Socket.IO",
+      "PWA",
+      "OpenRouter"
+    ],
+    "logo": "images/software/craftdish.png"
+  }
+]

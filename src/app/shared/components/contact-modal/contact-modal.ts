@@ -11,8 +11,7 @@ import { TranslatePipe } from '../../../core/i18n/translate.pipe';
 import { buildConsoleLines } from './build-console-lines';
 import { isCompleteMessage, isValidEmail } from './build-mailto-url';
 import { ContactSender } from './contact-sender.service';
-
-type SendStatus = 'idle' | 'sending' | 'sent' | 'failed';
+import { SendStatus } from './send-status';
 
 @Component({
   selector: 'app-contact-modal',

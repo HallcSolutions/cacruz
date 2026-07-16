@@ -12,23 +12,10 @@ import {
 import {
   INITIAL_TYPEWRITER_STATE,
   nextTypewriterState,
+  TYPEWRITER_TICK_MS,
   typewriterText,
 } from '../../../../shared/utils/typewriter';
-
-const TYPE_WORDS = [
-  'Angular',
-  '.NET · C#',
-  'TypeScript',
-  'NestJS',
-  'Node.js',
-  'Laravel · PHP',
-  'Flutter · Dart',
-  'Vue.js',
-  'SQL Server',
-  'MongoDB',
-  'IA & Agentes',
-] as const;
-const TYPE_TICK_MS = 80;
+import { TYPE_WORDS } from './hero-type-words';
 
 @Component({
   selector: 'app-hero',
@@ -53,7 +40,7 @@ export class Hero {
     const intervalId = setInterval(() => {
       state = nextTypewriterState(TYPE_WORDS, state);
       this.typed.set(typewriterText(TYPE_WORDS, state));
-    }, TYPE_TICK_MS);
+    }, TYPEWRITER_TICK_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(intervalId));
   }
 }

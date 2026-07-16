@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { TranslatePipe } from './core/i18n/translate.pipe';
+import { PIPELINE_FILES } from './pipeline-files';
 import { LanguageSwitcher } from './shared/components/language-switcher/language-switcher';
 
 @Component({
@@ -11,15 +12,7 @@ import { LanguageSwitcher } from './shared/components/language-switcher/language
   styleUrl: './app.css',
 })
 export class App {
-  /** Archivos reales del repo: desfilan en el pipeline del navbar. */
-  protected readonly pipelineFiles = [
-    'hero.ts',
-    'typewriter.ts',
-    'blog-post.ts',
-    'contact-modal.ts',
-    'value-page.ts',
-    'static-file.js',
-  ];
+  protected readonly pipelineFiles = PIPELINE_FILES;
 
   protected readonly year = new Date().getFullYear();
   protected readonly menuOpen = signal(false);

@@ -13,11 +13,10 @@ import { RevealOnScrollDirective } from '../../shared/directives/reveal-on-scrol
 import {
   INITIAL_TYPEWRITER_STATE,
   nextTypewriterState,
+  TYPEWRITER_TICK_MS,
   typewriterText,
 } from '../../shared/utils/typewriter';
 import { VALUE_ITEMS, VALUE_STATS } from './value-items';
-
-const TYPE_TICK_MS = 80;
 
 @Component({
   selector: 'app-value-page',
@@ -43,7 +42,7 @@ export class ValuePage {
       const words = [this.ctaText()];
       state = nextTypewriterState(words, state);
       this.typedCta.set(typewriterText(words, state));
-    }, TYPE_TICK_MS);
+    }, TYPEWRITER_TICK_MS);
     inject(DestroyRef).onDestroy(() => clearInterval(intervalId));
   }
 

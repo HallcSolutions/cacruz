@@ -2,12 +2,8 @@ import { ChangeDetectionStrategy, Component, DestroyRef, inject, signal } from '
 import { SUPPORTED_LANGUAGES } from '../../../core/i18n/language-options';
 import { Language } from '../../../core/i18n/language.model';
 import { TranslationService } from '../../../core/i18n/translation.service';
-
-/** Fases del "pull request" que simula el cambio de idioma. */
-type PrPhase = 'checks' | 'merged' | null;
-
-const CHECKS_MS = 650;
-const MERGED_MS = 1500;
+import { PrPhase } from './pr-phase';
+import { CHECKS_MS, MERGED_MS } from './pr-timing';
 
 @Component({
   selector: 'app-language-switcher',

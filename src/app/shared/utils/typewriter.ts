@@ -7,6 +7,9 @@ export interface TypewriterState {
 
 export const TYPEWRITER_HOLD_TICKS = 14;
 
+/** Cadencia de tecleo compartida por todas las máquinas de escribir del sitio. */
+export const TYPEWRITER_TICK_MS = 80;
+
 export const INITIAL_TYPEWRITER_STATE: TypewriterState = {
   wordIndex: 0,
   length: 0,

@@ -1,0 +1,361 @@
+{
+  "slug": "rules-that-can-fail",
+  "date": "2026-07-16",
+  "title": {
+    "es": "Un README que nadie comprueba es una mentira: reglas repartidas y verificadas",
+    "en": "A README nobody checks is a lie: rules split up and verified"
+  },
+  "summary": {
+    "es": "Un architecture.md de cuatrocientas líneas parece orden y es lo contrario: nadie sabe qué parte le aplica. Por qué cada repo y cada carpeta llevan sus propias reglas, por qué la presentación no necesita saber cómo se calcula un descuento, qué le pasa a tu factura cuando el agente lee tres líneas en vez de cuatrocientas, y por qué la única regla que sirve es la que puede fallar.",
+    "en": "A four-hundred-line architecture.md looks like order and is the opposite: nobody knows which part applies to them. Why each repo and each folder carry their own rules, why presentation doesn't need to know how a discount is calculated, what happens to your bill when the agent reads three lines instead of four hundred, and why the only rule worth having is the one that can fail."
+  },
+  "tags": [
+    "arquitectura",
+    "clean-code",
+    "chalc",
+    "agentes",
+    "documentación"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Un `architecture.md` de cuatrocientas líneas. Un documento de convenciones que lo explica todo. Un CLAUDE.md que crece cada semana porque alguien añadió una regla más. Parece orden, y es lo contrario: cuando todo está en un sitio, nadie sabe qué parte le aplica. Y lo que nadie sabe si le aplica, nadie lo lee."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta nota va de la otra forma de hacerlo: cada repo con su arquitectura, cada carpeta con sus reglas, y una máquina que comprueba que se cumplen. Es la continuación de [cómo orquesto una feature entre dos repos](/daily), donde conté que lo único que viaja entre ellos es un contrato. Aquí cuento lo que NO viaja — que resulta ser casi todo."
+      },
+      {
+        "kind": "quote",
+        "text": "Una regla que nadie comprueba no es una regla: es una opinión con buena redacción."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo único compartido es el contrato: cada repo manda en su casa"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay una consecuencia de todo esto que tardé en ver y que hoy me parece la más importante: el orquestador comparte el contrato y nada más. No comparte arquitectura, ni convenciones, ni estructura de carpetas, ni librerías. El back puede ser NestJS por capas y el front Angular feature-first, y al contrato le da exactamente igual."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se ve en el momento de equipar: dos repos, dos números distintos, y no es un descuido. Cada repo se equipa con lo suyo, sus reglas, sus skills, su método y su `docs/architecture.md`. Lo único que viaja entre los dos es un archivo de texto."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS",
+          "🔎 Readiness (equipando ambos repos)",
+          "  ✓ front: 19 skills equipadas",
+          "  ✓ back: 6 skills equipadas"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Hemos intentado demostrar con estos ejemplos que es casi siempre incorrecto empezar a descomponer un sistema en módulos a partir de un diagrama de flujo. Proponemos en cambio empezar por una lista de decisiones de diseño difíciles, o de decisiones que probablemente cambien.",
+        "source": "David L. Parnas · Communications of the ACM, 1972",
+        "sourceUrl": "https://dl.acm.org/doi/10.1145/361598.361623"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso no es una ocurrencia mía: es la idea mejor documentada del oficio, y tiene más de cincuenta años. En la descomposición que Parnas defiende, cada módulo se caracteriza por conocer una decisión de diseño que esconde a todos los demás. O sea: un módulo no se define por el paso del proceso que ejecuta, sino por la decisión que esconde. El contrato es exactamente eso: lo único que el back le enseña al mundo. Qué base de datos usa, cómo organiza sus capas, cómo valida por dentro — todo eso es decisión suya, y la esconde. Por eso puedo cambiarle el motor de persistencia al backend sin tocar el front: esa decisión nunca salió de su casa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y la idea baja hasta el último nivel. Cuando monto un proyecto, no quedan carpetas vacías esperando a que alguien adivine para qué son: cada carpeta se lleva su propio README con su rol, qué va dentro, qué buenas prácticas aplican y qué skills la cubren. Arriba, un `docs/architecture.md` con el mapa completo y las reglas de dependencia."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Su rol, en una línea: `domain/` es el corazón — reglas de negocio puras, sin framework ni I/O.",
+          "Qué va dentro: entidades, value objects, lógica de dominio e interfaces (los puertos) de los repositorios.",
+          "Sus buenas prácticas, y solo las suyas: cero imports de Angular, Nest o HTTP; no depende de ninguna otra capa; las dependencias externas se expresan aquí como interfaces.",
+          "Qué skills la cubren: las de siempre (`clean-code`, `solid-principles`, `minimal-implementation`, `modular-architecture`) más `interface-design`.",
+          "Y un enlace de vuelta a `docs/architecture.md`, por si quieres el mapa completo. Pero para trabajar en esta carpeta no te hace falta abrirlo."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí es donde toca ponerse honesto, porque a estas alturas puedes estar pensando: vale, pero esto sigue siendo documentación. Lo mismo escrito en una wiki de empresa, y me ahorro el invento. Y tendrías toda la razón — si no fuera por lo que viene ahora."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un README no vale más que una wiki por vivir dentro del repo. Acaba igual: ahí quieto, sin que nadie lo abra. Y el que lo abre puede hacer lo contrario sin que pase nada. A las tres semanas alguien importa lo que no debía, el archivo sigue diciendo que eso no se hace, y gana el código — el papel siempre pierde contra el código. Repartir las reglas por carpetas no arregla eso: como mucho hace que la mentira sea más corta y te la encuentres más cerca."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que sí lo arregla no es dónde escribes la regla, sino que algo la compruebe. Por eso las reglas de frontera no son recomendaciones: son ejecutables. `chalc verify` pasa un linter estático —sin IA y sin gastar un token— que lee los imports de verdad y señala al que cruzó la línea. Estas cuatro ya no se pueden ignorar, porque fallan:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "`domain` no importa `infrastructure` ni `presentation`: el corazón del negocio no conoce el mundo exterior. Si lo conociera, no podrías probarlo sin levantar medio sistema.",
+          "`application` no importa `data` ni `infrastructure`: los casos de uso hablan con el dominio por interfaces, no con la base de datos.",
+          "Un feature no importa a otro feature: si algo se repite, sube a `shared`. Así se borra un feature entero sin que se caiga otro.",
+          "`core` y `shared` no importan features: lo transversal no puede depender de lo específico, o deja de ser transversal."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahora la letra pequeña, porque acabo de fardar de que la regla es ejecutable y conviene decir hasta dónde. El linter no comprueba todo lo que el README dice. El README de `presentation/` pide que no llame directo a infraestructura, y eso hoy no lo verifica nadie: está escrito, no atado. La diferencia entre lo que documento y lo que verifico es exactamente mi lista de pendientes — y prefiero que la veas tú a fingir que no existe."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y el porqué de cada decisión también se queda escrito, no en la cabeza de quien estaba ese día. Michael Nygard lo explicó mejor que yo en [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), el artículo de 2011 donde propuso los registros de decisiones de arquitectura: \"una de las cosas más difíciles de rastrear durante la vida de un proyecto es la motivación detrás de ciertas decisiones\". Sin eso, el que llega solo puede hacer dos cosas y las dos son malas: aceptar a ciegas algo que ya no aplica, o cambiarlo a ciegas sin entender por qué estaba ahí."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí se cierra el argumento entero de la nota. Acoplarse sería compartir librerías, tipos y decisiones entre los dos repos. Lo que comparten es un papel. Y como cada casa lleva sus reglas escritas —y verificadas por una máquina, no por buena voluntad— un agente que aterriza en cualquiera de los dos sabe qué puede hacer sin preguntarle a nadie: ni a mí, ni al otro carril."
+      },
+      {
+        "kind": "heading",
+        "text": "Las reglas se reparten, no se amontonan"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ojo con el error contrario, que es igual de caro y mucho más común: meter todas las reglas del proyecto en un archivo principal. Un `architecture.md` de cuatrocientas líneas, o un único documento de convenciones que lo explica todo. Parece ordenado. Es exactamente lo contrario: cuando todo está en un sitio, nadie sabe qué parte le aplica. Y lo que nadie sabe qué parte le aplica, nadie lo lee."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso las reglas se reparten con el mismo criterio que el contrato: cada uno lee lo suyo. `presentation/` lleva las reglas de presentación. `domain/` lleva las suyas, que son otras. Nadie necesita leerse cuatrocientas líneas para saber que un componente no llama a la base de datos: le basta con las tres líneas de la carpeta donde está trabajando."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El ejemplo que mejor lo explica es el de [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html), la que describió Robert C. Martin en 2012. Y ojo, no porque sea la que uso siempre: la arquitectura la decide el proyecto, no mi gusto. Hay repos donde feature-first es la respuesta correcta y montar capas sería pura ceremonia. Pero es la que más me gusta por lo ordenada que es, y la que dibuja el límite con más nitidez para contarlo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y el límite es este: la capa de presentación no necesita saber las reglas de un caso de uso. No necesita saber cómo se calcula el descuento, ni en qué orden se validan las condiciones, ni si la operación hay que auditarla. De ese caso de uso solo necesita tres cosas: a cuál llamar, qué le pasa y qué hacer con lo que devuelve."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuidado, que eso no significa que la presentación sea tonta ni que no sepa nada. Es dueña de sus pantallas, de su estado, de su navegación y de validar el formulario antes de enviarlo — si el correo no tiene forma de correo, eso lo caza ella y no molesta a nadie. Lo que no le pertenece es la regla de negocio que hay detrás del botón."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no es purismo — es la consecuencia práctica: si la pantalla supiera cómo se calcula el descuento, el día que cambie la fórmula tendrías que tocar la pantalla. Habrías acoplado la interfaz a una regla de negocio que no le pertenece, que es justo lo que estabas intentando evitar."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/layers-know.es.svg",
+        "caption": "Las capas de Clean Architecture, que es una opción entre varias y no la ley. A la izquierda, lo que cada carpeta lleva escrito en su README; a la derecha, lo que jamás necesita saber. La flecha tachada es la que no existe: el detalle nunca sube."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Al revés también, y esta parte se olvida más: el dominio no sabe que existe una pantalla. La infraestructura no sabe quién la llama ni para qué caso de uso. Eso ya no es una preferencia mía — es la regla que sostiene toda la arquitectura, y Martin la escribió en una sola frase:"
+      },
+      {
+        "kind": "quote",
+        "text": "Las dependencias del código fuente solo pueden apuntar hacia adentro. Nada en un círculo interior puede saber absolutamente nada sobre algo de un círculo exterior.",
+        "source": "Robert C. Martin · The Clean Architecture, 2012",
+        "sourceUrl": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en que esa regla y la de arriba no son la misma. La de Martin dice que lo de dentro no puede conocer lo de fuera: el dominio no puede nombrar a la pantalla. La otra —que la presentación no cargue con las reglas del caso de uso— apunta al revés, y no la impone la Regla de Dependencia sino el sentido común de no meter en la pantalla algo que no le pertenece. Cada capa esconde su decisión y expone una interfaz: es [Parnas](https://dl.acm.org/doi/10.1145/361598.361623) otra vez, ahora carpeta a carpeta en lugar de repo a repo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay además una razón que solo aparece cuando trabajas con agentes, y para mí ya pesa tanto como las otras: el contexto se paga, literalmente. Cada línea que el agente lee es un token facturado. Un archivo de cuatrocientas líneas que se carga entero para tocar un botón son cuatrocientas líneas pagadas, de las que 390 no le tocaban."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no pasa una vez: pasa en cada tarea. Ahí está la diferencia entre cargar la carpeta donde trabajas y cargar el proyecto entero. El agente que aterriza en `presentation/` lee el README de `presentation/` — tres reglas — y con eso ya sabe qué puede hacer. Repartir las reglas deja de ser una cuestión de orden y se convierte en una línea de tu factura."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aunque el beneficio de verdad ni siquiera es el dinero: es que cuanto menos ruido lee, menos inventa. Un archivo gigante no solo aburre a las personas — hace que el agente se pierda entre reglas que no eran para él y las aplique donde no debía. Contexto pequeño y explícito le gana a contexto grande y completo, siempre."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres la nota anterior —cómo una sola historia de usuario se convierte en un contrato y dos specs alineadas, y por qué el back lo lidera— está en [notas de desarrollo](/daily). Y si quieres ver lo que construyo con esto, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI que monta las carpetas con su README, equipa cada repo y corre el linter de fronteras. El linter vive en `lib/verify-boundaries.mjs` y las guías por carpeta en `lib/init-folders.mjs`.",
+          "[On the Criteria To Be Used in Decomposing Systems into Modules](https://dl.acm.org/doi/10.1145/361598.361623) — David L. Parnas, Communications of the ACM, 1972. Por qué un módulo se define por lo que esconde y no por lo que hace. Si solo lees una fuente de esta lista, que sea esta: explica el contrato, las capas y los README de carpeta de una sola vez.",
+          "[The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin, 2012. La fuente de las capas y de la Regla de Dependencia. Se lee en diez minutos y de ahí salen los README de `domain`, `application` y `presentation` que enseño arriba.",
+          "[Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — Michael Nygard, 2011. El formato para dejar escrito el porqué de cada decisión, junto al código y no en una wiki que nadie abre."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "A four-hundred-line `architecture.md`. A conventions document that explains everything. A CLAUDE.md that grows every week because someone added one more rule. It looks like order, and it's the opposite: when everything lives in one place, nobody knows which part applies to them. And what nobody knows applies to them, nobody reads."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This note is about the other way of doing it: each repo with its own architecture, each folder with its own rules, and a machine that checks they hold. It follows on from [how I orchestrate a feature across two repos](/daily), where I explained that the only thing travelling between them is a contract. Here I cover what does NOT travel — which turns out to be almost everything."
+      },
+      {
+        "kind": "quote",
+        "text": "A rule nobody checks isn't a rule: it's an opinion with good grammar."
+      },
+      {
+        "kind": "heading",
+        "text": "The contract is the only shared thing: each repo rules its own house"
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's a consequence of all this that took me a while to see and that I now consider the most important: the orchestrator shares the contract and nothing else. It doesn't share architecture, or conventions, or folder structure, or libraries. The backend can be layered NestJS and the frontend feature-first Angular, and the contract could not care less."
+      },
+      {
+        "kind": "paragraph",
+        "text": "You can see it the moment they get equipped: two repos, two different numbers, and it isn't sloppiness. Each repo is equipped with its own: its rules, its skills, its method and its `docs/architecture.md`. The only thing travelling between them is a text file."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS",
+          "🔎 Readiness (equipping both repos)",
+          "  ✓ front: 19 skills equipped",
+          "  ✓ back: 6 skills equipped"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "We have tried to demonstrate by these examples that it is almost always incorrect to begin the decomposition of a system into modules on the basis of a flowchart. We propose instead that one begins with a list of difficult design decisions or design decisions which are likely to change.",
+        "source": "David L. Parnas · Communications of the ACM, 1972",
+        "sourceUrl": "https://dl.acm.org/doi/10.1145/361598.361623"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That isn't a notion of mine: it's the best-documented idea in the craft, and it's over fifty years old. A module isn't defined by the processing step it runs, but by the decision it hides. The contract is exactly that: the only thing the backend shows the world. Which database it uses, how it arranges its layers, how it validates internally — all of that is its own call, and it hides it. That's why I can swap the backend's persistence engine without touching the frontend: that decision never left its house."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the idea goes all the way down. When I set up a project, no empty folders are left for someone to guess at: every folder carries its own README with its role, what goes inside, which best practices apply and which skills cover it. Above them, a `docs/architecture.md` with the full map and the dependency rules."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Its role, in one line: `domain/` is the heart — pure business rules, no framework, no I/O.",
+          "What goes inside: entities, value objects, domain logic and the interfaces (the ports) of the repositories.",
+          "Its best practices, and only its own: zero imports of Angular, Nest or HTTP; it depends on no other layer; external dependencies are expressed here as interfaces.",
+          "Which skills cover it: the usual ones (`clean-code`, `solid-principles`, `minimal-implementation`, `modular-architecture`) plus `interface-design`.",
+          "And a link back to `docs/architecture.md`, in case you want the full map. But to work in this folder you don't need to open it."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is where I have to be honest, because by now you may be thinking: fine, but this is still documentation. The same thing written in a company wiki, and I skip the invention. And you'd be completely right — if it weren't for what comes next."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A README isn't worth more than a wiki just because it lives inside the repo. It ends up the same way: sitting there, unopened. And whoever does open it can do the opposite with no consequence. Three weeks in, someone imports what they shouldn't, the file still says that isn't allowed, and the code wins — paper always loses against code. Splitting the rules across folders doesn't fix that: at best it makes the lie shorter and puts it closer to you."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What does fix it isn't where you write the rule, but that something checks it. That's why the boundary rules aren't recommendations: they're executable. `chalc verify` runs a static linter — no AI, not a single token — that reads the actual imports and points at whoever crossed the line. These four can no longer be ignored, because they fail:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "`domain` doesn't import `infrastructure` or `presentation`: the heart of the business doesn't know the outside world. If it did, you couldn't test it without booting half the system.",
+          "`application` doesn't import `data` or `infrastructure`: use cases talk to the domain through interfaces, not to the database.",
+          "A feature doesn't import another feature: if something repeats, it goes up to `shared`. That's how you delete a whole feature without another one collapsing.",
+          "`core` and `shared` don't import features: cross-cutting code can't depend on the specific, or it stops being cross-cutting."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And now the small print, because I've just bragged that the rule is executable and it's only fair to say how far that goes. The linter doesn't check everything the README says. The `presentation/` README asks that it never call infrastructure directly, and today nobody verifies that: it's written, not enforced. The gap between what I document and what I verify is exactly my to-do list — and I'd rather you saw it than pretend it isn't there."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the why behind each decision stays written down too, not in the head of whoever happened to be there that day. Michael Nygard put it better than I can in [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), the 2011 article where he proposed architecture decision records: \"one of the hardest things to track during the life of a project is the motivation behind certain decisions\". Without that, whoever arrives can only do two things and both are bad: blindly accept something that no longer applies, or blindly change it without understanding why it was there."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that closes the whole argument of this note. Coupling would be sharing libraries, types and decisions between the two repos. What they share is a piece of paper. And because each house carries its own written rules — verified by a machine, not by good intentions — an agent landing in either one knows what it may do without asking anybody: not me, not the other lane."
+      },
+      {
+        "kind": "heading",
+        "text": "Rules get split up, not piled up"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And watch out for the opposite mistake, which is just as expensive and far more common: putting every rule of the project into one main file. A 400-line `architecture.md`, or a single conventions document that explains everything. It looks tidy. It's exactly the opposite: when everything lives in one place, nobody knows which part applies to them. And what nobody knows applies to them, nobody reads."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So the rules get split by the same criterion as the contract: everyone reads their own. `presentation/` carries the presentation rules. `domain/` carries its own, which are different ones. Nobody needs to read four hundred lines to know a component doesn't call the database: the three lines in the folder they're working in are enough."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The example that explains it best is [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html), the one Robert C. Martin described in 2012. And careful: not because it's the one I always use — the architecture is decided by the project, not by my taste. There are repos where feature-first is the right answer and layering would be pure ceremony. But it's the one I like most for how orderly it is, and the one that draws the boundary most sharply for telling this."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the boundary is this: the presentation layer does not need to know the rules of a use case. It doesn't need to know how the discount is calculated, or in what order the conditions are validated, or whether the operation must be audited. From that use case it needs three things: which one to call, what to pass it, and what to do with what comes back."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Careful though, that doesn't mean presentation is dumb or knows nothing. It owns its screens, its state, its navigation, and validating the form before sending it — if the email isn't shaped like an email, it catches that itself and bothers nobody. What doesn't belong to it is the business rule behind the button."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And this isn't purism — it's the practical consequence: if the screen knew how the discount is calculated, the day the formula changes you'd have to touch the screen. You'd have coupled the interface to a business rule that doesn't belong to it, which is precisely what you were trying to avoid."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/layers-know.en.svg",
+        "caption": "The layers of Clean Architecture — one option among several, not the law. On the left, what each folder actually says in its README; on the right, what it never needs to know. The crossed-out arrow is the one that doesn't exist: detail never flows up."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It runs the other way too, and that part gets forgotten more often: the domain doesn't know a screen exists. The infrastructure doesn't know who calls it or for which use case. That one isn't a preference of mine — it's the rule the whole architecture rests on, and Martin wrote it in a single sentence:"
+      },
+      {
+        "kind": "quote",
+        "text": "Source code dependencies can only point inwards. Nothing in an inner circle can know anything at all about something in an outer circle.",
+        "source": "Robert C. Martin · The Clean Architecture, 2012",
+        "sourceUrl": "https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice that this rule and the one above are not the same. Martin's says the inside can't know the outside: the domain may not name the screen. The other one — that presentation shouldn't carry the use case's rules — points the other way, and it isn't imposed by the Dependency Rule but by the plain sense of not putting something in the screen that doesn't belong to it. Each layer hides its decision and exposes an interface: that's [Parnas](https://dl.acm.org/doi/10.1145/361598.361623) again, now folder by folder instead of repo by repo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's also a reason that only shows up once you work with agents, and for me it now weighs as much as the others: context is paid for, literally. Every line the agent reads is a billed token. A four-hundred-line file loaded whole just to touch a button is four hundred lines you paid for, of which 390 weren't its business."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it doesn't happen once: it happens on every task. That's the difference between loading the folder you're working in and loading the entire project. The agent landing in `presentation/` reads the `presentation/` README — three rules — and that's enough for it to know what it may do. Splitting the rules stops being a matter of tidiness and becomes a line on your invoice."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Though the real benefit isn't even the money: it's that the less noise it reads, the less it invents. A giant file doesn't just bore people — it makes the agent get lost among rules that weren't meant for it and apply them where it shouldn't. Small, explicit context beats large, complete context. Every time."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want the previous note — how a single user story becomes a contract and two aligned specs, and why the backend leads it — it's in [dev notes](/daily). And if you want to see what I build with this, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI that scaffolds the folders with their README, equips each repo and runs the boundary linter. The linter lives in `lib/verify-boundaries.mjs` and the per-folder guides in `lib/init-folders.mjs`.",
+          "[On the Criteria To Be Used in Decomposing Systems into Modules](https://dl.acm.org/doi/10.1145/361598.361623) — David L. Parnas, Communications of the ACM, 1972. Why a module is defined by what it hides, not by what it does. If you only read one source on this list, make it this one: it explains the contract, the layers and the folder READMEs in one go.",
+          "[The Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) — Robert C. Martin, 2012. The source of the layers and of the Dependency Rule. It reads in ten minutes, and it's where the `domain`, `application` and `presentation` READMEs shown above come from.",
+          "[Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions) — Michael Nygard, 2011. The format for writing down the why behind each decision, next to the code instead of in a wiki nobody opens."
+        ]
+      }
+    ]
+  }
+}

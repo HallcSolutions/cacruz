@@ -1,0 +1,665 @@
+{
+  "slug": "one-contract-many-repos",
+  "date": "2026-07-16",
+  "title": {
+    "es": "Un contrato manda: qué es un orquestador y por qué lo lidera el back",
+    "en": "One contract rules: what an orchestrator is and why the backend leads it"
+  },
+  "summary": {
+    "es": "El front esperaba `userId` y el back devolvió `id`: la integración es donde se pierden los días. Qué es un orquestador —una pieza que no escribe código, solo reparte, comparte y junta—, por qué el contrato lo lidera el back y no el front, por qué el número de repos no es una propiedad del patrón sino un límite de cada implementación, y cómo la huella del contrato impide que nadie derive en silencio.",
+    "en": "The frontend expected `userId` and the backend returned `id`: integration is where the days go. What an orchestrator is — a piece that writes no code, it only splits, shares and joins — why the backend owns the contract instead of the frontend, why the number of repos is not a property of the pattern but a limit of each implementation, and how the contract fingerprint stops anyone from drifting in silence."
+  },
+  "tags": [
+    "chalc",
+    "orquestador",
+    "contratos",
+    "sdd",
+    "arquitectura"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "El front esperaba `userId`. El back devolvió `id`. El front dio por hecho que el 401 traía un mensaje; el back responde vacío. Nadie se equivocó en su repo: los dos hicieron bien un trabajo que no encajaba, y se enteran el día de integrar, que es el día en que ya no hay margen. Esa tarde no se pierde programando: se pierde en una reunión decidiendo quién cede."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso tiene nombre —deriva— y no se arregla con más disciplina, porque nadie fue indisciplinado. Se arregla con una pieza que casi nadie nombra: un orquestador. De eso va esta nota: qué es, cómo se dirige, y por qué el contrato lo lidera el back."
+      },
+      {
+        "kind": "quote",
+        "text": "Dos equipos pueden hacer bien su trabajo y entregar algo que no encaja. Lo único que lo evita es que los dos hayan firmado el mismo papel antes de empezar."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué es un orquestador (y qué no es)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un orquestador es una pieza que coordina a varios trabajadores alrededor de un mismo objetivo, sin hacer el trabajo de ninguno. La palabra viene de donde te imaginas: el director de orquesta no toca ningún instrumento. No es el mejor violinista de la sala y no le hace falta serlo. Su único trabajo es que los que sí tocan entren cuando deben y toquen la misma partitura."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa última parte es la que importa. Un director no logra que suene bien porque sepa violín: lo logra porque existe una partitura y todos leen la misma. Quítale la partitura y no queda dirección, queda una persona moviendo los brazos. En software es idéntico: sin un artefacto compartido, el orquestador no orquesta nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí está lo que más confunde, porque es lo contrario de lo que sugiere la palabra: un orquestador no es un jefe. No es una IA más lista que las otras que revisa el trabajo de las demás. No escribe código, no decide arquitectura y no opina sobre si el back debe usar Postgres. Si empieza a decidir por un lado, ya no es un orquestador: es un cuello de botella con buena prensa."
+      },
+      {
+        "kind": "quote",
+        "text": "No decide por ningún lado (no es ni el front ni el back): solo reparte, comparte el contrato y junta.",
+        "source": "Comentario de diseño en chalc · lib/featureorch.mjs",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa frase no es un eslogan que escribí para esta nota: es el comentario que encabeza el archivo del orquestador, y está ahí para que nadie —ni yo dentro de seis meses— caiga en la tentación de darle opiniones."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En mi caso el orquestador es `chalc feature`, un comando de [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), la CLI que construí. Hace exactamente tres cosas:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Reparte: toma UNA historia de usuario y la parte en dos trabajos, uno por repo. Cada lado recibe solo lo suyo, y [se lo dice explícitamente](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs): \"estás especificando ÚNICAMENTE la parte BACKEND de esta feature\".",
+          "Comparte: entrega a los dos lados el MISMO contrato de API, marcado como autoritativo: \"respétalo, no lo redefinas\". Es la partitura.",
+          "Junta: escribe las dos specs con el mismo slug (`login` en ambos repos), los mismos identificadores de requisito y una huella del contrato estampada en cada archivo. Intenta también darles el mismo número, y lo consigue si la feature es nueva en los dos lados; si un repo ya tenía esa carpeta, respeta la suya."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nada más. Y que sea así de tonto tiene una consecuencia que se puede medir: como no decide nada, no hay nada dentro que pueda equivocarse. Su test completo corre sin llamar a ninguna IA: le inyecto dos funciones falsas en lugar de las que generan el contrato y las specs, y compruebo lo único que le toca — que el orden fue contrato → back → front, que el contrato vio los dos stacks, y que a cada lado le llegó su rol con el mismo contrato dentro. Cero tokens, y el resultado es idéntico siempre."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Compara eso con un orquestador \"listo\", de esos que deciden y opinan: para probarlo tendrías que llamar al modelo. Cada test costaría dinero, tardaría segundos y podría dar un resultado distinto cada vez. La tontería no es una limitación que arrastro — es lo que hace que esta pieza sea la más aburrida y la más fiable de todo el flujo."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué el contrato lo lidera el back y no el front"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es la pregunta que me hacen siempre, casi siempre con desconfianza: ¿por qué manda el back? ¿No es el front el que sabe qué necesita el usuario? La respuesta corta es que \"liderar el contrato\" no significa \"mandar en el producto\". Significa algo mucho más aburrido: quien expone la API es quien la define."
+      },
+      {
+        "kind": "quote",
+        "text": "El BACKEND es dueño del contrato (expone la API); el FRONTEND lo consume. Se diseña desde el backend hacia afuera.",
+        "source": "Prompt del contrato en chalc · lib/prompts/feature-contract.prompt.xml",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El razonamiento es de responsabilidad, no de jerarquía. Y se sostiene solo cuando lo miras desde los hechos:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El back es el único que puede cumplirlo. Si el front \"decide\" que existe `GET /orders/{id}/history`, ese endpoint no existe hasta que el back lo escriba. Un contrato que una parte no puede cumplir no es un contrato: es una carta a los Reyes Magos.",
+          "El back es dueño de la verdad. Los datos, las reglas de negocio y la validación viven ahí. El front puede pintar un total; el back es quien responde si ese total es correcto. Quien custodia el dato define cómo se pide.",
+          "El back tiene un solo contrato; el front es uno de varios. Hoy consume la API una web. Mañana un panel de administración, un reporte, un socio externo. Si el contrato lo define un consumidor, los demás heredan decisiones que se tomaron sin ellos.",
+          "Romper hacia arriba es barato; romper hacia abajo es caro. Si el front cambia una pantalla, el back ni se entera. Si el back cambia un campo, se cae todo lo que consuma esa API. El lado que puede romper a los demás es el que debe hacer explícito su compromiso."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el orden real del flujo, porque ahí está la trampa que evita: el contrato se genera primero, y luego se especifican los dos lados contra ese contrato ya cerrado. El back no lo lidera porque escriba primero; lo lidera porque el contrato describe lo que él expone. De hecho el back tampoco puede inventarlo: el contrato sale de la historia de usuario, no de la opinión del backend. La [regla literal del prompt](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml) es \"eres un ESTRUCTURADOR, no un autor: solo formalizas lo que la HU dice\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y para ser honesto: existe la escuela contraria, es respetable y está mejor documentada que la mía. Se llama consumer-driven contracts —contratos dirigidos por el consumidor— y la describió Ian Robinson en 2006; puedes leerla completa en [Consumer-Driven Contracts: A Service Evolution Pattern](https://martinfowler.com/articles/consumerDrivenContracts.html). Propone justo lo inverso de lo que hago yo: que sea el proveedor quien derive su contrato de las expectativas de sus consumidores, en vez de publicar una API inflada que nadie usa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y por qué no lo implementé así? Por el título completo del artículo, que casi siempre se cita a medias: A Service Evolution Pattern. Es un patrón de evolución — resuelve cómo cambiar una API que ya está viva sin romper a quien ya depende de ella. Yo no estoy cambiando nada. Estoy creando algo que todavía no existe: no hay API en producción, no hay consumidores, no hay nada que romper. El back y el front nacen la misma tarde, con minutos de diferencia."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí es donde esa idea se muerde la cola. Para derivar el contrato de las expectativas del consumidor, alguien tiene que haberlas escrito antes. Pero el consumidor no existe todavía: su spec se genera en la misma pasada. El único que podría escribir esas expectativas soy yo, inventándomelas — que es exactamente lo que el contrato tiene prohibido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí toca ser justo con Robinson, porque su patrón no me obliga a montar nada: dice explícitamente que las expectativas se pueden transmitir hablando con el otro equipo, por correo o en una hoja de cálculo, y que solo cuando crecen demasiado conviene un servicio que las guarde. El aparato pesado —expectativas como tests ejecutables, un servidor que las almacena, verificación en cada build— viene de las herramientas que lo llevan al extremo, como [Pact](https://docs.pact.io/), y se amortiza cuando varios consumidores despliegan por su cuenta y con calendarios distintos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora la parte honesta: el día que esa API lleve un año en producción con cuatro consumidores, mi modelo se queda corto y el suyo pasa a ser el correcto. No son escuelas rivales — son dos momentos distintos de la misma API. Por eso [Pact](https://docs.pact.io/) está en las lecturas del final: es la herramienta que usaría en ese momento, no en este."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Tampoco lo veo como una contradicción: el consumidor influye en qué entra al contrato —por eso todo sale de la historia de usuario y nada es especulativo— pero el proveedor sigue siendo quien lo publica y quien lo cumple."
+      },
+      {
+        "kind": "heading",
+        "text": "Dos carriles no son el límite"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí siempre salta la misma objeción, y es la correcta: ¿y si son más de dos? Un panel de administración, un reporte, un socio externo, una app móvil. El número de carriles no es una propiedad del patrón — es una propiedad de quien lo implementa. El contrato no sabe quién lo consume, y por eso escala."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que aguanta N no es el orquestador: es el contrato. Un consumidor más no obliga a renegociar nada — lee `contracts/api.md`, se especifica contra él y ya está. Los carriles no hablan entre sí: hablan todos con el mismo papel. Ahí está la diferencia entre crecer y enredarse. Coordinar cinco equipos por acuerdos bilaterales son diez conversaciones que hay que mantener vivas; contra un contrato son cinco lecturas del mismo documento."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahora lo que de verdad corro, sin adornos: `chalc feature` coordina dos carriles, front y back. Pero por dentro la maquinaria ya es más general de lo que parece desde fuera. El número de spec compartido se calcula sobre una lista de repos, no sobre una pareja. Y el documento de rol que recibe cada lado no tiene una lista cerrada de roles: pregunta si eres el backend, y si no lo eres, te trata como consumidor — le da igual que seas una web, un panel o una app."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que sigue atado a dos es el cableado de fuera: el orquestador llama dos veces y el comando pide dos rutas. Añadir un tercer consumidor es configurarlo, no rediseñarlo — porque la pieza que importa, el contrato, nunca supo cuántos había."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La prueba está en la misma CLI, porque tengo un segundo orquestador y ese no coordina repos: coordina agentes. Un líder que planea y escribe la spec, un desarrollador que ejecuta una tarea por turno, y un revisor que nunca es el autor de lo que revisa. Tres roles, no dos. Misma idea —una partitura compartida y un coordinador sin opiniones— con otro reparto. Orquestar no va de dos: va de cuántos roles necesites y de que todos lean lo mismo."
+      },
+      {
+        "kind": "heading",
+        "text": "El flujo completo, tal como lo corro"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Entro con una historia de usuario —de Jira, de Azure DevOps, de un Word, o pegada a mano— y apunto a los dos repos. A partir de ahí el orden es fijo:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Detecta los stacks de ambos repos y me los muestra para que confirme que reconoció bien cada uno antes de gastar un token.",
+          "Prepara el terreno: hace `pull` en los dos, revisa si el árbol está limpio y equipa cada repo con sus skills y su método.",
+          "Genera el contrato desde la HU: requisitos compartidos en notación EARS (`CUANDO … EL SISTEMA DEBE …`), endpoints, modelos, autenticación.",
+          "Especifica el back contra ese contrato: endpoints, modelo de datos, reglas de negocio, validación y persistencia.",
+          "Especifica el front contra el MISMO contrato: pantallas, estado, navegación y consumo — con la orden explícita de no reimplementar la lógica del back.",
+          "Escribe y sella: `specs/004-login/` en ambos repos, con `contracts/api.md` idéntico y la huella estampada.",
+          "Crea la rama `feat/<slug>` en los dos — o en ninguno."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --branch",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS",
+          "🔎 Readiness (equipando ambos repos)",
+          "  ✓ git front: al día",
+          "  ✓ git back: al día",
+          "  ✓ front: 19 skills equipadas",
+          "  ✓ back: 6 skills equipadas",
+          "⠋ Orquestando: contrato → spec back → spec front",
+          "✓ Spec back en specs/004-login",
+          "✓ Spec front en specs/004-login",
+          "  Contrato compartido en cada spec: contracts/api.md",
+          "  ✓ front: rama feat/login (creada)",
+          "  ✓ back: rama feat/login (creada)",
+          "✓ Feature orquestada: contrato + spec del back + spec del front."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/contract-orchestrator.es.svg",
+        "caption": "Una historia entra, un contrato se genera, y sale alineado todo el que lo consuma. Fíjate en el camino rosa: cuando a un carril le falta algo, no se lo pide al de al lado — vuelve al contrato pasando por ti. El carril punteado es otro rol más: el contrato no sabe quién lo consume."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese punto 7 —la rama en los dos o en ninguno— parece un detalle y no lo es. Si el back se está trabajando en `feat/login` y el front en `main`, la feature ya está partida en dos realidades. El comando lo trata como una transacción: si alguno de los dos repos tiene cambios sin commitear, no crea la rama en ninguno y me avisa. Prefiero que no haga nada a que me deje media feature."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que el contrato tiene prohibido: inventar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El fallo más caro de una IA generando contratos no es equivocarse: es rellenar. Le pides un login y te devuelve paginación, versionado, OAuth, un array de roles y un endpoint de historial. Nada de eso estaba en la historia. Todo eso son semanas de trabajo que nadie pidió, y que además parecen legítimas porque vienen escritas con seguridad."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso la regla más dura del contrato no es sobre lo que debe hacer, sino sobre lo que no: si algo hace falta y la HU no lo dice, no se adivina — se marca. Va a una sección llamada \"Pendiente de aclarar\" como `[NEEDS CLARIFICATION]`, y esa pregunta vuelve a mí, que soy quien puede contestarla."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/004-login/contracts/api.md",
+          "→ ## Requisitos compartidos",
+          "→ - R1 — CUANDO el usuario envía email y contraseña válidos EL SISTEMA DEBE devolver un token de sesión.",
+          "→ - R2 — CUANDO las credenciales son inválidas EL SISTEMA DEBE responder 401 sin revelar cuál campo falló.",
+          "→ ### POST /auth/login",
+          "→ - Request (body): { \"email\": string, \"password\": string }",
+          "→ - Response 200: { \"token\": string, \"user\": { \"id\": string, \"email\": string } }",
+          "→ - Errores: 400 (validación), 401 (credenciales inválidas)",
+          "→ - Traza: R1, R2",
+          "→ ## Pendiente de aclarar",
+          "→ - [NEEDS CLARIFICATION] ¿El token expira? ¿hay refresh?"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un contrato que admite \"no sé\" vale mucho más que uno completo lleno de suposiciones. El primero te deja una lista de preguntas; el segundo te deja código que hay que borrar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pero falta la pregunta buena: ¿y si el front, a mitad de la implementación, descubre que necesita un campo que el contrato no tiene? Aquí es donde casi todo el mundo rompe el patrón sin enterarse. Le escribe por Slack al del back, se ponen de acuerdo en un minuto, el back añade el campo y sigue la vida. Funciona. Y acabas de perder el contrato: ahora el código hace algo que el papel no dice, y el que llegue mañana va a leer una mentira con toda la confianza del mundo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La regla es que un carril nunca le pide nada al otro carril: se lo pide al contrato. Y como el contrato no es una persona, en la práctica me lo pide a mí, que soy el único que puede decidir si eso entra o no. No es burocracia: es que un acuerdo entre dos por chat no es un acuerdo, es un secreto. Las [instrucciones del orquestador](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/feature.mjs) lo dejan por escrito: \"si algo está [NEEDS CLARIFICATION] en el contrato o una spec, pregúntame antes. La spec es la fuente de verdad: si cambia el alcance, actualiza spec y contrato primero\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí se cierra el círculo con lo que viene ahora: si decido que sí, cambia el contrato, cambia su huella, y las dos specs quedan marcadas como viejas y se regeneran alineadas. El cambio entra por el papel y baja a todos los carriles — nunca al revés. Por eso el patrón aguanta cinco consumidores sin convertirse en una madeja: cada uno mantiene una sola conversación, con el contrato, en vez de cuatro con sus vecinos."
+      },
+      {
+        "kind": "heading",
+        "text": "Anti-deriva: la huella que delata a la spec vieja"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Falta el problema de verdad, el que aparece a los tres días. El contrato cambia —porque el cliente aclaró algo, porque salió un caso que nadie vio— y ahora hay dos specs escritas contra un contrato que ya no existe. Lo peor es que no se nota: los archivos siguen ahí, se ven perfectos, y nadie sabe de qué versión salieron."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La solución es de las que me gustan porque es casi tonta: se calcula una huella del contrato (un hash corto: mismo contenido, misma huella) y se estampa en cada archivo generado, como comentario invisible que no ensucia el markdown. Además se guarda un `contract.lock.json` en un `.chalc/` dentro de la carpeta de la spec. La próxima vez que regenero, se comparan las huellas."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "head -1 specs/004-login/spec.md",
+          "→ <!-- chalc:contract fingerprint=8f3c1a9e0b42 generated=2026-07-16T10:22:14.618Z -->",
+          "chalc feature ./web --back ./api",
+          "→ ! back: el contrato cambió; se regeneran spec/plan/tasks alineados",
+          "→ ! front: el contrato cambió; se regeneran spec/plan/tasks alineados"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí la precisión importa, porque es fácil vender esto de más: nada vigila el repo por su cuenta. La huella no salta sola — se compara la próxima vez que corro `chalc feature`, y entonces me avisa de que las specs venían de un contrato viejo y las reescribe alineadas. No es una alarma, es un recibo. Pero me quita la única parte que se me da mal: acordarme. O la huella coincide o no coincide, y eso no depende de mi memoria."
+      },
+      {
+        "kind": "heading",
+        "text": "Los tests: el mismo R# a los dos lados de la red"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí es donde el contrato deja de ser documentación y empieza a defenderte. Los identificadores de requisito (`R1`, `R2`…) no se renumeran por repo: son los mismos en los dos. La [instrucción a cada lado](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs) es literal: \"reutiliza los MISMOS identificadores de requisito del contrato para conservar la trazabilidad cruzada\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso suena burocrático hasta que ves lo que compra. Tomemos R2 —credenciales inválidas → 401 sin revelar qué campo falló— y mira cómo se prueba a cada lado:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "En el back, R2 es un test de endpoint: mando credenciales malas, exijo un 401 y verifico que el cuerpo no diga cuál de los dos campos estaba mal.",
+          "En el front, R2 es un test de pantalla: simulo un 401 y exijo que se muestre el mensaje genérico y el foco vuelva al formulario.",
+          "Los dos tests fallan primero (Red), como manda el método. El contrato no exime del TDD: le da al test algo contra qué fallar que no es mi intuición.",
+          "Si R2 cambia, la búsqueda es de un segundo: `grep R2` en los dos repos y ahí está todo lo que hay que tocar — contrato, spec, tareas y tests, en back y front."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese es el truco completo. El front no prueba contra lo que el back hace hoy: prueba contra lo que el contrato dice. Si mañana el back se desvía del contrato, el que se cae es el back, y se cae en su propio repo, en su propio test, antes de integrar. Es exactamente la idea de los contract tests que [Martin Fowler describió en 2011](https://martinfowler.com/bliki/ContractTest.html): un fallo ahí te avisa de que el contrato del servicio cambió, en vez de enterarte cuando ya no hay marcha atrás."
+      },
+      {
+        "kind": "quote",
+        "text": "El día de la integración deja de ser un evento. Si los dos lados cumplieron el mismo contrato, conectar es aburrido — y aburrido es exactamente lo que quieres que sea."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuándo NO uso el orquestador"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Porque orquestar tiene un costo, y pagarlo cuando no hace falta es la otra forma de perder el día. Un orquestador solo se justifica si hay algo que coordinar. La regla que sigo es literal, y el propio comando la aplica: si le dices que no hay backend, se niega a seguir y te manda al camino simple."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Un solo repo: no hay nada que coordinar. `chalc spec-ia` genera la spec y listo. El comando [te lo dice tal cual](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/i18n.mjs): \"Sin backend: usa `chalc spec-ia` para un solo repo\".",
+          "El cambio no cruza la red: un color, un texto, una validación que vive entera en el front. Si la API no se mueve, el contrato no pinta nada.",
+          "La API ya existe y no cambia: si consumo un endpoint estable que ya está documentado, el contrato ya está escrito. No lo vuelvo a escribir; lo leo.",
+          "Todavía no sé qué quiero: si estoy explorando si algo es viable, especificar antes es inventar requisitos. Primero averiguo, tiro el experimento, y entonces escribo la historia."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y falta la otra mitad: si lo único que comparten los dos repos es el contrato, ¿qué pasa con todo lo demás? Cada uno con su arquitectura, sus reglas y su README por carpeta — y una máquina que comprueba que se cumplen. Lo cuento en [Un README que nadie comprueba es una mentira](/daily). Si quieres el escalón anterior —cómo una historia se convierte en spec, tests en rojo y mutantes muertos— también está ahí. Y si quieres ver lo que construyo con esto, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI de la que sale todo esto. El orquestador vive en `lib/featureorch.mjs` y el prompt del contrato en `lib/prompts/feature-contract.prompt.xml` — están comentados y se leen en cinco minutos.",
+          "[Consumer-Driven Contracts: A Service Evolution Pattern](https://martinfowler.com/articles/consumerDrivenContracts.html) — Ian Robinson, 2006. La escuela que empuja en dirección contraria: que el proveedor derive su contrato de lo que sus consumidores realmente usan. Vale la pena leerla justo por eso.",
+          "[Contract Test](https://martinfowler.com/bliki/ContractTest.html) — Martin Fowler, 2011. Por qué un test contra el contrato te avisa cuando el proveedor cambia, en vez de enterarte en producción.",
+          "[Notación EARS](https://alistairmavin.com/ears/) — Mav y sus colegas en Rolls-Royce, 2009. Son seis patrones para escribir requisitos que se puedan convertir en test; el contrato usa el de eventos, `CUANDO … EL SISTEMA DEBE …`, pero hay otros cinco que conviene conocer.",
+          "[Pact](https://docs.pact.io/): la herramienta de contratos dirigidos por el consumidor. Es lo que usaría el día que la API lleve tiempo viva y varios consumidores dependan de ella: cada uno publica lo que espera, y el proveedor lo verifica en cada build antes de desplegar."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "The frontend expected `userId`. The backend returned `id`. The frontend took for granted that the 401 carried a message; the backend answers empty. Nobody made a mistake in their own repo: both did a good job that didn't fit, and they find out on integration day — the day there's no room left. That afternoon isn't lost programming: it's lost in a meeting deciding who gives in."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That has a name — drift — and it isn't fixed with more discipline, because nobody was undisciplined. It's fixed with a piece almost nobody names: an orchestrator. That's what this note is about: what it is, how you direct it, and why the backend owns the contract."
+      },
+      {
+        "kind": "quote",
+        "text": "Two teams can each do their job well and still deliver something that doesn't fit. The only thing that prevents it is both having signed the same piece of paper before starting."
+      },
+      {
+        "kind": "heading",
+        "text": "What an orchestrator is (and what it isn't)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "An orchestrator is a piece that coordinates several workers around one goal, without doing any of their work. The word comes from where you'd guess: the conductor of an orchestra plays no instrument. They aren't the best violinist in the room and don't need to be. Their only job is to make the people who do play come in on time and read the same score."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That last part is what matters. A conductor doesn't make it sound good because they know violin: they manage it because a score exists and everyone reads the same one. Take the score away and there's no conducting left, just a person moving their arms. Software is identical: without a shared artifact, an orchestrator orchestrates nothing."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's the confusing part, because it's the opposite of what the word suggests: an orchestrator is not a boss. It isn't a smarter AI reviewing the others' work. It writes no code, decides no architecture, and holds no opinion on whether the backend should use Postgres. The moment it starts deciding for one side, it stops being an orchestrator: it becomes a bottleneck with a nicer job title."
+      },
+      {
+        "kind": "quote",
+        "text": "It decides for neither side (it is neither the frontend nor the backend): it only splits the work, shares the contract and joins the results.",
+        "source": "Design comment in chalc · lib/featureorch.mjs",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That line isn't a slogan I wrote for this note: it's the comment at the top of the orchestrator's file, and it's there so that nobody — including me six months from now — gives it opinions."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In my case the orchestrator is `chalc feature`, a command in [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), the CLI I built. It does exactly three things:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "It splits: takes ONE user story and cuts it into two jobs, one per repo. Each side gets only its own, and is [told so explicitly](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs): \"you are specifying ONLY the BACKEND part of this feature\".",
+          "It shares: hands both sides the SAME API contract, marked as authoritative: \"respect it, do not redefine it\". That's the score.",
+          "It joins: writes both specs with the same slug (`login` in both repos), the same requirement identifiers, and a contract fingerprint stamped into every file. It also tries to give them the same number, and manages it when the feature is new on both sides; if one repo already had that folder, it respects the existing one."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nothing else. And being that dumb has a consequence you can measure: since it decides nothing, there's nothing inside it that can be wrong. Its entire test runs without calling any AI: I inject two fake functions in place of the ones that generate the contract and the specs, and check the only thing that's its job — that the order was contract → back → front, that the contract saw both stacks, and that each side got its role with the same contract inside. Zero tokens, and the result is identical every time."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Compare that to a \"smart\" orchestrator, one that decides and holds opinions: to test it you'd have to call the model. Every test would cost money, take seconds, and could come out different each time. The dumbness isn't a limitation I put up with — it's what makes this piece the most boring and the most reliable one in the whole flow."
+      },
+      {
+        "kind": "heading",
+        "text": "Why the backend owns the contract, not the frontend"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the question I always get, almost always with suspicion: why does the backend lead? Isn't the frontend the one that knows what the user needs? The short answer is that \"owning the contract\" doesn't mean \"running the product\". It means something far more boring: whoever exposes the API is the one who defines it."
+      },
+      {
+        "kind": "quote",
+        "text": "The BACKEND owns the contract (it exposes the API); the FRONTEND consumes it. Design from the backend out.",
+        "source": "Contract prompt in chalc · lib/prompts/feature-contract.prompt.xml",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The reasoning is about responsibility, not hierarchy. And it only holds up when you look at the facts:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The backend is the only one that can fulfill it. If the frontend \"decides\" that `GET /orders/{id}/history` exists, that endpoint does not exist until the backend writes it. A contract one party can't fulfill isn't a contract: it's a letter to Santa.",
+          "The backend owns the truth. The data, the business rules and the validation live there. The frontend can paint a total; the backend is who answers whether that total is correct. Whoever guards the data defines how it's requested.",
+          "The backend has one contract; the frontend is one of many. Today a web app consumes the API. Tomorrow an admin panel, a report, an external partner. If one consumer defines the contract, the rest inherit decisions made without them.",
+          "Breaking upward is cheap; breaking downward is expensive. If the frontend changes a screen, the backend never notices. If the backend changes a field, everything consuming that API falls over. The side that can break the others is the side that must make its commitment explicit."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Look at the real order of the flow, because that's the trap it avoids: the contract is generated first, and only then are both sides specified against that already-closed contract. The backend doesn't lead because it writes first; it leads because the contract describes what it exposes. In fact the backend can't invent it either: the contract comes from the user story, not from the backend's opinion. The prompt's [literal rule](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml) is \"you are a STRUCTURER, not an author: you only formalize what the user story states\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And to be honest: the opposite school exists, it's respectable, and it's better documented than mine. It's called consumer-driven contracts and Ian Robinson described it in 2006 — you can read it in full at [Consumer-Driven Contracts: A Service Evolution Pattern](https://martinfowler.com/articles/consumerDrivenContracts.html). It proposes exactly the inverse: that the provider derive its contract from its consumers' expectations, so it doesn't publish a bloated API nobody uses."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So why didn't I implement it that way? Because of the article's full title, which almost always gets quoted by halves: A Service Evolution Pattern. It's an evolution pattern — it solves how to change an API that is already alive without breaking whoever already depends on it. I'm not changing anything. I'm creating something that doesn't exist yet: no API in production, no consumers, nothing to break. The backend and the frontend are born the same afternoon, minutes apart."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that's where the idea eats its own tail. To derive the contract from the consumer's expectations, someone has to have written them first. But the consumer doesn't exist yet: its spec is generated in the same run. The only one who could write those expectations is me, making them up — which is exactly what the contract forbids."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here I have to be fair to Robinson, because his pattern forces me to set up nothing: he says explicitly that expectations can be transmitted by talking to the other team, by email, or in a spreadsheet, and that only when they grow too large does a service to store them become worthwhile. The heavy machinery — expectations as executable tests, a server holding them, verification on every build — comes from the tools that take it to the extreme, like [Pact](https://docs.pact.io/), and it pays off when several consumers deploy on their own, on different calendars."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now the honest part: the day that API has been in production for a year with four consumers, my model falls short and theirs becomes the right one. They aren't rival schools — they're two different moments of the same API. That's why [Pact](https://docs.pact.io/) is in the reading list at the end: it's the tool I'd reach for then, not now."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I don't see a contradiction either: the consumer influences what enters the contract — that's why everything comes from the user story and nothing is speculative — but the provider is still the one who publishes it and the one who fulfills it."
+      },
+      {
+        "kind": "heading",
+        "text": "Two lanes are not the limit"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here the same objection always comes up, and it's the right one: what if there are more than two? An admin panel, a report, an external partner, a mobile app. The number of lanes is not a property of the pattern — it's a property of whoever implements it. The contract doesn't know who consumes it, and that's exactly why it scales."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What holds N isn't the orchestrator: it's the contract. One more consumer forces no renegotiation — it reads `contracts/api.md`, gets specified against it, done. The lanes don't talk to each other: they all talk to the same piece of paper. That's the difference between growing and tangling. Coordinating five teams through bilateral agreements is ten conversations you have to keep alive; against a contract it's five readings of the same document."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And now what I actually run, without dressing it up: `chalc feature` coordinates two lanes, frontend and backend. But inside, the machinery is already more general than it looks from outside. The shared spec number is computed over a list of repos, not over a pair. And the role document each side receives has no closed list of roles: it asks whether you're the backend, and if you aren't, it treats you as a consumer — it doesn't care whether you're a web app, an admin panel or a mobile app."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What's still tied to two is the wiring on the outside: the orchestrator makes two calls and the command asks for two paths. Adding a third consumer is configuring it, not redesigning it — because the piece that matters, the contract, never knew how many there were."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The proof is in the same CLI, because I have a second orchestrator and that one doesn't coordinate repos: it coordinates agents. A leader who plans and writes the spec, a developer who executes one task per turn, and a reviewer who is never the author of what it reviews. Three roles, not two. Same idea — a shared score and a coordinator with no opinions — with a different cast. Orchestrating isn't about two: it's about however many roles you need, and about all of them reading the same thing."
+      },
+      {
+        "kind": "heading",
+        "text": "The full flow, exactly as I run it"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I come in with a user story — from Jira, from Azure DevOps, from a Word doc, or pasted by hand — and point at both repos. From there the order is fixed:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "It detects both stacks and shows them to me so I confirm it recognized each repo correctly before spending a single token.",
+          "It prepares the ground: pulls both, checks whether the tree is clean, and equips each repo with its skills and method.",
+          "It generates the contract from the story: shared requirements in EARS notation (`WHEN … THE SYSTEM SHALL …`), endpoints, models, authentication.",
+          "It specifies the backend against that contract: endpoints, data model, business rules, validation and persistence.",
+          "It specifies the frontend against the SAME contract: screens, state, navigation and consumption — with the explicit order not to reimplement backend logic.",
+          "It writes and seals: `specs/004-login/` in both repos, with an identical `contracts/api.md` and the fingerprint stamped in.",
+          "It creates the branch `feat/<slug>` in both — or in neither."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --branch",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS",
+          "🔎 Readiness (equipping both repos)",
+          "  ✓ git front: up to date",
+          "  ✓ git back: up to date",
+          "  ✓ front: 19 skills equipped",
+          "  ✓ back: 6 skills equipped",
+          "⠋ Orchestrating: contract → back spec → front spec",
+          "✓ back spec at specs/004-login",
+          "✓ front spec at specs/004-login",
+          "  Shared contract in each spec: contracts/api.md",
+          "  ✓ front: branch feat/login (created)",
+          "  ✓ back: branch feat/login (created)",
+          "✓ Feature orchestrated: contract + back spec + front spec."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/contract-orchestrator.en.svg",
+        "caption": "One story goes in, one contract is generated, and everyone consuming it comes out aligned. Watch the pink path: when a lane is missing something, it doesn't ask its neighbour — it goes back to the contract, through you. The dashed lane is just one more role: the contract doesn't know who consumes it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That step 7 — the branch in both or in neither — looks like a detail and isn't. If the backend is being worked on `feat/login` and the frontend on `main`, the feature is already split into two realities. The command treats it as a transaction: if either repo has uncommitted changes, it creates the branch in neither and tells me. I'd rather it do nothing than leave me half a feature."
+      },
+      {
+        "kind": "heading",
+        "text": "What the contract is forbidden to do: invent"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The most expensive failure of an AI generating contracts isn't being wrong: it's padding. You ask for a login and it returns pagination, versioning, OAuth, a roles array and a history endpoint. None of that was in the story. All of it is weeks of work nobody asked for — and it looks legitimate, because it's written with confidence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why the contract's hardest rule isn't about what it must do, but about what it must not: if something is needed and the story doesn't state it, it isn't guessed — it's flagged. It goes into a section called \"Pending clarification\" as `[NEEDS CLARIFICATION]`, and that question comes back to me, the one who can actually answer it."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/004-login/contracts/api.md",
+          "→ ## Shared requirements",
+          "→ - R1 — WHEN the user submits a valid email and password THE SYSTEM SHALL return a session token.",
+          "→ - R2 — WHEN the credentials are invalid THE SYSTEM SHALL respond 401 without revealing which field failed.",
+          "→ ### POST /auth/login",
+          "→ - Request (body): { \"email\": string, \"password\": string }",
+          "→ - Response 200: { \"token\": string, \"user\": { \"id\": string, \"email\": string } }",
+          "→ - Errors: 400 (validation), 401 (invalid credentials)",
+          "→ - Trace: R1, R2",
+          "→ ## Pending clarification",
+          "→ - [NEEDS CLARIFICATION] Does the token expire? Is there a refresh?"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "A contract that admits \"I don't know\" is worth far more than a complete one full of assumptions. The first leaves you a list of questions; the second leaves you code you'll have to delete."
+      },
+      {
+        "kind": "paragraph",
+        "text": "But the good question is still missing: what if the frontend, halfway through the implementation, finds it needs a field the contract doesn't have? This is where almost everyone breaks the pattern without noticing. They Slack the backend person, they agree in a minute, the backend adds the field, life goes on. It works. And you've just lost the contract: now the code does something the paper doesn't say, and whoever arrives tomorrow will read a lie with total confidence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The rule is that a lane never asks anything of another lane: it asks the contract. And since the contract isn't a person, in practice it asks me — the only one who can decide whether that goes in. It isn't bureaucracy: it's that an agreement between two people over chat isn't an agreement, it's a secret. The [orchestrator's instructions](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/feature.mjs) put it in writing: \"if something is [NEEDS CLARIFICATION] in the contract or a spec, ask me first. The spec is the source of truth: if scope changes, update spec and contract first\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that closes the loop with what comes next: if I say yes, the contract changes, its fingerprint changes, and both specs get marked stale and regenerated in sync. The change enters through the paper and flows down to every lane — never the other way around. That's why the pattern survives five consumers without turning into a tangle: each one keeps a single conversation, with the contract, instead of four with its neighbours."
+      },
+      {
+        "kind": "heading",
+        "text": "Anti-drift: the fingerprint that exposes the stale spec"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now the real problem, the one that shows up three days in. The contract changes — because the client clarified something, because a case nobody saw came up — and now there are two specs written against a contract that no longer exists. The worst part is that it doesn't show: the files are still there, they look perfect, and nobody knows which version they came from."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The solution is one of my favorites because it's almost dumb: a fingerprint of the contract is computed (a short hash: same content, same fingerprint) and stamped into every generated file, as an invisible comment that doesn't clutter the markdown. A `contract.lock.json` is saved in a `.chalc/` inside the spec's folder too. Next time I regenerate, the fingerprints are compared."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "head -1 specs/004-login/spec.md",
+          "→ <!-- chalc:contract fingerprint=8f3c1a9e0b42 generated=2026-07-16T10:22:14.618Z -->",
+          "chalc feature ./web --back ./api",
+          "→ ! back: contract changed; spec/plan/tasks regenerated in sync",
+          "→ ! front: contract changed; spec/plan/tasks regenerated in sync"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And precision matters here, because this is easy to oversell: nothing watches the repo on its own. The fingerprint doesn't raise an alarm by itself — it gets compared the next time I run `chalc feature`, and that's when it tells me the specs came from an old contract and rewrites them in sync. It isn't an alarm, it's a receipt. But it takes away the one part I'm bad at: remembering. Either the fingerprint matches or it doesn't, and that doesn't depend on my memory."
+      },
+      {
+        "kind": "heading",
+        "text": "The tests: the same R# on both sides of the network"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is where the contract stops being documentation and starts defending you. The requirement identifiers (`R1`, `R2`…) are not renumbered per repo: they're the same on both. The [instruction to each side](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs) is literal: \"reuse the SAME requirement identifiers from the contract to preserve cross-repo traceability\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That sounds bureaucratic until you see what it buys. Take R2 — invalid credentials → 401 without revealing which field failed — and look at how it's tested on each side:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "On the backend, R2 is an endpoint test: I send bad credentials, require a 401, and verify the body doesn't say which of the two fields was wrong.",
+          "On the frontend, R2 is a screen test: I simulate a 401 and require the generic message to show and focus to return to the form.",
+          "Both tests fail first (Red), as the method demands. The contract doesn't exempt you from TDD: it gives the test something to fail against that isn't my intuition.",
+          "If R2 changes, the search takes a second: `grep R2` in both repos and there's everything to touch — contract, spec, tasks and tests, backend and frontend."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's the whole trick. The frontend doesn't test against what the backend does today: it tests against what the contract says. If tomorrow the backend deviates from the contract, the backend is what falls over — in its own repo, in its own test, before integrating. It's exactly the idea behind the contract tests [Martin Fowler described in 2011](https://martinfowler.com/bliki/ContractTest.html): a failure there tells you the service contract changed, instead of finding out when there's no way back."
+      },
+      {
+        "kind": "quote",
+        "text": "Integration day stops being an event. If both sides honored the same contract, connecting is boring — and boring is exactly what you want it to be."
+      },
+      {
+        "kind": "heading",
+        "text": "When I do NOT use the orchestrator"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Because orchestrating has a cost, and paying it when it isn't needed is the other way to lose the day. An orchestrator is only justified if there's something to coordinate. The rule I follow is literal, and the command itself enforces it: tell it there's no backend and it refuses to continue, sending you down the simple path."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "A single repo: there's nothing to coordinate. `chalc spec-ia` generates the spec and that's it. The command [says so outright](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/i18n.mjs): \"No backend: use `chalc spec-ia` for a single repo\".",
+          "The change doesn't cross the network: a color, a text, a validation living entirely in the frontend. If the API doesn't move, the contract has no role.",
+          "The API already exists and isn't changing: if I consume a stable, documented endpoint, the contract is already written. I don't rewrite it; I read it.",
+          "I don't know what I want yet: if I'm exploring whether something is viable, specifying first is inventing requirements. First I find out, I throw the experiment away, and then I write the story."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the other half is missing: if the only thing the two repos share is the contract, what happens to everything else? Each one with its own architecture, its own rules and a README per folder — plus a machine that checks they hold. I cover that in [A README nobody checks is a lie](/daily). If you want the previous step — how a story becomes a spec, red tests and dead mutants — it's there too. And if you want to see what I build with this, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI all of this comes from. The orchestrator lives in `lib/featureorch.mjs` and the contract prompt in `lib/prompts/feature-contract.prompt.xml` — both are commented and read in five minutes.",
+          "[Consumer-Driven Contracts: A Service Evolution Pattern](https://martinfowler.com/articles/consumerDrivenContracts.html) — Ian Robinson, 2006. The school pushing the other way: the provider derives its contract from what its consumers actually use. Worth reading precisely for that.",
+          "[Contract Test](https://martinfowler.com/bliki/ContractTest.html) — Martin Fowler, 2011. Why a test against the contract warns you when the provider changes, instead of finding out in production.",
+          "[EARS notation](https://alistairmavin.com/ears/) — Mav and colleagues at Rolls-Royce, 2009. Six patterns for writing requirements that can become tests; the contract uses the event-driven one, `WHEN … THE SYSTEM SHALL …`, but there are five others worth knowing.",
+          "[Pact](https://docs.pact.io/): the consumer-driven contract tool. It's what I'd use the day the API has been alive a while and several consumers depend on it: each one publishes what it expects, and the provider verifies it on every build before deploying."
+        ]
+      }
+    ]
+  }
+}

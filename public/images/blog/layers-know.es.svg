@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" role="img" aria-label="Cada capa sabe lo justo: qué regla lleva cada carpeta y qué no necesita saber">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .lay { animation: pop 7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .l2 { animation-delay: .6s; } .l3 { animation-delay: 1.2s; } .l4 { animation-delay: 1.8s; }
+    .flow { stroke-dasharray: 5 6; animation: dash 1.8s linear infinite; }
+    .nope { animation: blink 4s ease-in-out infinite; }
+    @keyframes pop { 0%, 100% { opacity: .8; transform: translateX(0); } 8% { opacity: 1; transform: translateX(4px); } 22% { opacity: .96; } }
+    @keyframes dash { to { stroke-dashoffset: -44; } }
+    @keyframes blink { 0%, 100% { opacity: .5; } 50% { opacity: .95; } }
+  </style>
+
+  <rect width="1000" height="540" fill="url(#bg)"/>
+  <text x="40" y="48" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Cada capa sabe lo justo</text>
+  <text x="40" y="76" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">Clean Architecture · un README por carpeta con SUS reglas, no un archivo de 400 líneas</text>
+
+  <text x="130" y="108" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">lo que lleva escrito en su README</text>
+  <text x="960" y="108" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">lo que NO necesita saber</text>
+
+  <!-- Presentation -->
+  <g class="lay">
+    <rect x="110" y="120" width="500" height="72" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="132" y="148" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">📄 presentation/</text>
+    <text x="132" y="172" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">llama al caso de uso · nunca a infraestructura · sin reglas de negocio</text>
+  </g>
+  <g class="nope">
+    <text x="960" y="150" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">cómo se calcula el descuento</text>
+    <text x="960" y="170" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">si hay que auditar la operación</text>
+  </g>
+
+  <path d="M360 194 V 216" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="372" y="210" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">depende de</text>
+
+  <!-- Application -->
+  <g class="lay l2">
+    <rect x="110" y="220" width="500" height="72" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="132" y="248" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">📄 application/</text>
+    <text x="132" y="272" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">orquesta el dominio por sus interfaces · un caso de uso = una operación</text>
+  </g>
+  <g class="nope">
+    <text x="960" y="250" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">si el dato viene de Postgres,</text>
+    <text x="960" y="270" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">de una API o de una caché</text>
+  </g>
+
+  <path d="M360 294 V 316" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+  <text x="372" y="310" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">depende de</text>
+
+  <!-- Domain -->
+  <g class="lay l3">
+    <rect x="110" y="320" width="500" height="72" rx="12" fill="none" stroke="#34d399" stroke-width="2.5"/>
+    <text x="132" y="348" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">📄 domain/  ·  el corazón</text>
+    <text x="132" y="372" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">reglas puras · cero framework · define los puertos (interfaces)</text>
+  </g>
+  <g class="nope">
+    <text x="960" y="350" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">que exista una pantalla</text>
+    <text x="960" y="370" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">o una base de datos</text>
+  </g>
+
+  <path d="M360 442 V 396" class="flow" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#arg)"/>
+  <text x="372" y="424" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">implementa sus puertos</text>
+
+  <!-- Infrastructure -->
+  <g class="lay l4">
+    <rect x="110" y="446" width="500" height="72" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="132" y="474" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">📄 infrastructure/</text>
+    <text x="132" y="498" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">implementa los puertos del dominio · aquí vive el detalle técnico</text>
+  </g>
+  <g class="nope">
+    <text x="960" y="476" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">quién la llama</text>
+    <text x="960" y="496" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">ni para qué caso de uso</text>
+  </g>
+
+  <!-- la flecha que no existe -->
+  <g class="nope">
+    <path d="M96 456 V 130" stroke="#fb7185" stroke-width="1.5" fill="none" stroke-dasharray="4 5"/>
+    <line x1="88" y1="286" x2="104" y2="302" stroke="#fb7185" stroke-width="2"/>
+    <line x1="104" y1="286" x2="88" y2="302" stroke="#fb7185" stroke-width="2"/>
+    <text x="70" y="240" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185" transform="rotate(-90 70 240)">regla: el detalle no sube</text>
+  </g>
+</svg>

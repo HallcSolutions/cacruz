@@ -1,5 +1,31 @@
 [
   {
+    "slug": "rules-that-can-fail",
+    "date": "2026-07-16",
+    "title": {
+      "es": "Un README que nadie comprueba es una mentira: reglas repartidas y verificadas",
+      "en": "A README nobody checks is a lie: rules split up and verified"
+    },
+    "summary": {
+      "es": "Un architecture.md de cuatrocientas líneas parece orden y es lo contrario: nadie sabe qué parte le aplica. Por qué cada repo y cada carpeta llevan sus propias reglas, por qué la presentación no necesita saber cómo se calcula un descuento, qué le pasa a tu factura cuando el agente lee tres líneas en vez de cuatrocientas, y por qué la única regla que sirve es la que puede fallar.",
+      "en": "A four-hundred-line architecture.md looks like order and is the opposite: nobody knows which part applies to them. Why each repo and each folder carry their own rules, why presentation doesn't need to know how a discount is calculated, what happens to your bill when the agent reads three lines instead of four hundred, and why the only rule worth having is the one that can fail."
+    },
+    "tags": ["arquitectura", "clean-code", "chalc", "agentes", "documentación"]
+  },
+  {
+    "slug": "one-contract-many-repos",
+    "date": "2026-07-16",
+    "title": {
+      "es": "Un contrato manda: qué es un orquestador y por qué lo lidera el back",
+      "en": "One contract rules: what an orchestrator is and why the backend leads it"
+    },
+    "summary": {
+      "es": "El front esperaba `userId` y el back devolvió `id`: la integración es donde se pierden los días. Qué es un orquestador —una pieza que no escribe código, solo reparte, comparte y junta—, por qué el contrato lo lidera el back y no el front, por qué el número de repos no es una propiedad del patrón sino un límite de cada implementación, y cómo la huella del contrato impide que nadie derive en silencio.",
+      "en": "The frontend expected `userId` and the backend returned `id`: integration is where the days go. What an orchestrator is — a piece that writes no code, it only splits, shares and joins — why the backend owns the contract instead of the frontend, why the number of repos is not a property of the pattern but a limit of each implementation, and how the contract fingerprint stops anyone from drifting in silence."
+    },
+    "tags": ["chalc", "orquestador", "contratos", "sdd", "arquitectura"]
+  },
+  {
     "slug": "the-software-in-minutes-trap",
     "date": "2026-07-15",
     "title": {

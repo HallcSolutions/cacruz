@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Por qué la misma pregunta da dos respuestas: el modelo predice la siguiente palabra con un peso para cada opción y saca una al azar">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/></marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/></marker>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/></marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 5 6; animation: dash 1.7s linear infinite; }
+    .bar { animation: grow 6s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+    .b2 { animation-delay: .3s; } .b3 { animation-delay: .6s; } .b4 { animation-delay: .9s; } .b5 { animation-delay: 1.2s; }
+    .pulse { animation: pulse 3.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes dash { to { stroke-dashoffset: -44; } }
+    @keyframes grow { 0% { transform: scaleX(.12); opacity: .45; } 14% { transform: scaleX(1); opacity: 1; } 100% { transform: scaleX(1); opacity: .9; } }
+    @keyframes pulse { 0%,100% { opacity: .8; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Por qué la misma pregunta da dos respuestas</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">Un LLM no calcula la respuesta: predice la siguiente palabra y saca una al azar según su peso</text>
+
+  <!-- prompt -->
+  <rect x="40" y="112" width="215" height="58" rx="11" fill="none" stroke="#8a7fb0" stroke-width="1.8"/>
+  <text x="147" y="140" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">le das un texto</text>
+  <text x="147" y="160" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">"el cielo está ___"</text>
+
+  <path d="M255 141 H 300" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#av)"/>
+
+  <!-- modelo -->
+  <rect x="302" y="104" width="180" height="74" rx="12" fill="none" stroke="#a78bfa" stroke-width="2.2" class="pulse"/>
+  <text x="392" y="134" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">modelo (LLM)</text>
+  <text x="392" y="156" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">¿qué palabra sigue?</text>
+
+  <path d="M482 141 H 528" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#av)"/>
+
+  <!-- distribucion -->
+  <text x="545" y="100" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">le pone un peso a cada opción posible<tspan fill="#8a7fb0"> · cifras de ejemplo</tspan></text>
+  <g font-family="ui-monospace, monospace" font-size="12">
+    <text x="628" y="132" text-anchor="end" fill="#34d399">azul</text>
+    <rect x="636" y="121" width="240" height="16" rx="4" fill="#34d399" class="bar"/>
+    <text x="884" y="133" fill="#34d399">62%</text>
+
+    <text x="628" y="164" text-anchor="end" fill="#c6bdf0">gris</text>
+    <rect x="636" y="153" width="70" height="16" rx="4" fill="#a78bfa" class="bar b2"/>
+    <text x="714" y="165" fill="#8a7fb0">18%</text>
+
+    <text x="628" y="196" text-anchor="end" fill="#c6bdf0">claro</text>
+    <rect x="636" y="185" width="43" height="16" rx="4" fill="#a78bfa" class="bar b3"/>
+    <text x="687" y="197" fill="#8a7fb0">11%</text>
+
+    <text x="628" y="228" text-anchor="end" fill="#c6bdf0">rojo</text>
+    <rect x="636" y="217" width="24" height="16" rx="4" fill="#7c6aa8" class="bar b4"/>
+    <text x="668" y="229" fill="#8a7fb0">6%</text>
+
+    <text x="628" y="260" text-anchor="end" fill="#c6bdf0">otras…</text>
+    <rect x="636" y="249" width="12" height="16" rx="4" fill="#7c6aa8" class="bar b5"/>
+    <text x="656" y="261" fill="#8a7fb0">3%</text>
+  </g>
+
+  <!-- muestreo -->
+  <path d="M392 178 V 300" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#av)"/>
+  <rect x="250" y="304" width="500" height="52" rx="12" fill="#a78bfa" fill-opacity="0.08" stroke="#a78bfa" stroke-width="1.6" class="pulse"/>
+  <text x="500" y="328" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">🎲  saca una al azar, con más peso a las más probables</text>
+  <text x="500" y="346" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">a esto se le llama «muestreo» · casi siempre sale la de arriba, pero no siempre</text>
+
+  <!-- dos tiradas -->
+  <path d="M420 356 C 380 385, 320 392, 300 408" class="flow" stroke="#34d399" stroke-width="2" fill="none" marker-end="url(#ag)"/>
+  <path d="M580 356 C 620 385, 680 392, 700 408" class="flow" stroke="#fb7185" stroke-width="2" fill="none" marker-end="url(#ar)"/>
+
+  <rect x="40" y="410" width="440" height="72" rx="12" fill="none" stroke="#34d399" stroke-width="2"/>
+  <text x="60" y="436" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">Tirada 1 · toma «azul»</text>
+  <text x="60" y="462" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">"el cielo está azul y despejado."</text>
+
+  <rect x="520" y="410" width="440" height="72" rx="12" fill="none" stroke="#fb7185" stroke-width="2"/>
+  <text x="540" y="436" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185">Tirada 2 · toma «gris» (menos probable, pero pasa)</text>
+  <text x="540" y="462" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">"el cielo está gris y va a llover."</text>
+
+  <rect x="40" y="498" width="920" height="54" rx="10" fill="#a78bfa" fill-opacity="0.06" stroke="#453768" stroke-width="1"/>
+  <text x="500" y="521" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">La palabra elegida se añade al texto y el modelo vuelve a empezar, palabra a palabra.</text>
+  <text x="500" y="540" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">Por eso la misma pregunta se bifurca: no está rota, funciona así.</text>
+</svg>

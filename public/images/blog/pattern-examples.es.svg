@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Un ejemplo real de cada patrón: clasificar un correo, escribir un artículo, soporte al cliente, revisar un contrato, generar un informe y traducir con calidad">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .flow { fill: none; stroke-dasharray: 4 5; animation: dash 1.8s linear infinite; }
+    .cell { animation: fade 7s ease-in-out infinite; }
+    .c2{animation-delay:.4s}.c3{animation-delay:.8s}.c4{animation-delay:1.2s}.c5{animation-delay:1.6s}.c6{animation-delay:2s}
+    @keyframes dash { to { stroke-dashoffset: -36; } }
+    @keyframes fade { 0%,100%{opacity:.92} 50%{opacity:1} }
+    text { font-family: ui-monospace, monospace; }
+    .node { fill: none; stroke-width: 1.7; }
+    .lbl { font-size: 9.5px; fill: #ece7fb; }
+    .cap { fill: #8a7fb0; }
+    .mdl { stroke: #a78bfa; }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">Un ejemplo real de cada patrón</text>
+  <text x="40" y="72" class="cap" font-size="13.5">El mismo orden de la lista. ◆ = una llamada al modelo; en verde, la salida que te llevas.</text>
+
+  <!-- ===== FILA 1 ===== -->
+  <!-- 1 Clasificar un correo -->
+  <g class="cell">
+    <rect x="30" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="48" y="124" font-size="12.5" fill="#c6bdf0">1 · Clasificar un correo</text>
+    <text x="48" y="144" class="cap" font-size="9.5">una sola llamada</text>
+    <rect class="node" x="48" y="188" width="60" height="30" rx="7" stroke="#8a7fb0"/><text x="78" y="207" text-anchor="middle" class="lbl">correo</text>
+    <rect class="node mdl" x="140" y="185" width="42" height="36" rx="8"/><text x="161" y="207" text-anchor="middle" class="lbl">◆</text>
+    <path d="M108 203 H 138" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <rect class="node" x="214" y="168" width="96" height="22" rx="6" stroke="#34d399"/><text x="262" y="183" text-anchor="middle" class="lbl">queja ✓</text>
+    <rect class="node" x="214" y="194" width="96" height="22" rx="6" stroke="#5a4d7a"/><text x="262" y="209" text-anchor="middle" class="lbl">consulta</text>
+    <rect class="node" x="214" y="220" width="96" height="22" rx="6" stroke="#5a4d7a"/><text x="262" y="235" text-anchor="middle" class="lbl">spam</text>
+    <path d="M182 200 C 198 192, 200 182, 212 179" class="flow" stroke="#34d399" stroke-width="1.5" marker-end="url(#ag)"/>
+    <path d="M182 205 H 212" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <path d="M182 210 C 198 218, 200 228, 212 231" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="180" y="272" text-anchor="middle" class="cap" font-size="9.5">le pega una etiqueta y listo</text>
+  </g>
+
+  <!-- 2 Escribir un articulo -->
+  <g class="cell c2">
+    <rect x="350" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="368" y="124" font-size="12.5" fill="#c6bdf0">2 · Escribir un artículo</text>
+    <text x="368" y="144" class="cap" font-size="9.5">cadena de pasos</text>
+    <rect class="node mdl" x="362" y="190" width="58" height="28" rx="7"/><text x="391" y="208" text-anchor="middle" class="lbl">esquema</text>
+    <rect class="node mdl" x="430" y="190" width="58" height="28" rx="7"/><text x="459" y="208" text-anchor="middle" class="lbl">borrador</text>
+    <rect class="node mdl" x="498" y="190" width="44" height="28" rx="7"/><text x="520" y="208" text-anchor="middle" class="lbl">pulir</text>
+    <rect class="node" x="552" y="190" width="66" height="28" rx="7" stroke="#34d399"/><text x="585" y="208" text-anchor="middle" class="lbl">traducir ✓</text>
+    <path d="M420 204 H 429" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M488 204 H 497" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M542 204 H 551" class="flow" stroke="#34d399" stroke-width="1.6" marker-end="url(#ag)"/>
+    <text x="500" y="272" text-anchor="middle" class="cap" font-size="9.5">cada salida entra en el paso siguiente</text>
+  </g>
+
+  <!-- 3 Soporte al cliente -->
+  <g class="cell c3">
+    <rect x="670" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="688" y="124" font-size="12.5" fill="#c6bdf0">3 · Soporte al cliente</text>
+    <text x="688" y="144" class="cap" font-size="9.5">enrutado</text>
+    <rect class="node" x="686" y="188" width="46" height="28" rx="7" stroke="#8a7fb0"/><text x="709" y="206" text-anchor="middle" class="lbl">msg</text>
+    <rect class="node mdl" x="748" y="186" width="52" height="32" rx="8"/><text x="774" y="206" text-anchor="middle" class="lbl" font-size="9">router</text>
+    <path d="M732 202 H 746" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <rect class="node" x="828" y="166" width="98" height="20" rx="6" stroke="#34d399"/><text x="877" y="180" text-anchor="middle" class="lbl">facturación ✓</text>
+    <rect class="node" x="828" y="192" width="98" height="20" rx="6" stroke="#5a4d7a"/><text x="877" y="206" text-anchor="middle" class="lbl">técnico</text>
+    <rect class="node" x="828" y="218" width="98" height="20" rx="6" stroke="#5a4d7a"/><text x="877" y="232" text-anchor="middle" class="lbl">devoluciones</text>
+    <path d="M800 198 C 814 190, 816 180, 826 177" class="flow" stroke="#34d399" stroke-width="1.5" marker-end="url(#ag)"/>
+    <path d="M800 202 H 826" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <path d="M800 206 C 814 214, 816 224, 826 227" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="820" y="272" text-anchor="middle" class="cap" font-size="9.5">cada rama, su prompt y su tono</text>
+  </g>
+
+  <!-- ===== FILA 2 ===== -->
+  <!-- 4 Revisar un contrato -->
+  <g class="cell c4">
+    <rect x="30" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="48" y="344" font-size="12.5" fill="#c6bdf0">4 · Revisar un contrato</text>
+    <text x="48" y="364" class="cap" font-size="9.5">paralelización</text>
+    <rect class="node" x="48" y="408" width="58" height="30" rx="7" stroke="#8a7fb0"/><text x="77" y="427" text-anchor="middle" class="lbl">contrato</text>
+    <rect class="node mdl" x="140" y="388" width="66" height="20" rx="6"/><text x="173" y="402" text-anchor="middle" class="lbl">riesgos</text>
+    <rect class="node mdl" x="140" y="413" width="66" height="20" rx="6"/><text x="173" y="427" text-anchor="middle" class="lbl">pagos</text>
+    <rect class="node mdl" x="140" y="438" width="66" height="20" rx="6"/><text x="173" y="452" text-anchor="middle" class="lbl">datos</text>
+    <rect class="node" x="238" y="410" width="72" height="28" rx="7" stroke="#34d399"/><text x="274" y="428" text-anchor="middle" class="lbl">informe ✓</text>
+    <path d="M106 418 C 122 408, 124 400, 138 398" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M106 423 H 138" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M106 428 C 122 438, 124 446, 138 448" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M206 398 C 222 408, 224 416, 236 421" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M206 423 H 236" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M206 448 C 222 438, 224 430, 236 425" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="180" y="492" text-anchor="middle" class="cap" font-size="9.5">tres revisiones a la vez, luego se juntan</text>
+  </g>
+
+  <!-- 5 Generar un informe -->
+  <g class="cell c5">
+    <rect x="350" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="368" y="344" font-size="12.5" fill="#c6bdf0">5 · Generar un informe</text>
+    <text x="368" y="364" class="cap" font-size="9.5">orquestador</text>
+    <rect class="node mdl" x="362" y="408" width="48" height="30" rx="7" stroke-width="2.2"/><text x="386" y="427" text-anchor="middle" class="lbl" font-size="9">orq</text>
+    <rect class="node mdl" x="446" y="388" width="60" height="20" rx="6"/><text x="476" y="402" text-anchor="middle" class="lbl">intro</text>
+    <rect class="node mdl" x="446" y="413" width="60" height="20" rx="6"/><text x="476" y="427" text-anchor="middle" class="lbl">datos</text>
+    <rect class="node mdl" x="446" y="438" width="60" height="20" rx="6"/><text x="476" y="452" text-anchor="middle" class="lbl">cierre</text>
+    <rect class="node" x="536" y="410" width="72" height="28" rx="7" stroke="#34d399"/><text x="572" y="428" text-anchor="middle" class="lbl">informe ✓</text>
+    <path d="M410 418 C 426 408, 428 400, 444 398" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M410 423 H 444" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M410 428 C 426 438, 428 446, 444 448" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M506 398 C 522 408, 524 416, 534 421" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M506 423 H 534" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M506 448 C 522 438, 524 430, 534 425" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="486" y="492" text-anchor="middle" class="cap" font-size="9.5">él decide las secciones y las cose</text>
+  </g>
+
+  <!-- 6 Traducir con calidad -->
+  <g class="cell c6">
+    <rect x="670" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="688" y="344" font-size="12.5" fill="#c6bdf0">6 · Traducir con calidad</text>
+    <text x="688" y="364" class="cap" font-size="9.5">evaluador</text>
+    <rect class="node mdl" x="700" y="405" width="66" height="30" rx="7"/><text x="733" y="424" text-anchor="middle" class="lbl">traduce</text>
+    <rect class="node mdl" x="800" y="405" width="84" height="30" rx="7"/><text x="842" y="424" text-anchor="middle" class="lbl" font-size="8.5">¿suena natural?</text>
+    <path d="M766 415 H 798" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <path d="M800 429 C 786 452, 748 452, 750 435" class="flow" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#av)"/>
+    <text x="775" y="466" text-anchor="middle" class="cap" font-size="9">corrige ↺</text>
+    <path d="M884 420 H 902" class="flow" stroke="#34d399" stroke-width="1.6" marker-end="url(#ag)"/>
+    <text x="924" y="424" text-anchor="middle" class="lbl" fill="#34d399" font-size="9">✓ OK</text>
+    <text x="820" y="492" text-anchor="middle" class="cap" font-size="9.5">genera y critica hasta que pasa</text>
+  </g>
+</svg>

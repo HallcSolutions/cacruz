@@ -1,0 +1,429 @@
+{
+  "slug": "ai-architectures-people-use",
+  "date": "2026-07-17",
+  "title": {
+    "es": "Las arquitecturas de IA que de verdad se usan (y cuánta libertad darle al modelo)",
+    "en": "The AI architectures people actually use (and how much freedom to give the model)"
+  },
+  "summary": {
+    "es": "Qué cambia cuando pones un modelo donde antes había código, por qué casi todo lo que llaman «agente» en realidad es un workflow, y las arquitecturas más usadas ordenadas por una sola pregunta: cuánta libertad le das al modelo. Con gráficos de cada patrón, cuándo usar cada uno, dónde encaja RAG, y enlaces a la investigación original.",
+    "en": "What changes when you put a model where code used to be, why most of what gets called an \"agent\" is really a workflow, and the most-used architectures ordered by a single question: how much freedom you give the model. With diagrams of each pattern, when to use each, where RAG fits, and links to the original research."
+  },
+  "tags": ["ia", "agentes", "arquitectura", "rag", "workflows"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "La pregunta que casi todo el mundo hace mal es «¿qué arquitectura de IA uso?». Suena a que hay un catálogo de cajas y flechas del que eliges una. No lo hay. La pregunta de verdad, la que ordena todas las demás, es otra: **¿cuánta libertad le doy a la pieza que no siempre da la misma respuesta?** Toda la ingeniería de agentes cabe en esa frase."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con esa pregunta delante, lo demás se ordena solo, y eso es lo que recorre la nota. Primero, qué cambia exactamente cuando una pieza deja de ser código y pasa a ser un modelo. Después, las arquitecturas que más se repiten en los sistemas reales, colocadas por lo único que de verdad las distingue: cuánta libertad le ceden al modelo. De cada una digo cuándo conviene y —lo que casi nadie dice— cuándo estorba. Y aclaro qué es RAG y por qué casi nadie lo coloca bien: no es una arquitectura de agente, es la forma de darle al modelo lo que no sabe —tus datos, lo que cambió ayer— sin reentrenarlo, y por eso encaja debajo de cualquiera de los patrones en vez de competir con ellos. Todo con gráficos, porque un eje se entiende antes viéndolo que leyéndolo. Y que quede claro: nada de esto es dogma ni pretendo tener razón en todo. Es cómo lo entiendo hoy, con las fuentes originales al lado para que lo compruebes y discrepes si hace falta. Sin producto detrás: son patrones generales, te sirvan en tu proyecto o en el mío."
+      },
+      {
+        "kind": "quote",
+        "text": "Encuentra la solución más simple posible, y aumenta la complejidad solo cuando haga falta.",
+        "source": "Anthropic · Building Effective Agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "heading",
+        "text": "Qué cambia cuando metes un modelo dentro"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En la arquitectura de siempre, una pieza es una función: le das la misma entrada y te devuelve la misma salida, hoy y en tres meses. `2 + 2` da `4` las veces que quieras. Sobre esa promesa está construido todo lo que sabes: puedes probarlo con un test que compara igualdad, cachear el resultado, razonar sobre el sistema. Es determinista, y determinista quiere decir aburrido en el buen sentido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un modelo rompe esa promesa. No calcula una respuesta: elige una entre muchas posibles, y la misma pregunta puede dar dos respuestas distintas —una buena y una floja— sin que nada haya cambiado. Eso no es un defecto que se arregle con mejor prompt: es la naturaleza de la pieza. Y en cuanto lo aceptas, todo lo demás se deriva solo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y por qué elige, en lugar de calcular? Porque por dentro un modelo de lenguaje —un LLM— hace una sola cosa: predecir la siguiente palabra (en realidad trozos de palabra, llamados «tokens», pero para entenderlo piénsalo en palabras). Le das un texto y, para cada palabra que podría venir después, calcula una probabilidad: tras «el cielo está», «azul» es muy probable, «gris» bastante menos, «verde» casi imposible. Y aquí está el truco: en vez de quedarse siempre con la más probable, saca una al azar respetando esos pesos —a eso se le llama muestreo—, la añade al texto y repite, palabra a palabra, hasta terminar. Ese dado con los pesos cargados es lo que hace que la misma pregunta, lanzada dos veces, tome caminos distintos y acabe en dos respuestas válidas. No está roto: funciona exactamente como se diseñó."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/next-token.es.svg",
+        "caption": "El modelo no devuelve «la» respuesta: para la siguiente palabra le pone un peso a cada opción y saca una al azar, con más peso a las más probables. Casi siempre sale la de arriba; cuando sale otra, la respuesta entera se bifurca. Por eso la misma pregunta puede dar dos resultados sin que nada haya cambiado. (Las cifras del gráfico son ilustrativas.)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Porque si la salida no es fija, tienes que hacer tres cosas que con código no hacían falta: **acotar** lo que el modelo puede tocar, **verificar** lo que produce antes de fiarte, y **decidir cuánta libertad** le das para llegar a la respuesta. Esa tercera decisión —cuánta libertad— no es un detalle de implementación: es, literalmente, la arquitectura. Todo lo que viene después son formas distintas de responderla."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-vs-classic.es.svg",
+        "caption": "A la izquierda, código: misma entrada, misma salida, se prueba comparando igualdad. A la derecha, un modelo: la misma pregunta puede dar dos respuestas. De ahí sale la necesidad de límites, revisión y una condición de parada."
+      },
+      {
+        "kind": "heading",
+        "text": "Workflow o agente: la línea que casi nadie traza"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Antes de los patrones hay que trazar una línea que la mayoría se salta, y que Anthropic dejó clara en «Building Effective Agents». Hay dos familias, y llamarlas a las dos «agentes» es la fuente de la mitad de los proyectos que se van de presupuesto."
+      },
+      {
+        "kind": "quote",
+        "text": "Los workflows son sistemas donde los LLM y las herramientas se orquestan a través de rutas de código predefinidas. Los agentes son sistemas donde los LLM dirigen dinámicamente sus propios procesos y el uso de herramientas, manteniendo el control sobre cómo llevan a cabo las tareas.",
+        "source": "Anthropic · Building Effective Agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La diferencia es quién manda. En un **workflow**, manda tu código: tú escribiste los pasos, en qué orden van y qué se hace con cada resultado; el modelo solo rellena los huecos. En un **agente**, manda el modelo: decide qué paso dar, qué herramienta usar y cuándo ha terminado. Lo primero es un raíl; lo segundo, un conductor. La mayoría de lo que se vende como «agente» es, en realidad, un workflow bien montado — y eso es una buena noticia, no una decepción."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y cuándo conviene cada uno? La misma fuente lo resume: los workflows dan previsibilidad y consistencia cuando la tarea está bien definida; el agente gana cuando necesitas flexibilidad y que el propio modelo decida, a escala. En la práctica se reduce a una regla sencilla: si puedes escribir los pasos, escríbelos y quédate en un workflow. El agente es lo que usas cuando no puedes prever esos pasos — no un ascenso al que aspirar."
+      },
+      {
+        "kind": "heading",
+        "text": "Las más usadas, de menos a más libertad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí están los patrones que se repiten en casi todos los sistemas reales, ordenados por la única variable que importa: cuánta libertad tiene el modelo. Los cinco primeros son workflows; el último es el único agente de verdad. Léelos de arriba abajo y párate en el primero que resuelva tu problema — bajar más es pagar de más."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/pattern-shapes.es.svg",
+        "caption": "La forma de cada patrón, en el mismo orden del eje: de la llamada única (verde, tú mandas) al agente (rojo, manda el modelo). Cada caja «◆» es una llamada al modelo; las flechas, el flujo de datos. Debajo tienes cada uno con su cuándo y su cuándo no."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Una sola llamada.** Un único envío al modelo y su respuesta, sin nada orquestando alrededor. La potencia no está en llamar más veces, sino en el prompt: una instrucción clara y uno o dos ejemplos ya resueltos —lo que se llama *few-shot*— para que el modelo copie el formato y el criterio. «Clasifica este correo en queja, consulta o spam», con dos ejemplos etiquetados debajo, acierta la inmensa mayoría sin más andamiaje. Empieza siempre aquí. Cuándo: clasificar, extraer datos, resumir, reescribir. Cuándo no: cuando la tarea necesita varios pasos encadenados, o información que el modelo no tiene y no cabe meter en una sola pasada.",
+          "**Cadena de pasos** (prompt chaining). Partes la tarea en pasos fijos y encadenas las llamadas: la salida de una es la entrada de la siguiente. Cada llamada hace una sola cosa, así que sale mejor y puedes revisar en medio antes de seguir. Escribir un artículo: una llamada saca el esquema, otra lo convierte en borrador, otra lo pule y una última lo traduce. Cuándo: la tarea tiene fases claras y cada una es más fácil por separado. Cuándo no: si el camino no es siempre el mismo y depende de la entrada — eso es enrutado u orquestador, no una cadena.",
+          "**Enrutado** (routing). Una primera llamada clasifica la entrada y decide a qué camino la manda; cada camino lleva su propio prompt afinado para ese caso. En un soporte, el mensaje va a facturación, a soporte técnico o a devoluciones, y cada rama responde con sus instrucciones y su tono. Gana porque un prompt especializado por tipo acierta más que uno genérico que intenta cubrirlo todo. Cuándo: entradas de tipos muy distintos que se atienden mejor por separado. Cuándo no: si todo se trata igual, el router solo añade una llamada y un punto de fallo.",
+          "**Paralelización.** Lanzas varias llamadas a la vez, independientes, y juntas lo que devuelven. Dos sabores: trocear (cada llamada hace una parte) o votar (la misma pregunta a varias y te quedas con la mayoría). Revisar un contrato: a la vez, una llamada busca riesgos legales, otra revisa las cláusulas de pago y otra el tratamiento de datos; al final se juntan los tres informes. Cuándo: quieres ir más rápido, o más confianza cruzando varias opiniones. Cuándo no: si una respuesta necesita la anterior, no es paralelo — es una cadena disfrazada.",
+          "**Orquestador y trabajadores** (orchestrator-workers). Un modelo central lee la tarea, decide sobre la marcha en qué subtareas partirla —que no conocías de antemano—, se las reparte a varios trabajadores y cose lo que vuelve. La diferencia con paralelizar: allí los trozos son fijos; aquí los inventa el orquestador según la entrada. Generar un informe: el orquestador mira el tema, decide qué secciones lleva, encarga cada una a un trabajador y las junta. Cuándo: el número y la forma de las subtareas dependen de la entrada. Cuándo no: si el troceo es siempre igual, con una cadena te sobra y te ahorras la parte impredecible.",
+          "**Evaluador y optimizador** (evaluator-optimizer). Una llamada genera y otra hace de crítico: revisa contra un criterio y devuelve correcciones, y así en bucle hasta que da el visto bueno. Funciona porque separar al autor del que juzga saca fallos que el autor no ve. Traducir un texto: una llamada traduce, otra comprueba que suene natural y marca lo que chirría, y se repite hasta que pasa. Cuándo: tienes un criterio claro de «esto está bien» y las primeras versiones suelen fallarlo. Cuándo no: si no sabes decir qué es «bien», el evaluador solo da vueltas gastando tokens."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/pattern-examples.es.svg",
+        "caption": "Los seis puntos con un caso real cada uno: clasificar un correo (una llamada), escribir un artículo (cadena), soporte al cliente (enrutado), revisar un contrato (paralelización), generar un informe (orquestador) y traducir con calidad (evaluador). En verde, la salida que te llevas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y al final del eje, el único que cede el control de verdad: el **agente**. El modelo recibe un objetivo, y él elige los pasos, usa las herramientas que necesita, mira el resultado, corrige y decide cuándo ha terminado. No hay ruta escrita por ti — por eso es tan potente y por eso es tan difícil de acotar y de probar. Cuándo: problemas abiertos donde no puedes prever los pasos. Cuándo no: casi siempre que puedas prever los pasos, porque entonces un workflow te da lo mismo más barato y sin sorpresas."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/freedom-axis.es.svg",
+        "caption": "El mismo eje de siempre: a la izquierda tú decides los pasos; a la derecha, el modelo. Cuanto más a la derecha, más flexible y también más caro y más difícil de probar. Los cinco patrones centrales son workflows; solo el último es un agente."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ojo con leer el eje como una escalera que hay que subir. No es «mejor» estar a la derecha: es más libertad a cambio de más coste y menos control. El buen diseño casi siempre vive lo más a la izquierda que el problema permita. La derecha del eje es donde vas cuando no te queda otra, no donde demuestras que sabes."
+      },
+      {
+        "kind": "heading",
+        "text": "Dónde aprender cada patrón (sin casarte con una sola fuente)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nada de esto me lo he inventado yo, y no hace falta que lo aprendas de una sola voz. Estas fuentes —de casas distintas y con enfoques distintos— explican estos patrones con más detalle y más código del que cabe en una nota. Elige la que más te sirva:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**LangChain (LangGraph) · «Workflows and agents»** — [docs.langchain.com](https://docs.langchain.com/oss/python/langgraph/workflows-agents). Los cinco patrones de workflow —cadena, enrutado, paralelización, orquestador y evaluador— más el agente, cada uno con código que puedes ejecutar. El recorrido más completo y práctico de todo el eje.",
+          "**OpenAI · «A practical guide to building agents»** — [PDF](https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf). Cuándo conviene un agente, cómo orquestar uno o varios y qué barreras de seguridad ponerle. La misma discusión vista desde otra casa.",
+          "**Google · whitepaper «Agents»** (Wiesinger, Marlow y Vuskovic) — [en Kaggle](https://www.kaggle.com/whitepaper-agents). Descompone un agente en tres capas: modelo, orquestación y herramientas. Bueno para entender el agente por dentro.",
+          "**Lilian Weng · «LLM Powered Autonomous Agents»** — [lilianweng.github.io](https://lilianweng.github.io/posts/2023-06-23-agent/). El interior del agente: planificación, memoria y uso de herramientas. La referencia independiente más citada del tema.",
+          "**Thoughtworks · Martin Fowler y Bharani Subramaniam, «Emerging Patterns in Building GenAI Products»** — [martinfowler.com](https://martinfowler.com/articles/gen-ai-patterns/). Patrones de producción con mirada de ingeniería clásica: RAG, evaluaciones (evals), reranking y guardrails.",
+          "**DAIR.AI · Prompt Engineering Guide, «RAG»** — [promptingguide.ai](https://www.promptingguide.ai/techniques/rag). La explicación práctica de RAG paso a paso, que enlaza con la siguiente sección."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "RAG: no es una arquitectura de agentes, es cómo le das memoria"
+      },
+      {
+        "kind": "paragraph",
+        "text": "RAG —Retrieval-Augmented Generation, «generación aumentada por recuperación»— aparece en casi todos estos sistemas, y por eso conviene ponerlo en su sitio: no es un patrón de agente, es la respuesta a otra pregunta. No «cuánta libertad le doy al modelo», sino «de dónde saca lo que no sabe». Encaja debajo de cualquiera de los patrones de arriba."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La idea, del paper que lo bautizó en 2020, es combinar dos memorias. La del modelo —lo que aprendió al entrenarse, que va metido en sus pesos— y una externa: un índice de tus documentos que puedes buscar y actualizar sin reentrenar nada. Ante una pregunta, primero se buscan en el índice los trozos más parecidos, y esos trozos se le pasan al modelo junto con la pregunta. El modelo ya no responde solo de lo que recuerda: responde de lo que le acabas de dar."
+      },
+      {
+        "kind": "quote",
+        "text": "Los modelos de lenguaje preentrenados grandes almacenan conocimiento factual en sus parámetros [...] pero su capacidad para acceder y manipular ese conocimiento con precisión sigue siendo limitada. [Combinamos] memoria paramétrica preentrenada y memoria no paramétrica para la generación de lenguaje.",
+        "source": "Lewis et al. · Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, NeurIPS 2020",
+        "sourceUrl": "https://arxiv.org/abs/2005.11401"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por qué importa en la práctica: el modelo no conoce tus datos privados, no sabe qué pasó después de su entrenamiento, y cuando no sabe algo no se calla — lo rellena con aplomo. RAG ataca las tres cosas de golpe. Le das los documentos que sí conocen tu caso, y de paso puedes **citar la fuente**: la respuesta deja de ser «créeme» y pasa a «míralo aquí»."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/rag-flow.es.svg",
+        "caption": "La pregunta busca en la memoria externa —tus documentos, actualizables sin reentrenar—, los trozos más relevantes vuelven al modelo junto con la pregunta, y la respuesta sale apoyada en ellos y con fuente. Sin RAG, el modelo responde de memoria y puede inventar lo que no sabe."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y también cuándo NO usar RAG, que se dice poco: si la respuesta ya vive en el modelo, montar un índice, un buscador y una tubería de recuperación solo añade piezas que se pueden romper y latencia que se paga. RAG resuelve un problema concreto —conocimiento que el modelo no tiene o no puede tener— y fuera de ese problema es complejidad de más. La misma regla de antes: la solución más simple que sirva."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuándo NO montar un agente"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La parte que más proyectos hunde no es elegir mal el patrón: es olvidar que el modelo es la parte pequeña del sistema. Alrededor de esa pieza que responde hay que montar todo lo demás —datos, validación, límites, monitorización, manejo de errores— y eso no es opcional ni es el 10% del trabajo. Sculley y su equipo lo midieron y lo dibujaron en 2015, y el gráfico se volvió la imagen fundacional de todo el oficio de poner IA en producción."
+      },
+      {
+        "kind": "quote",
+        "text": "Solo una pequeña fracción de los sistemas de ML del mundo real está compuesta por el código de ML, como muestra la pequeña caja negra del centro. La infraestructura que lo rodea es enorme y compleja.",
+        "source": "Sculley et al. · Hidden Technical Debt in Machine Learning Systems, NeurIPS 2015",
+        "sourceUrl": "https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese es el motivo real de la regla de empezar simple. No es purismo minimalista: es que cada escalón que subes en el eje de libertad multiplica la caja de fuera. Un agente autónomo no es «una llamada más lista» — es un sistema que hay que acotar, observar y contener, y ese trabajo crece mucho más rápido que la parte lista. Por eso la mejor arquitectura suele ser la más aburrida que resuelve el problema."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que la decisión no es «¿agente o no?», sino un descenso por el eje: ¿basta una llamada? ¿Y una cadena? ¿Y un router? Bajas un escalón solo cuando el de arriba se queda corto de verdad, no porque el de abajo suene más impresionante. La palabra «agente» en un README no impresiona a nadie que haya tenido que mantener uno."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "¿Lo resuelve una sola llamada con buen prompt y un par de ejemplos? Entonces ya terminaste. La mayoría de las veces es esto.",
+          "¿La tarea tiene fases fijas y claras? Una cadena de pasos, y sigues en terreno predecible y barato de probar.",
+          "¿El modelo necesita datos que no tiene —privados, recientes, con fuente citable? Añade RAG debajo del patrón que ya elegiste, no en su lugar.",
+          "¿El número y la forma de los subpasos dependen de la entrada y no los puedes prever? Ahí sí subes a orquestador o, si de verdad no hay pasos previsibles, a un agente — asumiendo el coste de acotarlo y observarlo."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si te interesa el detalle de lo que va debajo de todo esto, tengo notas sobre [qué es de verdad un agente y por qué dos trabajan mejor que uno](/daily) y sobre [las piezas que separan una IA que inventa de una que entrega](/daily). Y si quieres ver lo que construyo con estas ideas, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024. La fuente de la distinción workflow/agente y de los cinco patrones de workflow. Si solo lees una de esta lista, que sea esta: es corta, práctica y explica el eje entero con ejemplos.",
+          "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis et al., NeurIPS 2020. El paper que bautizó RAG y explica lo de la memoria paramétrica y la no paramétrica que cuento arriba.",
+          "[Hidden Technical Debt in Machine Learning Systems](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html) — Sculley et al., NeurIPS 2015. El origen de la «caja negra pequeña»: por qué el modelo es la parte diminuta y la infraestructura de alrededor es casi todo el trabajo."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "The question almost everyone gets wrong is \"which AI architecture do I use?\". It sounds like there's a catalogue of boxes and arrows you pick from. There isn't. The real question, the one that orders all the others, is different: **how much freedom do I give the piece that doesn't always return the same answer?** All of agent engineering fits in that sentence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With that question in front of you, the rest orders itself — and that's what the note walks through. First, what exactly changes when a piece stops being code and becomes a model. Then the architectures that recur most in real systems, arranged by the one thing that truly sets them apart: how much freedom they cede to the model. For each I say when it's worth it and — the part almost nobody says — when it gets in the way. And I spell out what RAG is and why almost nobody places it right: it isn't an agent architecture, it's the way to give the model what it doesn't know —your data, what changed yesterday— without retraining it, which is why it sits underneath any of the patterns instead of competing with them. All with diagrams, because an axis is easier to grasp by seeing it than by reading it. And to be clear: none of this is dogma, and I'm not claiming to be right about everything. It's how I understand it today, with the original sources alongside so you can check it and disagree where you need to. No product behind it: they're general patterns, whether they serve you in your project or in mine."
+      },
+      {
+        "kind": "quote",
+        "text": "Find the simplest solution possible, and only increase complexity when needed.",
+        "source": "Anthropic · Building Effective Agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "heading",
+        "text": "What changes when you put a model inside"
+      },
+      {
+        "kind": "paragraph",
+        "text": "In the old architecture, a piece is a function: give it the same input and it returns the same output, today and three months from now. `2 + 2` gives `4` as many times as you like. Everything you know is built on that promise: you can test it with a check for equality, cache the result, reason about the system. It's deterministic, and deterministic means boring in the good sense."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A model breaks that promise. It doesn't compute an answer: it picks one out of many possible ones, and the same question can give two different answers — a good one and a weak one — with nothing having changed. That's not a defect you fix with a better prompt: it's the nature of the piece. And the moment you accept it, everything else follows on its own."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And why does it pick, instead of compute? Because inside, a language model — an LLM — does only one thing: predict the next word (really pieces of words, called \"tokens\", but to get the idea just think in words). You give it some text and, for each word that could come next, it works out a probability: after \"the sky is\", \"blue\" is very likely, \"grey\" much less, \"green\" almost impossible. And here's the trick: instead of always taking the most likely one, it draws one at random weighted by those odds — that's called sampling — adds it to the text and repeats, word by word, until it's done. That loaded die is what makes the same question, asked twice, take different paths and land on two valid answers. It isn't broken: it works exactly as designed."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/next-token.en.svg",
+        "caption": "The model doesn't return \"the\" answer: for the next word it gives each option a weight and draws one at random, favoring the likely ones. Usually the top one comes out; when another does, the whole answer forks. That's why the same question can give two results with nothing having changed. (The figures in the diagram are illustrative.)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Because if the output isn't fixed, you have to do three things you didn't need with code: **bound** what the model can touch, **verify** what it produces before you trust it, and **decide how much freedom** you give it to reach the answer. That third decision — how much freedom — isn't an implementation detail: it is, literally, the architecture. Everything that follows is a different way of answering it."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-vs-classic.en.svg",
+        "caption": "On the left, code: same input, same output, tested by checking equality. On the right, a model: the same question can give two answers. That's where the need for limits, review and a stopping condition comes from."
+      },
+      {
+        "kind": "heading",
+        "text": "Workflow or agent: the line almost nobody draws"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Before the patterns there's a line most people skip, and one Anthropic made clear in \"Building Effective Agents\". There are two families, and calling both of them \"agents\" is the source of half the projects that run over budget."
+      },
+      {
+        "kind": "quote",
+        "text": "Workflows are systems where LLMs and tools are orchestrated through predefined code paths. Agents are systems where LLMs dynamically direct their own processes and tool usage, maintaining control over how they accomplish tasks.",
+        "source": "Anthropic · Building Effective Agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The difference is who's in charge. In a **workflow**, your code is in charge: you wrote the steps, the order they go in and what happens with each result; the model just fills the gaps. In an **agent**, the model is in charge: it decides which step to take, which tool to use and when it's done. The first is a rail; the second, a driver. Most of what gets sold as an \"agent\" is really a well-built workflow — and that's good news, not a letdown."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So when is each one the right call? The same source sums it up: workflows give predictability and consistency when the task is well defined; the agent wins when you need flexibility and the model itself to decide, at scale. In practice it boils down to a simple rule: if you can write the steps, write them and stay in a workflow. An agent is what you reach for when you can't foresee those steps — not a promotion to aspire to."
+      },
+      {
+        "kind": "heading",
+        "text": "The most-used ones, from least to most freedom"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here are the patterns that recur in almost every real system, ordered by the only variable that matters: how much freedom the model has. The first five are workflows; the last is the only true agent. Read them top to bottom and stop at the first one that solves your problem — going further down is overpaying."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/pattern-shapes.en.svg",
+        "caption": "The shape of each pattern, in the same order as the axis: from the single call (green, you're in charge) to the agent (red, the model decides). Each «◆» box is one call to the model; the arrows are the data flow. Below, each one with its when and its when-not."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**A single call.** One send to the model and its reply, with nothing orchestrating around it. The leverage isn't calling more times, it's the prompt: a clear instruction plus one or two worked examples —what's called *few-shot*— so the model copies the format and the criteria. \"Classify this email as complaint, question or spam\", with two labeled examples below it, gets it right the vast majority of the time with no further scaffolding. Always start here. When: classify, extract data, summarize, rewrite. When not: when the task needs several chained steps, or information the model doesn't have and won't fit in a single pass.",
+          "**Prompt chaining.** You split the task into fixed steps and chain the calls: one's output is the next one's input. Each call does a single thing, so it comes out better and you can check in between before moving on. Writing an article: one call drafts the outline, another turns it into prose, another polishes it and a last one translates it. When: the task has clear phases and each is easier on its own. When not: if the path isn't always the same and depends on the input — that's routing or an orchestrator, not a chain.",
+          "**Routing.** A first call classifies the input and decides which path it goes down; each path carries its own prompt tuned for that case. In a support desk, the message goes to billing, to tech support or to returns, and each branch answers with its own instructions and tone. It wins because a specialized prompt per type beats one generic prompt trying to cover everything. When: inputs of very different kinds, better handled separately. When not: if everything is treated the same, the router just adds a call and a point of failure.",
+          "**Parallelization.** You fire several independent calls at once and merge what comes back. Two flavors: slice it (each call does a part) or vote (the same question to several, keep the majority). Reviewing a contract: at the same time one call hunts legal risks, another checks the payment clauses and another the data handling; at the end the three reports are merged. When: you want more speed, or more confidence by crossing several opinions. When not: if one answer needs the previous one, it isn't parallel — it's a chain in disguise.",
+          "**Orchestrator and workers.** A central model reads the task, decides on the fly which subtasks to split it into —ones you didn't know in advance—, hands them to several workers and stitches together what comes back. The difference from parallelizing: there the slices are fixed; here the orchestrator invents them based on the input. Generating a report: the orchestrator looks at the topic, decides which sections it needs, assigns each to a worker and joins them. When: the number and shape of the subtasks depend on the input. When not: if the slicing is always the same, a chain is enough and saves you the unpredictable part.",
+          "**Evaluator and optimizer.** One call generates and another plays critic: it checks against a criterion and returns fixes, looping until it signs off. It works because separating the author from the judge surfaces flaws the author can't see. Translating a text: one call translates, another checks it reads naturally and flags what grates, and it repeats until it passes. When: you have a clear sense of \"this is good\" and first versions usually fail it. When not: if you can't say what \"good\" is, the evaluator just circles, burning tokens."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/pattern-examples.en.svg",
+        "caption": "The six points with one real case each: classify an email (single call), write an article (chaining), customer support (routing), review a contract (parallelization), generate a report (orchestrator) and translate with quality (evaluator). In green, the output you keep."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And at the end of the axis, the only one that truly cedes control: the **agent**. The model gets a goal, and it chooses the steps, uses the tools it needs, looks at the result, corrects and decides when it's done. There's no route written by you — that's why it's so powerful and why it's so hard to bound and to test. When: open problems where you can't foresee the steps. When not: almost any time you *can* foresee the steps, because then a workflow gives you the same thing cheaper and without surprises."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/freedom-axis.en.svg",
+        "caption": "The same old axis: on the left you decide the steps; on the right, the model. The further right, the more flexible and also the more costly and harder to test. The five central patterns are workflows; only the last is an agent."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And careful reading the axis as a ladder you're meant to climb. Being on the right isn't \"better\": it's more freedom in exchange for more cost and less control. Good design almost always lives as far left as the problem allows. The right of the axis is where you go when you have no choice, not where you prove you know your stuff."
+      },
+      {
+        "kind": "heading",
+        "text": "Where to learn each pattern (without marrying a single source)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "None of this is my invention, and you don't have to learn it from one voice. These sources — from different houses and with different angles — explain these patterns in more detail, and with more code, than fits in a note. Pick whichever serves you:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**LangChain (LangGraph) · \"Workflows and agents\"** — [docs.langchain.com](https://docs.langchain.com/oss/python/langgraph/workflows-agents). The five workflow patterns — chaining, routing, parallelization, orchestrator and evaluator — plus the agent, each with code you can run. The most complete, practical tour of the whole axis.",
+          "**OpenAI · \"A practical guide to building agents\"** — [PDF](https://cdn.openai.com/business-guides-and-resources/a-practical-guide-to-building-agents.pdf). When an agent is worth it, how to orchestrate one or many, and what guardrails to put on it. The same discussion seen from another house.",
+          "**Google · \"Agents\" whitepaper** (Wiesinger, Marlow and Vuskovic) — [on Kaggle](https://www.kaggle.com/whitepaper-agents). Breaks an agent into three layers: model, orchestration and tools. Good for understanding the agent from the inside.",
+          "**Lilian Weng · \"LLM Powered Autonomous Agents\"** — [lilianweng.github.io](https://lilianweng.github.io/posts/2023-06-23-agent/). The agent's internals: planning, memory and tool use. The most cited independent reference on the topic.",
+          "**Thoughtworks · Martin Fowler and Bharani Subramaniam, \"Emerging Patterns in Building GenAI Products\"** — [martinfowler.com](https://martinfowler.com/articles/gen-ai-patterns/). Production patterns with a classic-engineering eye: RAG, evals, reranking and guardrails.",
+          "**DAIR.AI · Prompt Engineering Guide, \"RAG\"** — [promptingguide.ai](https://www.promptingguide.ai/techniques/rag). The practical, step-by-step explanation of RAG, which leads into the next section."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "RAG: not an agent architecture, it's how you give the model memory"
+      },
+      {
+        "kind": "paragraph",
+        "text": "RAG — Retrieval-Augmented Generation — shows up in almost all of these systems, so it's worth putting in its place: it's not an agent pattern, it's the answer to a different question. Not \"how much freedom do I give the model\", but \"where does it get what it doesn't know\". It fits underneath any of the patterns above."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The idea, from the paper that named it in 2020, is to combine two memories. The model's — what it learned during training, baked into its weights — and an external one: an index of your documents that you can search and update without retraining anything. Given a question, you first search the index for the most similar chunks, and those chunks get handed to the model along with the question. The model no longer answers just from what it remembers: it answers from what you just gave it."
+      },
+      {
+        "kind": "quote",
+        "text": "Large pre-trained language models [...] store factual knowledge in their parameters [...] but their ability to access and precisely manipulate knowledge is still limited. [We combine] pre-trained parametric and non-parametric memory for language generation.",
+        "source": "Lewis et al. · Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, NeurIPS 2020",
+        "sourceUrl": "https://arxiv.org/abs/2005.11401"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why it matters in practice: the model doesn't know your private data, doesn't know what happened after its training, and when it doesn't know something it doesn't go quiet — it fills the gap with confidence. RAG hits all three at once. You hand it the documents that do know your case, and along the way you can **cite the source**: the answer stops being \"trust me\" and becomes \"look here\"."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/rag-flow.en.svg",
+        "caption": "The question searches the external memory — your documents, updatable without retraining — the most relevant chunks return to the model along with the question, and the answer comes out grounded in them and with a source. Without RAG, the model answers from memory and can invent what it doesn't know."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And also when NOT to use RAG, which gets said too rarely: if the answer already lives in the model, standing up an index, a retriever and a retrieval pipeline just adds pieces that can break and latency you pay for. RAG solves a specific problem — knowledge the model doesn't have or can't have — and outside that problem it's complexity you don't need. The same rule as before: the simplest solution that works."
+      },
+      {
+        "kind": "heading",
+        "text": "When NOT to build an agent"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The part that sinks most projects isn't picking the wrong pattern: it's forgetting that the model is the small part of the system. Around that piece that answers you have to build everything else — data, validation, limits, monitoring, error handling — and that's not optional, nor is it 10% of the work. Sculley and his team measured it and drew it in 2015, and the diagram became the founding image of the whole craft of putting AI in production."
+      },
+      {
+        "kind": "quote",
+        "text": "Only a small fraction of real-world ML systems is composed of the ML code, as shown by the small black box in the middle. The required surrounding infrastructure is vast and complex.",
+        "source": "Sculley et al. · Hidden Technical Debt in Machine Learning Systems, NeurIPS 2015",
+        "sourceUrl": "https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's the real reason behind the rule of starting simple. It's not minimalist purism: it's that every step you climb on the freedom axis multiplies the box around it. An autonomous agent isn't \"a smarter call\" — it's a system you have to bound, observe and contain, and that work grows far faster than the smart part. That's why the best architecture is usually the most boring one that solves the problem."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So the decision isn't \"agent or not?\", but a descent down the axis: is a single call enough? A chain? A router? You drop one step only when the one above genuinely falls short, not because the one below sounds more impressive. The word \"agent\" in a README impresses nobody who's had to maintain one."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Does a single call with a good prompt and a couple of examples solve it? Then you're done. Most of the time it's this.",
+          "Does the task have fixed, clear phases? A prompt chain, and you stay in predictable, cheap-to-test territory.",
+          "Does the model need data it doesn't have — private, recent, with a citable source? Add RAG underneath the pattern you already picked, not in its place.",
+          "Do the number and shape of the substeps depend on the input and you can't foresee them? That's where you climb to an orchestrator or, if there really are no foreseeable steps, to an agent — taking on the cost of bounding and observing it."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want the detail of what sits underneath all this, I have notes on [what an agent really is and why two beat one](/daily) and on [the pieces that separate an AI that makes things up from one that delivers](/daily). And if you want to see what I build with these ideas, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Building Effective Agents](https://www.anthropic.com/research/building-effective-agents) — Anthropic, 2024. The source of the workflow/agent distinction and of the five workflow patterns. If you read only one on this list, make it this one: it's short, practical, and explains the whole axis with examples.",
+          "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis et al., NeurIPS 2020. The paper that named RAG and explains the parametric and non-parametric memory I describe above.",
+          "[Hidden Technical Debt in Machine Learning Systems](https://papers.nips.cc/paper/2015/hash/86df7dcfd896fcaf2674f757a2463eba-Abstract.html) — Sculley et al., NeurIPS 2015. The origin of the \"small black box\": why the model is the tiny part and the surrounding infrastructure is almost all the work."
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,18 @@
 [
   {
+    "slug": "ai-architectures-people-use",
+    "date": "2026-07-17",
+    "title": {
+      "es": "Las arquitecturas de IA que de verdad se usan (y cuánta libertad darle al modelo)",
+      "en": "The AI architectures people actually use (and how much freedom to give the model)"
+    },
+    "summary": {
+      "es": "Qué cambia cuando pones un modelo donde antes había código, por qué casi todo lo que llaman «agente» en realidad es un workflow, y las arquitecturas más usadas ordenadas por una sola pregunta: cuánta libertad le das al modelo. Con gráficos de cada patrón, cuándo usar cada uno, dónde encaja RAG, y enlaces a la investigación original.",
+      "en": "What changes when you put a model where code used to be, why most of what gets called an \"agent\" is really a workflow, and the most-used architectures ordered by a single question: how much freedom you give the model. With diagrams of each pattern, when to use each, where RAG fits, and links to the original research."
+    },
+    "tags": ["ia", "agentes", "arquitectura", "rag", "workflows"]
+  },
+  {
     "slug": "rules-that-can-fail",
     "date": "2026-07-16",
     "title": {

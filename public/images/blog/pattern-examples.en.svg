@@ -1,0 +1,129 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="A real example of each pattern: classify an email, write an article, customer support, review a contract, generate a report and translate with quality">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .flow { fill: none; stroke-dasharray: 4 5; animation: dash 1.8s linear infinite; }
+    .cell { animation: fade 7s ease-in-out infinite; }
+    .c2{animation-delay:.4s}.c3{animation-delay:.8s}.c4{animation-delay:1.2s}.c5{animation-delay:1.6s}.c6{animation-delay:2s}
+    @keyframes dash { to { stroke-dashoffset: -36; } }
+    @keyframes fade { 0%,100%{opacity:.92} 50%{opacity:1} }
+    text { font-family: ui-monospace, monospace; }
+    .node { fill: none; stroke-width: 1.7; }
+    .cap { fill: #8a7fb0; }
+    .lbl { font-size: 9.5px; fill: #ece7fb; }
+    .mdl { stroke: #a78bfa; }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">A real example of each pattern</text>
+  <text x="40" y="72" class="cap" font-size="13.5">Same order as the list. ◆ = one call to the model; in green, the output you keep.</text>
+
+  <!-- ===== ROW 1 ===== -->
+  <!-- 1 Classify an email -->
+  <g class="cell">
+    <rect x="30" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="48" y="124" font-size="12.5" fill="#c6bdf0">1 · Classify an email</text>
+    <text x="48" y="144" class="cap" font-size="9.5">a single call</text>
+    <rect class="node" x="48" y="188" width="60" height="30" rx="7" stroke="#8a7fb0"/><text x="78" y="207" text-anchor="middle" class="lbl">email</text>
+    <rect class="node mdl" x="140" y="185" width="42" height="36" rx="8"/><text x="161" y="207" text-anchor="middle" class="lbl">◆</text>
+    <path d="M108 203 H 138" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <rect class="node" x="214" y="168" width="96" height="22" rx="6" stroke="#34d399"/><text x="262" y="183" text-anchor="middle" class="lbl">complaint ✓</text>
+    <rect class="node" x="214" y="194" width="96" height="22" rx="6" stroke="#5a4d7a"/><text x="262" y="209" text-anchor="middle" class="lbl">question</text>
+    <rect class="node" x="214" y="220" width="96" height="22" rx="6" stroke="#5a4d7a"/><text x="262" y="235" text-anchor="middle" class="lbl">spam</text>
+    <path d="M182 200 C 198 192, 200 182, 212 179" class="flow" stroke="#34d399" stroke-width="1.5" marker-end="url(#ag)"/>
+    <path d="M182 205 H 212" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <path d="M182 210 C 198 218, 200 228, 212 231" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="180" y="272" text-anchor="middle" class="cap" font-size="9.5">tags it and it's done</text>
+  </g>
+
+  <!-- 2 Write an article -->
+  <g class="cell c2">
+    <rect x="350" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="368" y="124" font-size="12.5" fill="#c6bdf0">2 · Write an article</text>
+    <text x="368" y="144" class="cap" font-size="9.5">prompt chaining</text>
+    <rect class="node mdl" x="362" y="190" width="58" height="28" rx="7"/><text x="391" y="208" text-anchor="middle" class="lbl">outline</text>
+    <rect class="node mdl" x="430" y="190" width="52" height="28" rx="7"/><text x="456" y="208" text-anchor="middle" class="lbl">draft</text>
+    <rect class="node mdl" x="492" y="190" width="52" height="28" rx="7"/><text x="518" y="208" text-anchor="middle" class="lbl">polish</text>
+    <rect class="node" x="554" y="190" width="64" height="28" rx="7" stroke="#34d399"/><text x="586" y="208" text-anchor="middle" class="lbl">translate ✓</text>
+    <path d="M420 204 H 429" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M482 204 H 491" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M544 204 H 553" class="flow" stroke="#34d399" stroke-width="1.6" marker-end="url(#ag)"/>
+    <text x="500" y="272" text-anchor="middle" class="cap" font-size="9.5">each output feeds the next step</text>
+  </g>
+
+  <!-- 3 Customer support -->
+  <g class="cell c3">
+    <rect x="670" y="96" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="688" y="124" font-size="12.5" fill="#c6bdf0">3 · Customer support</text>
+    <text x="688" y="144" class="cap" font-size="9.5">routing</text>
+    <rect class="node" x="686" y="188" width="46" height="28" rx="7" stroke="#8a7fb0"/><text x="709" y="206" text-anchor="middle" class="lbl">msg</text>
+    <rect class="node mdl" x="748" y="186" width="52" height="32" rx="8"/><text x="774" y="206" text-anchor="middle" class="lbl" font-size="9">router</text>
+    <path d="M732 202 H 746" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <rect class="node" x="828" y="166" width="98" height="20" rx="6" stroke="#34d399"/><text x="877" y="180" text-anchor="middle" class="lbl">billing ✓</text>
+    <rect class="node" x="828" y="192" width="98" height="20" rx="6" stroke="#5a4d7a"/><text x="877" y="206" text-anchor="middle" class="lbl">tech support</text>
+    <rect class="node" x="828" y="218" width="98" height="20" rx="6" stroke="#5a4d7a"/><text x="877" y="232" text-anchor="middle" class="lbl">returns</text>
+    <path d="M800 198 C 814 190, 816 180, 826 177" class="flow" stroke="#34d399" stroke-width="1.5" marker-end="url(#ag)"/>
+    <path d="M800 202 H 826" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <path d="M800 206 C 814 214, 816 224, 826 227" class="flow" stroke="#5a4d7a" stroke-width="1.3" marker-end="url(#av)"/>
+    <text x="820" y="272" text-anchor="middle" class="cap" font-size="9.5">each branch, its own prompt and tone</text>
+  </g>
+
+  <!-- ===== ROW 2 ===== -->
+  <!-- 4 Review a contract -->
+  <g class="cell c4">
+    <rect x="30" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="48" y="344" font-size="12.5" fill="#c6bdf0">4 · Review a contract</text>
+    <text x="48" y="364" class="cap" font-size="9.5">parallelization</text>
+    <rect class="node" x="48" y="408" width="60" height="30" rx="7" stroke="#8a7fb0"/><text x="78" y="427" text-anchor="middle" class="lbl">contract</text>
+    <rect class="node mdl" x="142" y="388" width="66" height="20" rx="6"/><text x="175" y="402" text-anchor="middle" class="lbl">risks</text>
+    <rect class="node mdl" x="142" y="413" width="66" height="20" rx="6"/><text x="175" y="427" text-anchor="middle" class="lbl">payment</text>
+    <rect class="node mdl" x="142" y="438" width="66" height="20" rx="6"/><text x="175" y="452" text-anchor="middle" class="lbl">data</text>
+    <rect class="node" x="240" y="410" width="70" height="28" rx="7" stroke="#34d399"/><text x="275" y="428" text-anchor="middle" class="lbl">report ✓</text>
+    <path d="M108 418 C 124 408, 126 400, 140 398" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M108 423 H 140" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M108 428 C 124 438, 126 446, 140 448" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M208 398 C 224 408, 226 416, 238 421" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M208 423 H 238" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M208 448 C 224 438, 226 430, 238 425" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="180" y="492" text-anchor="middle" class="cap" font-size="9.5">three reviews at once, then merged</text>
+  </g>
+
+  <!-- 5 Generate a report -->
+  <g class="cell c5">
+    <rect x="350" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="368" y="344" font-size="12.5" fill="#c6bdf0">5 · Generate a report</text>
+    <text x="368" y="364" class="cap" font-size="9.5">orchestrator</text>
+    <rect class="node mdl" x="362" y="408" width="52" height="30" rx="7" stroke-width="2.2"/><text x="388" y="427" text-anchor="middle" class="lbl" font-size="9">orch</text>
+    <rect class="node mdl" x="450" y="388" width="60" height="20" rx="6"/><text x="480" y="402" text-anchor="middle" class="lbl">intro</text>
+    <rect class="node mdl" x="450" y="413" width="60" height="20" rx="6"/><text x="480" y="427" text-anchor="middle" class="lbl">data</text>
+    <rect class="node mdl" x="450" y="438" width="60" height="20" rx="6"/><text x="480" y="452" text-anchor="middle" class="lbl">closing</text>
+    <rect class="node" x="540" y="410" width="70" height="28" rx="7" stroke="#34d399"/><text x="575" y="428" text-anchor="middle" class="lbl">report ✓</text>
+    <path d="M414 418 C 430 408, 432 400, 448 398" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M414 423 H 448" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M414 428 C 430 438, 432 446, 448 448" class="flow" stroke="#a78bfa" stroke-width="1.4" marker-end="url(#av)"/>
+    <path d="M510 398 C 526 408, 528 416, 538 421" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M510 423 H 538" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <path d="M510 448 C 526 438, 528 430, 538 425" class="flow" stroke="#34d399" stroke-width="1.4" marker-end="url(#ag)"/>
+    <text x="486" y="492" text-anchor="middle" class="cap" font-size="9.5">it decides the sections and stitches them</text>
+  </g>
+
+  <!-- 6 Translate with quality -->
+  <g class="cell c6">
+    <rect x="670" y="316" width="300" height="196" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="688" y="344" font-size="12.5" fill="#c6bdf0">6 · Translate with quality</text>
+    <text x="688" y="364" class="cap" font-size="9.5">evaluator</text>
+    <rect class="node mdl" x="700" y="405" width="72" height="30" rx="7"/><text x="736" y="424" text-anchor="middle" class="lbl">translate</text>
+    <rect class="node mdl" x="806" y="405" width="82" height="30" rx="7"/><text x="847" y="424" text-anchor="middle" class="lbl" font-size="8.5">reads well?</text>
+    <path d="M772 415 H 804" class="flow" stroke="#a78bfa" stroke-width="1.7" marker-end="url(#av)"/>
+    <path d="M806 429 C 792 452, 752 452, 754 435" class="flow" stroke="#a78bfa" stroke-width="1.5" marker-end="url(#av)"/>
+    <text x="780" y="466" text-anchor="middle" class="cap" font-size="9">fix ↺</text>
+    <path d="M888 420 H 906" class="flow" stroke="#34d399" stroke-width="1.6" marker-end="url(#ag)"/>
+    <text x="930" y="424" text-anchor="middle" class="lbl" fill="#34d399" font-size="9">✓ OK</text>
+    <text x="820" y="492" text-anchor="middle" class="cap" font-size="9.5">generate and critique until it passes</text>
+  </g>
+</svg>

@@ -1,0 +1,100 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" role="img" aria-label="Las arquitecturas de IA ordenadas por cuánta libertad se le da al modelo, de la llamada única al agente autónomo">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="axis" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#34d399"/><stop offset="0.55" stop-color="#a78bfa"/><stop offset="1" stop-color="#fb7185"/>
+    </linearGradient>
+    <marker id="ae" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#fb7185"/></marker>
+  </defs>
+  <style>
+    .node { animation: rise 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .n2 { animation-delay: .4s; } .n3 { animation-delay: .8s; } .n4 { animation-delay: 1.2s; }
+    .n5 { animation-delay: 1.6s; } .n6 { animation-delay: 2s; } .n7 { animation-delay: 2.4s; }
+    @keyframes rise { 0%,100% { opacity: .82; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="500" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Cuánta libertad le das al modelo</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">De izquierda a derecha cedes control. Empieza por la izquierda y sube solo si hace falta.</text>
+
+  <!-- polos -->
+  <text x="55" y="120" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">◀ tú decides los pasos</text>
+  <text x="945" y="120" text-anchor="end" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">el modelo decide ▶</text>
+
+  <!-- eje -->
+  <line x1="70" y1="250" x2="930" y2="250" stroke="url(#axis)" stroke-width="4" marker-end="url(#ae)"/>
+
+  <!-- nodo 1 -->
+  <g class="node">
+    <circle cx="90" cy="250" r="9" fill="#0d0b16" stroke="#34d399" stroke-width="3"/>
+    <text x="90" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#34d399">Una llamada</text>
+    <text x="90" y="188" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">pregunta →</text>
+    <text x="90" y="202" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">respuesta</text>
+    <line x1="90" y1="212" x2="90" y2="241" stroke="#34d399" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 2 -->
+  <g class="node n2">
+    <circle cx="230" cy="250" r="9" fill="#0d0b16" stroke="#5ec9a0" stroke-width="3"/>
+    <text x="230" y="300" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Cadena de pasos</text>
+    <text x="230" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">paso → paso → paso,</text>
+    <text x="230" y="334" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">en orden fijo</text>
+    <line x1="230" y1="259" x2="230" y2="284" stroke="#5ec9a0" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 3 -->
+  <g class="node n3">
+    <circle cx="370" cy="250" r="9" fill="#0d0b16" stroke="#8ab0c9" stroke-width="3"/>
+    <text x="370" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Enrutado</text>
+    <text x="370" y="188" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">clasifica y manda</text>
+    <text x="370" y="202" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">al especialista</text>
+    <line x1="370" y1="212" x2="370" y2="241" stroke="#8ab0c9" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 4 -->
+  <g class="node n4">
+    <circle cx="510" cy="250" r="9" fill="#0d0b16" stroke="#a78bfa" stroke-width="3"/>
+    <text x="510" y="300" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Paralelización</text>
+    <text x="510" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">varias a la vez,</text>
+    <text x="510" y="334" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">luego se juntan</text>
+    <line x1="510" y1="259" x2="510" y2="284" stroke="#a78bfa" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 5 -->
+  <g class="node n5">
+    <circle cx="650" cy="250" r="9" fill="#0d0b16" stroke="#a78bfa" stroke-width="3"/>
+    <text x="650" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Orquestador</text>
+    <text x="650" y="188" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">uno reparte,</text>
+    <text x="650" y="202" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">varios ejecutan</text>
+    <line x1="650" y1="212" x2="650" y2="241" stroke="#a78bfa" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 6 -->
+  <g class="node n6">
+    <circle cx="790" cy="250" r="9" fill="#0d0b16" stroke="#c39bf5" stroke-width="3"/>
+    <text x="790" y="300" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Evaluador</text>
+    <text x="790" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">genera y critica</text>
+    <text x="790" y="334" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">en bucle</text>
+    <line x1="790" y1="259" x2="790" y2="284" stroke="#c39bf5" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- nodo 7 -->
+  <g class="node n7">
+    <circle cx="912" cy="250" r="11" fill="#0d0b16" stroke="#fb7185" stroke-width="3.5"/>
+    <text x="912" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#fb7185">Agente</text>
+    <text x="912" y="188" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">el modelo elige</text>
+    <text x="912" y="202" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">los pasos y para</text>
+    <line x1="912" y1="213" x2="912" y2="239" stroke="#fb7185" stroke-width="1" stroke-dasharray="2 3"/>
+  </g>
+
+  <!-- barra de intercambio -->
+  <text x="70" y="392" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">predecible · barato · fácil de probar</text>
+  <text x="930" y="392" text-anchor="end" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">flexible · caro · difícil de probar</text>
+  <rect x="70" y="400" width="860" height="8" rx="4" fill="url(#axis)"/>
+
+  <rect x="70" y="432" width="860" height="48" rx="10" fill="#a78bfa" fill-opacity="0.08" stroke="#453768" stroke-width="1"/>
+  <text x="500" y="456" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Las cinco del medio son «workflows»: el código manda y el modelo rellena huecos.</text>
+  <text x="500" y="474" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">Solo la última es un agente de verdad: el modelo dirige. Regla: usa la más simple que sirva.</text>
+</svg>

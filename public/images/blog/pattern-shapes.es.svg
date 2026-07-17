@@ -1,0 +1,148 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 600" role="img" aria-label="La forma de cada patrón: llamada única, cadena, enrutado, paralelización, orquestador, evaluador y agente">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/></marker>
+    <marker id="ag" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#34d399"/></marker>
+    <marker id="ar" markerWidth="8" markerHeight="8" refX="6.5" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#fb7185"/></marker>
+  </defs>
+  <style>
+    .flow { fill: none; stroke-dasharray: 4 5; animation: dash 1.8s linear infinite; }
+    .cell { animation: fade 7s ease-in-out infinite; }
+    .c2{animation-delay:.4s}.c3{animation-delay:.8s}.c4{animation-delay:1.2s}.c5{animation-delay:1.6s}.c6{animation-delay:2s}.c7{animation-delay:2.4s}
+    @keyframes dash { to { stroke-dashoffset: -36; } }
+    @keyframes fade { 0%,100%{opacity:.9} 50%{opacity:1} }
+    text { font-family: ui-monospace, monospace; }
+    .node { fill: none; stroke-width: 1.8; }
+    .lbl { font-size: 10px; fill: #ece7fb; }
+    .cap { font-size: 10px; fill: #8a7fb0; }
+  </style>
+
+  <rect width="1000" height="600" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">La forma de cada patrón</text>
+  <text x="40" y="72" class="cap" font-size="13.5">Mismo orden que el eje: de menos libertad (verde) a más (rojo). ◆ = una llamada al modelo.</text>
+
+  <!-- ===== FILA 1 ===== -->
+  <!-- 1 Una llamada -->
+  <g class="cell">
+    <rect x="30" y="96" width="225" height="222" rx="12" fill="#34d399" fill-opacity="0.04" stroke="#2f5a4a" stroke-width="1"/>
+    <text x="46" y="124" font-size="12.5" fill="#34d399">1 · Una llamada</text>
+    <rect class="node" x="50" y="196" width="34" height="26" rx="6" stroke="#8a7fb0"/><text x="67" y="213" text-anchor="middle" class="lbl">in</text>
+    <rect class="node" x="122" y="192" width="44" height="34" rx="7" stroke="#34d399"/><text x="144" y="213" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="204" y="196" width="34" height="26" rx="6" stroke="#8a7fb0"/><text x="221" y="213" text-anchor="middle" class="lbl">out</text>
+    <path d="M84 209 H 120" class="flow" stroke="#34d399" stroke-width="1.8" marker-end="url(#ag)"/>
+    <path d="M166 209 H 202" class="flow" stroke="#34d399" stroke-width="1.8" marker-end="url(#ag)"/>
+    <text x="142" y="272" text-anchor="middle" class="cap">pregunta → respuesta</text>
+  </g>
+
+  <!-- 2 Cadena -->
+  <g class="cell c2">
+    <rect x="268" y="96" width="225" height="222" rx="12" fill="#34d399" fill-opacity="0.04" stroke="#2f5a4a" stroke-width="1"/>
+    <text x="284" y="124" font-size="12.5" fill="#5ec9a0">2 · Cadena de pasos</text>
+    <rect class="node" x="288" y="192" width="42" height="32" rx="7" stroke="#5ec9a0"/><text x="309" y="212" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="358" y="192" width="42" height="32" rx="7" stroke="#5ec9a0"/><text x="379" y="212" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="428" y="192" width="42" height="32" rx="7" stroke="#5ec9a0"/><text x="449" y="212" text-anchor="middle" class="lbl">◆</text>
+    <path d="M330 208 H 356" class="flow" stroke="#5ec9a0" stroke-width="1.8" marker-end="url(#ag)"/>
+    <path d="M400 208 H 426" class="flow" stroke="#5ec9a0" stroke-width="1.8" marker-end="url(#ag)"/>
+    <text x="380" y="272" text-anchor="middle" class="cap">la salida alimenta al siguiente</text>
+  </g>
+
+  <!-- 3 Enrutado -->
+  <g class="cell c3">
+    <rect x="506" y="96" width="225" height="222" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="522" y="124" font-size="12.5" fill="#c6bdf0">3 · Enrutado</text>
+    <rect class="node" x="520" y="196" width="32" height="26" rx="6" stroke="#8a7fb0"/><text x="536" y="213" text-anchor="middle" class="lbl">in</text>
+    <rect class="node" x="576" y="194" width="50" height="30" rx="7" stroke="#a78bfa"/><text x="601" y="213" text-anchor="middle" class="lbl" font-size="9">router</text>
+    <path d="M552 209 H 574" class="flow" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#av)"/>
+    <rect class="node" x="662" y="164" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="682" y="179" text-anchor="middle" class="lbl">A</text>
+    <rect class="node" x="662" y="198" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="682" y="213" text-anchor="middle" class="lbl">B</text>
+    <rect class="node" x="662" y="232" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="682" y="247" text-anchor="middle" class="lbl">C</text>
+    <path d="M626 205 C 645 195, 648 180, 660 176" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M626 209 H 660" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M626 213 C 645 223, 648 238, 660 242" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <text x="616" y="290" text-anchor="middle" class="cap">clasifica y manda al que toca</text>
+  </g>
+
+  <!-- 4 Paralelización -->
+  <g class="cell c4">
+    <rect x="744" y="96" width="225" height="222" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="760" y="124" font-size="12.5" fill="#c6bdf0">4 · Paralelización</text>
+    <rect class="node" x="756" y="196" width="30" height="26" rx="6" stroke="#8a7fb0"/><text x="771" y="213" text-anchor="middle" class="lbl">in</text>
+    <rect class="node" x="828" y="162" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="848" y="177" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="828" y="198" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="848" y="213" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="828" y="234" width="40" height="22" rx="6" stroke="#a78bfa"/><text x="848" y="249" text-anchor="middle" class="lbl">◆</text>
+    <rect class="node" x="906" y="194" width="46" height="30" rx="7" stroke="#a78bfa"/><text x="929" y="213" text-anchor="middle" class="lbl" font-size="9">juntar</text>
+    <path d="M786 205 C 806 195, 810 178, 826 174" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M786 209 H 826" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M786 213 C 806 223, 810 240, 826 244" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M868 173 C 888 183, 892 198, 904 204" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M868 209 H 904" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M868 245 C 888 235, 892 220, 904 214" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <text x="855" y="290" text-anchor="middle" class="cap">a la vez, luego se juntan</text>
+  </g>
+
+  <!-- ===== FILA 2 ===== -->
+  <!-- 5 Orquestador -->
+  <g class="cell c5">
+    <rect x="30" y="340" width="225" height="222" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="46" y="368" font-size="12.5" fill="#c6bdf0">5 · Orquestador</text>
+    <rect class="node" x="44" y="440" width="50" height="30" rx="7" stroke="#a78bfa" stroke-width="2.2"/><text x="69" y="459" text-anchor="middle" class="lbl" font-size="9">orq</text>
+    <rect class="node" x="128" y="410" width="38" height="22" rx="6" stroke="#a78bfa"/><text x="147" y="425" text-anchor="middle" class="lbl">w</text>
+    <rect class="node" x="128" y="444" width="38" height="22" rx="6" stroke="#a78bfa"/><text x="147" y="459" text-anchor="middle" class="lbl">w</text>
+    <rect class="node" x="128" y="478" width="38" height="22" rx="6" stroke="#a78bfa"/><text x="147" y="493" text-anchor="middle" class="lbl">w</text>
+    <rect class="node" x="204" y="442" width="40" height="28" rx="7" stroke="#a78bfa"/><text x="224" y="460" text-anchor="middle" class="lbl" font-size="9">juntar</text>
+    <path d="M94 450 C 110 440, 114 424, 126 420" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M94 455 H 126" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M94 460 C 110 470, 114 486, 126 490" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M166 421 C 186 431, 190 446, 202 452" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M166 455 H 202" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <path d="M166 489 C 186 479, 190 464, 202 458" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <text x="142" y="532" text-anchor="middle" class="cap">él decide cómo trocear</text>
+  </g>
+
+  <!-- 6 Evaluador -->
+  <g class="cell c6">
+    <rect x="268" y="340" width="225" height="222" rx="12" fill="#a78bfa" fill-opacity="0.04" stroke="#3a3260" stroke-width="1"/>
+    <text x="284" y="368" font-size="12.5" fill="#c6bdf0">6 · Evaluador</text>
+    <rect class="node" x="300" y="438" width="54" height="32" rx="7" stroke="#a78bfa"/><text x="327" y="458" text-anchor="middle" class="lbl" font-size="9">genera</text>
+    <rect class="node" x="404" y="438" width="54" height="32" rx="7" stroke="#a78bfa"/><text x="431" y="458" text-anchor="middle" class="lbl" font-size="9">evalúa</text>
+    <path d="M354 448 H 402" class="flow" stroke="#a78bfa" stroke-width="1.8" marker-end="url(#av)"/>
+    <path d="M404 462 C 388 486, 370 486, 354 464" class="flow" stroke="#a78bfa" stroke-width="1.6" marker-end="url(#av)"/>
+    <text x="379" y="500" text-anchor="middle" class="cap" font-size="9">corrige ↺</text>
+    <text x="379" y="532" text-anchor="middle" class="cap">genera y critica hasta el OK</text>
+  </g>
+
+  <!-- 7 Agente -->
+  <g class="cell c7">
+    <rect x="506" y="340" width="225" height="222" rx="12" fill="#fb7185" fill-opacity="0.05" stroke="#6b3644" stroke-width="1"/>
+    <text x="522" y="368" font-size="12.5" fill="#fb7185">7 · Agente</text>
+    <rect class="node" x="520" y="442" width="34" height="26" rx="6" stroke="#8a7fb0"/><text x="537" y="459" text-anchor="middle" class="lbl" font-size="9">meta</text>
+    <rect class="node" x="586" y="436" width="58" height="34" rx="8" stroke="#fb7185" stroke-width="2.2"/><text x="615" y="457" text-anchor="middle" class="lbl" font-size="9">modelo</text>
+    <path d="M600 436 C 596 416, 634 416, 630 436" class="flow" stroke="#fb7185" stroke-width="1.6" marker-end="url(#ar)"/>
+    <text x="615" y="410" text-anchor="middle" class="cap" font-size="9">decide ↺</text>
+    <rect class="node" x="586" y="486" width="58" height="22" rx="6" stroke="#fb7185"/><text x="615" y="501" text-anchor="middle" class="lbl" font-size="9">tools</text>
+    <path d="M608 470 V 484" class="flow" stroke="#fb7185" stroke-width="1.4" marker-end="url(#ar)"/>
+    <path d="M622 484 V 470" class="flow" stroke="#fb7185" stroke-width="1.4" marker-end="url(#ar)"/>
+    <rect class="node" x="676" y="442" width="34" height="26" rx="6" stroke="#34d399"/><text x="693" y="459" text-anchor="middle" class="lbl" font-size="9">fin</text>
+    <path d="M554 455 H 584" class="flow" stroke="#fb7185" stroke-width="1.6" marker-end="url(#ar)"/>
+    <path d="M644 453 H 674" class="flow" stroke="#34d399" stroke-width="1.6" marker-end="url(#ag)"/>
+    <text x="616" y="532" text-anchor="middle" class="cap">elige pasos y para solo</text>
+  </g>
+
+  <!-- 8 Leyenda -->
+  <g class="cell">
+    <rect x="744" y="340" width="225" height="222" rx="12" fill="#181329" stroke="#3a3260" stroke-width="1"/>
+    <text x="760" y="368" font-size="12.5" fill="#ece7fb">Cómo leerlo</text>
+    <rect class="node" x="762" y="392" width="30" height="22" rx="6" stroke="#a78bfa"/><text x="777" y="407" text-anchor="middle" class="lbl">◆</text>
+    <text x="802" y="407" class="cap" font-size="10.5">una llamada al modelo</text>
+    <line x1="764" y1="436" x2="792" y2="436" class="flow" stroke="#8a7fb0" stroke-width="1.8" marker-end="url(#av)"/>
+    <text x="802" y="440" class="cap" font-size="10.5">flujo de datos</text>
+    <rect x="762" y="462" width="16" height="12" rx="3" fill="#34d399" fill-opacity="0.5" stroke="#34d399"/>
+    <text x="788" y="472" class="cap" font-size="10.5">tú mandas · workflow</text>
+    <rect x="762" y="486" width="16" height="12" rx="3" fill="#fb7185" fill-opacity="0.5" stroke="#fb7185"/>
+    <text x="788" y="496" class="cap" font-size="10.5">manda el modelo · agente</text>
+    <text x="760" y="528" class="cap" font-size="10">Los cinco primeros son</text>
+    <text x="760" y="544" class="cap" font-size="10">workflows; el último, un agente.</text>
+  </g>
+</svg>

@@ -1,0 +1,101 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="La especificación es la fuente de verdad">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto-start-reverse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowR" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto-start-reverse">
+      <path d="M0 0 L8 4 L0 8 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 1.6s linear infinite; }
+    .flowbad { stroke-dasharray: 6 8; animation: dash 2.2s linear infinite; }
+    .glow { animation: glow 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .fade { animation: fade 3.6s ease-in-out infinite; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes glow { 0%, 100% { opacity: .85; } 50% { opacity: 1; } }
+    @keyframes fade { 0%, 100% { opacity: .4; } 50% { opacity: .72; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">La especificación es la fuente de verdad</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">código primero  vs.  especificación primero</text>
+
+  <line x1="500" y1="108" x2="500" y2="392" stroke="#2a2340" stroke-width="1.5" stroke-dasharray="3 6"/>
+
+  <!-- IZQUIERDA: código primero -->
+  <text x="60" y="132" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">CÓDIGO PRIMERO</text>
+
+  <g class="fade">
+    <rect x="60" y="150" width="130" height="52" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="125" y="181" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">💬 prompt</text>
+  </g>
+  <line x1="192" y1="176" x2="246" y2="176" class="flowbad" stroke="#fb7185" stroke-width="2" marker-end="url(#arrowR)"/>
+
+  <g>
+    <rect x="250" y="150" width="200" height="52" rx="12" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="350" y="173" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">código</text>
+    <text x="350" y="191" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185">única fuente de verdad</text>
+  </g>
+
+  <!-- fan: código -> tests / doc -->
+  <path d="M350 202 V216 H150 V229" class="flowbad" stroke="#fb7185" stroke-width="1.8" fill="none" marker-end="url(#arrowR)"/>
+  <path d="M350 202 V229" class="flowbad" stroke="#fb7185" stroke-width="1.8" fill="none" marker-end="url(#arrowR)"/>
+
+  <g class="fade">
+    <rect x="90" y="232" width="120" height="44" rx="10" fill="none" stroke="#3a3357" stroke-width="1.6"/>
+    <text x="150" y="259" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">tests después</text>
+  </g>
+  <g class="fade">
+    <rect x="290" y="232" width="120" height="44" rx="10" fill="none" stroke="#3a3357" stroke-width="1.6"/>
+    <text x="350" y="259" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">doc que envejece</text>
+  </g>
+  <text x="60" y="316" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185">✗ la intención se pierde</text>
+  <text x="60" y="338" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">nadie sabe qué debía hacer;</text>
+  <text x="60" y="356" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">el código es lo único que queda</text>
+
+  <!-- DERECHA: especificación primero -->
+  <text x="540" y="132" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">ESPECIFICACIÓN PRIMERO</text>
+
+  <g>
+    <rect x="540" y="150" width="120" height="52" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="600" y="181" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">intención</text>
+  </g>
+  <line x1="662" y1="176" x2="706" y2="176" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <g class="glow">
+    <rect x="710" y="146" width="230" height="60" rx="12" fill="none" stroke="url(#ac)" stroke-width="2.6"/>
+    <text x="825" y="172" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">spec.md</text>
+    <text x="825" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">fuente de verdad · versionada</text>
+  </g>
+
+  <!-- fan: spec -> código / tests / doc -->
+  <path d="M825 206 V219 H620 V229" class="flow" stroke="#a78bfa" stroke-width="1.8" fill="none" marker-end="url(#arrow)"/>
+  <path d="M825 206 V219 H765 V229" class="flow" stroke="#a78bfa" stroke-width="1.8" fill="none" marker-end="url(#arrow)"/>
+  <path d="M825 206 V219 H910 V229" class="flow" stroke="#a78bfa" stroke-width="1.8" fill="none" marker-end="url(#arrow)"/>
+
+  <g>
+    <rect x="560" y="232" width="120" height="44" rx="10" fill="none" stroke="#34d399" stroke-width="1.8"/>
+    <text x="620" y="259" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">código</text>
+  </g>
+  <g>
+    <rect x="705" y="232" width="120" height="44" rx="10" fill="none" stroke="#34d399" stroke-width="1.8"/>
+    <text x="765" y="259" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">tests</text>
+  </g>
+  <g>
+    <rect x="850" y="232" width="120" height="44" rx="10" fill="none" stroke="#34d399" stroke-width="1.8"/>
+    <text x="910" y="259" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">documentación</text>
+  </g>
+
+  <text x="540" y="316" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">✓ la intención permanece</text>
+  <text x="540" y="338" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">artefactos derivados de la spec;</text>
+  <text x="540" y="356" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">cada línea de código apunta a un requisito</text>
+
+  <text x="500" y="424" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#ece7fb" font-style="italic">Si el código es el único documento, la intención se evapora con él.</text>
+</svg>

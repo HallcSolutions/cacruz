@@ -1,5 +1,18 @@
 [
   {
+    "slug": "what-is-spec-driven-development",
+    "date": "2026-07-20",
+    "title": {
+      "es": "Qué es el desarrollo guiado por especificación (y cuándo NO usarlo)",
+      "en": "What spec-driven development is (and when NOT to use it)"
+    },
+    "summary": {
+      "es": "La nota que explica el método en sí, no cómo lo aplico: qué significa que la especificación mande y el código sea un artefacto, de dónde viene la idea (cascada, BDD, EARS) y las variantes de hoy —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordenadas por cuánto manda la spec. Y, sin adornos, cuándo NO conviene usarlo.",
+      "en": "The note that explains the method itself, not how I apply it: what it means for the spec to be in charge and code to be an artifact, where the idea comes from (waterfall, BDD, EARS) and today's variants —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordered by how much the spec rules. And, plainly, when NOT to use it."
+    },
+    "tags": ["sdd", "especificación", "metodología", "ia", "calidad"]
+  },
+  {
     "slug": "ai-architectures-people-use",
     "date": "2026-07-17",
     "title": {

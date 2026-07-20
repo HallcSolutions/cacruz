@@ -1,0 +1,69 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Las variantes de SDD ordenadas por cuánto manda la especificación">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="spec" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#453768"/><stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .row { animation: rise 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .r2 { animation-delay: .3s; } .r3 { animation-delay: .6s; } .r4 { animation-delay: .9s; } .r5 { animation-delay: 1.2s; }
+    @keyframes rise { 0%, 100% { opacity: .86; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="27" fill="#ece7fb">La misma idea, distintas variantes</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">ordenadas por cuánto manda la spec  ·  taxonomía de B. Böckeler</text>
+
+  <!-- barra-espectro -->
+  <rect x="58" y="120" width="8" height="256" rx="4" fill="url(#spec)"/>
+  <path d="M62 376 l-6 -10 h12 z" fill="#a78bfa"/>
+  <text x="46" y="130" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0" transform="rotate(90 46 130)">la spec manda más  →</text>
+
+  <!-- Row 1 -->
+  <g class="row">
+    <rect x="100" y="118" width="860" height="58" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="116" y="143" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">SPEC PRIMERO <tspan fill="#6b5f86" font-size="11">· spec-first</tspan></text>
+    <text x="116" y="164" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">GitHub Spec Kit · Amazon Kiro</text>
+    <line x1="350" y1="130" x2="350" y2="164" stroke="#2a2340" stroke-width="1.5"/>
+    <text x="368" y="152" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0">La spec arranca el trabajo; el código llega después (y puede desviarse).</text>
+  </g>
+
+  <!-- Row 2 -->
+  <g class="row r2">
+    <rect x="100" y="186" width="860" height="58" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="116" y="211" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">SPEC ANCLADA <tspan fill="#6b5f86" font-size="11">· spec-anchored</tspan></text>
+    <text x="116" y="232" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">OpenSpec (Fission AI)</text>
+    <line x1="350" y1="198" x2="350" y2="232" stroke="#2a2340" stroke-width="1.5"/>
+    <text x="368" y="220" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0">La spec evoluciona junto al código, por deltas. Para código que ya existe.</text>
+  </g>
+
+  <!-- Row 3 -->
+  <g class="row r3">
+    <rect x="100" y="254" width="860" height="58" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="116" y="279" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">SPEC COMO FUENTE <tspan fill="#6b5f86" font-size="11">· spec-as-source</tspan></text>
+    <text x="116" y="300" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Tessl</text>
+    <line x1="350" y1="266" x2="350" y2="300" stroke="#2a2340" stroke-width="1.5"/>
+    <text x="368" y="288" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0">Editas la spec; el código se genera y queda marcado como no editable.</text>
+  </g>
+
+  <!-- Row 4 -->
+  <g class="row r4">
+    <rect x="100" y="322" width="860" height="58" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="116" y="347" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">EQUIPO SIMULADO <tspan fill="#6b5f86" font-size="11">· agile-sim</tspan></text>
+    <text x="116" y="368" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">BMAD-METHOD</text>
+    <line x1="350" y1="334" x2="350" y2="368" stroke="#2a2340" stroke-width="1.5"/>
+    <text x="368" y="360" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0">12+ agentes con roles (PM, arquitecto, QA…) que se revisan entre sí.</text>
+  </g>
+
+  <!-- chalc -->
+  <g class="row r5">
+    <rect x="100" y="392" width="860" height="34" rx="10" fill="none" stroke="url(#ac)" stroke-width="2.4"/>
+    <text x="116" y="414" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">chalc <tspan fill="#8a7fb0" font-size="11">· mi versión:</tspan> <tspan fill="#34d399">spec-first + TDD estricto y mutación</tspan><tspan fill="#8a7fb0" font-size="11">, con cualquier agente.</tspan></text>
+  </g>
+</svg>

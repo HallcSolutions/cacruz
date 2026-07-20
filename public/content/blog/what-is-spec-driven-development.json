@@ -1,0 +1,371 @@
+{
+  "slug": "what-is-spec-driven-development",
+  "date": "2026-07-20",
+  "title": {
+    "es": "Qué es el desarrollo guiado por especificación (y cuándo NO usarlo)",
+    "en": "What spec-driven development is (and when NOT to use it)"
+  },
+  "summary": {
+    "es": "La nota que explica el método en sí, no cómo lo aplico: qué significa que la especificación mande y el código sea un artefacto, de dónde viene la idea (cascada, BDD, EARS) y las variantes de hoy —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordenadas por cuánto manda la spec. Y, sin adornos, cuándo NO conviene usarlo.",
+    "en": "The note that explains the method itself, not how I apply it: what it means for the spec to be in charge and code to be an artifact, where the idea comes from (waterfall, BDD, EARS) and today's variants —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordered by how much the spec rules. And, plainly, when NOT to use it."
+  },
+  "tags": ["sdd", "especificación", "metodología", "ia", "calidad"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Si has visto a una IA entregar código que se ve perfecto y a la semana nadie recuerda qué debía hacer, ya conociste el problema que resuelve este método. En otra nota conté [cómo lo aplico en un feature completo](/daily/ship-a-feature-in-hours), paso a paso. Esta responde la pregunta de antes: qué es exactamente el desarrollo guiado por especificación —Spec-Driven Development, SDD por sus siglas en inglés—, de dónde salió, por qué volvió con fuerza justo ahora y en qué casos es un error usarlo."
+      },
+      {
+        "kind": "quote",
+        "text": "La idea de fondo cabe en una frase: la especificación es la que manda, y el código tiene un solo trabajo: cumplirla."
+      },
+
+      { "kind": "heading", "text": "Qué es, en una frase" },
+      {
+        "kind": "paragraph",
+        "text": "Piénsalo como construir una casa. No le das el dinero al maestro de obra y le dices «hazme algo bonito»: primero acuerdan un plano —cuántas habitaciones, dónde va la cocina, por dónde entra la luz—, y ese plano es lo que después usas para comprobar si la casa quedó como pediste. El desarrollo guiado por especificación es justo eso, pero con software: antes de escribir una sola línea de código, escribes ese «plano» —la especificación— que dice QUÉ tiene que hacer el programa y POR QUÉ."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con una condición estricta: cada frase del plano tiene que ser tan concreta que se pueda comprobar. «La pantalla debe ser rápida» no sirve, porque nadie sabe cuándo se cumple; «la pantalla debe cargar en menos de dos segundos» sí, porque o se cumple o no. Si algo no se puede comprobar, no es un requisito: es una opinión. Y las opiniones no se pueden entregar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Suena de sentido común, pero es al revés de como se trabaja casi siempre. Lo normal es empezar por el código y dejar el plano para nunca: no queda escrito en ningún lado qué debía hacer el programa ni por qué. Mientras la persona que lo hizo sigue ahí, se le pregunta y contesta de memoria. Pero esa persona se va —cambia de trabajo, de equipo, de proyecto— y con ella se va la única copia de por qué las cosas son como son. Meses después nadie se atreve a tocar ese código por miedo a romper algo que ya nadie entiende. Con la especificación primero, ese «porqué» queda escrito y guardado junto al código: cuando la persona se va, la explicación se queda."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-source-of-truth.es.svg",
+        "caption": "El cambio de fondo: cuando manda la especificación, el código, las pruebas y la documentación salen de ella y se comprueban contra ella."
+      },
+
+      { "kind": "heading", "text": "De dónde viene: no lo inventó la IA" },
+      {
+        "kind": "paragraph",
+        "text": "La tentación es creer que esto nació con los modelos de lenguaje. No. La idea de escribir la especificación antes que el código es tan vieja como la ingeniería de software: en los años setenta, el modelo en cascada ya ponía una gran especificación al inicio del proyecto. El problema es que era rígida, se escribía una sola vez y quedaba desconectada del código que venía después. El movimiento ágil reaccionó contra ese peso muerto —y con razón—, pero al hacerlo muchos equipos tiraron también la parte buena: tener claro y por escrito qué se estaba construyendo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La respuesta a ese vacío llegó de la gente que se dedicaba a las pruebas. A mediados de los 2000, Dan North propuso el desarrollo guiado por comportamiento (BDD): describir el software con ejemplos concretos de lo que debe hacer, en un lenguaje que entiendan por igual el cliente y los programadores. En 2011, Gojko Adzic lo consolidó en su libro Specification by Example, donde popularizó la idea de documentación viva: una especificación que no se archiva en un cajón, sino que se ejecuta contra el sistema y por eso nunca puede mentir."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Faltaba una pieza: una forma de escribir requisitos que no fueran ambiguos. La aportó Alistair Mavin con la notación EARS, publicada en la conferencia de ingeniería de requisitos del IEEE en 2009. Su equipo en Rolls-Royce revisaba las normas de aeronavegabilidad —la certificación de que algo es seguro para volar— del control de un motor a reacción, y notó que los buenos requisitos siempre tenían la misma forma: WHEN … THE SYSTEM SHALL … — cuando ocurre esto, el sistema debe hacer aquello. Esa plantilla convierte una frase de negocio en algo que se puede comprobar sin discusión."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-lineage.es.svg",
+        "caption": "Medio siglo de la misma idea: de la gran spec de la cascada a las especificaciones ejecutables de BDD y EARS, hasta el SDD que hoy ejecuta un agente."
+      },
+
+      { "kind": "heading", "text": "Por qué resucitó justo ahora" },
+      {
+        "kind": "paragraph",
+        "text": "Porque los modelos de lenguaje adivinan. Le pides \"hazme una pantalla de login\" y rellena los huecos que dejaste con lo primero que le parezca razonable, que casi nunca es lo que tenías en la cabeza. Una especificación aprobada le quita el margen para inventar: le da un objetivo exacto que cumplir y te deja algo concreto que revisar antes de que exista una sola línea de código. Es la reacción directa al vibe coding —programar a golpe de prompt y aceptar lo que salga—, y por eso en 2025 casi todas las herramientas grandes se subieron a la vez."
+      },
+      {
+        "kind": "quote",
+        "text": "Escribes una «spec» antes que el código con la IA, y esa spec se vuelve la fuente de verdad para el humano y para la IA.",
+        "source": "Birgitta Böckeler · martinfowler.com, 2025",
+        "sourceUrl": "https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html"
+      },
+
+      { "kind": "heading", "text": "Las variantes que existen (y en qué se diferencian)" },
+      {
+        "kind": "paragraph",
+        "text": "No todas las herramientas llevan la idea igual de lejos, y la diferencia entre ellas es una sola pregunta: al final, ¿quién manda, la especificación o el código? Birgitta Böckeler, en el blog de Martin Fowler, las ordena de menos a más en ese eje. Aquí van de la más suave a la más radical, con las herramientas reales de cada grupo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "La spec solo da el pistoletazo de salida. Escribes la especificación, la herramienta genera el código a partir de ella y, desde ahí, el código va por su cuenta: con el tiempo puede acabar alejándose de lo que decía la spec. Es el grupo más popular. Aquí están GitHub Spec Kit (gratis y de código abierto, funciona con casi cualquier asistente de IA) y Amazon Kiro (un editor de código completo montado sobre esta idea).",
+          "La spec y el código caminan juntos. La especificación no se queda en el arranque: se actualiza cada vez que cambias algo, anotando solo lo que cambió. Sirve sobre todo para proyectos que ya existen y llevan años funcionando. El ejemplo es OpenSpec, también gratis y abierto.",
+          "La spec manda del todo. Aquí das la vuelta completa: lo que editas es la especificación, y el código lo escribe la máquina a partir de ella —ni siquiera lo tocas a mano—. Es lo más radical y lo más nuevo; Tessl es quien más lejos lleva la idea.",
+          "Un equipo entero en vez de un solo ayudante. En lugar de una única IA, BMAD-METHOD pone a trabajar a más de doce, cada una con el papel de alguien de un equipo real —quien analiza, quien diseña, quien prueba— y se revisan entre ellas antes de dar el siguiente paso."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specify init mi-proyecto        # GitHub Spec Kit",
+          "→ /speckit.constitution   principios no negociables",
+          "→ /speckit.specify        el QUÉ y el PORQUÉ",
+          "→ /speckit.plan           el CÓMO",
+          "→ /speckit.tasks          tareas trazadas a requisitos",
+          "→ /speckit.implement      recién ahora, el código"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "chalc, la herramienta que construí y uso a diario, es mi versión del primer grupo (la spec da la salida) con dos diferencias: no te ata a un editor —funciona con Claude Code, Copilot, Cursor o Gemini— y no suelta el código hasta el final, cerrando con pruebas automáticas exigentes que comprueban que hace de verdad lo que la spec pedía. Lo importante es que el método viaja guardado dentro del proyecto, no en mi memoria. Puedes verlo en [mis proyectos](/projects)."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-variants.es.svg",
+        "caption": "El panorama de 2025 ordenado por cuánto manda la spec: desde la que solo arranca el trabajo (Spec Kit, Kiro) hasta la que genera el código (Tessl)."
+      },
+
+      { "kind": "heading", "text": "Dónde encaja de verdad" },
+      {
+        "kind": "steps",
+        "items": [
+          "Funciones con varias reglas —un descuento, un permiso, un cálculo—, donde un pedido vago a la IA olvidaría la mitad y nadie lo notaría hasta que ya está en manos de la gente.",
+          "Equipos donde quien revisa no es quien escribió: la spec le dice al revisor qué debía pasar, sin tener que adivinarlo del código.",
+          "Trabajo con agentes de IA, que rinden mucho mejor contra un objetivo verificable que contra una instrucción vaga.",
+          "Código que vivirá años y lo mantendrá gente que hoy no está: la intención queda escrita, no en la cabeza del que ya se fue.",
+          "Dominios regulados —salud, banca, aeronáutica— donde no basta con que funcione: hay que poder demostrar por qué hace lo que hace."
+        ]
+      },
+
+      { "kind": "heading", "text": "Cuándo NO conviene (dilo sin miedo)" },
+      {
+        "kind": "paragraph",
+        "text": "La especificación no es gratis. Cuesta tiempo por adelantado, y ese coste solo se recupera cuando el código vive más que la sesión que lo escribió. Si el código va a morir antes de que la spec valga la pena, especificarlo es ceremonia. Estos son los casos donde yo no lo uso:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Prototipos de usar y tirar: código que escribes para probar una idea y borras el mismo día. Ahí el objetivo es descubrir, no dejar algo fijo.",
+          "Cuando todavía no entiendes el problema: si no sabes qué construir, no puedes especificarlo. Explora primero, especifica cuando el camino esté claro.",
+          "Scripts de un solo uso y automatizaciones triviales: si el requisito cabe en la cabeza y escribir la spec cuesta más que escribir el código, la spec sobra.",
+          "Demos y hackathons contra reloj, donde el valor está en enseñar la idea en una hora, no en dejar algo mantenible.",
+          "Trabajo puramente exploratorio o creativo, donde fijar el QUÉ demasiado pronto mata justo lo que estabas buscando."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Especificar un experimento que vas a tirar es ceremonia; especificar algo que otra persona mantendrá durante años es un regalo que le haces por adelantado."
+      },
+
+      { "kind": "heading", "text": "Sí, es más aburrido —y aun así lo hago" },
+      {
+        "kind": "paragraph",
+        "text": "Voy a ser honesto: escribir la especificación primero es aburrido. Lo natural, y lo que apetece, es decirle a la IA «hazlo ya» y quedarte con la entrega en la mitad de tiempo. Y esa parte es cierta: sin spec entregas más rápido hoy. Lo que no se ve el primer día es la factura del segundo. Ese código rápido, sin un porqué escrito, se convierte en un cuello de botella en cuanto necesitas cambiar algo —y siempre necesitas cambiar algo—: nadie sabe qué debía hacer, así que tocarlo da miedo y cada cambio cuesta el triple."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso, para mí, la spec no es más lenta: solo cambia cuándo haces el trabajo difícil. Vuelve a la casa del principio: mover la cocina en el plano es borrar una línea; moverla con las paredes ya levantadas es tirar un muro y rehacerlo. Con el código pasa exactamente igual. Aclarar qué quieres antes de escribirlo te cuesta un rato; descubrir que estaba mal cuando ya funciona y la gente lo está usando cuesta días de arreglos a las apuradas. La spec no te ahorra pensar: te hace pensar cuando cambiar de idea todavía es barato."
+      },
+      {
+        "kind": "quote",
+        "text": "Sin especificación entregas más rápido hoy y más lento para siempre."
+      },
+
+      { "kind": "heading", "text": "Qué cambia de verdad" },
+      {
+        "kind": "steps",
+        "items": [
+          "Revisas contra un contrato, no contra tu intuición: cada línea de código apunta a un requisito con nombre.",
+          "El agente —o la persona— deja de improvisar, porque tiene un objetivo exacto en vez de un prompt ambiguo.",
+          "Cuando el alcance cambia, y siempre cambia, actualizas la spec primero y el código después. Nunca al revés.",
+          "El avance se mide con hechos —requisitos cumplidos, pruebas que pasan— y no con estimaciones optimistas.",
+          "Y lo más importante: la intención sobrevive a la persona. El proyecto no se queda huérfano cuando alguien se va."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-helps-ai.es.svg",
+        "caption": "En una imagen: la IA no falla por mala, falla porque no sabe qué querías. La especificación le da el mapa —y de paso te deja algo que revisar y algo fácil de cambiar mañana."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Este mismo sitio nació así, con una especificación de requisitos numerados donde cada test apunta a uno. Si quieres ver el método en acción —el flujo real, con los comandos y los gráficos de cada fase—, esa es la nota de [cómo entrego un feature en horas](/daily/ship-a-feature-in-hours). Y si te sirve para tu equipo, hablemos desde [lo que aporto](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Understanding Spec-Driven Development](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Birgitta Böckeler, martinfowler.com, 2025: compara Kiro, Spec Kit y Tessl y ordena las variantes en el espectro spec-first / spec-anchored / spec-as-source. La mejor visión neutral del panorama.",
+          "[GitHub Spec Kit — el repositorio](https://github.com/github/spec-kit): el toolkit de código libre (MIT) que lleva el SDD a más de 30 agentes. Empieza por su README.",
+          "[Kiro](https://kiro.dev/) — el IDE de Amazon donde la spec es la unidad de trabajo y el código, un artefacto de compilación.",
+          "[OpenSpec](https://github.com/Fission-AI/OpenSpec) — de Fission AI (MIT): SDD ligero que trabaja por «deltas», pensado para meterse en código que ya existe.",
+          "[Tessl](https://tessl.io/) — de Guy Podjarny (fundador de Snyk): lleva la idea al extremo «spec-as-source», donde la especificación es lo que editas y el agente genera el código.",
+          "[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) — el framework que simula un equipo ágil entero de agentes con roles (analista, PM, arquitecto, QA…).",
+          "[Specification by Example](https://www.manning.com/books/specification-by-example) — Gojko Adzic, Manning, 2011: el libro que consolidó la documentación viva y las especificaciones ejecutables.",
+          "[Introducing BDD](https://dannorth.net/blog/introducing-bdd/) — Dan North: el artículo que dio nombre al desarrollo guiado por comportamiento, el antecedente directo del SDD.",
+          "[Notación EARS](https://alistairmavin.com/ears/) — Alistair Mavin: la guía oficial de la sintaxis WHEN … SHALL … con la que un requisito se vuelve testeable."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "If you've watched an AI deliver code that looks perfect and, a week later, nobody remembers what it was supposed to do, you've already met the problem this method solves. In another note I described [how I apply it to a complete feature](/daily/ship-a-feature-in-hours), step by step. This one answers the question that comes first: what spec-driven development (SDD) actually is, where it came from, why it came back so hard right now, and in which cases using it is a mistake."
+      },
+      {
+        "kind": "quote",
+        "text": "The core idea fits in one sentence: the specification is what's in charge, and the code has a single job: to obey it."
+      },
+
+      { "kind": "heading", "text": "What it is, in one sentence" },
+      {
+        "kind": "paragraph",
+        "text": "Think of it like building a house. You don't hand the money to the builder and say \"make me something nice\": first you agree on a blueprint — how many rooms, where the kitchen goes, where the light comes in — and that blueprint is what you later use to check whether the house came out the way you asked. Spec-driven development is exactly that, but for software: before writing a single line of code, you write that \"blueprint\" — the specification — saying WHAT the program must do and WHY."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With one strict condition: every sentence of the blueprint has to be concrete enough to be checked. \"The screen should be fast\" doesn't count, because nobody knows when it's met; \"the screen must load in under two seconds\" does, because it either happens or it doesn't. If something can't be checked, it isn't a requirement: it's an opinion. And you can't ship opinions."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It sounds like common sense, but it's the opposite of how work usually happens. The norm is to start with the code and leave the blueprint for never: nowhere is it written what the program was supposed to do, or why. While the person who built it is still around, you ask them and they answer from memory. But that person leaves — new job, new team, new project — and the only copy of why things are the way they are leaves with them. Months later nobody dares touch that code, afraid of breaking something nobody understands anymore. With spec-first, that \"why\" is written down and kept next to the code: when the person leaves, the explanation stays."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-source-of-truth.en.svg",
+        "caption": "The core shift: when the specification is in charge, the code, the tests and the documentation all come out of it and are checked against it."
+      },
+
+      { "kind": "heading", "text": "Where it comes from: AI didn't invent it" },
+      {
+        "kind": "paragraph",
+        "text": "It's tempting to think this was born with language models. It wasn't. Writing the specification before the code is as old as software engineering: in the 1970s, the waterfall model already placed a big specification at the start of the project. The problem was that it was rigid, written once, and disconnected from the code that followed. The agile movement reacted against that dead weight — rightly so — but in doing it many teams also threw away the good part: being clear, in writing, about what was being built."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The answer to that gap came from the testing community. In the mid-2000s, Dan North proposed behaviour-driven development (BDD): describe software with concrete examples of what it must do, in language the client and the programmers understand equally. In 2011, Gojko Adzic consolidated it in his book Specification by Example, where he popularized the idea of living documentation: a specification that isn't filed away in a drawer but executed against the system, and therefore can never lie."
+      },
+      {
+        "kind": "paragraph",
+        "text": "One piece was missing: a way to write requirements that weren't ambiguous. Alistair Mavin supplied it with EARS notation, published at the IEEE requirements engineering conference in 2009. His team at Rolls-Royce was reviewing the airworthiness rules — the certification that something is safe to fly — for a jet engine's control system and noticed that good requirements always had the same shape: WHEN … THE SYSTEM SHALL … — when this happens, the system must do that. That template turns a business sentence into something you can check without argument."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-lineage.en.svg",
+        "caption": "Half a century of the same idea: from waterfall's big spec to the executable specs of BDD and EARS, all the way to the SDD an agent runs today."
+      },
+
+      { "kind": "heading", "text": "Why it came back right now" },
+      {
+        "kind": "paragraph",
+        "text": "Because language models guess. You ask for \"a login screen\" and it fills the gaps you left with whatever seems reasonable to it, which is almost never what you had in mind. An approved specification removes its room to improvise: it gives it an exact target to meet and gives you something concrete to review before a single line of code exists. It's the direct reaction to vibe coding — programming by prompt and accepting whatever comes out — and that's why, in 2025, nearly every big tool jumped in at once."
+      },
+      {
+        "kind": "quote",
+        "text": "You write a \"spec\" before writing code with AI, and that spec becomes the source of truth for the human and the AI.",
+        "source": "Birgitta Böckeler · martinfowler.com, 2025",
+        "sourceUrl": "https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html"
+      },
+
+      { "kind": "heading", "text": "The variants that exist (and how they differ)" },
+      {
+        "kind": "paragraph",
+        "text": "Not all the tools take the idea equally far, and the difference between them comes down to a single question: in the end, who's in charge — the specification or the code? Birgitta Böckeler, on Martin Fowler's site, orders them from least to most along that axis. Here they go from the mildest to the most radical, with the real tools in each group."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The spec just fires the starting gun. You write the specification, the tool generates code from it, and from there the code goes its own way: over time it can drift from what the spec said. It's the most popular group. Here live GitHub Spec Kit (free and open source, works with almost any AI assistant) and Amazon Kiro (a full code editor built on this idea).",
+          "The spec and the code walk together. The specification doesn't stop at the start: it's updated every time you change something, noting only what changed. It's mostly for projects that already exist and have run for years. The example is OpenSpec, also free and open.",
+          "The spec is fully in charge. Here you flip it completely: what you edit is the specification, and the machine writes the code from it — you don't even touch it by hand. It's the most radical and the newest; Tessl takes the idea the furthest.",
+          "A whole team instead of a single helper. Instead of one AI, BMAD-METHOD puts twelve-plus to work, each playing the part of someone on a real team — who analyses, who designs, who tests — reviewing each other before taking the next step."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specify init my-project        # GitHub Spec Kit",
+          "→ /speckit.constitution   non-negotiable principles",
+          "→ /speckit.specify        the WHAT and the WHY",
+          "→ /speckit.plan           the HOW",
+          "→ /speckit.tasks          tasks traced to requirements",
+          "→ /speckit.implement      only now, the code"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "chalc, the tool I built and use every day, is my take on the first group (the spec fires the start) with two differences: it doesn't tie you to an editor — it works with Claude Code, Copilot, Cursor or Gemini — and it doesn't let go of the code until the end, closing with demanding automated tests that check it really does what the spec asked. The key is that the method travels stored inside the project, not in my memory. You can see it in [my projects](/projects)."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-variants.en.svg",
+        "caption": "The 2025 landscape ordered by how much the spec is in charge: from the one that merely kicks off the work (Spec Kit, Kiro) to the one that generates the code (Tessl)."
+      },
+
+      { "kind": "heading", "text": "Where it genuinely fits" },
+      {
+        "kind": "steps",
+        "items": [
+          "Functions with several rules — a discount, a permission, a calculation — where a vague request to the AI would forget half of them and nobody would notice until it's already in people's hands.",
+          "Teams where the reviewer isn't the author: the spec tells the reviewer what was supposed to happen, instead of guessing it from the code.",
+          "Work with AI agents, which perform far better against a verifiable target than against a vague instruction.",
+          "Code that will live for years and be maintained by people who aren't here today: the intent is written down, not in the head of whoever left.",
+          "Regulated domains — health, banking, aviation — where working isn't enough: you have to be able to prove why it does what it does."
+        ]
+      },
+
+      { "kind": "heading", "text": "When NOT to use it (say it without fear)" },
+      {
+        "kind": "paragraph",
+        "text": "The specification isn't free. It costs time up front, and that cost is only recovered when the code lives longer than the session that wrote it. If the code will die before the spec pays off, specifying it is ceremony. These are the cases where I don't use it:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Throwaway prototypes: code you write to try an idea and delete the same day. There the goal is to discover, not to lock anything down.",
+          "When you still don't understand the problem: if you don't know what to build, you can't specify it. Explore first, specify once the path is clear.",
+          "One-off scripts and trivial automations: if the requirement fits in your head and writing the spec costs more than writing the code, the spec is overhead.",
+          "Demos and hackathons against the clock, where the value is showing the idea in an hour, not leaving something maintainable.",
+          "Purely exploratory or creative work, where pinning down the WHAT too early kills exactly what you were looking for."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Specifying an experiment you're going to throw away is ceremony; specifying something another person will maintain for years is a gift you hand them in advance."
+      },
+
+      { "kind": "heading", "text": "Yes, it's more boring — and I still do it" },
+      {
+        "kind": "paragraph",
+        "text": "I'll be honest: writing the spec first is boring. The natural thing, the tempting thing, is to tell the AI \"just build it\" and walk away with the delivery in half the time. And that part is true: without a spec you ship faster today. What you don't see on day one is day two's bill. That fast code, with no written why, turns into a bottleneck the moment you need to change something — and you always need to change something: nobody knows what it was supposed to do, so touching it is scary and every change costs triple."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why, to me, the spec isn't slower: it just changes when you do the hard part. Back to the house from the start: moving the kitchen on the blueprint is erasing one line; moving it once the walls are up means knocking down a wall and rebuilding it. Code works exactly the same. Getting clear on what you want before you write it costs you a little while; finding out it was wrong once it's live and people are using it costs days of frantic fixes. The spec doesn't save you from thinking: it makes you think while changing your mind is still cheap."
+      },
+      {
+        "kind": "quote",
+        "text": "Without a spec you ship faster today and slower forever."
+      },
+
+      { "kind": "heading", "text": "What actually changes" },
+      {
+        "kind": "steps",
+        "items": [
+          "You review against a contract, not your intuition: every line of code points to a named requirement.",
+          "The agent — or the person — stops improvising, because it has an exact target instead of an ambiguous prompt.",
+          "When scope changes, and it always changes, you update the spec first and the code after. Never the other way around.",
+          "Progress is measured with facts — requirements met, tests that pass — not with optimistic estimates.",
+          "And most important: the intent outlives the person. The project isn't orphaned when someone leaves."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-helps-ai.en.svg",
+        "caption": "In one picture: the AI doesn't fail because it's bad, it fails because it doesn't know what you wanted. The spec is the map — and it also leaves you something to review and something that's easy to change tomorrow."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This very site was born that way, with a specification of numbered requirements where every test points to one. If you want to see the method in action — the real flow, with the commands and the diagrams of each phase — that's the note on [how I ship a feature in hours](/daily/ship-a-feature-in-hours). And if it's useful for your team, let's talk from [what I bring](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Understanding Spec-Driven Development](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Birgitta Böckeler, martinfowler.com, 2025: compares Kiro, Spec Kit and Tessl and orders the variants on the spec-first / spec-anchored / spec-as-source spectrum. The best neutral view of the landscape.",
+          "[GitHub Spec Kit — the repository](https://github.com/github/spec-kit): the open-source (MIT) toolkit that brings SDD to 30+ agents. Start with its README.",
+          "[Kiro](https://kiro.dev/) — Amazon's IDE where the spec is the unit of work and code is a build artifact.",
+          "[OpenSpec](https://github.com/Fission-AI/OpenSpec) — from Fission AI (MIT): lightweight SDD that works via 'deltas', designed to slot into code that already exists.",
+          "[Tessl](https://tessl.io/) — by Guy Podjarny (Snyk's founder): pushes the idea to the 'spec-as-source' end, where the specification is what you edit and the agent generates the code.",
+          "[BMAD-METHOD](https://github.com/bmad-code-org/BMAD-METHOD) — the framework that simulates a whole agile team of role-based agents (analyst, PM, architect, QA…).",
+          "[Specification by Example](https://www.manning.com/books/specification-by-example) — Gojko Adzic, Manning, 2011: the book that consolidated living documentation and executable specifications.",
+          "[Introducing BDD](https://dannorth.net/blog/introducing-bdd/) — Dan North: the article that named behaviour-driven development, the direct ancestor of SDD.",
+          "[EARS notation](https://alistairmavin.com/ears/) — Alistair Mavin: the official guide to the WHEN … SHALL … syntax that turns a requirement into something testable."
+        ]
+      }
+    ]
+  }
+}

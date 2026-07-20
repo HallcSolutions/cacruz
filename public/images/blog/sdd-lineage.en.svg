@@ -1,0 +1,86 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Where spec-driven development comes from">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="line" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#453768"/><stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .node { animation: rise 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .n2 { animation-delay: .4s; } .n3 { animation-delay: .8s; } .n4 { animation-delay: 1.2s; } .n5 { animation-delay: 1.6s; }
+    .dot { animation: pulse 3s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .spark { stroke-dasharray: 4 8; animation: dash 1.4s linear infinite; }
+    @keyframes rise { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+    @keyframes pulse { 0%, 100% { r: 6; opacity: .8; } 50% { r: 8; opacity: 1; } }
+    @keyframes dash { to { stroke-dashoffset: -48; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="48" font-family="Georgia, serif" font-size="29" fill="#ece7fb">AI didn't invent it: where it comes from</text>
+  <text x="40" y="76" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">the spec as source of truth is half a century old</text>
+
+  <!-- baseline -->
+  <line x1="70" y1="250" x2="930" y2="250" class="spark" stroke="url(#line)" stroke-width="2.5"/>
+
+  <!-- 1: 1970s (top) -->
+  <g class="node">
+    <rect x="45" y="122" width="170" height="94" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="130" y="148" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">1970s</text>
+    <text x="130" y="172" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">waterfall</text>
+    <text x="130" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">big spec up front,</text>
+    <text x="130" y="206" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">rigid and disconnected</text>
+  </g>
+  <line x1="130" y1="216" x2="130" y2="244" stroke="#453768" stroke-width="1.6"/>
+  <circle class="dot" cx="130" cy="250" r="6" fill="#a78bfa"/>
+
+  <!-- 2: 2000s (bottom) -->
+  <g class="node n2">
+    <rect x="235" y="284" width="170" height="94" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="320" y="310" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">2000s</text>
+    <text x="320" y="334" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">BDD · ATDD</text>
+    <text x="320" y="354" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">executable</text>
+    <text x="320" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">specs · Dan North</text>
+  </g>
+  <line x1="320" y1="256" x2="320" y2="284" stroke="#453768" stroke-width="1.6"/>
+  <circle class="dot" cx="320" cy="250" r="6" fill="#a78bfa"/>
+
+  <!-- 3: 2009 EARS (top) -->
+  <g class="node n3">
+    <rect x="415" y="122" width="170" height="94" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="500" y="148" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">2009 · EARS</text>
+    <text x="500" y="172" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">WHEN … SHALL …</text>
+    <text x="500" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">requirements that</text>
+    <text x="500" y="206" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">become tests · Rolls-Royce</text>
+  </g>
+  <line x1="500" y1="216" x2="500" y2="244" stroke="#453768" stroke-width="1.6"/>
+  <circle class="dot" cx="500" cy="250" r="6" fill="#a78bfa"/>
+
+  <!-- 4: 2011 SbE (bottom) -->
+  <g class="node n4">
+    <rect x="595" y="284" width="170" height="94" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="680" y="310" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">2011 · by example</text>
+    <text x="680" y="334" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">living documentation</text>
+    <text x="680" y="354" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">Specification by</text>
+    <text x="680" y="368" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">Example · Gojko Adzic</text>
+  </g>
+  <line x1="680" y1="256" x2="680" y2="284" stroke="#453768" stroke-width="1.6"/>
+  <circle class="dot" cx="680" cy="250" r="6" fill="#a78bfa"/>
+
+  <!-- 5: 2025 SDD agents (top, highlighted) -->
+  <g class="node n5">
+    <rect x="775" y="118" width="180" height="102" rx="12" fill="none" stroke="url(#ac)" stroke-width="2.6"/>
+    <text x="865" y="144" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">2025 · with agents</text>
+    <text x="865" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">modern SDD</text>
+    <text x="865" y="188" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">Spec Kit · Kiro · chalc</text>
+    <text x="865" y="206" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">AI implements the spec</text>
+  </g>
+  <line x1="865" y1="220" x2="865" y2="244" stroke="#a78bfa" stroke-width="1.8"/>
+  <circle class="dot" cx="865" cy="250" r="7" fill="#34d399"/>
+
+  <text x="500" y="430" text-anchor="middle" font-family="Georgia, serif" font-size="16" fill="#ece7fb" font-style="italic">The idea is old; what's new is having an agent that follows it to the letter.</text>
+</svg>

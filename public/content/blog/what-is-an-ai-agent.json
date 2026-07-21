@@ -14,11 +14,11 @@
     "es": [
       {
         "kind": "paragraph",
-        "text": "\"Estoy usando un agente de IA\". Lo escucho todos los días, y nueve de cada diez veces lo que la persona tiene abierto es un chat. La diferencia no es marketing: es arquitectura, y explica por qué a unos la IA les entrega trabajo terminado y a otros les devuelve texto bonito."
+        "text": "«Estoy usando un agente de IA». Lo escucho todos los días, y nueve de cada diez veces lo que la persona tiene abierto es un chat. La diferencia no es marketing: es arquitectura, y explica por qué a unos la IA les entrega trabajo terminado y a otros les devuelve texto bonito."
       },
       {
         "kind": "quote",
-        "text": "Un chat responde una vez. Un agente decide, actúa, mira el resultado y vuelve a decidir — hasta cumplir el objetivo."
+        "text": "Un chat responde una vez. Un agente decide, actúa, mira el resultado y vuelve a decidir —hasta cumplir el objetivo."
       },
 
       { "kind": "heading", "text": "Qué es un agente (y qué no)" },
@@ -50,7 +50,7 @@
       {
         "kind": "steps",
         "items": [
-          "**Un objetivo verificable.** \"Mejora el código\" no sirve: no hay forma de saber si terminó. \"Haz que pase el test R3\" sí, porque el propio test responde.",
+          "**Un objetivo verificable.** «Mejora el código» no sirve: no hay forma de saber si terminó. «Haz que pase el test R3» sí, porque el propio test responde.",
           "**Herramientas reales.** Sin poder leer archivos ni ejecutar comandos, el agente adivina. El entorno al que puede acceder define, literalmente, lo que es capaz de hacer.",
           "**Una condición de parada.** Un bucle sin freno es un bucle infinito: agentes gastando tokens buscando un archivo que no existe, o reintentando lo mismo veinte veces. El límite lo pone el código, no la buena voluntad del modelo."
         ]
@@ -68,7 +68,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "El refrán lo dice mejor que cualquier paper: por la misma razón por la que no revisas tu propio texto, un autor no ve sus propios vicios. Si el modelo que escribió el código es el mismo que juzga si el código está bien, la respuesta será siempre \"está bien\". No miente — es que mira con los mismos ojos con los que escribió."
+        "text": "El refrán lo dice mejor que cualquier paper: por la misma razón por la que no revisas tu propio texto, un autor no ve sus propios vicios. Si el modelo que escribió el código es el mismo que juzga si el código está bien, la respuesta será siempre «está bien». No miente —es que mira con los mismos ojos con los que escribió."
       },
       {
         "kind": "quote",
@@ -91,7 +91,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Porque no todas las tareas son iguales. Diseñar la arquitectura de un feature es un trabajo de criterio: ahí quiero el mejor modelo disponible. Pero escribir la interfaz `Employee` con cuatro campos, siguiendo una orden explícita, no exige genialidad — exige obedecer. Y medí los tokens: la mayoría no se gastan pensando, **se gastan ejecutando**."
+        "text": "Porque no todas las tareas son iguales. Diseñar la arquitectura de un feature es un trabajo de criterio: ahí quiero el mejor modelo disponible. Pero escribir la interfaz `Employee` con cuatro campos, siguiendo una orden explícita, no exige genialidad —exige obedecer. Y medí los tokens: la mayoría no se gastan pensando, **se gastan ejecutando**."
       },
       {
         "kind": "quote",
@@ -99,7 +99,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Así lo repartí, con estos modelos exactos. Y aquí está la gracia: **puedes jugar con los modelos para que los tokens no te devoren y termines pagando un platal**. No se trata de gastar poco porque sí, sino de saber en qué se va cada peso — sobre todo si eres extremadamente ahorrativo, como yo, jajajaja:"
+        "text": "Así lo repartí, con estos modelos exactos. Y aquí está la gracia: **puedes jugar con los modelos para que los tokens no te devoren y termines pagando un platal**. No se trata de gastar poco porque sí, sino de saber en qué se va cada peso —sobre todo si eres extremadamente ahorrativo, como yo, jajajaja:"
       },
       {
         "kind": "image",
@@ -111,22 +111,22 @@
         "items": [
           "**El líder → Claude Opus 4.8** (nube, el más caro). Se llama **una sola vez** por tarea: recibe el proyecto completo —la spec, la arquitectura, las reglas— y produce el plan: una lista de órdenes verificables, cada una atada a un requisito (T1 → R1).",
           "**El desarrollador → qwen3-coder:30b en Ollama** (local, en mi propia máquina, **$0**). Hace el grueso del trabajo, pero recibe UNA orden a la vez, con el archivo exacto y el criterio de aceptación. No ve el resto del proyecto: no lo necesita, y verlo solo lo distraería.",
-          "**El revisor → GPT-5.5** (nube, centavos). Deliberadamente **distinto** al que escribió el código. Recibe la spec y el diff, y responde una sola pregunta: ¿esto cumple R1, R2, R3? Sus hallazgos son trazables (\"R2 sin cumplir, en este archivo, por esta causa\"), y quien corrige es siempre el desarrollador.",
-          "**El veredicto no lo da ningún modelo — y tampoco lo da el build.** Que compile solo prueba que compila. Un diff puede pasar todos los tests y aun así romper la arquitectura que acordamos para el proyecto: un feature importando a otro, la lógica de negocio metida en el componente, un servicio que nadie puede probar aislado. Por eso el revisor no juzga con su criterio, sino contra lo que está escrito: la spec (¿cumple R1, R2?), las reglas de arquitectura del proyecto, y el mutation testing, que dice si esas pruebas de verdad atrapan errores. El último filtro sigo siendo yo, leyendo el diff.",
+          "**El revisor → GPT-5.5** (nube, centavos). Deliberadamente **distinto** al que escribió el código. Recibe la spec y el diff, y responde una sola pregunta: ¿esto cumple R1, R2, R3? Sus hallazgos son trazables («R2 sin cumplir, en este archivo, por esta causa»), y quien corrige es siempre el desarrollador.",
+          "**El veredicto no lo da ningún modelo —y tampoco lo da el build.** Que compile solo prueba que compila. Un diff puede pasar todos los tests y aun así romper la arquitectura que acordamos para el proyecto: un feature importando a otro, la lógica de negocio metida en el componente, un servicio que nadie puede probar aislado. Por eso el revisor no juzga con su criterio, sino contra lo que está escrito: la spec (¿cumple R1, R2?), las reglas de arquitectura del proyecto, y el mutation testing, que dice si esas pruebas de verdad atrapan errores. El último filtro sigo siendo yo, leyendo el diff.",
           "**Nada de esto vive en un chat: todo queda escrito en `.chalc/`.** El plan con sus tareas y su estado, el diff que produjo cada una, y el veredicto del revisor con el hallazgo exacto (qué requisito, qué archivo, por qué). Si mañana pregunto por qué el servicio quedó así, no busco en una conversación de 300 mensajes: abro el archivo. Eso es trazabilidad, no memoria."
         ]
       },
       {
         "kind": "paragraph",
-        "text": "El hallazgo que no esperaba: darle **menos** contexto al modelo pequeño lo hace **mejor**. La orden que funciona es **detallada pero corta** — qué archivo tocar, qué debe cumplir, cómo sabemos que quedó bien — y **una a la vez**. Si le entrego las diez tareas de golpe, mezcla las dos primeras y se inventa la tercera. Si le entrego la tarea 1, la termina, la reviso, y solo entonces le paso la 2, el mismo modelo que se perdía ahora acierta. No necesitaba un modelo más listo — necesitaba una orden más clara y un paso a la vez."
+        "text": "El hallazgo que no esperaba: darle **menos** contexto al modelo pequeño lo hace **mejor**. La orden que funciona es **detallada pero corta** —qué archivo tocar, qué debe cumplir, cómo sabemos que quedó bien— y **una a la vez**. Si le entrego las diez tareas de golpe, mezcla las dos primeras y se inventa la tercera. Si le entrego la tarea 1, la termina, la reviso, y solo entonces le paso la 2, el mismo modelo que se perdía ahora acierta. No necesitaba un modelo más listo —necesitaba una orden más clara y un paso a la vez."
       },
       {
         "kind": "paragraph",
-        "text": "Y la segunda pregunta, la del ahorro, se responde sola cuando miras dónde se van los tokens: no se gastan pensando, **se gastan ejecutando**. Escribir el código, corregir el test, repetir. Esa parte —la más pesada, la que más llamadas hace— ahora corre en mi máquina y cuesta **$0**. Lo único que pago es planear (una llamada por tarea) y revisar (una llamada por diff). Y ojo, que aquí no se trata de buscar \"el mejor modelo\": **ese modelo no existe**. Uno razona mejor cuando le pones el proyecto entero encima; otro escribe código rápido y sin cobrarte; otro es buen crítico justamente porque no escribió ni una línea. El trabajo no es elegir el mejor, es poner a cada uno donde rinde."
+        "text": "Y la segunda pregunta, la del ahorro, se responde sola cuando miras dónde se van los tokens: no se gastan pensando, **se gastan ejecutando**. Escribir el código, corregir el test, repetir. Esa parte —la más pesada, la que más llamadas hace— ahora corre en mi máquina y cuesta **$0**. Lo único que pago es planear (una llamada por tarea) y revisar (una llamada por diff). Y ojo, que aquí no se trata de buscar «el mejor modelo»: **ese modelo no existe**. Uno razona mejor cuando le pones el proyecto entero encima; otro escribe código rápido y sin cobrarte; otro es buen crítico justamente porque no escribió ni una línea. El trabajo no es elegir el mejor, es poner a cada uno donde rinde."
       },
       {
         "kind": "paragraph",
-        "text": "Y hay una regla que hace que todo esto funcione: **los agentes no se hablan entre ellos, se dejan artefactos**. El plan es un archivo. La revisión es un archivo. Y una tarea solo se marca como hecha cuando **hay evidencia de que se verificó**: los tests corrieron, el criterio se cumple. Esa verificación la ejecuta un agente, pero dentro de las reglas que le impone el **harness**, que es quien exige la evidencia y no acepta un simple \"listo\" como prueba. Así, cuando algo falla, no reviso un chat de 300 mensajes: leo dos archivos y sé exactamente qué pasó."
+        "text": "Y hay una regla que hace que todo esto funcione: **los agentes no se hablan entre ellos, se dejan artefactos**. El plan es un archivo. La revisión es un archivo. Y una tarea solo se marca como hecha cuando **hay evidencia de que se verificó**: los tests corrieron, el criterio se cumple. Esa verificación la ejecuta un agente, pero dentro de las reglas que le impone el **harness**, que es quien exige la evidencia y no acepta un simple «listo» como prueba. Así, cuando algo falla, no reviso un chat de 300 mensajes: leo dos archivos y sé exactamente qué pasó."
       },
       {
         "kind": "terminal",
@@ -142,7 +142,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Ese ejemplo del final es real, de una de mis sesiones: el desarrollador \"obedeció\" usando formularios reactivos en el `.ts`… mientras colaba un `ngModel` en el template. Un revisor con los mismos ojos lo habría aprobado. Otro modelo lo cazó en segundos."
+        "text": "Ese ejemplo del final es real, de una de mis sesiones: el desarrollador «obedeció» usando formularios reactivos en el `.ts`… mientras colaba un `ngModel` en el template. Un revisor con los mismos ojos lo habría aprobado. Otro modelo lo cazó en segundos."
       },
 
       { "kind": "heading", "text": "Lo que hay que saber antes de emocionarse" },
@@ -158,13 +158,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "Traducido a mi realidad: varios agentes valen la pena cuando el trabajo se puede **partir de verdad** en piezas independientes y verificables. Si no puedes decir con precisión qué debe entregar cada uno y cómo se comprueba, no necesitas más agentes — necesitas una mejor especificación."
+        "text": "Traducido a mi realidad: varios agentes valen la pena cuando el trabajo se puede **partir de verdad** en piezas independientes y verificables. Si no puedes decir con precisión qué debe entregar cada uno y cómo se comprueba, no necesitas más agentes —necesitas una mejor especificación."
       },
 
       { "kind": "heading", "text": "La IA no decide: decidimos nosotros" },
       {
         "kind": "paragraph",
-        "text": "Quiero dejar esto muy claro, porque con tanto ruido se está perdiendo: **aquí ningún modelo decide nada**. Todo arranca en un documento humano — una historia de usuario, un requerimiento del negocio, algo escrito y validado por personas. De ahí sale la spec, y yo la contrasto contra ese documento antes de que exista una sola línea de código. La IA redacta, ejecuta y propone; las decisiones vienen del negocio y del desarrollador, y esa responsabilidad no se delega a nadie."
+        "text": "Quiero dejar esto muy claro, porque con tanto ruido se está perdiendo: **aquí ningún modelo decide nada**. Todo arranca en un documento humano —una historia de usuario, un requerimiento del negocio, algo escrito y validado por personas. De ahí sale la spec, y yo la contrasto contra ese documento antes de que exista una sola línea de código. La IA redacta, ejecuta y propone; las decisiones vienen del negocio y del desarrollador, y esa responsabilidad no se delega a nadie."
       },
       {
         "kind": "steps",
@@ -172,12 +172,12 @@
           "**La spec no la inventa un modelo: nace de una HU.** La fuente de verdad es lo que el negocio escribió y validó. La IA puede redactar la spec a partir de ese documento, pero soy yo quien la compara con el original y la aprueba. Si el requisito quedó mal entendido ahí, el código saldrá mal por muy listo que sea el modelo: un agente amplifica lo que le entregas, claridad o desorden.",
           "**Las reglas de arquitectura las pongo yo.** Qué capa puede importar a cuál, qué va en cada carpeta, qué debe ser testeable. El modelo las obedece; no las inventa ni las negocia.",
           "**Leo todo el código que entra.** Línea por línea, como revisaría el PR de un compañero. Que los tests pasen no me exime de entender qué se escribió y por qué.",
-          "**Nunca la dejo trabajar sola.** Ni merge automático, ni \"seguro salió bien\". La IA no va a responder por ese código en producción un domingo a las 2 de la mañana: respondo yo."
+          "**Nunca la dejo trabajar sola.** Ni merge automático, ni «seguro salió bien». La IA no va a responder por ese código en producción un domingo a las 2 de la mañana: respondo yo."
         ]
       },
       {
         "kind": "paragraph",
-        "text": "Y aquí está la parte incómoda, la que casi nadie dice: **para guiar bien a un modelo hay que saber hacer el trabajo**. No puedes escribir el criterio de aceptación de algo que no entiendes, ni darte cuenta de que el revisor dejó pasar una violación de arquitectura si no conoces tu arquitectura. La IA no reemplaza al que sabe: multiplica al que sabe, y deja en evidencia al que no. Por eso sigo estudiando — mi ventaja nunca fue el modelo que uso, sino entender bien lo que le estoy pidiendo."
+        "text": "Y aquí está la parte incómoda, la que casi nadie dice: **para guiar bien a un modelo hay que saber hacer el trabajo**. No puedes escribir el criterio de aceptación de algo que no entiendes, ni darte cuenta de que el revisor dejó pasar una violación de arquitectura si no conoces tu arquitectura. La IA no reemplaza al que sabe: multiplica al que sabe, y deja en evidencia al que no. Por eso sigo estudiando —mi ventaja nunca fue el modelo que uso, sino entender bien lo que le estoy pidiendo."
       },
 
       { "kind": "heading", "text": "Qué mejora, en concreto" },
@@ -186,7 +186,7 @@
         "items": [
           "**Calidad**: el error lo caza un modelo que no tiene el orgullo de haberlo escrito.",
           "**Costo**: el modelo caro piensa una vez (el plan); el barato ejecuta muchas veces. No pago precio premium por cada línea escrita.",
-          "**Trazabilidad**: reviso el trabajo como revisaría el de un equipo humano — órdenes escritas, avance con evidencia y un registro auditable — en vez de leer un chat gigante.",
+          "**Trazabilidad**: reviso el trabajo como revisaría el de un equipo humano —órdenes escritas, avance con evidencia y un registro auditable— en vez de leer un chat gigante.",
           "**Reanudable**: si el proceso muere en la tarea 4 de 7, se retoma ahí, sin volver a pagar el análisis."
         ]
       },

@@ -28,10 +28,10 @@
       },
       {
         "kind": "paragraph",
-        "text": "Lo vendíamos como velocidad, pero lo que entregábamos era deuda. Cada \"sistema en minutos\" se convertía en meses de parches. Y lo más incómodo: nadie en el equipo podía explicar del todo por qué el código hacía lo que hacía, porque no lo había escrito una persona razonando un problema — lo había escupido una plantilla. Ahí aprendí, a los golpes, algo que no se me olvidó: la parte difícil del software nunca fue teclear. Fue entender el problema, saber guiar la herramienta, tener una arquitectura definida y poder explicar por qué doy cada paso. Eso una plantilla no lo hace por ti — y una IA, tampoco: por sí sola no entiende tu negocio, solo te devuelve la probabilidad más alta de lo que le pediste. Y una probabilidad, cuando no sabes hacia dónde vas, se parece muchísimo a una respuesta correcta… hasta que llega a producción."
+        "text": "Lo vendíamos como velocidad, pero lo que entregábamos era deuda. Cada «sistema en minutos» se convertía en meses de parches. Y lo más incómodo: nadie en el equipo podía explicar del todo por qué el código hacía lo que hacía, porque no lo había escrito una persona razonando un problema —lo había escupido una plantilla. Ahí aprendí, a los golpes, algo que no se me olvidó: la parte difícil del software nunca fue teclear. Fue entender el problema, saber guiar la herramienta, tener una arquitectura definida y poder explicar por qué doy cada paso. Eso una plantilla no lo hace por ti —y una IA, tampoco: por sí sola no entiende tu negocio, solo te devuelve la probabilidad más alta de lo que le pediste. Y una probabilidad, cuando no sabes hacia dónde vas, se parece muchísimo a una respuesta correcta… hasta que llega a producción."
       },
 
-      { "kind": "heading", "text": "Por qué \"en minutos\" es la señal de alarma" },
+      { "kind": "heading", "text": "Por qué «en minutos» es la señal de alarma" },
       {
         "kind": "paragraph",
         "text": "Hay una razón de fondo, y la explicó Fred Brooks hace casi cuarenta años. Brooks partió el trabajo de hacer software en dos: lo accidental —escribir la sintaxis, pelear con las herramientas, teclear— y lo esencial —entender el problema, decidir cómo se estructura, pensar los casos que nadie mencionó. Las herramientas, decía, solo pueden acelerar lo accidental. Lo esencial, lo verdaderamente difícil, no se automatiza."
@@ -44,17 +44,17 @@
       },
       {
         "kind": "paragraph",
-        "text": "Traducido a hoy: la IA es buenísima con lo accidental. Teclea rapidísimo, conoce la sintaxis de cualquier lenguaje, rellena lo repetitivo en segundos. Por eso impresiona en las demos. Pero \"software empresarial en minutos\" promete resolver lo esencial —el problema real de un negocio— con una herramienta que solo domina lo accidental. Por eso sale rápido y por eso no sirve: es la plantilla otra vez, con mejor marketing."
+        "text": "Traducido a hoy: la IA es buenísima con lo accidental. Teclea rapidísimo, conoce la sintaxis de cualquier lenguaje, rellena lo repetitivo en segundos. Por eso impresiona en las demos. Pero «software empresarial en minutos» promete resolver lo esencial —el problema real de un negocio— con una herramienta que solo domina lo accidental. Por eso sale rápido y por eso no sirve: es la plantilla otra vez, con mejor marketing."
       },
 
       { "kind": "heading", "text": "La IA sin rumbo: velocidad que no es avance" },
       {
         "kind": "paragraph",
-        "text": "Y hoy quien la vende no siempre sabe de qué habla. Aparecieron empresas y \"expertos\" que ofrecen justo esto —sistemas completos a golpe de prompt— pero les preguntas qué arquitectura manejan, cómo separan las capas, cómo prueban lo que entregan… y no hay respuesta. Creen que basta con escribir un prompt y que, por arte de magia, todo sale perfecto. El problema es que la magia no existe: el que paga la factura es el cliente que se queda con un sistema que nadie sabe sostener."
+        "text": "Y hoy quien la vende no siempre sabe de qué habla. Aparecieron empresas y «expertos» que ofrecen justo esto —sistemas completos a golpe de prompt— pero les preguntas qué arquitectura manejan, cómo separan las capas, cómo prueban lo que entregan… y no hay respuesta. Creen que basta con escribir un prompt y que, por arte de magia, todo sale perfecto. El problema es que la magia no existe: el que paga la factura es el cliente que se queda con un sistema que nadie sabe sostener."
       },
       {
         "kind": "paragraph",
-        "text": "\"Sin rumbo\" es cuando le sueltas a la IA \"hazme el sistema\" y aceptas lo que salga: sin una spec, sin arquitectura, sin nadie leyendo lo que produce. Va rapidísimo — hacia cualquier lado. Y esto ya no es opinión mía: hay datos."
+        "text": "«Sin rumbo» es cuando le sueltas a la IA «hazme el sistema» y aceptas lo que salga: sin una spec, sin arquitectura, sin nadie leyendo lo que produce. Va rapidísimo —hacia cualquier lado. Y esto ya no es opinión mía: hay datos."
       },
       {
         "kind": "paragraph",
@@ -62,13 +62,13 @@
       },
       {
         "kind": "quote",
-        "text": "La IA no escribe código malo porque sea tonta. Lo escribe malo porque le pediste velocidad, no criterio — y te dio exactamente lo que pediste."
+        "text": "La IA no escribe código malo porque sea tonta. Lo escribe malo porque le pediste velocidad, no criterio —y te dio exactamente lo que pediste."
       },
 
       { "kind": "heading", "text": "Le metes mil fallas, te devuelve otras mil" },
       {
         "kind": "paragraph",
-        "text": "Una IA aprende de lo que ve. Si le das como ejemplo un proyecto lleno de malas prácticas —sin pruebas, con código duplicado por todas partes, una sola clase que hace de todo, la lógica de negocio metida dentro de la pantalla— no lo corrige. No tiene criterio para saber que está mal; tiene imitación. Lo toma como \"la forma en que aquí se hacen las cosas\" y genera más código igual, con los mismos vicios repetidos y multiplicados. Le metes mil fallas y te devuelve otras mil — esta vez más rápido y con más confianza. La IA no limpia tu desorden: lo escala."
+        "text": "Una IA aprende de lo que ve. Si le das como ejemplo un proyecto lleno de malas prácticas —sin pruebas, con código duplicado por todas partes, una sola clase que hace de todo, la lógica de negocio metida dentro de la pantalla— no lo corrige. No tiene criterio para saber que está mal; tiene imitación. Lo toma como «la forma en que aquí se hacen las cosas» y genera más código igual, con los mismos vicios repetidos y multiplicados. Le metes mil fallas y te devuelve otras mil —esta vez más rápido y con más confianza. La IA no limpia tu desorden: lo escala."
       },
       {
         "kind": "image",
@@ -98,18 +98,18 @@
       },
       {
         "kind": "paragraph",
-        "text": "Cambia \"texto\" por \"código\" y tienes el retrato exacto del problema. Si el software que se entrega en minutos —sin arquitectura, duplicado, sin revisar— se vuelve el ejemplo con el que aprende la siguiente herramienta, la calidad no se estanca: baja. La basura entra, la basura se aprende, y sale más basura con acento de autoridad. Por eso me importa tanto lo que dejo en un repositorio: no es solo mi problema de hoy, es material de entrenamiento de mañana."
+        "text": "Cambia «texto» por «código» y tienes el retrato exacto del problema. Si el software que se entrega en minutos —sin arquitectura, duplicado, sin revisar— se vuelve el ejemplo con el que aprende la siguiente herramienta, la calidad no se estanca: baja. La basura entra, la basura se aprende, y sale más basura con acento de autoridad. Por eso me importa tanto lo que dejo en un repositorio: no es solo mi problema de hoy, es material de entrenamiento de mañana."
       },
 
       { "kind": "heading", "text": "Por qué la IA no puede trabajar sin supervisión" },
       {
         "kind": "paragraph",
-        "text": "Nada de esto significa que la IA sea inútil — la uso todos los días y me cambió la forma de trabajar. Significa que la IA es un motor, no un conductor. Y hay tres razones concretas por las que dejarla sola no funciona:"
+        "text": "Nada de esto significa que la IA sea inútil —la uso todos los días y me cambió la forma de trabajar. Significa que la IA es un motor, no un conductor. Y hay tres razones concretas por las que dejarla sola no funciona:"
       },
       {
         "kind": "steps",
         "items": [
-          "**No sabe cuándo terminó.** Un modelo no tiene forma de saber si su código de verdad resuelve el problema del negocio; solo sabe si \"se parece\" a código que ha visto. Alguien que entienda el problema tiene que decir \"esto sí, esto no\". Sin ese juicio, \"listo\" no significa nada.",
+          "**No sabe cuándo terminó.** Un modelo no tiene forma de saber si su código de verdad resuelve el problema del negocio; solo sabe si «se parece» a código que ha visto. Alguien que entienda el problema tiene que decir «esto sí, esto no». Sin ese juicio, «listo» no significa nada.",
           "**Te hace sentir seguro justo cuando no deberías.** Un estudio de Stanford encontró que quienes programaban con un asistente de IA escribían código *menos* seguro… y a la vez estaban *más* convencidos de que era seguro. La herramienta no solo introduce fallos: te quita las ganas de buscarlos. → [el estudio de Stanford](https://arxiv.org/abs/2211.03622)",
           "**Rápido en la demo no es rápido en la realidad.** En un experimento controlado de 2025, desarrolladores experimentados tardaron un 19% *más* usando IA en sus propios proyectos — aunque ellos creían haber ido más rápido. La sensación de velocidad y la velocidad real no son lo mismo. → [el experimento de METR](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/)"
         ]
@@ -120,7 +120,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Por eso, en mi trabajo, la IA nunca decide sola. Hay una especificación que nace de un problema real y que yo valido; hay una arquitectura que yo pongo; hay pruebas que dicen si algo funciona de verdad; y hay una revisión que contrasta cada cambio contra la spec y la arquitectura antes de que una sola línea llegue a producción — a veces la primera pasada la hace otro modelo, pero la última palabra la tengo yo, leyendo el diff línea por línea. No es más lento: es la diferencia entre entregar algo en minutos y entregar algo que sirva."
+        "text": "Por eso, en mi trabajo, la IA nunca decide sola. Hay una especificación que nace de un problema real y que yo valido; hay una arquitectura que yo pongo; hay pruebas que dicen si algo funciona de verdad; y hay una revisión que contrasta cada cambio contra la spec y la arquitectura antes de que una sola línea llegue a producción —a veces la primera pasada la hace otro modelo, pero la última palabra la tengo yo, leyendo el diff línea por línea. No es más lento: es la diferencia entre entregar algo en minutos y entregar algo que sirva."
       },
 
       { "kind": "heading", "text": "No todo software necesita IA" },
@@ -134,27 +134,27 @@
       },
       {
         "kind": "quote",
-        "text": "\"Resolvemos el problema\" y \"usamos IA generativa\" son dos titulares muy distintos.",
+        "text": "«Resolvemos el problema» y «usamos IA generativa» son dos titulares muy distintos.",
         "source": "Chip Huyen · AI Engineering (O'Reilly, 2025)",
         "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
       },
       {
         "kind": "paragraph",
-        "text": "Y si tu producto de verdad necesita IA, el libro es claro en algo que conecta con todo lo que vengo diciendo: un modelo es probabilístico, no determinista. No siempre responde igual, y a veces se equivoca con total seguridad. Por eso construir con IA no es \"llamar a la API y listo\": exige empezar simple, no complicarse de entrada, poner evaluación —con personas, no solo métricas automáticas— y guardarraíles antes de ponerlo frente a un usuario. Meter IA sin eso no es un producto con IA: es una demo con suerte."
+        "text": "Y si tu producto de verdad necesita IA, el libro es claro en algo que conecta con todo lo que vengo diciendo: un modelo es probabilístico, no determinista. No siempre responde igual, y a veces se equivoca con total seguridad. Por eso construir con IA no es «llamar a la API y listo»: exige empezar simple, no complicarse de entrada, poner evaluación —con personas, no solo métricas automáticas— y guardarraíles antes de ponerlo frente a un usuario. Meter IA sin eso no es un producto con IA: es una demo con suerte."
       },
       {
         "kind": "paragraph",
-        "text": "Es la misma lección, en otro nivel. Un software que escupe sistemas en minutos y un producto que le cuelga IA para parecer moderno cometen el mismo error de fondo: confunden usar una tecnología con resolver un problema. La pregunta nunca es \"¿le meto IA?\", sino \"¿el problema que estoy resolviendo de verdad necesita IA?\"."
+        "text": "Es la misma lección, en otro nivel. Un software que escupe sistemas en minutos y un producto que le cuelga IA para parecer moderno cometen el mismo error de fondo: confunden usar una tecnología con resolver un problema. La pregunta nunca es «¿le meto IA?», sino «¿el problema que estoy resolviendo de verdad necesita IA?»."
       },
 
       { "kind": "heading", "text": "El código no se escribe para ti, se escribe para el que llega" },
       {
         "kind": "paragraph",
-        "text": "Hay una idea que me ordenó la forma de trabajar: escribir código no es lograr que la máquina te entienda —eso es lo fácil—, es lograr que la próxima persona te entienda. Ese \"próximo\" casi nunca eres tú: es el compañero que hereda el proyecto, o tú mismo dentro de seis meses, cuando ya no te acuerdas de nada. Por eso las malas prácticas no son un pecado estético: son una carta que le dejas al que viene, escrita en un idioma que no va a poder leer."
+        "text": "Hay una idea que me ordenó la forma de trabajar: escribir código no es lograr que la máquina te entienda —eso es lo fácil—, es lograr que la próxima persona te entienda. Ese «próximo» casi nunca eres tú: es el compañero que hereda el proyecto, o tú mismo dentro de seis meses, cuando ya no te acuerdas de nada. Por eso las malas prácticas no son un pecado estético: son una carta que le dejas al que viene, escrita en un idioma que no va a poder leer."
       },
       {
         "kind": "paragraph",
-        "text": "Y aquí está el giro que casi nadie ve: hoy \"el que llega\" también es la IA. Cuando le pides que modifique tu proyecto, trabaja sobre el contexto que le dejaste — el mismo que le dejarías a un humano. Si el código está claro, con una arquitectura que se entiende y decisiones explicadas, la IA rinde. Si es un desorden sin rumbo, hereda ese desorden y lo amplifica, como ya vimos. Escribir para el que llega dejó de ser solo cortesía con tus colegas: es, literalmente, lo que permite que la IA pueda ayudarte."
+        "text": "Y aquí está el giro que casi nadie ve: hoy «el que llega» también es la IA. Cuando le pides que modifique tu proyecto, trabaja sobre el contexto que le dejaste —el mismo que le dejarías a un humano. Si el código está claro, con una arquitectura que se entiende y decisiones explicadas, la IA rinde. Si es un desorden sin rumbo, hereda ese desorden y lo amplifica, como ya vimos. Escribir para el que llega dejó de ser solo cortesía con tus colegas: es, literalmente, lo que permite que la IA pueda ayudarte."
       },
       {
         "kind": "paragraph",
@@ -162,17 +162,17 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y quizá lo más importante: nada de esto va de sabérselas todas. Yo no me las sé, y llevo años en esto. Va de estudiar, de leer, y —sobre todo— de no tragarse las cosas enteras: preguntarse si lo que estás aprendiendo tiene un porqué, cuestionarlo, y salir de la zona de confort aunque incomode, porque es la única forma de crecer un poco cada día. Va de que el código de hoy sea mejor que el de ayer, y de mirar los propios errores de frente — porque cada fallo que entiendes de verdad es una trampa en la que no vuelves a caer. La IA no te ahorra ese camino: lo hace más importante. Te da velocidad, pero el criterio para distinguir lo que está bien de lo que no solo se construye estudiando, equivocándose y corrigiendo. Por eso sigo aprendiendo, y por eso escribo estas notas."
+        "text": "Y quizá lo más importante: nada de esto va de sabérselas todas. Yo no me las sé, y llevo años en esto. Va de estudiar, de leer, y —sobre todo— de no tragarse las cosas enteras: preguntarse si lo que estás aprendiendo tiene un porqué, cuestionarlo, y salir de la zona de confort aunque incomode, porque es la única forma de crecer un poco cada día. Va de que el código de hoy sea mejor que el de ayer, y de mirar los propios errores de frente —porque cada fallo que entiendes de verdad es una trampa en la que no vuelves a caer. La IA no te ahorra ese camino: lo hace más importante. Te da velocidad, pero el criterio para distinguir lo que está bien de lo que no solo se construye estudiando, equivocándose y corrigiendo. Por eso sigo aprendiendo, y por eso escribo estas notas."
       },
 
       { "kind": "heading", "text": "Lo que sí funciona" },
       {
         "kind": "paragraph",
-        "text": "El antídoto contra la IA sin rumbo no es dejar de usar IA — es darle rumbo. Un problema entendido, una spec como fuente de verdad, una tarea a la vez, y evidencia de que cada paso quedó bien antes de seguir. La velocidad aparece sola cuando el camino está claro; forzarla desde el principio es lo que produce basura. Lo conté en detalle en [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours) y en [por qué dos agentes trabajan mejor que uno](/daily/what-is-an-ai-agent)."
+        "text": "El antídoto contra la IA sin rumbo no es dejar de usar IA —es darle rumbo. Un problema entendido, una spec como fuente de verdad, una tarea a la vez, y evidencia de que cada paso quedó bien antes de seguir. La velocidad aparece sola cuando el camino está claro; forzarla desde el principio es lo que produce basura. Lo conté en detalle en [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours) y en [por qué dos agentes trabajan mejor que uno](/daily/what-is-an-ai-agent)."
       },
       {
         "kind": "paragraph",
-        "text": "Si algo me dejó aquella empresa de las plantillas, fue una vacuna: cada vez que escucho \"software en minutos, sin esfuerzo\", sé exactamente cómo termina esa película. La IA es la herramienta más potente que he tenido en las manos. Pero una herramienta potente sin rumbo no te lleva más lejos — te lleva al mismo muro, más rápido. Si quieres ver cómo trabajo cuando el rumbo importa, te dejo [mis proyectos](/projects) y [en qué te puedo ayudar](/for-companies)."
+        "text": "Si algo me dejó aquella empresa de las plantillas, fue una vacuna: cada vez que escucho «software en minutos, sin esfuerzo», sé exactamente cómo termina esa película. La IA es la herramienta más potente que he tenido en las manos. Pero una herramienta potente sin rumbo no te lleva más lejos —te lleva al mismo muro, más rápido. Si quieres ver cómo trabajo cuando el rumbo importa, te dejo [mis proyectos](/projects) y [en qué te puedo ayudar](/for-companies)."
       },
 
       { "kind": "heading", "text": "Para leer más" },

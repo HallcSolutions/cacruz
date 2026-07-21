@@ -73,7 +73,34 @@ abren en pestaña nueva automáticamente.
   → gráfico que lo explique visualmente → qué mejora de verdad → cierre con enlaces al sitio
   → **sección final "Para leer más" / "Further reading"** con un `steps` de enlaces a la documentación y las fuentes
   citadas (repositorio, paper original, docs de la herramienta). Cada punto: `[título](url)` + una frase de por qué vale la pena.
-- Longitud sana: 15–30 bloques. Si crece más, parte en dos notas.
+- **Sin límite de longitud.** Una nota dura lo que tenga que durar: manda el contenido, no un número de bloques.
+  Nunca propongas partirla ni recortarla por tamaño; hazlo solo si Christian lo pide.
+
+## Ortografía y puntuación (innegociable)
+
+La nota se publica **sin una sola falta**. Antes de dar una nota por terminada, revísala entera en los dos
+idiomas — no a ojo: pasa una comprobación bloque a bloque.
+
+- **Tildes**: repasa diacríticas (`él/el`, `tú/tu`, `sí/si`, `más/mas`, `qué/que`, `cómo/como`, `sé/se`,
+  `aún/aun`, `dé/de`) y `por qué` / `porque` / `porqué` / `por que`. También `sino` vs `si no`.
+- **Signos dobles en español**: toda `?` lleva su `¿` y toda `!` su `¡`.
+- **Comillas**: en español, angulares «…»; en inglés, rectas `"…"` (escapadas en el JSON). Nunca mezcles.
+- **Raya (—)**: en español va en pareja para incisos (`—así—`) y pegada al texto que encierra; una raya suelta
+  a mitad de frase casi siempre debe ser una coma o dos puntos. En inglés sí es correcta la raya sola
+  (`… reasonable — which is almost never …`). Se admite raya sola como separador en la bibliografía de ambos
+  idiomas (`[título](url) — autor, año: …`).
+- **Concordancia y tiempos verbales**: sujeto/verbo y género/número; cuidado al reescribir a medias
+  (`el que firma… eres tú`, no `sigues siendo tú`). Nada de enumerar tres «mitades» de un mismo grupo.
+- **Porcentajes sin espacio** (`48%`), para no romper línea y por coherencia con las notas ya publicadas.
+- **Español neutro**: evita regionalismos fuertes (`coger`, `de una tacada`, `ordenador` frente a
+  `computador`) y monedas que no encajen con la fuente citada.
+- **Sin espacios dobles, sin espacio antes de coma o punto**, sin `...` (usa `…` solo si hace falta).
+- **Los dos idiomas en paralelo**: si corriges algo en `es`, aplica el equivalente en `en`. La secuencia de
+  bloques debe ser idéntica en ambos.
+- Comprobación rápida antes de publicar (valida JSON y detecta rayas/comillas descuadradas):
+  ```bash
+  node -e "const j=require('./public/content/blog/<slug>.json');const k=l=>j.body[l].map(b=>b.kind[0]).join('');console.log(k('es')===k('en'))"
+  ```
 
 ## Gráficos SVG (uno por idioma)
 

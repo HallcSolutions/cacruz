@@ -51,7 +51,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Faltaba una pieza: una forma de escribir requisitos que no fueran ambiguos. La aportó Alistair Mavin con la notación EARS, publicada en la conferencia de ingeniería de requisitos del IEEE en 2009. Su equipo en Rolls-Royce revisaba las normas de aeronavegabilidad —la certificación de que algo es seguro para volar— del control de un motor a reacción, y notó que los buenos requisitos siempre tenían la misma forma: WHEN … THE SYSTEM SHALL … — cuando ocurre esto, el sistema debe hacer aquello. Esa plantilla convierte una frase de negocio en algo que se puede comprobar sin discusión."
+        "text": "Faltaba una pieza: una forma de escribir requisitos que no fueran ambiguos. La aportó Alistair Mavin con la notación EARS, publicada en la conferencia de ingeniería de requisitos del IEEE en 2009. Su equipo en Rolls-Royce revisaba las normas de aeronavegabilidad —la certificación de que algo es seguro para volar— del control de un motor a reacción, y notó que los buenos requisitos siempre tenían la misma forma: WHEN … THE SYSTEM SHALL … —cuando ocurre esto, el sistema debe hacer aquello. Esa plantilla convierte una frase de negocio en algo que se puede comprobar sin discusión."
       },
       {
         "kind": "image",
@@ -62,7 +62,7 @@
       { "kind": "heading", "text": "Por qué resucitó justo ahora" },
       {
         "kind": "paragraph",
-        "text": "Porque los modelos de lenguaje adivinan. Le pides \"hazme una pantalla de login\" y rellena los huecos que dejaste con lo primero que le parezca razonable, que casi nunca es lo que tenías en la cabeza. Una especificación aprobada le quita el margen para inventar: le da un objetivo exacto que cumplir y te deja algo concreto que revisar antes de que exista una sola línea de código. Es la reacción directa al vibe coding —programar a golpe de prompt y aceptar lo que salga—, y por eso en 2025 casi todas las herramientas grandes se subieron a la vez."
+        "text": "Porque los modelos de lenguaje adivinan. Le pides «hazme una pantalla de login» y rellena los huecos que dejaste con lo primero que le parezca razonable, que casi nunca es lo que tenías en la cabeza. Una especificación aprobada le quita el margen para inventar: le da un objetivo exacto que cumplir y te deja algo concreto que revisar antes de que exista una sola línea de código. Es la reacción directa al vibe coding —programar a golpe de prompt y aceptar lo que salga—, y por eso en 2025 casi todas las herramientas grandes se subieron a la vez."
       },
       {
         "kind": "quote",

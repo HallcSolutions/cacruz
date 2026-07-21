@@ -24,7 +24,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Esta nota va de la otra forma de hacerlo: cada repo con su arquitectura, cada carpeta con sus reglas, y una máquina que comprueba que se cumplen. Es la continuación de [cómo orquesto una feature entre dos repos](/daily), donde conté que lo único que viaja entre ellos es un contrato. Aquí cuento lo que NO viaja — que resulta ser casi todo."
+        "text": "Esta nota va de la otra forma de hacerlo: cada repo con su arquitectura, cada carpeta con sus reglas, y una máquina que comprueba que se cumplen. Es la continuación de [cómo orquesto una feature entre dos repos](/daily), donde conté que lo único que viaja entre ellos es un contrato. Aquí cuento lo que NO viaja —que resulta ser casi todo."
       },
       {
         "kind": "quote",
@@ -61,7 +61,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Eso no es una ocurrencia mía: es la idea mejor documentada del oficio, y tiene más de cincuenta años. En la descomposición que Parnas defiende, cada módulo se caracteriza por conocer una decisión de diseño que esconde a todos los demás. O sea: un módulo no se define por el paso del proceso que ejecuta, sino por la decisión que esconde. El contrato es exactamente eso: lo único que el back le enseña al mundo. Qué base de datos usa, cómo organiza sus capas, cómo valida por dentro — todo eso es decisión suya, y la esconde. Por eso puedo cambiarle el motor de persistencia al backend sin tocar el front: esa decisión nunca salió de su casa."
+        "text": "Eso no es una ocurrencia mía: es la idea mejor documentada del oficio, y tiene más de cincuenta años. En la descomposición que Parnas defiende, cada módulo se caracteriza por conocer una decisión de diseño que esconde a todos los demás. O sea: un módulo no se define por el paso del proceso que ejecuta, sino por la decisión que esconde. El contrato es exactamente eso: lo único que el back le enseña al mundo. Qué base de datos usa, cómo organiza sus capas, cómo valida por dentro —todo eso es decisión suya, y la esconde. Por eso puedo cambiarle el motor de persistencia al backend sin tocar el front: esa decisión nunca salió de su casa."
       },
       {
         "kind": "paragraph",
@@ -70,7 +70,7 @@
       {
         "kind": "steps",
         "items": [
-          "Su rol, en una línea: `domain/` es el corazón — reglas de negocio puras, sin framework ni I/O.",
+          "Su rol, en una línea: `domain/` es el corazón —reglas de negocio puras, sin framework ni I/O.",
           "Qué va dentro: entidades, value objects, lógica de dominio e interfaces (los puertos) de los repositorios.",
           "Sus buenas prácticas, y solo las suyas: cero imports de Angular, Nest o HTTP; no depende de ninguna otra capa; las dependencias externas se expresan aquí como interfaces.",
           "Qué skills la cubren: las de siempre (`clean-code`, `solid-principles`, `minimal-implementation`, `modular-architecture`) más `interface-design`.",
@@ -79,11 +79,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "Aquí es donde toca ponerse honesto, porque a estas alturas puedes estar pensando: vale, pero esto sigue siendo documentación. Lo mismo escrito en una wiki de empresa, y me ahorro el invento. Y tendrías toda la razón — si no fuera por lo que viene ahora."
+        "text": "Aquí es donde toca ponerse honesto, porque a estas alturas puedes estar pensando: vale, pero esto sigue siendo documentación. Lo mismo escrito en una wiki de empresa, y me ahorro el invento. Y tendrías toda la razón —si no fuera por lo que viene ahora."
       },
       {
         "kind": "paragraph",
-        "text": "Un README no vale más que una wiki por vivir dentro del repo. Acaba igual: ahí quieto, sin que nadie lo abra. Y el que lo abre puede hacer lo contrario sin que pase nada. A las tres semanas alguien importa lo que no debía, el archivo sigue diciendo que eso no se hace, y gana el código — el papel siempre pierde contra el código. Repartir las reglas por carpetas no arregla eso: como mucho hace que la mentira sea más corta y te la encuentres más cerca."
+        "text": "Un README no vale más que una wiki por vivir dentro del repo. Acaba igual: ahí quieto, sin que nadie lo abra. Y el que lo abre puede hacer lo contrario sin que pase nada. A las tres semanas alguien importa lo que no debía, el archivo sigue diciendo que eso no se hace, y gana el código —el papel siempre pierde contra el código. Repartir las reglas por carpetas no arregla eso: como mucho hace que la mentira sea más corta y te la encuentres más cerca."
       },
       {
         "kind": "paragraph",
@@ -100,11 +100,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y ahora la letra pequeña, porque acabo de fardar de que la regla es ejecutable y conviene decir hasta dónde. El linter no comprueba todo lo que el README dice. El README de `presentation/` pide que no llame directo a infraestructura, y eso hoy no lo verifica nadie: está escrito, no atado. La diferencia entre lo que documento y lo que verifico es exactamente mi lista de pendientes — y prefiero que la veas tú a fingir que no existe."
+        "text": "Y ahora la letra pequeña, porque acabo de fardar de que la regla es ejecutable y conviene decir hasta dónde. El linter no comprueba todo lo que el README dice. El README de `presentation/` pide que no llame directo a infraestructura, y eso hoy no lo verifica nadie: está escrito, no atado. La diferencia entre lo que documento y lo que verifico es exactamente mi lista de pendientes —y prefiero que la veas tú a fingir que no existe."
       },
       {
         "kind": "paragraph",
-        "text": "Y el porqué de cada decisión también se queda escrito, no en la cabeza de quien estaba ese día. Michael Nygard lo explicó mejor que yo en [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), el artículo de 2011 donde propuso los registros de decisiones de arquitectura: \"una de las cosas más difíciles de rastrear durante la vida de un proyecto es la motivación detrás de ciertas decisiones\". Sin eso, el que llega solo puede hacer dos cosas y las dos son malas: aceptar a ciegas algo que ya no aplica, o cambiarlo a ciegas sin entender por qué estaba ahí."
+        "text": "Y el porqué de cada decisión también se queda escrito, no en la cabeza de quien estaba ese día. Michael Nygard lo explicó mejor que yo en [Documenting Architecture Decisions](https://cognitect.com/blog/2011/11/15/documenting-architecture-decisions), el artículo de 2011 donde propuso los registros de decisiones de arquitectura: «una de las cosas más difíciles de rastrear durante la vida de un proyecto es la motivación detrás de ciertas decisiones». Sin eso, el que llega solo puede hacer dos cosas y las dos son malas: aceptar a ciegas algo que ya no aplica, o cambiarlo a ciegas sin entender por qué estaba ahí."
       },
       {
         "kind": "paragraph",
@@ -132,11 +132,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "Cuidado, que eso no significa que la presentación sea tonta ni que no sepa nada. Es dueña de sus pantallas, de su estado, de su navegación y de validar el formulario antes de enviarlo — si el correo no tiene forma de correo, eso lo caza ella y no molesta a nadie. Lo que no le pertenece es la regla de negocio que hay detrás del botón."
+        "text": "Cuidado, que eso no significa que la presentación sea tonta ni que no sepa nada. Es dueña de sus pantallas, de su estado, de su navegación y de validar el formulario antes de enviarlo —si el correo no tiene forma de correo, eso lo caza ella y no molesta a nadie. Lo que no le pertenece es la regla de negocio que hay detrás del botón."
       },
       {
         "kind": "paragraph",
-        "text": "Y no es purismo — es la consecuencia práctica: si la pantalla supiera cómo se calcula el descuento, el día que cambie la fórmula tendrías que tocar la pantalla. Habrías acoplado la interfaz a una regla de negocio que no le pertenece, que es justo lo que estabas intentando evitar."
+        "text": "Y no es purismo —es la consecuencia práctica: si la pantalla supiera cómo se calcula el descuento, el día que cambie la fórmula tendrías que tocar la pantalla. Habrías acoplado la interfaz a una regla de negocio que no le pertenece, que es justo lo que estabas intentando evitar."
       },
       {
         "kind": "image",
@@ -145,7 +145,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Al revés también, y esta parte se olvida más: el dominio no sabe que existe una pantalla. La infraestructura no sabe quién la llama ni para qué caso de uso. Eso ya no es una preferencia mía — es la regla que sostiene toda la arquitectura, y Martin la escribió en una sola frase:"
+        "text": "Al revés también, y esta parte se olvida más: el dominio no sabe que existe una pantalla. La infraestructura no sabe quién la llama ni para qué caso de uso. Eso ya no es una preferencia mía —es la regla que sostiene toda la arquitectura, y Martin la escribió en una sola frase:"
       },
       {
         "kind": "quote",
@@ -163,11 +163,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y no pasa una vez: pasa en cada tarea. Ahí está la diferencia entre cargar la carpeta donde trabajas y cargar el proyecto entero. El agente que aterriza en `presentation/` lee el README de `presentation/` — tres reglas — y con eso ya sabe qué puede hacer. Repartir las reglas deja de ser una cuestión de orden y se convierte en una línea de tu factura."
+        "text": "Y no pasa una vez: pasa en cada tarea. Ahí está la diferencia entre cargar la carpeta donde trabajas y cargar el proyecto entero. El agente que aterriza en `presentation/` lee el README de `presentation/` —tres reglas— y con eso ya sabe qué puede hacer. Repartir las reglas deja de ser una cuestión de orden y se convierte en una línea de tu factura."
       },
       {
         "kind": "paragraph",
-        "text": "Aunque el beneficio de verdad ni siquiera es el dinero: es que cuanto menos ruido lee, menos inventa. Un archivo gigante no solo aburre a las personas — hace que el agente se pierda entre reglas que no eran para él y las aplique donde no debía. Contexto pequeño y explícito le gana a contexto grande y completo, siempre."
+        "text": "Aunque el beneficio de verdad ni siquiera es el dinero: es que cuanto menos ruido lee, menos inventa. Un archivo gigante no solo aburre a las personas —hace que el agente se pierda entre reglas que no eran para él y las aplique donde no debía. Contexto pequeño y explícito le gana a contexto grande y completo, siempre."
       },
       {
         "kind": "paragraph",

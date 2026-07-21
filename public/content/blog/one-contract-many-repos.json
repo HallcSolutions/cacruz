@@ -63,18 +63,18 @@
       {
         "kind": "steps",
         "items": [
-          "Reparte: toma UNA historia de usuario y la parte en dos trabajos, uno por repo. Cada lado recibe solo lo suyo, y [se lo dice explícitamente](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs): \"estás especificando ÚNICAMENTE la parte BACKEND de esta feature\".",
-          "Comparte: entrega a los dos lados el MISMO contrato de API, marcado como autoritativo: \"respétalo, no lo redefinas\". Es la partitura.",
+          "Reparte: toma UNA historia de usuario y la parte en dos trabajos, uno por repo. Cada lado recibe solo lo suyo, y [se lo dice explícitamente](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs): «estás especificando ÚNICAMENTE la parte BACKEND de esta feature».",
+          "Comparte: entrega a los dos lados el MISMO contrato de API, marcado como autoritativo: «respétalo, no lo redefinas». Es la partitura.",
           "Junta: escribe las dos specs con el mismo slug (`login` en ambos repos), los mismos identificadores de requisito y una huella del contrato estampada en cada archivo. Intenta también darles el mismo número, y lo consigue si la feature es nueva en los dos lados; si un repo ya tenía esa carpeta, respeta la suya."
         ]
       },
       {
         "kind": "paragraph",
-        "text": "Nada más. Y que sea así de tonto tiene una consecuencia que se puede medir: como no decide nada, no hay nada dentro que pueda equivocarse. Su test completo corre sin llamar a ninguna IA: le inyecto dos funciones falsas en lugar de las que generan el contrato y las specs, y compruebo lo único que le toca — que el orden fue contrato → back → front, que el contrato vio los dos stacks, y que a cada lado le llegó su rol con el mismo contrato dentro. Cero tokens, y el resultado es idéntico siempre."
+        "text": "Nada más. Y que sea así de tonto tiene una consecuencia que se puede medir: como no decide nada, no hay nada dentro que pueda equivocarse. Su test completo corre sin llamar a ninguna IA: le inyecto dos funciones falsas en lugar de las que generan el contrato y las specs, y compruebo lo único que le toca —que el orden fue contrato → back → front, que el contrato vio los dos stacks, y que a cada lado le llegó su rol con el mismo contrato dentro. Cero tokens, y el resultado es idéntico siempre."
       },
       {
         "kind": "paragraph",
-        "text": "Compara eso con un orquestador \"listo\", de esos que deciden y opinan: para probarlo tendrías que llamar al modelo. Cada test costaría dinero, tardaría segundos y podría dar un resultado distinto cada vez. La tontería no es una limitación que arrastro — es lo que hace que esta pieza sea la más aburrida y la más fiable de todo el flujo."
+        "text": "Compara eso con un orquestador «listo», de esos que deciden y opinan: para probarlo tendrías que llamar al modelo. Cada test costaría dinero, tardaría segundos y podría dar un resultado distinto cada vez. La tontería no es una limitación que arrastro —es lo que hace que esta pieza sea la más aburrida y la más fiable de todo el flujo."
       },
       {
         "kind": "heading",
@@ -82,7 +82,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Esta es la pregunta que me hacen siempre, casi siempre con desconfianza: ¿por qué manda el back? ¿No es el front el que sabe qué necesita el usuario? La respuesta corta es que \"liderar el contrato\" no significa \"mandar en el producto\". Significa algo mucho más aburrido: quien expone la API es quien la define."
+        "text": "Esta es la pregunta que me hacen siempre, casi siempre con desconfianza: ¿por qué manda el back? ¿No es el front el que sabe qué necesita el usuario? La respuesta corta es que «liderar el contrato» no significa «mandar en el producto». Significa algo mucho más aburrido: quien expone la API es quien la define."
       },
       {
         "kind": "quote",
@@ -97,7 +97,7 @@
       {
         "kind": "steps",
         "items": [
-          "El back es el único que puede cumplirlo. Si el front \"decide\" que existe `GET /orders/{id}/history`, ese endpoint no existe hasta que el back lo escriba. Un contrato que una parte no puede cumplir no es un contrato: es una carta a los Reyes Magos.",
+          "El back es el único que puede cumplirlo. Si el front «decide» que existe `GET /orders/{id}/history`, ese endpoint no existe hasta que el back lo escriba. Un contrato que una parte no puede cumplir no es un contrato: es una carta a los Reyes Magos.",
           "El back es dueño de la verdad. Los datos, las reglas de negocio y la validación viven ahí. El front puede pintar un total; el back es quien responde si ese total es correcto. Quien custodia el dato define cómo se pide.",
           "El back tiene un solo contrato; el front es uno de varios. Hoy consume la API una web. Mañana un panel de administración, un reporte, un socio externo. Si el contrato lo define un consumidor, los demás heredan decisiones que se tomaron sin ellos.",
           "Romper hacia arriba es barato; romper hacia abajo es caro. Si el front cambia una pantalla, el back ni se entera. Si el back cambia un campo, se cae todo lo que consuma esa API. El lado que puede romper a los demás es el que debe hacer explícito su compromiso."
@@ -105,7 +105,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Fíjate en el orden real del flujo, porque ahí está la trampa que evita: el contrato se genera primero, y luego se especifican los dos lados contra ese contrato ya cerrado. El back no lo lidera porque escriba primero; lo lidera porque el contrato describe lo que él expone. De hecho el back tampoco puede inventarlo: el contrato sale de la historia de usuario, no de la opinión del backend. La [regla literal del prompt](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml) es \"eres un ESTRUCTURADOR, no un autor: solo formalizas lo que la HU dice\"."
+        "text": "Fíjate en el orden real del flujo, porque ahí está la trampa que evita: el contrato se genera primero, y luego se especifican los dos lados contra ese contrato ya cerrado. El back no lo lidera porque escriba primero; lo lidera porque el contrato describe lo que él expone. De hecho el back tampoco puede inventarlo: el contrato sale de la historia de usuario, no de la opinión del backend. La [regla literal del prompt](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/prompts/feature-contract.prompt.xml) es «eres un ESTRUCTURADOR, no un autor: solo formalizas lo que la HU dice»."
       },
       {
         "kind": "paragraph",
@@ -113,11 +113,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "¿Y por qué no lo implementé así? Por el título completo del artículo, que casi siempre se cita a medias: A Service Evolution Pattern. Es un patrón de evolución — resuelve cómo cambiar una API que ya está viva sin romper a quien ya depende de ella. Yo no estoy cambiando nada. Estoy creando algo que todavía no existe: no hay API en producción, no hay consumidores, no hay nada que romper. El back y el front nacen la misma tarde, con minutos de diferencia."
+        "text": "¿Y por qué no lo implementé así? Por el título completo del artículo, que casi siempre se cita a medias: A Service Evolution Pattern. Es un patrón de evolución —resuelve cómo cambiar una API que ya está viva sin romper a quien ya depende de ella. Yo no estoy cambiando nada. Estoy creando algo que todavía no existe: no hay API en producción, no hay consumidores, no hay nada que romper. El back y el front nacen la misma tarde, con minutos de diferencia."
       },
       {
         "kind": "paragraph",
-        "text": "Y ahí es donde esa idea se muerde la cola. Para derivar el contrato de las expectativas del consumidor, alguien tiene que haberlas escrito antes. Pero el consumidor no existe todavía: su spec se genera en la misma pasada. El único que podría escribir esas expectativas soy yo, inventándomelas — que es exactamente lo que el contrato tiene prohibido."
+        "text": "Y ahí es donde esa idea se muerde la cola. Para derivar el contrato de las expectativas del consumidor, alguien tiene que haberlas escrito antes. Pero el consumidor no existe todavía: su spec se genera en la misma pasada. El único que podría escribir esas expectativas soy yo, inventándomelas —que es exactamente lo que el contrato tiene prohibido."
       },
       {
         "kind": "paragraph",
@@ -137,19 +137,19 @@
       },
       {
         "kind": "paragraph",
-        "text": "Aquí siempre salta la misma objeción, y es la correcta: ¿y si son más de dos? Un panel de administración, un reporte, un socio externo, una app móvil. El número de carriles no es una propiedad del patrón — es una propiedad de quien lo implementa. El contrato no sabe quién lo consume, y por eso escala."
+        "text": "Aquí siempre salta la misma objeción, y es la correcta: ¿y si son más de dos? Un panel de administración, un reporte, un socio externo, una app móvil. El número de carriles no es una propiedad del patrón —es una propiedad de quien lo implementa. El contrato no sabe quién lo consume, y por eso escala."
       },
       {
         "kind": "paragraph",
-        "text": "Lo que aguanta N no es el orquestador: es el contrato. Un consumidor más no obliga a renegociar nada — lee `contracts/api.md`, se especifica contra él y ya está. Los carriles no hablan entre sí: hablan todos con el mismo papel. Ahí está la diferencia entre crecer y enredarse. Coordinar cinco equipos por acuerdos bilaterales son diez conversaciones que hay que mantener vivas; contra un contrato son cinco lecturas del mismo documento."
+        "text": "Lo que aguanta N no es el orquestador: es el contrato. Un consumidor más no obliga a renegociar nada —lee `contracts/api.md`, se especifica contra él y ya está. Los carriles no hablan entre sí: hablan todos con el mismo papel. Ahí está la diferencia entre crecer y enredarse. Coordinar cinco equipos por acuerdos bilaterales son diez conversaciones que hay que mantener vivas; contra un contrato son cinco lecturas del mismo documento."
       },
       {
         "kind": "paragraph",
-        "text": "Y ahora lo que de verdad corro, sin adornos: `chalc feature` coordina dos carriles, front y back. Pero por dentro la maquinaria ya es más general de lo que parece desde fuera. El número de spec compartido se calcula sobre una lista de repos, no sobre una pareja. Y el documento de rol que recibe cada lado no tiene una lista cerrada de roles: pregunta si eres el backend, y si no lo eres, te trata como consumidor — le da igual que seas una web, un panel o una app."
+        "text": "Y ahora lo que de verdad corro, sin adornos: `chalc feature` coordina dos carriles, front y back. Pero por dentro la maquinaria ya es más general de lo que parece desde fuera. El número de spec compartido se calcula sobre una lista de repos, no sobre una pareja. Y el documento de rol que recibe cada lado no tiene una lista cerrada de roles: pregunta si eres el backend, y si no lo eres, te trata como consumidor —le da igual que seas una web, un panel o una app."
       },
       {
         "kind": "paragraph",
-        "text": "Lo que sigue atado a dos es el cableado de fuera: el orquestador llama dos veces y el comando pide dos rutas. Añadir un tercer consumidor es configurarlo, no rediseñarlo — porque la pieza que importa, el contrato, nunca supo cuántos había."
+        "text": "Lo que sigue atado a dos es el cableado de fuera: el orquestador llama dos veces y el comando pide dos rutas. Añadir un tercer consumidor es configurarlo, no rediseñarlo —porque la pieza que importa, el contrato, nunca supo cuántos había."
       },
       {
         "kind": "paragraph",
@@ -170,9 +170,9 @@
           "Prepara el terreno: hace `pull` en los dos, revisa si el árbol está limpio y equipa cada repo con sus skills y su método.",
           "Genera el contrato desde la HU: requisitos compartidos en notación EARS (`CUANDO … EL SISTEMA DEBE …`), endpoints, modelos, autenticación.",
           "Especifica el back contra ese contrato: endpoints, modelo de datos, reglas de negocio, validación y persistencia.",
-          "Especifica el front contra el MISMO contrato: pantallas, estado, navegación y consumo — con la orden explícita de no reimplementar la lógica del back.",
+          "Especifica el front contra el MISMO contrato: pantallas, estado, navegación y consumo —con la orden explícita de no reimplementar la lógica del back.",
           "Escribe y sella: `specs/004-login/` en ambos repos, con `contracts/api.md` idéntico y la huella estampada.",
-          "Crea la rama `feat/<slug>` en los dos — o en ninguno."
+          "Crea la rama `feat/<slug>` en los dos —o en ninguno."
         ]
       },
       {
@@ -198,7 +198,7 @@
       {
         "kind": "image",
         "src": "images/blog/contract-orchestrator.es.svg",
-        "caption": "Una historia entra, un contrato se genera, y sale alineado todo el que lo consuma. Fíjate en el camino rosa: cuando a un carril le falta algo, no se lo pide al de al lado — vuelve al contrato pasando por ti. El carril punteado es otro rol más: el contrato no sabe quién lo consume."
+        "caption": "Una historia entra, un contrato se genera, y sale alineado todo el que lo consuma. Fíjate en el camino rosa: cuando a un carril le falta algo, no se lo pide al de al lado —vuelve al contrato pasando por ti. El carril punteado es otro rol más: el contrato no sabe quién lo consume."
       },
       {
         "kind": "paragraph",
@@ -214,7 +214,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Por eso la regla más dura del contrato no es sobre lo que debe hacer, sino sobre lo que no: si algo hace falta y la HU no lo dice, no se adivina — se marca. Va a una sección llamada \"Pendiente de aclarar\" como `[NEEDS CLARIFICATION]`, y esa pregunta vuelve a mí, que soy quien puede contestarla."
+        "text": "Por eso la regla más dura del contrato no es sobre lo que debe hacer, sino sobre lo que no: si algo hace falta y la HU no lo dice, no se adivina —se marca. Va a una sección llamada «Pendiente de aclarar» como `[NEEDS CLARIFICATION]`, y esa pregunta vuelve a mí, que soy quien puede contestarla."
       },
       {
         "kind": "terminal",
@@ -224,8 +224,8 @@
           "→ - R1 — CUANDO el usuario envía email y contraseña válidos EL SISTEMA DEBE devolver un token de sesión.",
           "→ - R2 — CUANDO las credenciales son inválidas EL SISTEMA DEBE responder 401 sin revelar cuál campo falló.",
           "→ ### POST /auth/login",
-          "→ - Request (body): { \"email\": string, \"password\": string }",
-          "→ - Response 200: { \"token\": string, \"user\": { \"id\": string, \"email\": string } }",
+          "→ - Request (body): { «email»: string, «password»: string }",
+          "→ - Response 200: { «token»: string, «user»: { «id»: string, «email»: string } }",
           "→ - Errores: 400 (validación), 401 (credenciales inválidas)",
           "→ - Traza: R1, R2",
           "→ ## Pendiente de aclarar",
@@ -234,7 +234,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Un contrato que admite \"no sé\" vale mucho más que uno completo lleno de suposiciones. El primero te deja una lista de preguntas; el segundo te deja código que hay que borrar."
+        "text": "Un contrato que admite «no sé» vale mucho más que uno completo lleno de suposiciones. El primero te deja una lista de preguntas; el segundo te deja código que hay que borrar."
       },
       {
         "kind": "paragraph",
@@ -242,11 +242,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "La regla es que un carril nunca le pide nada al otro carril: se lo pide al contrato. Y como el contrato no es una persona, en la práctica me lo pide a mí, que soy el único que puede decidir si eso entra o no. No es burocracia: es que un acuerdo entre dos por chat no es un acuerdo, es un secreto. Las [instrucciones del orquestador](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/feature.mjs) lo dejan por escrito: \"si algo está [NEEDS CLARIFICATION] en el contrato o una spec, pregúntame antes. La spec es la fuente de verdad: si cambia el alcance, actualiza spec y contrato primero\"."
+        "text": "La regla es que un carril nunca le pide nada al otro carril: se lo pide al contrato. Y como el contrato no es una persona, en la práctica me lo pide a mí, que soy el único que puede decidir si eso entra o no. No es burocracia: es que un acuerdo entre dos por chat no es un acuerdo, es un secreto. Las [instrucciones del orquestador](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/feature.mjs) lo dejan por escrito: «si algo está [NEEDS CLARIFICATION] en el contrato o una spec, pregúntame antes. La spec es la fuente de verdad: si cambia el alcance, actualiza spec y contrato primero»."
       },
       {
         "kind": "paragraph",
-        "text": "Y ahí se cierra el círculo con lo que viene ahora: si decido que sí, cambia el contrato, cambia su huella, y las dos specs quedan marcadas como viejas y se regeneran alineadas. El cambio entra por el papel y baja a todos los carriles — nunca al revés. Por eso el patrón aguanta cinco consumidores sin convertirse en una madeja: cada uno mantiene una sola conversación, con el contrato, en vez de cuatro con sus vecinos."
+        "text": "Y ahí se cierra el círculo con lo que viene ahora: si decido que sí, cambia el contrato, cambia su huella, y las dos specs quedan marcadas como viejas y se regeneran alineadas. El cambio entra por el papel y baja a todos los carriles —nunca al revés. Por eso el patrón aguanta cinco consumidores sin convertirse en una madeja: cada uno mantiene una sola conversación, con el contrato, en vez de cuatro con sus vecinos."
       },
       {
         "kind": "heading",
@@ -272,7 +272,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y aquí la precisión importa, porque es fácil vender esto de más: nada vigila el repo por su cuenta. La huella no salta sola — se compara la próxima vez que corro `chalc feature`, y entonces me avisa de que las specs venían de un contrato viejo y las reescribe alineadas. No es una alarma, es un recibo. Pero me quita la única parte que se me da mal: acordarme. O la huella coincide o no coincide, y eso no depende de mi memoria."
+        "text": "Y aquí la precisión importa, porque es fácil vender esto de más: nada vigila el repo por su cuenta. La huella no salta sola —se compara la próxima vez que corro `chalc feature`, y entonces me avisa de que las specs venían de un contrato viejo y las reescribe alineadas. No es una alarma, es un recibo. Pero me quita la única parte que se me da mal: acordarme. O la huella coincide o no coincide, y eso no depende de mi memoria."
       },
       {
         "kind": "heading",
@@ -280,7 +280,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Aquí es donde el contrato deja de ser documentación y empieza a defenderte. Los identificadores de requisito (`R1`, `R2`…) no se renumeran por repo: son los mismos en los dos. La [instrucción a cada lado](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs) es literal: \"reutiliza los MISMOS identificadores de requisito del contrato para conservar la trazabilidad cruzada\"."
+        "text": "Aquí es donde el contrato deja de ser documentación y empieza a defenderte. Los identificadores de requisito (`R1`, `R2`…) no se renumeran por repo: son los mismos en los dos. La [instrucción a cada lado](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs) es literal: «reutiliza los MISMOS identificadores de requisito del contrato para conservar la trazabilidad cruzada»."
       },
       {
         "kind": "paragraph",
@@ -292,7 +292,7 @@
           "En el back, R2 es un test de endpoint: mando credenciales malas, exijo un 401 y verifico que el cuerpo no diga cuál de los dos campos estaba mal.",
           "En el front, R2 es un test de pantalla: simulo un 401 y exijo que se muestre el mensaje genérico y el foco vuelva al formulario.",
           "Los dos tests fallan primero (Red), como manda el método. El contrato no exime del TDD: le da al test algo contra qué fallar que no es mi intuición.",
-          "Si R2 cambia, la búsqueda es de un segundo: `grep R2` en los dos repos y ahí está todo lo que hay que tocar — contrato, spec, tareas y tests, en back y front."
+          "Si R2 cambia, la búsqueda es de un segundo: `grep R2` en los dos repos y ahí está todo lo que hay que tocar —contrato, spec, tareas y tests, en back y front."
         ]
       },
       {
@@ -301,7 +301,7 @@
       },
       {
         "kind": "quote",
-        "text": "El día de la integración deja de ser un evento. Si los dos lados cumplieron el mismo contrato, conectar es aburrido — y aburrido es exactamente lo que quieres que sea."
+        "text": "El día de la integración deja de ser un evento. Si los dos lados cumplieron el mismo contrato, conectar es aburrido —y aburrido es exactamente lo que quieres que sea."
       },
       {
         "kind": "heading",
@@ -314,7 +314,7 @@
       {
         "kind": "steps",
         "items": [
-          "Un solo repo: no hay nada que coordinar. `chalc spec-ia` genera la spec y listo. El comando [te lo dice tal cual](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/i18n.mjs): \"Sin backend: usa `chalc spec-ia` para un solo repo\".",
+          "Un solo repo: no hay nada que coordinar. `chalc spec-ia` genera la spec y listo. El comando [te lo dice tal cual](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/i18n.mjs): «Sin backend: usa `chalc spec-ia` para un solo repo».",
           "El cambio no cruza la red: un color, un texto, una validación que vive entera en el front. Si la API no se mueve, el contrato no pinta nada.",
           "La API ya existe y no cambia: si consumo un endpoint estable que ya está documentado, el contrato ya está escrito. No lo vuelvo a escribir; lo leo.",
           "Todavía no sé qué quiero: si estoy explorando si algo es viable, especificar antes es inventar requisitos. Primero averiguo, tiro el experimento, y entonces escribo la historia."
@@ -322,7 +322,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y falta la otra mitad: si lo único que comparten los dos repos es el contrato, ¿qué pasa con todo lo demás? Cada uno con su arquitectura, sus reglas y su README por carpeta — y una máquina que comprueba que se cumplen. Lo cuento en [Un README que nadie comprueba es una mentira](/daily). Si quieres el escalón anterior —cómo una historia se convierte en spec, tests en rojo y mutantes muertos— también está ahí. Y si quieres ver lo que construyo con esto, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+        "text": "Y falta la otra mitad: si lo único que comparten los dos repos es el contrato, ¿qué pasa con todo lo demás? Cada uno con su arquitectura, sus reglas y su README por carpeta —y una máquina que comprueba que se cumplen. Lo cuento en [Un README que nadie comprueba es una mentira](/daily). Si quieres el escalón anterior —cómo una historia se convierte en spec, tests en rojo y mutantes muertos— también está ahí. Y si quieres ver lo que construyo con esto, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
       },
       {
         "kind": "heading",

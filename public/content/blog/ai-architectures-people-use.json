@@ -72,11 +72,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "La diferencia es quién manda. En un **workflow**, manda tu código: tú escribiste los pasos, en qué orden van y qué se hace con cada resultado; el modelo solo rellena los huecos. En un **agente**, manda el modelo: decide qué paso dar, qué herramienta usar y cuándo ha terminado. Lo primero es un raíl; lo segundo, un conductor. La mayoría de lo que se vende como «agente» es, en realidad, un workflow bien montado — y eso es una buena noticia, no una decepción."
+        "text": "La diferencia es quién manda. En un **workflow**, manda tu código: tú escribiste los pasos, en qué orden van y qué se hace con cada resultado; el modelo solo rellena los huecos. En un **agente**, manda el modelo: decide qué paso dar, qué herramienta usar y cuándo ha terminado. Lo primero es un raíl; lo segundo, un conductor. La mayoría de lo que se vende como «agente» es, en realidad, un workflow bien montado —y eso es una buena noticia, no una decepción."
       },
       {
         "kind": "paragraph",
-        "text": "¿Y cuándo conviene cada uno? La misma fuente lo resume: los workflows dan previsibilidad y consistencia cuando la tarea está bien definida; el agente gana cuando necesitas flexibilidad y que el propio modelo decida, a escala. En la práctica se reduce a una regla sencilla: si puedes escribir los pasos, escríbelos y quédate en un workflow. El agente es lo que usas cuando no puedes prever esos pasos — no un ascenso al que aspirar."
+        "text": "¿Y cuándo conviene cada uno? La misma fuente lo resume: los workflows dan previsibilidad y consistencia cuando la tarea está bien definida; el agente gana cuando necesitas flexibilidad y que el propio modelo decida, a escala. En la práctica se reduce a una regla sencilla: si puedes escribir los pasos, escríbelos y quédate en un workflow. El agente es lo que usas cuando no puedes prever esos pasos —no un ascenso al que aspirar."
       },
       {
         "kind": "heading",
@@ -84,7 +84,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Aquí están los patrones que se repiten en casi todos los sistemas reales, ordenados por la única variable que importa: cuánta libertad tiene el modelo. Los cinco primeros son workflows; el último es el único agente de verdad. Léelos de arriba abajo y párate en el primero que resuelva tu problema — bajar más es pagar de más."
+        "text": "Aquí están los patrones que se repiten en casi todos los sistemas reales, ordenados por la única variable que importa: cuánta libertad tiene el modelo. Los cinco primeros son workflows; el último es el único agente de verdad. Léelos de arriba abajo y párate en el primero que resuelva tu problema —bajar más es pagar de más."
       },
       {
         "kind": "image",
@@ -95,9 +95,9 @@
         "kind": "steps",
         "items": [
           "**Una sola llamada.** Un único envío al modelo y su respuesta, sin nada orquestando alrededor. La potencia no está en llamar más veces, sino en el prompt: una instrucción clara y uno o dos ejemplos ya resueltos —lo que se llama *few-shot*— para que el modelo copie el formato y el criterio. «Clasifica este correo en queja, consulta o spam», con dos ejemplos etiquetados debajo, acierta la inmensa mayoría sin más andamiaje. Empieza siempre aquí. Cuándo: clasificar, extraer datos, resumir, reescribir. Cuándo no: cuando la tarea necesita varios pasos encadenados, o información que el modelo no tiene y no cabe meter en una sola pasada.",
-          "**Cadena de pasos** (prompt chaining). Partes la tarea en pasos fijos y encadenas las llamadas: la salida de una es la entrada de la siguiente. Cada llamada hace una sola cosa, así que sale mejor y puedes revisar en medio antes de seguir. Escribir un artículo: una llamada saca el esquema, otra lo convierte en borrador, otra lo pule y una última lo traduce. Cuándo: la tarea tiene fases claras y cada una es más fácil por separado. Cuándo no: si el camino no es siempre el mismo y depende de la entrada — eso es enrutado u orquestador, no una cadena.",
+          "**Cadena de pasos** (prompt chaining). Partes la tarea en pasos fijos y encadenas las llamadas: la salida de una es la entrada de la siguiente. Cada llamada hace una sola cosa, así que sale mejor y puedes revisar en medio antes de seguir. Escribir un artículo: una llamada saca el esquema, otra lo convierte en borrador, otra lo pule y una última lo traduce. Cuándo: la tarea tiene fases claras y cada una es más fácil por separado. Cuándo no: si el camino no es siempre el mismo y depende de la entrada —eso es enrutado u orquestador, no una cadena.",
           "**Enrutado** (routing). Una primera llamada clasifica la entrada y decide a qué camino la manda; cada camino lleva su propio prompt afinado para ese caso. En un soporte, el mensaje va a facturación, a soporte técnico o a devoluciones, y cada rama responde con sus instrucciones y su tono. Gana porque un prompt especializado por tipo acierta más que uno genérico que intenta cubrirlo todo. Cuándo: entradas de tipos muy distintos que se atienden mejor por separado. Cuándo no: si todo se trata igual, el router solo añade una llamada y un punto de fallo.",
-          "**Paralelización.** Lanzas varias llamadas a la vez, independientes, y juntas lo que devuelven. Dos sabores: trocear (cada llamada hace una parte) o votar (la misma pregunta a varias y te quedas con la mayoría). Revisar un contrato: a la vez, una llamada busca riesgos legales, otra revisa las cláusulas de pago y otra el tratamiento de datos; al final se juntan los tres informes. Cuándo: quieres ir más rápido, o más confianza cruzando varias opiniones. Cuándo no: si una respuesta necesita la anterior, no es paralelo — es una cadena disfrazada.",
+          "**Paralelización.** Lanzas varias llamadas a la vez, independientes, y juntas lo que devuelven. Dos sabores: trocear (cada llamada hace una parte) o votar (la misma pregunta a varias y te quedas con la mayoría). Revisar un contrato: a la vez, una llamada busca riesgos legales, otra revisa las cláusulas de pago y otra el tratamiento de datos; al final se juntan los tres informes. Cuándo: quieres ir más rápido, o más confianza cruzando varias opiniones. Cuándo no: si una respuesta necesita la anterior, no es paralelo —es una cadena disfrazada.",
           "**Orquestador y trabajadores** (orchestrator-workers). Un modelo central lee la tarea, decide sobre la marcha en qué subtareas partirla —que no conocías de antemano—, se las reparte a varios trabajadores y cose lo que vuelve. La diferencia con paralelizar: allí los trozos son fijos; aquí los inventa el orquestador según la entrada. Generar un informe: el orquestador mira el tema, decide qué secciones lleva, encarga cada una a un trabajador y las junta. Cuándo: el número y la forma de las subtareas dependen de la entrada. Cuándo no: si el troceo es siempre igual, con una cadena te sobra y te ahorras la parte impredecible.",
           "**Evaluador y optimizador** (evaluator-optimizer). Una llamada genera y otra hace de crítico: revisa contra un criterio y devuelve correcciones, y así en bucle hasta que da el visto bueno. Funciona porque separar al autor del que juzga saca fallos que el autor no ve. Traducir un texto: una llamada traduce, otra comprueba que suene natural y marca lo que chirría, y se repite hasta que pasa. Cuándo: tienes un criterio claro de «esto está bien» y las primeras versiones suelen fallarlo. Cuándo no: si no sabes decir qué es «bien», el evaluador solo da vueltas gastando tokens."
         ]
@@ -109,7 +109,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y al final del eje, el único que cede el control de verdad: el **agente**. El modelo recibe un objetivo, y él elige los pasos, usa las herramientas que necesita, mira el resultado, corrige y decide cuándo ha terminado. No hay ruta escrita por ti — por eso es tan potente y por eso es tan difícil de acotar y de probar. Cuándo: problemas abiertos donde no puedes prever los pasos. Cuándo no: casi siempre que puedas prever los pasos, porque entonces un workflow te da lo mismo más barato y sin sorpresas."
+        "text": "Y al final del eje, el único que cede el control de verdad: el **agente**. El modelo recibe un objetivo, y él elige los pasos, usa las herramientas que necesita, mira el resultado, corrige y decide cuándo ha terminado. No hay ruta escrita por ti —por eso es tan potente y por eso es tan difícil de acotar y de probar. Cuándo: problemas abiertos donde no puedes prever los pasos. Cuándo no: casi siempre que puedas prever los pasos, porque entonces un workflow te da lo mismo más barato y sin sorpresas."
       },
       {
         "kind": "image",
@@ -159,7 +159,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Por qué importa en la práctica: el modelo no conoce tus datos privados, no sabe qué pasó después de su entrenamiento, y cuando no sabe algo no se calla — lo rellena con aplomo. RAG ataca las tres cosas de golpe. Le das los documentos que sí conocen tu caso, y de paso puedes **citar la fuente**: la respuesta deja de ser «créeme» y pasa a «míralo aquí»."
+        "text": "Por qué importa en la práctica: el modelo no conoce tus datos privados, no sabe qué pasó después de su entrenamiento, y cuando no sabe algo no se calla —lo rellena con aplomo. RAG ataca las tres cosas de golpe. Le das los documentos que sí conocen tu caso, y de paso puedes **citar la fuente**: la respuesta deja de ser «créeme» y pasa a «míralo aquí»."
       },
       {
         "kind": "image",
@@ -186,7 +186,7 @@
       },
       {
         "kind": "paragraph",
-        "text": "Ese es el motivo real de la regla de empezar simple. No es purismo minimalista: es que cada escalón que subes en el eje de libertad multiplica la caja de fuera. Un agente autónomo no es «una llamada más lista» — es un sistema que hay que acotar, observar y contener, y ese trabajo crece mucho más rápido que la parte lista. Por eso la mejor arquitectura suele ser la más aburrida que resuelve el problema."
+        "text": "Ese es el motivo real de la regla de empezar simple. No es purismo minimalista: es que cada escalón que subes en el eje de libertad multiplica la caja de fuera. Un agente autónomo no es «una llamada más lista» —es un sistema que hay que acotar, observar y contener, y ese trabajo crece mucho más rápido que la parte lista. Por eso la mejor arquitectura suele ser la más aburrida que resuelve el problema."
       },
       {
         "kind": "paragraph",
@@ -198,7 +198,7 @@
           "¿Lo resuelve una sola llamada con buen prompt y un par de ejemplos? Entonces ya terminaste. La mayoría de las veces es esto.",
           "¿La tarea tiene fases fijas y claras? Una cadena de pasos, y sigues en terreno predecible y barato de probar.",
           "¿El modelo necesita datos que no tiene —privados, recientes, con fuente citable? Añade RAG debajo del patrón que ya elegiste, no en su lugar.",
-          "¿El número y la forma de los subpasos dependen de la entrada y no los puedes prever? Ahí sí subes a orquestador o, si de verdad no hay pasos previsibles, a un agente — asumiendo el coste de acotarlo y observarlo."
+          "¿El número y la forma de los subpasos dependen de la entrada y no los puedes prever? Ahí sí subes a orquestador o, si de verdad no hay pasos previsibles, a un agente —asumiendo el coste de acotarlo y observarlo."
         ]
       },
       {
@@ -296,7 +296,7 @@
       {
         "kind": "image",
         "src": "images/blog/pattern-shapes.en.svg",
-        "caption": "The shape of each pattern, in the same order as the axis: from the single call (green, you're in charge) to the agent (red, the model decides). Each «◆» box is one call to the model; the arrows are the data flow. Below, each one with its when and its when-not."
+        "caption": "The shape of each pattern, in the same order as the axis: from the single call (green, you're in charge) to the agent (red, the model decides). Each \"◆\" box is one call to the model; the arrows are the data flow. Below, each one with its when and its when-not."
       },
       {
         "kind": "steps",

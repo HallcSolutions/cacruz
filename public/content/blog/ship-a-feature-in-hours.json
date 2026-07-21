@@ -70,7 +70,7 @@
       { "kind": "heading", "text": "Paso 2 · La idea se convierte en especificación" },
       {
         "kind": "paragraph",
-        "text": "Aquí está el cambio de fondo. Antes le pedía a la IA \"hazme una pantalla de login\" y aceptaba lo que saliera. Hoy lo primero que producimos no es código: es un contrato."
+        "text": "Aquí está el cambio de fondo. Antes le pedía a la IA «hazme una pantalla de login» y aceptaba lo que saliera. Hoy lo primero que producimos no es código: es un contrato."
       },
       {
         "kind": "image",
@@ -80,11 +80,11 @@
       {
         "kind": "steps",
         "items": [
-          "Escribo la historia de usuario como la diría el negocio: \"quiero entrar con mi correo y contraseña\".",
+          "Escribo la historia de usuario como la diría el negocio: «quiero entrar con mi correo y contraseña».",
           "Sale spec.md con los requisitos numerados (R1, R2, R3…) en notación EARS: WHEN el usuario envía credenciales inválidas THE SYSTEM SHALL mostrar el error junto al campo. Si una frase no se puede convertir en test, no es un requisito.",
           "Sale plan.md: arquitectura, contratos y decisiones. El CÓMO, aprobado antes de escribir una línea.",
           "Sale tasks.md: tareas atómicas, cada una apuntando a su requisito (T1 → R1). Nada de código huérfano.",
-          "Recién ahí empieza el código — y siempre con un test que primero falla."
+          "Recién ahí empieza el código —y siempre con un test que primero falla."
         ]
       },
       {
@@ -121,11 +121,11 @@
       },
       {
         "kind": "paragraph",
-        "text": "Y aunque suene a moda reciente, no lo es: la idea la propuso Richard Lipton siendo estudiante en 1971, y la formalizaron Richard DeMillo, Richard Lipton y Frederick Sayward en 1978, en un artículo de IEEE Computer con un título que ya lo decía todo: \"Hints on Test Data Selection: Help for the Practicing Programmer\". La primera herramienta la construyó Timothy Budd en su tesis doctoral de Yale, en 1980."
+        "text": "Y aunque suene a moda reciente, no lo es: la idea la propuso Richard Lipton siendo estudiante en 1971, y la formalizaron Richard DeMillo, Richard Lipton y Frederick Sayward en 1978, en un artículo de IEEE Computer con un título que ya lo decía todo: «Hints on Test Data Selection: Help for the Practicing Programmer». La primera herramienta la construyó Timothy Budd en su tesis doctoral de Yale, en 1980."
       },
       {
         "kind": "quote",
-        "text": "Parten de la hipótesis del programador competente: el código con defectos suele estar muy cerca del código correcto. Los errores reales son pequeños — y por eso los mutantes pequeños son la mejor forma de cazarlos.",
+        "text": "Parten de la hipótesis del programador competente: el código con defectos suele estar muy cerca del código correcto. Los errores reales son pequeños —y por eso los mutantes pequeños son la mejor forma de cazarlos.",
         "source": "DeMillo, Lipton y Sayward · IEEE Computer, 1978",
         "sourceUrl": "https://ieeexplore.ieee.org/document/1646911"
       },

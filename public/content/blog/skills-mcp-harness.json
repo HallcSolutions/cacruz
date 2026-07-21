@@ -14,7 +14,7 @@
     "es": [
       {
         "kind": "paragraph",
-        "text": "Casi todas las quejas que escucho sobre la IA —\"inventa rutas\", \"dice que terminó y no hizo nada\", \"no conoce mi base de datos\"— no son fallas del modelo. Son fallas de lo que hay alrededor del modelo. Y ese alrededor tiene un nombre: el harness."
+        "text": "Casi todas las quejas que escucho sobre la IA —«inventa rutas», «dice que terminó y no hizo nada», «no conoce mi base de datos»— no son fallas del modelo. Son fallas de lo que hay alrededor del modelo. Y ese alrededor tiene un nombre: el harness."
       },
       {
         "kind": "paragraph",
@@ -90,11 +90,11 @@
       },
       {
         "kind": "quote",
-        "text": "La casilla no se marca con un \"listo\" del modelo: se marca con evidencia, y el harness es quien la exige. Un modelo nunca califica su propio trabajo."
+        "text": "La casilla no se marca con un «listo» del modelo: se marca con evidencia, y el harness es quien la exige. Un modelo nunca califica su propio trabajo."
       },
       {
         "kind": "paragraph",
-        "text": "Suena obvio y casi nadie lo hace. La mayoría de los flujos con IA terminan con el modelo diciendo \"listo ✓\" y el humano creyéndole. Pero \"listo\" es una afirmación del modelo, no un hecho: puede haber escrito el archivo en otra ruta, haber dejado el test rojo, o simplemente haber alucinado el resultado."
+        "text": "Suena obvio y casi nadie lo hace. La mayoría de los flujos con IA terminan con el modelo diciendo «listo ✓» y el humano creyéndole. Pero «listo» es una afirmación del modelo, no un hecho: puede haber escrito el archivo en otra ruta, haber dejado el test rojo, o simplemente haber alucinado el resultado."
       },
       {
         "kind": "image",
@@ -112,7 +112,7 @@
           "El modelo actúa: escribe, edita, ejecuta. Y afirma que terminó.",
           "El harness comprueba con hechos, no con promesas: ¿el archivo existe y cambió?, ¿el comando salió con código 0?, ¿los tests están en verde?",
           "Si hay evidencia, marca `[x]` en el plan. Si no la hay, la tarea sigue pendiente y se reintenta pasándole el error real, no una regañina genérica.",
-          "Todo queda escrito en archivos del proyecto (plan y bitácora de revisión), así que si el proceso se cae en la tarea 4 de 7, se reanuda ahí — sin volver a pagar el análisis."
+          "Todo queda escrito en archivos del proyecto (plan y bitácora de revisión), así que si el proceso se cae en la tarea 4 de 7, se reanuda ahí —sin volver a pagar el análisis."
         ]
       },
       {
@@ -136,8 +136,8 @@
           "Sin skills, el modelo sabe programar pero no sabe programar aquí: reinventa la estructura y rompe las convenciones.",
           "Sin MCP, trabaja a ciegas sobre tu resumen del mundo en vez del mundo: por eso inventa campos, tablas y rutas.",
           "Sin reglas, no hay límites: toca lo que no debía tocar y nadie se entera hasta el code review.",
-          "Y sin harness no existe nada de lo anterior: no hay quién decida qué skill cargar, qué herramienta permitir ni cómo verificar. Te queda un asistente elocuente diciendo \"hecho\" sin que nadie lo compruebe.",
-          "Con el harness completo, la IA deja de ser una apuesta y pasa a ser un colaborador auditable — la única forma en que un profesional puede firmar el trabajo."
+          "Y sin harness no existe nada de lo anterior: no hay quién decida qué skill cargar, qué herramienta permitir ni cómo verificar. Te queda un asistente elocuente diciendo «hecho» sin que nadie lo compruebe.",
+          "Con el harness completo, la IA deja de ser una apuesta y pasa a ser un colaborador auditable —la única forma en que un profesional puede firmar el trabajo."
         ]
       },
       {

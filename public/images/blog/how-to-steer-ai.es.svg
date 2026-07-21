@@ -1,0 +1,72 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Cómo se dirige la IA: contexto, objetivo, trozos pequeños y verificación">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="aok" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="agr" markerWidth="8" markerHeight="8" refX="6.2" refY="4" orient="auto">
+      <path d="M0 0 L8 4 L0 8 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 1.5s linear infinite; }
+    .loop { stroke-dasharray: 7 9; animation: dash 3s linear infinite; }
+    .s1 { animation: st 4s ease-in-out infinite; }
+    .s2 { animation: st 4s ease-in-out infinite 1s; }
+    .s3 { animation: st 4s ease-in-out infinite 2s; }
+    .s4 { animation: st 4s ease-in-out infinite 3s; }
+    @keyframes dash { to { stroke-dashoffset: -60; } }
+    @keyframes st { 0%,100% { opacity:.72;} 50% { opacity:1;} }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="42" font-family="Georgia, serif" font-size="27" fill="#ece7fb">Cómo se dirige la herramienta</text>
+  <text x="40" y="68" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">no es escribir mejores frases: es darle rumbo y comprobar la salida</text>
+
+  <!-- 1 contexto -->
+  <rect class="s1" x="40" y="132" width="200" height="126" rx="12" fill="none" stroke="#a78bfa" stroke-width="2.2"/>
+  <text x="60" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">01</text>
+  <text x="60" y="188" font-family="ui-monospace, monospace" font-size="15" fill="#ece7fb">CONTEXTO</text>
+  <text x="60" y="212" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">qué construyes, con qué</text>
+  <text x="60" y="228" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">reglas y para quién</text>
+  <text x="60" y="248" font-family="ui-monospace, monospace" font-size="10.5" fill="#a78bfa">sin esto, adivina</text>
+  <line x1="246" y1="195" x2="278" y2="195" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#aok)"/>
+
+  <!-- 2 objetivo -->
+  <rect class="s2" x="285" y="132" width="200" height="126" rx="12" fill="none" stroke="#a78bfa" stroke-width="2.2"/>
+  <text x="305" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">02</text>
+  <text x="305" y="188" font-family="ui-monospace, monospace" font-size="15" fill="#ece7fb">OBJETIVO</text>
+  <text x="305" y="212" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">algo que se pueda</text>
+  <text x="305" y="228" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">comprobar, no «que quede bien»</text>
+  <text x="305" y="248" font-family="ui-monospace, monospace" font-size="10.5" fill="#a78bfa">se cumple o no se cumple</text>
+  <line x1="491" y1="195" x2="523" y2="195" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#aok)"/>
+
+  <!-- 3 trozos -->
+  <rect class="s3" x="530" y="132" width="200" height="126" rx="12" fill="none" stroke="#a78bfa" stroke-width="2.2"/>
+  <text x="550" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">03</text>
+  <text x="550" y="188" font-family="ui-monospace, monospace" font-size="15" fill="#ece7fb">TROZOS PEQUEÑOS</text>
+  <text x="550" y="212" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">una cosa por pedido,</text>
+  <text x="550" y="228" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">no el proyecto entero</text>
+  <text x="550" y="248" font-family="ui-monospace, monospace" font-size="10.5" fill="#a78bfa">lo pequeño se revisa</text>
+  <line x1="736" y1="195" x2="768" y2="195" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#aok)"/>
+
+  <!-- 4 verificar -->
+  <rect class="s4" x="775" y="132" width="185" height="126" rx="12" fill="none" stroke="#34d399" stroke-width="2.4"/>
+  <text x="795" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">04</text>
+  <text x="795" y="188" font-family="ui-monospace, monospace" font-size="15" fill="#34d399">VERIFICAS TÚ</text>
+  <text x="795" y="212" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">pruebas, lectura y</text>
+  <text x="795" y="228" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">tu criterio</text>
+  <text x="795" y="248" font-family="ui-monospace, monospace" font-size="10.5" fill="#34d399">firmas tú, no el modelo</text>
+
+  <!-- bucle de vuelta -->
+  <path class="loop" d="M867 264 C 867 330, 700 344, 500 344 C 300 344, 140 330, 140 268"
+        fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#agr)"/>
+  <text x="500" y="366" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#34d399">lo que falló vuelve como contexto —así la herramienta mejora contigo</text>
+
+  <text x="500" y="420" text-anchor="middle" font-family="Georgia, serif" font-size="16.5" fill="#ece7fb" font-style="italic">La IA propone; la responsabilidad de lo que entregas sigue siendo tuya.</text>
+</svg>

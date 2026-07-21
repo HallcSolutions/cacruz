@@ -1,5 +1,18 @@
 [
   {
+    "slug": "fear-laziness-and-the-tool",
+    "date": "2026-07-21",
+    "title": {
+      "es": "Ni miedo ni pereza: la IA es una herramienta y hay que aprender a dirigirla",
+      "en": "Neither fear nor laziness: AI is a tool, and you have to learn to steer it"
+    },
+    "summary": {
+      "es": "En las empresas donde he estado veo gente que trata la IA como su enemiga y gente que la usa sin mirar; las dos acaban igual, sin entender la herramienta. Por qué el miedo y la pereza van al mismo sitio, por qué cuesta más de lo que parece —saber qué quieres y conseguir explicárselo a alguien que no está en tu cabeza— y cómo se dirige, con datos y gráficos.",
+      "en": "At the companies I've worked in I see people treating AI as an enemy and people using it without looking; both end up the same, not understanding the tool. Why fear and laziness lead to the same place, why it takes more work than it looks —knowing what you want and explaining it to someone who isn't in your head— and how you steer it."
+    },
+    "tags": ["ia", "herramientas", "criterio", "trabajo", "aprendizaje"]
+  },
+  {
     "slug": "what-is-spec-driven-development",
     "date": "2026-07-20",
     "title": {

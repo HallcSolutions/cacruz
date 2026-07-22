@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" role="img" aria-label="AI engineer: what it really is, what it isn't, and how the work actually goes">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#a78bfa" stop-opacity=".15"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.15" r="0.6">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity=".18"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="627" fill="url(#bg)"/>
+  <rect width="1200" height="627" fill="url(#glow)"/>
+  <rect x="64" y="72" width="4" height="250" fill="url(#rule)"/>
+
+  <text x="96" y="92" font-family="Consolas, ui-monospace, monospace" font-size="17" letter-spacing="2.5" fill="#a78bfa">DEV NOTES · CACRUZ.COM</text>
+
+  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">AI engineer: what it</text>
+  <text x="96" y="232" font-family="Georgia, serif" font-size="54" fill="#ece7fb">really is, what it isn't,</text>
+  <text x="96" y="296" font-family="Georgia, serif" font-size="54" fill="#a78bfa">and how the work goes</text>
+
+  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">I read the job ads, went to the documentation, and translated</text>
+  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">word by word what they're really asking you for.</text>
+
+  <g>
+    <rect x="64" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="90" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">0</text>
+    <text x="90" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">official occupation codes</text>
+    <text x="90" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">exist for this job title</text>
+
+    <rect x="430" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="456" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">66%</text>
+    <text x="456" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">name "almost right, but</text>
+    <text x="456" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">not quite" as top gripe</text>
+
+    <rect x="796" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="822" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">80→95</text>
+    <text x="822" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">costs as much as getting</text>
+    <text x="822" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">to that first 80%</text>
+  </g>
+
+  <text x="64" y="588" font-family="Consolas, ui-monospace, monospace" font-size="16" fill="#5a5375">Christian Cruz Arango · cacruz.com/daily</text>
+</svg>

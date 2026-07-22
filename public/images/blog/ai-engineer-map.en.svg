@@ -1,0 +1,73 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Where the AI engineer fits">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ax" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#8a7fb0"/><stop offset="1" stop-color="#a78bfa"/>
+    </linearGradient>
+    <marker id="ap" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 2.2s linear infinite; }
+    .p1 { animation: pl 3.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .p2 { animation: pl 3.6s ease-in-out infinite .9s; transform-box: fill-box; transform-origin: center; }
+    .p3 { animation: pl 3.6s ease-in-out infinite 1.8s; transform-box: fill-box; transform-origin: center; }
+    .p4 { animation: pl 3.6s ease-in-out infinite 2.7s; transform-box: fill-box; transform-origin: center; }
+    .glow { animation: gw 3s ease-in-out infinite; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes pl { 0%,100% { opacity:.6; } 50% { opacity:1; } }
+    @keyframes gw { 0%,100% { opacity:.75;} 50% { opacity:1;} }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="42" font-family="Georgia, serif" font-size="27" fill="#ece7fb">Four trades on the same chain</text>
+  <text x="40" y="68" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">from model to product — and the title "AI engineer" fills only one box</text>
+
+  <!-- axis -->
+  <line class="flow" x1="46" y1="118" x2="954" y2="118" stroke="url(#ax)" stroke-width="2.4" marker-end="url(#ap)"/>
+  <text x="46" y="106" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">closer to the model</text>
+  <text x="924" y="106" text-anchor="end" font-family="ui-monospace, monospace" font-size="11.5" fill="#a78bfa">closer to the user</text>
+
+  <!-- 1 researcher -->
+  <rect class="p1" x="40" y="146" width="215" height="180" rx="12" fill="none" stroke="#8a7fb0" stroke-width="2.2"/>
+  <text x="60" y="180" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0">Researcher</text>
+  <text x="60" y="212" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Makes the model better.</text>
+  <text x="60" y="234" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Ships: a finding,</text>
+  <text x="60" y="254" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">a paper, a model.</text>
+  <text x="60" y="290" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">measured by: accuracy</text>
+  <text x="60" y="308" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">against the state of the art</text>
+
+  <!-- 2 ML engineer -->
+  <rect class="p2" x="268" y="146" width="215" height="180" rx="12" fill="none" stroke="#8a7fb0" stroke-width="2.2"/>
+  <text x="288" y="180" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0">ML engineer</text>
+  <text x="288" y="212" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Trains and deploys</text>
+  <text x="288" y="234" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">in-house models.</text>
+  <text x="288" y="254" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Data, labels, tuning.</text>
+  <text x="288" y="290" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">measured by: quality</text>
+  <text x="288" y="308" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">of the model shipped</text>
+
+  <!-- 3 AI engineer -->
+  <rect class="p3" x="496" y="138" width="230" height="196" rx="12" fill="none" stroke="#a78bfa" stroke-width="3"/>
+  <text x="516" y="174" font-family="ui-monospace, monospace" font-size="15.5" fill="#a78bfa">AI engineer</text>
+  <text x="516" y="206" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Builds the product on</text>
+  <text x="516" y="228" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">someone else's model:</text>
+  <text x="516" y="250" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">context, tools, limits</text>
+  <text x="516" y="272" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">and evaluation.</text>
+  <text x="516" y="302" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">measured by: the system</text>
+  <text x="516" y="320" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">getting it right for real</text>
+
+  <!-- 4 product -->
+  <rect class="p4" x="739" y="146" width="215" height="180" rx="12" fill="none" stroke="#8a7fb0" stroke-width="2.2"/>
+  <text x="759" y="180" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0">Product and business</text>
+  <text x="759" y="212" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">Decides which problem</text>
+  <text x="759" y="234" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">is worth solving,</text>
+  <text x="759" y="254" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">and for whom.</text>
+  <text x="759" y="290" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">measured by: value</text>
+  <text x="759" y="308" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">delivered to the user</text>
+
+  <text class="glow" x="500" y="392" text-anchor="middle" font-family="Georgia, serif" font-size="16.5" fill="#ece7fb" font-style="italic">The researcher and the ML engineer build the engine. The AI engineer builds the car.</text>
+  <text x="500" y="424" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">None of the four boxes is redundant. The problem is calling all four the same thing in the ad.</text>
+</svg>

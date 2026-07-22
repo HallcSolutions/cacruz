@@ -1,0 +1,991 @@
+{
+  "slug": "what-an-ai-engineer-actually-does",
+  "date": "2026-07-22",
+  "title": {
+    "es": "Ingeniero de IA: qué es de verdad, qué no es y cómo se trabaja",
+    "en": "AI engineer: what it really is, what it isn't, and how the work actually goes"
+  },
+  "summary": {
+    "es": "Llevo semanas leyendo ofertas de «ingeniero de IA» y casi ninguna dice lo mismo. Qué dice la documentación que es el cargo, qué NO es, el diccionario de la oferta traducido palabra por palabra, el proceso real, qué te preguntan en la entrevista y qué prueba técnica te ponen, lo bueno y lo malo, y qué tiene que poner la empresa.",
+    "en": "I've spent weeks reading \"AI engineer\" job ads and almost none of them agree. What the documentation says the role is, why it doesn't exist in any official occupation catalogue, what it is NOT, the real process step by step, the tasks of a normal week, the upsides and downsides without varnish, and what the company has to put in for the work to be possible."
+  },
+  "tags": [
+    "ia",
+    "carrera",
+    "ingeniería",
+    "trabajo",
+    "ofertas"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Llevo semanas leyendo ofertas de empleo con el título «Ingeniero de IA» y me ha pasado algo curioso: casi ninguna describe el mismo trabajo. Hoy mismo, mientras escribo esto, hay una que solo pide RAG y modelos de lenguaje; otra que exige Python, Docker, Kubernetes, inglés C1 y, a la vez, cuatro marcos de orquestación —LangChain, LangGraph, LlamaIndex y Haystack— que en buena medida sirven para lo mismo y de los que en un proyecto real eliges uno, no los cuatro. Y luego está la que más me llama la atención: la que pide «experiencia con Claude, Codex o Copilot», es decir, saber usar el asistente que te ayuda a escribir código, que no tiene nada que ver con construir un producto sobre un modelo. Y por debajo de todas, la descripción genérica del cargo: el texto de ejemplo que recursos humanos copia y pega cuando publica la oferta y no tiene claro qué pedir. Ahí no aparece ni una de esas palabras: se habla de ciencia de datos, de estadística y de tener una carrera —ingeniería de sistemas, informática o matemáticas—, pero ni una línea sobre lo que vas a hacer el lunes por la mañana. Mismo título, oficios distintos. Así que hice lo que suelo hacer cuando algo no me cuadra: en vez de fiarme de las ofertas, me fui a la documentación."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta nota es lo que encontré. Qué dice la literatura que es este cargo, de dónde salió, por qué no aparece en ningún catálogo oficial de profesiones, qué NO es —que es la parte que más confusión genera—, cómo es el proceso de trabajo día a día, qué tareas caen de verdad en una semana normal, qué me preguntarían en una entrevista y qué prueba técnica me pondrían, lo bueno y lo malo, y qué tiene que poner la empresa de su parte para que todo esto sea posible. Sin vender nada: si al final te parece que no es lo tuyo, la nota habrá servido igual."
+      },
+      {
+        "kind": "quote",
+        "text": "Cuando se trata de sacar productos de IA, quieres ingenieros, no investigadores.",
+        "source": "Shawn «swyx» Wang · The Rise of the AI Engineer, Latent Space, junio de 2023",
+        "sourceUrl": "https://www.latent.space/p/ai-engineer"
+      },
+      {
+        "kind": "heading",
+        "text": "De dónde sale este cargo (y por qué no existe oficialmente)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El término tiene fecha y autor. El 30 de junio de 2023, Shawn Wang —que firma como «swyx»— publicó un ensayo titulado [The Rise of the AI Engineer](https://www.latent.space/p/ai-engineer), que puedes leer entero y gratis. Su argumento era sencillo: cosas que antes exigían un equipo de investigación y cinco años, de repente se podían hacer con la documentación de una API y una tarde libre. Y si eso es cierto, hace falta un perfil nuevo: alguien que no entrena modelos, sino que construye productos encima de modelos que ya existen."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora la parte que a mí me pareció más reveladora, y que explica el caos de las ofertas. Ese cargo no existe en el catálogo oficial de profesiones de Estados Unidos. El sistema que usa el gobierno para clasificar ocupaciones, el SOC, no tiene un código para «ingeniero de IA»: el trabajo de IA queda repartido entre científicos de datos, desarrolladores de software e investigadores en computación. Un análisis del CSET de la Universidad de Georgetown, al intentar medir cuánta gente trabaja en IA en el país, tuvo que reconocer exactamente eso: no hay una ocupación de IA, hay decenas de ocupaciones que hacen IA."
+      },
+      {
+        "kind": "quote",
+        "text": "No existe una única ocupación de «inteligencia artificial»; el trabajo de IA está repartido entre decenas de ocupaciones ya existentes.",
+        "source": "Diana Gehlhaus y Santiago Mutis · The U.S. AI Workforce, CSET (Universidad de Georgetown), enero de 2021",
+        "sourceUrl": "https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf"
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y por qué importa esto, en vez de ser un dato curioso y ya está? Porque un cargo que no tiene definición oficial la recibe del mercado, y el mercado no se pone de acuerdo. Cada empresa rellena el título con lo que necesita ese trimestre. Por eso no puedes leer una oferta y suponer que sabes qué te van a pedir: tienes que leer las tareas, no el título. Más abajo dejo dos listas: las preguntas que yo haría en una entrevista para averiguar en qué versión del cargo estoy entrando, y las que, según esta investigación, supongo que me harían a mí."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué dice la documentación que es"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay dos definiciones circulando, y conviene tenerlas separadas porque describen trabajos distintos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La primera es la clásica, la de los servicios públicos de empleo. El servicio nacional de orientación profesional del Reino Unido define al ingeniero de IA como quien «desarrolla programas y algoritmos que enseñan a una máquina a realizar tareas y a aprender de ellas»: modelos, matemáticas, prototipos, análisis de datos. Es, en la práctica, lo que la industria llamaba ingeniero de machine learning."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La segunda es la que domina hoy en las ofertas reales, y es la de Chip Huyen en su libro [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), publicado por O'Reilly en 2025 (y aquí va mi punto de vista, no un dato: yo lo recomiendo. No es un libro que te enseñe a programar —no vas a encontrar tutoriales que copiar—, es un libro que te enseña a decidir y a mirar el producto: cuándo RAG y cuándo ajuste fino, cómo evaluar, qué merece la pena construir y qué no. La propia autora dice que lo escribió, entre otros, para quien está valorando dedicarse a esto; es decir, para quien lee una nota como esta). Ella lo define como construir aplicaciones sobre modelos fundacionales que ya están disponibles. La diferencia con el machine learning de siempre no es de grado, es de dirección: antes pasabas meses construyendo un modelo y luego montabas una aplicación encima; ahora empiezas por el producto, con un modelo que no es tuyo, y solo después —si hace falta— te metes a ajustar el modelo."
+      },
+      {
+        "kind": "quote",
+        "text": "La ingeniería de IA es el proceso de construir aplicaciones con modelos fundacionales ya disponibles; se distingue de la ingeniería de ML, que consiste en construir y desplegar modelos propios.",
+        "source": "Chip Huyen · AI Engineering: Building Applications with Foundation Models, O'Reilly, 2025",
+        "sourceUrl": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si tuviera que resumirlo en una frase para alguien que no está en esto: el ingeniero de machine learning fabrica el motor; el ingeniero de IA toma un motor que ya funciona y construye el coche, la carrocería, los frenos y el salpicadero, y responde de que el coche llegue entero al destino. Los dos son ingeniería. No son el mismo oficio."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué NO es un ingeniero de IA"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es la parte que más malentendidos ahorra, y la pongo antes del proceso a propósito. Si una oferta te describe alguna de estas cinco cosas y la llama «ingeniero de IA», no es que mienta: es que está usando el título para otra cosa."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "No es un investigador. El investigador busca que el modelo sea mejor y publica el hallazgo. El ingeniero da por bueno el modelo que hay y busca que el producto funcione. Son dos objetivos distintos y se miden de forma distinta.",
+          "No es un científico de datos. El científico de datos responde preguntas sobre datos que ya ocurrieron —qué pasó, por qué, qué predice esto—. El ingeniero de IA entrega un sistema que se ejecuta en producción, con usuarios delante y con un tiempo de respuesta que alguien va a reclamar.",
+          "No es un ingeniero de machine learning, aunque se solapen. Si el trabajo es entrenar, etiquetar y ajustar un modelo propio, eso es ML. Si el trabajo es evaluar, orquestar y poner en producción un modelo ajeno, eso es ingeniería de IA.",
+          "No es un «prompt engineer». Escribir buenos encargos es una habilidad dentro del oficio, igual que escribir buenas consultas SQL es una habilidad dentro del back. No es el oficio entero, y la empresa que lo confunda con el oficio entero acaba llevándose un disgusto en producción.",
+          "No es «alguien que sabe usar Claude, Codex o Copilot». Esta es la confusión que más veo en las ofertas y la más cara de las cinco. Usar IA para escribir tu código es una herramienta de productividad, y está muy bien. Construir un producto cuyo funcionamiento depende de un modelo es otra cosa completamente distinta: ahí el modelo no te ayuda a trabajar, el modelo es el producto, y si se equivoca lo nota el cliente, no tú."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-engineer-map.es.svg",
+        "caption": "Dónde encaja el ingeniero de IA entre los perfiles con los que se confunde."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una aclaración que hago siempre, porque la confusión sale cara: un modelo no es un agente. Un modelo predice texto; un agente es un modelo con herramientas, un objetivo y un bucle. Lo conté entero en [qué es un agente de IA](/daily/what-is-an-ai-agent), y las formas de montarlo están en [las arquitecturas de IA que de verdad se usan](/daily/ai-architectures-people-use)."
+      },
+      {
+        "kind": "heading",
+        "text": "El proceso: cómo se trabaja de verdad, paso a paso"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está el corazón de la nota, y es la parte que ninguna oferta explica. El proceso no empieza escribiendo un prompt —el encargo que le escribes al modelo—. Empieza mucho antes, y termina mucho después, y si te saltas los extremos el proyecto se cae. Este orden no me lo he inventado: es el que recomiendan tanto Anthropic en su guía de ingeniería como Chip Huyen en su lista de errores comunes, y coincide con lo que he visto funcionar."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Decidir si esto necesita IA. El primer paso es el más incómodo: comprobar que el problema no se resuelve con una consulta, una regla o un algoritmo de toda la vida, que serían más baratos, más rápidos y siempre darían el mismo resultado. Es el error número uno de la lista de Huyen, y ahorra proyectos enteros.",
+          "Definir qué significa «bien». Antes de escribir nada, escribes cómo vas a saber si el sistema acierta. Qué respuesta es correcta, cuál es aceptable, cuál es inadmisible. Si no puedes escribirlo, no puedes construirlo: solo podrás opinar sobre ello.",
+          "Montar la evaluación antes que el producto. Un conjunto de casos reales con su resultado esperado. Esto es el equivalente a los tests en el desarrollo normal y es, con diferencia, lo que más distingue a quien sabe de quien improvisa. Sin evaluación no tienes ingeniería, tienes una demo con suerte.",
+          "Empezar por lo más simple que pueda funcionar. Un solo modelo, un solo encargo bien escrito, sin marcos ni bases de datos vectoriales ni agentes. Anthropic lo dice sin rodeos: encuentra la solución más simple posible y sube la complejidad solo cuando la simple se quede corta.",
+          "Darle el contexto que le falta. Cuando el modelo falle por no saber algo de tu negocio, se lo das: documentos, resultados de búsqueda, datos de tu base. Eso es RAG, y llega ahora, no al principio.",
+          "Darle herramientas solo si el problema las pide. Que pueda consultar una API, ejecutar una función o buscar. Cada herramienta que añades es una superficie más donde el sistema puede equivocarse, así que se justifican una a una.",
+          "Poner límites y protecciones. Qué no puede responder, qué datos no pueden salir, qué pasa cuando el modelo no está disponible, cuánto se puede gastar. Esto en una oferta se llama «guardrails» y en la práctica es lo que impide un titular en el periódico.",
+          "Medir en producción y volver al paso 3. Registrar qué pregunta la gente de verdad, qué respuestas fallaron, cuánto costó cada una. Esos fallos reales se convierten en casos nuevos de tu evaluación. El bucle no se cierra nunca: eso no es un defecto del proceso, es el proceso."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-engineer-loop.es.svg",
+        "caption": "El bucle del ingeniero de IA: la evaluación va delante, y producción alimenta la evaluación."
+      },
+      {
+        "kind": "quote",
+        "text": "Pasar de un 80% a un 95% de acierto suele costar tanto trabajo como llegar al 80% inicial.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, enero de 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa frase merece que te pares un segundo. La demo que impresiona en una reunión sale en dos tardes. Lo que va detrás —el 15% que separa «impresiona» de «puedo cobrar por esto»— es el trabajo real y es donde se va el calendario. Quien no ha pasado por ahí promete fechas imposibles con toda la buena fe del mundo."
+      },
+      {
+        "kind": "heading",
+        "text": "Las tareas de una semana normal"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Bajemos del proceso a la agenda. Esto es lo que de verdad ocupa las horas, y sorprende a quien entra esperando pasar el día hablando con un modelo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Hablar con quien tiene el problema. Producto, negocio o el cliente. Traducir «queremos que responda dudas de facturación» a un criterio que se pueda comprobar. Es la mitad del trabajo y no lleva código.",
+          "Escribir y revisar casos de evaluación. Añadir los fallos de la semana pasada al conjunto, revisar a mano una muestra de respuestas. Huyen insiste en que el juez automático hay que validarlo con revisión humana; el juez también se equivoca.",
+          "Programar. Sí, se programa, y bastante: integraciones, tratamiento de documentos, colas, caché, tiempos de espera, reintentos, contratos de datos. Es ingeniería de software normal, con un componente raro en el medio.",
+          "Ajustar contexto y encargos. Reescribir instrucciones, recortar lo que sobra, decidir qué información entra en cada llamada. Aburrido de contar, decisivo en resultados.",
+          "Vigilar el gasto. Cada llamada cuesta dinero y ese coste crece con el uso, no con el tamaño del equipo. Alguien tiene que mirar esa factura, y ese alguien sueles ser tú.",
+          "Observar producción. Registros, trazas, latencias, qué preguntó la gente, dónde se cayó. Un sistema con IA falla de formas que no dan error: responde algo plausible y equivocado, con el mismo tono seguro de siempre.",
+          "Explicar por qué. A dirección, a legal, a soporte, al cliente. «El modelo lo decidió» no es una respuesta aceptable en ninguna de esas conversaciones."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Lo bueno del cargo"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "La demanda es real y está medida. LinkedIn coloca «AI engineer» en el primer puesto de su lista de empleos que más crecen en Estados Unidos en 2025, y el Foro Económico Mundial sitúa a los especialistas en IA y aprendizaje automático entre los tres perfiles que más crecen de aquí a 2030.",
+          "No hace falta doctorado, ni ninguna certificación concreta. Es lo que defendía swyx en 2023 y lo que confirman hoy las ofertas: la mayoría de los puestos son de aplicación —sacar producto sobre modelos existentes—, no de investigación. Se entra desde el desarrollo de software, que es de donde vengo yo. Las certificaciones abren puertas en algunos procesos de selección, pero lo que se defiende en una entrevista es una cosa que hayas puesto en producción.",
+          "Se ve el resultado. Trabajas sobre problemas cuyo efecto se nota la misma semana, no en un informe trimestral. Para quien viene de proyectos que tardan un año en salir, esto engancha.",
+          "Te obliga a ser mejor ingeniero, no peor. Como no puedes confiar en la salida, tienes que apoyarte más en lo de siempre: contratos claros, límites bien puestos, pruebas, observabilidad. La parte de mi oficio que más me sirve aquí es la que ya traía.",
+          "Y el sueldo acompaña. Por dar una referencia que se puede comprobar y no un número de LinkedIn: el servicio público de empleo del Reino Unido publica un rango de 35.000 a 75.000 libras al año según experiencia. Varía enormemente por país y por empresa, así que tómalo como orden de magnitud, no como promesa."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Lo malo, que casi nunca aparece en la oferta"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El sistema no es determinista. La misma entrada puede darte dos salidas distintas. Todo lo que aprendiste sobre depurar —reproducir el fallo y arreglarlo— se complica: aquí a veces no puedes reproducirlo, solo puedes medir con qué frecuencia ocurre.",
+          "El suelo se mueve solo. Sale una versión nueva del modelo, cambia su comportamiento y tu producto responde distinto sin que hayas tocado una línea. Por eso la evaluación no es un lujo: es tu única forma de enterarte antes que el cliente.",
+          "Se trabaja mucho más con datos y con gente que con modelos. Si entras esperando entrenar redes neuronales, vas a pasar la mayor parte del tiempo limpiando documentos, discutiendo criterios y leyendo registros.",
+          "El título está inflado. Como no hay definición oficial, hay empresas que llaman «ingeniero de IA» a integrar un chat en la web, y otras que exigen publicaciones. Puedes acabar en un puesto que no se parece en nada al que aceptaste.",
+          "La confianza del sector va a la baja, y con motivo. En la encuesta de Stack Overflow de 2025, el 66% señala como su mayor frustración las respuestas de la IA «casi correctas, pero no del todo», y hay más gente que desconfía de su exactitud (46%) que gente que confía (33%), pese a que el uso no para de subir. Ese «casi correctas» es exactamente el terreno donde vas a trabajar.",
+          "La responsabilidad es tuya y no se delega. Cuando el sistema dice una barbaridad a un cliente, el que da la cara eres tú. No hay «lo dijo el modelo» que valga, y esa presión es real."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Confundir «mal producto» con «mala IA» es de los errores más caros: casi todos usan los mismos modelos, así que la diferencia la marca el producto.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, enero de 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "heading",
+        "text": "Qué piden las ofertas de verdad (las he mirado hoy)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí he contado lo que dicen los libros. Ahora lo que dice el mercado, porque no siempre coinciden. He repasado las ofertas publicadas este mes de julio de 2026, tanto en España como fuera, y esto es lo que se repite. No cito empresas a propósito: los anuncios concretos caducan en semanas y lo que importa no es quién contrata, sino qué se está pidiendo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Python, siempre, y casi siempre como «imprescindible». JavaScript, TypeScript o Go aparecen como deseables, nunca como el eje. Si no programas en Python, ese es el primer hueco que tapar.",
+          "Un marco de orquestación: LangChain y LangGraph son los que más se repiten, seguidos de LlamaIndex y Haystack. Ojo con esto: son andamios, no el oficio, y en su mayoría son alternativas entre sí. Ver tres o cuatro en la misma oferta no significa que allí se usen los cuatro; suele significar que quien la redactó copió la lista entera por si acaso.",
+          "RAG y bases de datos vectoriales. Aparece prácticamente en todas: pgvector sobre PostgreSQL, OpenSearch, o el servicio vectorial de turno de la nube que use la empresa.",
+          "Agentes y llamada a herramientas. Es lo más nuevo del lote. Algunas lo escriben como «agentic systems», otras como «tool calling» o «structured output», y todas se refieren a lo mismo: que el modelo pueda ejecutar cosas, no solo responder.",
+          "Evaluación. Es la que menos aparece de las cinco y la que más te distingue si la traes. Cuando aparece, se escribe como «evals», «golden datasets» o «LLM-as-a-judge», y es la señal más clara de que en esa empresa alguien ya ha puesto algo en producción y se ha llevado el golpe.",
+          "Infraestructura normal: Docker, Kubernetes, alguna nube, alguna API en FastAPI o Django. Es decir, el trabajo de siempre, que sigue ahí debajo.",
+          "Y en España, además, inglés alto —muchas piden C1— y bastante trabajo en remoto."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el contraste, porque es todo el argumento de esta nota en un párrafo. La descripción estándar del puesto —la que se copia de plantilla en plantilla— habla de «evaluar procesos de aprendizaje automático», «recoger y analizar grandes cantidades de datos» y pide una carrera en ingeniería de sistemas, informática, matemáticas o estadística. Las ofertas que están abiertas hoy hablan de LangChain, RAG, pgvector y Docker. Las dos usan el mismo título. La primera describe el oficio de hace diez años; la segunda, el de esta semana. Y quien redacta la oferta, muchas veces, copia de la primera y contrata para la segunda."
+      },
+      {
+        "kind": "heading",
+        "text": "El diccionario de la oferta: qué te están pidiendo de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí quiero pararme, porque creo que es lo más útil que puedo dejarte. Una oferta de estas es una lista de palabras que, si no estás dentro, no significan nada; y lo peor es que suenan mucho más difíciles de lo que son. Voy a traducirlas una a una, en el orden en que aparecen en un sistema real, con la definición que dan las documentaciones oficiales y no la que me invento yo. Si eres desarrollador, verás que la mitad ya la sabes con otro nombre."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "«LLM» o «modelo fundacional». El modelo grande de lenguaje: un programa que, entrenado con cantidades enormes de texto, predice qué sigue después de lo que le escribes. No razona ni consulta nada por su cuenta; predice. Cuando la oferta dice «experiencia con LLMs» quiere decir que has trabajado llamando a uno de esos modelos desde tu código.",
+          "«Token» y «ventana de contexto». Un token es el trozo en que el modelo parte el texto, más o menos una sílaba larga o una palabra corta. La ventana de contexto es cuánto texto cabe de una vez entre lo que le mandas y lo que responde. Importa por dos motivos muy terrenales: se paga por token y, pasado el límite, lo que sobra sencillamente no se ve.",
+          "«Prompt» o «ingeniería de prompts». El encargo que le escribes: la instrucción, el ejemplo y el material. Escribirlo bien es una habilidad real, pero no es un oficio; es más parecido a saber redactar un ticket claro que a saber programar.",
+          "«Embedding» o «vectorizar». La documentación de Anthropic lo define como una representación numérica del texto que permite medir parecido de significado. En cristiano: conviertes cada párrafo en una lista de números de forma que dos textos que quieren decir lo mismo quedan cerca, aunque no compartan ni una palabra. Eso es lo que permite buscar por significado y no por coincidencia literal.",
+          "«Base de datos vectorial». Donde guardas esos números para poder preguntar «dame los cinco párrafos más parecidos a esto». No siempre hace falta una base nueva: pgvector es una extensión de PostgreSQL, así que muchas veces es tu base de siempre con una capacidad más.",
+          "«Chunking» o troceado. Cortar tus documentos en fragmentos antes de vectorizarlos. Suena a detalle y decide el resultado: si cortas por la mitad de una tabla o separas una condición de su excepción, la búsqueda devolverá medias verdades y el modelo responderá con ellas tan tranquilo.",
+          "«RAG», o generación aumentada por recuperación. Es la pieza que más aparece y la más malentendida. Consiste en buscar en tus documentos los fragmentos que vienen al caso y pegárselos al modelo dentro de la pregunta. No cambia el modelo, no lo entrena, no le enseña nada de forma permanente: le pasa una chuleta antes de cada respuesta.",
+          "«Fine-tuning» o ajuste fino. Esto sí toca el modelo: se le da un entrenamiento adicional que modifica sus pesos internos. Cuesta más, se hace menos, y sirve para cambiar cómo responde, no para darle datos nuevos.",
+          "«Agente», «tool calling», «structured output». Tres etiquetas que giran alrededor de lo mismo: dejar que el modelo haga cosas además de hablar. Que llame a una función tuya, que consulte una API, que devuelva un JSON con la forma exacta que tu programa espera. Cuando una oferta dice «agentic systems» está pidiendo esto.",
+          "«Evals» o evaluación. El conjunto de preguntas con su respuesta esperada contra el que mides el sistema, y las medidas que sacas de ahí. Es lo mismo que tus tests de siempre, con una diferencia incómoda: la respuesta correcta no es una cadena exacta, así que hay que decidir con qué criterio se da por buena.",
+          "«Guardrails» o barandillas. Los límites: qué no puede responder, qué datos no pueden salir, qué se hace si no hay respuesta fiable. Es validación de entrada y de salida, exactamente igual que la que ya haces en cualquier formulario, solo que aquí lo que validas es texto libre.",
+          "«Alucinación». La palabra de moda para algo muy concreto: el modelo devuelve algo falso con el mismo tono de seguridad con el que devuelve lo cierto. No es que mienta ni que se confunda; es que su trabajo es producir el texto más plausible, y lo plausible y lo verdadero no siempre coinciden.",
+          "«LangChain», «LangGraph», «LlamaIndex», «Haystack». Bibliotecas para no escribir a mano el pegamento entre el modelo, tus datos y tus herramientas. Conviene saber que LangChain y LangGraph son del mismo fabricante pero son cosas distintas y separables —su propia documentación dice que no necesitas LangChain para usar LangGraph—, y que ninguna es obligatoria: todo esto se puede hacer llamando a la API directamente.",
+          "«LLMOps» u observabilidad. Registrar qué se preguntó, qué se respondió, cuánto tardó y cuánto costó. Es tu monitorización de siempre, con dos columnas nuevas: el gasto y la calidad de la respuesta."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Los modelos RAG combinan memoria paramétrica preentrenada y memoria no paramétrica para generar lenguaje.",
+        "source": "Lewis, Perez, Piktus et al. · Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, NeurIPS 2020",
+        "sourceUrl": "https://arxiv.org/abs/2005.11401"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa frase, traducida, es la definición original de RAG y dice justo lo que tanta gente confunde: la memoria del modelo (lo que aprendió al entrenarse) y la memoria de fuera (tus documentos) son dos cosas separadas. RAG junta las dos en el momento de responder. No convierte la segunda en la primera."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y fíjate en el resumen de todo el diccionario, porque es lo que me habría gustado que alguien me dijera al principio: partir texto, guardarlo, buscarlo, validar entradas y salidas, registrar lo que pasa y medir contra casos de prueba. Eso es un backend. La pieza nueva es una sola —un modelo que devuelve texto plausible y que hay que vigilar— y el resto del vocabulario son nombres nuevos para cosas que un desarrollador ya hace. Por eso creo que este cargo asusta más de lo que debería."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo leer una oferta sin engañarte"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Como el título no significa nada por sí solo, estas son las preguntas que yo haría en la entrevista. Las respuestas te dicen en cuál de las tres versiones del cargo estás entrando, y también qué madurez tiene el equipo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "¿Entrenamos modelos propios o construimos sobre modelos de terceros? Separa el puesto de ML del puesto de ingeniería de IA en una sola pregunta.",
+          "¿Cómo sabéis hoy si el sistema responde bien? Si la respuesta es «lo probamos y parece que va», no tienen evaluación, y ese trabajo lo vas a montar tú desde cero.",
+          "¿Qué hay ya en producción y desde cuándo? Distingue a quien tiene un producto vivo de quien lleva un año en fase piloto.",
+          "¿Quién responde cuando el sistema se equivoca delante de un cliente? Te dice si hay un proceso o si el pararrayos vas a ser tú.",
+          "¿Cuánto gastáis al mes en llamadas al modelo? Si nadie sabe la cifra, tampoco saben si el proyecto es sostenible.",
+          "¿Qué parte del tiempo se dedica a datos y a hablar con negocio? Si te dicen «poca», o no lo han hecho todavía o no te lo están contando."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "¿Y a mí qué me preguntarían? La entrevista y la prueba técnica"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Llegados aquí me quedaba la duda que de verdad me traía dando vueltas, y es una duda mía, personal: si mañana mando mi currículum a una de esas ofertas y me llaman, ¿qué me van a preguntar exactamente? ¿Qué prueba técnica me pondrían delante? Porque una cosa es entender el cargo leyendo un libro y otra muy distinta es sentarte enfrente de alguien que lleva dos años peleándose con esto en producción."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que fui a mirarlo, igual que fui a mirar el resto. Y me tranquilizó bastante lo que encontré, porque casi todo gira alrededor de cinco temas y ninguno es esotérico: cómo funciona un modelo por dentro a grandes rasgos, cómo se le da contexto (RAG), cuándo conviene un agente, cómo se escriben los encargos y —la que más peso tiene— cómo se evalúa. Aviso de honestidad: no he pasado por esas entrevistas, así que esto no es un «me preguntaron»; son las preguntas que más se repiten en lo que he podido consultar y las que, por tanto, supongo que me harían a mí."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "«Diseña un sistema que responda dudas de clientes con nuestra documentación. ¿Cómo lo evaluarías?» Es la pregunta estrella y aparece en casi todos los procesos. Fíjate en que son dos preguntas: la segunda mitad es la que de verdad puntúa.",
+          "«¿Qué haces cuando la información no está en los documentos y el modelo se la inventa?» La respuesta que buscan tiene dos capas: mejorar la búsqueda, porque la mayoría de invenciones son huecos de información que el modelo rellena; y escribir el encargo de forma que obligue a citar el documento y a responder «no lo sé» cuando no hay material.",
+          "«¿RAG o ajuste fino del modelo?» Es la pregunta que separa a quien lo ha hecho de quien lo ha leído. Vuelvo sobre ella abajo, porque encierra la confusión más común de todas.",
+          "«¿Cómo trocearías estos documentos?» Suena a detalle menor y no lo es: cómo partes un PDF en fragmentos decide qué encuentra la búsqueda, y una mala partición hunde el sistema entero sin que ningún registro te avise.",
+          "«¿Cómo mides si va bien?» Aquí esperan tres ideas: si la respuesta se sostiene en los documentos recuperados, si lo recuperado era realmente pertinente, y si la respuesta contesta lo que se preguntó y no algo del mismo tema.",
+          "«¿Cuándo pondrías un agente y cuándo un flujo fijo?» La respuesta buena casi siempre es la aburrida: un flujo fijo, salvo que el problema pida decidir sobre la marcha. Lo desarrollé en su nota aparte.",
+          "«¿Cuánto costaría esto al mes y cuánto tardaría en responder?» Coste y latencia. Se pregunta más de lo que parece y descoloca a mucha gente que solo ha hecho pruebas en su portátil.",
+          "Y la que a mí me parece la de verdad: «cuéntame algo que pusieras en producción y qué se te rompió». No hay forma de improvisar esa respuesta, y por eso vale más que las siete anteriores juntas."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo respondería yo a la pregunta grande"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Dejar la lista de preguntas sin las respuestas sería dejarte a medias, así que voy con ellas. Y aviso de cómo lo planteo: no son frases para recitar, sino el análisis de lo que yo haría de verdad, en orden. Porque lo que se está mirando en esa media hora no es si te sabes las palabras, es si eres capaz de ordenar un problema. Empiezo por la grande —«diseña un sistema que responda con nuestra documentación y dime cómo lo evaluarías»— porque de ella cuelgan casi todas las demás."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Primero preguntar, no diseñar. Qué dudas concretas quieren cubrir, quién las responde hoy y cuánto tarda, y qué pasa si la respuesta sale mal: si es una molestia o es un problema legal. Sin eso, cualquier arquitectura que dibuje es adivinar. Y esta primera reacción, la de no lanzarse, ya dice bastante de quien la tiene.",
+          "Definir qué es una respuesta correcta, con ejemplos. Pediría entre treinta y cincuenta preguntas reales con su respuesta buena, sacadas del histórico de soporte. Y, muy importante, unas cuantas cuya respuesta NO esté en la documentación, para comprobar que el sistema sabe callarse.",
+          "Montar una línea base tonta antes de nada. Búsqueda por palabras de toda la vida, o meter la documentación entera en la pregunta si cabe. Mido con el conjunto anterior. Esto parece un paso perdido y no lo es: es la única forma de saber después cuánto aporta de verdad todo lo que venga encima.",
+          "Ahora sí, el RAG. Trocear los documentos, vectorizarlos, recuperar los fragmentos más cercanos a la pregunta y pasárselos al modelo con una instrucción clara: responde solo con esto y di de dónde lo sacas. Vuelvo a medir contra el mismo conjunto y comparo con la línea base.",
+          "Medir tres cosas, no una. Si la respuesta se sostiene en los fragmentos recuperados; si esos fragmentos eran de verdad pertinentes o eran ruido; y si la respuesta contesta lo que se preguntó. Un sistema puede fallar en cualquiera de las tres y el síntoma desde fuera es el mismo.",
+          "Poner las barandillas antes de enseñárselo a nadie. Qué queda fuera de su alcance, qué datos no pueden salir, un tiempo máximo de respuesta y un tope de gasto. Y la regla que más disgustos ahorra: si la búsqueda no encuentra nada suficientemente parecido, no se llama al modelo siquiera; se responde que no está en la documentación.",
+          "Dejarlo instrumentado desde el primer día. Registrar la pregunta, qué fragmentos se usaron, la respuesta, el coste y el tiempo, más un pulgar arriba o abajo del usuario. Cada fallo real entra al conjunto de evaluación, y ahí es donde el sistema empieza de verdad a mejorar.",
+          "Y decir en voz alta lo que NO haría: no meto un agente, no ajusto el modelo y no añado un marco de orquestación salvo que ya lo tengan en casa. Saber renunciar a las piezas de moda es, para mí, la mitad de la respuesta."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en que en esa respuesta hay poquísima tecnología y mucho orden. Es a propósito, y es lo que creo que se está midiendo: que empieces por el problema y por cómo se mide, no por las herramientas; que sepas montar algo simple antes que algo lucido; y que seas capaz de decir que no a la mitad de las palabras que venían en la oferta."
+      },
+      {
+        "kind": "heading",
+        "text": "Y las otras siete, respondidas"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Cuando se lo inventa. Tres capas, de fuera hacia dentro: que la búsqueda encuentre mejor, porque la mayoría de invenciones son huecos que el modelo rellena; que la instrucción le obligue a citar y a decir «no lo sé»; y una tercera que casi nadie menciona y que a mí me parece la más efectiva: si ningún fragmento supera un mínimo de parecido, ni siquiera se llama al modelo. Es más barato y más honesto.",
+          "RAG o ajuste fino. La regla en una línea: si lo que falta es información, RAG; si lo que falla es la manera de responder —el tono, el formato, la longitud—, ajuste fino. Y una advertencia que suma puntos: nunca uses ajuste fino para meter datos que cambian, porque cada cambio te obliga a reentrenar y a esperar. Se pueden combinar, pero se empieza por RAG.",
+          "Cómo trocear los documentos. Cortando por la estructura del propio documento —encabezados, secciones, artículos—, no cada tantos caracteres a ciegas; con un pequeño solapamiento para no partir una frase por la mitad; y guardando en cada fragmento de dónde viene y de cuándo es. La prueba que uso es simple: si lees un fragmento suelto y no se entiende sin el resto, está mal cortado.",
+          "Cómo mido si va bien. Con las tres medidas de antes, contra un conjunto de casos que no se toca, y ejecutándolo en cada cambio como cualquier otra prueba. Añadiría dos matices que suelen gustar: que el juez automático hay que validarlo revisando una muestra a mano, porque el juez también se equivoca; y que la comparación importante nunca es contra cero, es contra la versión de ayer.",
+          "Agente o flujo fijo. Flujo fijo por defecto, siempre. Un agente solo cuando no puedes saber de antemano los pasos ni el orden. El motivo es aburrido y práctico: cada herramienta que le das es una superficie más donde equivocarse, más latencia y más gasto, y un flujo fijo se depura y un agente se investiga.",
+          "Coste y latencia. El coste sale de multiplicar llamadas por tokens, así que se baja por tres sitios: recortar el contexto que mandas, cachear lo que se repite y usar un modelo pequeño donde el grande no aporte. La latencia casi nunca está en la búsqueda, está en el modelo; se disimula devolviendo la respuesta a medida que se genera, y se ataca de verdad acortando lo que se le manda.",
+          "Qué se te rompió. Aquí no hay técnica que valga: se cuenta uno real, con lo que falló, cómo se detectó y qué se cambió después para que no volviera. Y si no tienes ninguno todavía, decirlo tal cual y contar lo más parecido que hayas vivido. Inventarse una batalla es la forma más rápida de que se note que no la has dado."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y termino con la respuesta que más me ha servido en cualquier entrevista de mi vida, y que aquí vale el doble: «no lo sé, y así es como lo comprobaría». En un oficio que consiste precisamente en no fiarse de lo que suena bien, decir eso no te resta; es una demostración en directo de que sabes trabajar."
+      },
+      {
+        "kind": "heading",
+        "text": "La prueba técnica que me pondrían"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La prueba, por lo que he visto, casi siempre es la misma con distinto disfraz: te dan un puñado de documentos y te piden un sistema que responda preguntas sobre ellos. A veces en directo, con alguien mirando; a veces para casa, con un fin de semana de plazo. Lo interesante es que el sistema funcionando no es lo que puntúa, porque eso hoy lo saca casi cualquiera. Lo que puntúa es lo que hay alrededor."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Que entregues, junto al código, un conjunto de preguntas con su respuesta esperada. Es decir, que hayas medido y no solo probado.",
+          "Que el sistema sepa decir «esto no está en los documentos» en vez de inventarse algo. Muchas pruebas incluyen a propósito una pregunta cuya respuesta no está.",
+          "Que cada respuesta indique de qué documento salió, para que se pueda comprobar.",
+          "Que expliques qué decisiones tomaste y qué descartaste: por qué ese tamaño de fragmento, por qué ese modelo, por qué no metiste un agente.",
+          "Que hables de coste y de qué pasa si el servicio del modelo se cae.",
+          "Y algo que se agradece mucho y casi nadie hace: decir con franqueza qué falla todavía en tu entrega. Enseñar los límites de lo que has construido es la señal más clara de que sabes lo que has construido."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Dos frases que he oído y que ahora sabría contestar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La primera me la han dicho tal cual: «hazme un RAG con mis documentos para entrenar el modelo». Suena razonable y mezcla dos cosas que no tienen nada que ver. RAG no entrena nada. El modelo se queda exactamente igual que estaba; lo que haces es buscar los fragmentos de tus documentos que vienen al caso y pegárselos en la pregunta, para que responda leyéndolos. Es un examen a libro abierto: el alumno no ha estudiado más, es que le has dejado el libro delante."
+      },
+      {
+        "kind": "quote",
+        "text": "RAG hace esto sin modificar el modelo de lenguaje subyacente. El ajuste fino, en cambio, exige tocar los pesos y los parámetros del modelo.",
+        "source": "Red Hat · RAG frente a ajuste fino (fine-tuning)",
+        "sourceUrl": "https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Entrenar de verdad —el ajuste fino— sí cambia el modelo por dentro, cuesta bastante más y sirve para otra cosa: para enseñarle a comportarse de una manera, no para darle información nueva. La regla que yo uso es sencilla: si lo que falta es información, RAG; si lo que falla es la forma de responder, ajuste fino. Y para casi todo lo que me han pedido hasta ahora, la respuesta era RAG."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La segunda frase es la que más daño hace: «esto son seis horas, si ya ni hace falta saber programar». Es cierta la primera mitad. Un sistema que responde sobre tus documentos y que funciona en la demo se monta en una tarde, y quien lo dice no está mintiendo: lo ha visto. Lo que no ha visto es la semana siguiente. Hay un artículo académico que estudió sistemas de este tipo ya en funcionamiento y llegó a una conclusión que a mí me parece demoledora."
+      },
+      {
+        "kind": "quote",
+        "text": "La validación de un sistema RAG solo es posible durante su operación, y su robustez no se diseña de entrada: evoluciona.",
+        "source": "Barnett, Kurniawan, Thudumu, Brannelly y Abdelrazek · Seven Failure Points When Engineering a Retrieval Augmented Generation System, 2024",
+        "sourceUrl": "https://arxiv.org/abs/2401.05856"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Léelo despacio, porque contesta a la frase de las seis horas mejor que cualquier discusión: no puedes saber si esto funciona hasta que está en marcha con preguntas reales, y la solidez se gana con el tiempo, no se dibuja en la pizarra el primer día. Las seis horas son verdad. Lo que no es verdad es que en esas seis horas esté el trabajo."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué espera un ingeniero de IA de la empresa"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí he hablado de lo que se le pide al ingeniero. Falta la otra mitad, y es la que casi nunca se pone por escrito: qué tiene que poner la empresa para que ese trabajo sea posible. Lo digo sin rodeos porque me parece lo más útil de toda la nota: cuando un proyecto de IA fracasa, muchas veces no falló el modelo ni falló quien lo montó, faltaba alguna de estas ocho cosas desde el primer día."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Documentación de negocio, no solo documentación técnica. Un modelo no puede responder cómo se calcula un recargo si eso solo vive en la cabeza de una persona de administración. Antes que la arquitectura, hace falta que las reglas del negocio estén escritas en algún sitio. Y si no lo están, escribirlas es la primera tarea del proyecto, no un requisito previo que alguien tenga que traerte hecho.",
+          "Acceso a datos reales, y permiso para usarlos. Sin ejemplos verdaderos —preguntas que hicieron clientes de verdad, documentos que se usan de verdad— no se puede evaluar nada. Trabajar con datos de ejemplo inventados da una falsa sensación de que todo funciona y luego produce el peor tipo de sorpresa: la que aparece el día del lanzamiento.",
+          "Alguien que decida qué es una respuesta correcta. Esto no es una decisión técnica y no me corresponde a mí tomarla. Necesito una persona con nombre y apellidos —de negocio, de producto, de soporte— que revise ejemplos y diga «esta sí, esta no». Si nadie quiere firmar ese criterio, el proyecto no está listo para empezar.",
+          "Un caso de uso elegido, no una lista de veinte. Chip Huyen lo señala como uno de los errores más caros: pedir ideas a toda la organización y acabar persiguiendo muchas aplicaciones de poco impacto. Es mejor un caso que importe, terminado y medido, que quince pilotos a medias que solo sirven para concluir que «la IA no funcionó aquí».",
+          "Un criterio claro sobre datos y privacidad, por escrito. Qué información puede salir hacia un proveedor externo, cuál no, qué hay que anonimizar y quién responde de eso. Esta conversación con legal se tiene al principio o se tiene tarde, y tarde significa rehacer el sistema entero.",
+          "Presupuesto visible y aceptado. Cada llamada al modelo cuesta, y el coste crece con el uso. La empresa tiene que saber cuánto está dispuesta a gastar al mes y aceptar que el diseño va a estar condicionado por esa cifra. Si nadie la conoce, la sorpresa llega en la factura del tercer mes.",
+          "Acceso a producción y a los registros. No puedo mejorar lo que no puedo observar. Necesito ver qué preguntó la gente de verdad, qué se respondió y qué falló. Sin eso, el bucle de mejora se rompe y solo queda trabajar a base de intuiciones.",
+          "Tiempo aceptado para evaluar, no solo para construir. Si el calendario solo contempla la demo, la evaluación no se hará; y sin evaluación no hay forma de saber si el sistema empeora cuando cambie el modelo. Esa parte hay que defenderla igual que se defiende el tiempo de pruebas en cualquier otro proyecto serio."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Sin una priorización estratégica, las empresas persiguen muchas aplicaciones de poco impacto y acaban concluyendo, en falso, que la IA no da retorno.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, enero de 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una idea que a mí me ordena mucho las conversaciones con clientes: casi ninguna de estas ocho cosas es de inteligencia artificial. Son reglas escritas, datos accesibles, una persona que decide y un presupuesto conocido. Es decir, es la misma madurez que hace falta para cualquier proyecto de software que salga bien. La IA no crea ese problema; lo que hace es dejarlo a la vista mucho antes."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que yo haría si empezara mañana"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y termino con lo que le diría a alguien que viene del desarrollo y está mirando estas ofertas, que es más o menos donde estaba yo. No hay que empezar de cero: lo que ya sabes es la mitad del camino, y es justo la mitad que no se puede improvisar."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "No tires tu oficio. Contratos claros, límites entre capas, pruebas, observabilidad, coste. Todo eso vale aquí más que antes, precisamente porque la pieza del medio es poco fiable.",
+          "Aprende primero a evaluar, no a hacer prompts. Toma un problema pequeño tuyo, escribe treinta casos con su respuesta esperada y mide. Ese ejercicio enseña más que veinte tutoriales.",
+          "Construye una cosa entera, aunque sea diminuta. De la idea a producción, con su medición y su factura. Una cosa terminada enseña más que cinco a medias, y además se puede enseñar en una entrevista.",
+          "Documenta por qué decidiste cada cosa. En un terreno que cambia cada seis meses, el criterio es lo único que no caduca.",
+          "Y no te creas ninguna cifra sin ir a la fuente. Incluidas las mías: todas las de esta nota llevan enlace abajo para que las compruebes."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "En conclusión"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si tuviera que dejar todo esto en una sola idea, sería esta: las empresas no están buscando a alguien que sepa de inteligencia artificial. Están buscando tres cosas de siempre —velocidad, algo que funcione y código que se pueda seguir ampliando dentro de un año sin tirarlo— y hoy la IA es la vía más rápida que han encontrado para conseguirlas. La IA está en el título de la oferta; en la cabeza de quien contrata están esas tres."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y hay algo que ha cambiado y conviene decirlo sin rodeos: hoy casi nadie lee el código. Ni el cliente, ni negocio, ni muchas veces el compañero que lo hereda. Se mira el producto: si responde, si va rápido, si no se cae. Eso puede sonar a que el código ya da igual, y es justo al revés. Cuando nadie mira dentro, lo de dentro tiene que sostenerse solo, porque ya no hay quien te avise a tiempo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "La idea clara. Antes de escribir una línea, saber qué tiene que hacer y cómo vas a saber que lo hace. Es el paso 2 y el paso 3 de esta nota, y es lo único que separa un producto de una demo.",
+          "La velocidad. Entregar pronto y en trozos que se puedan ver funcionando. No porque haya prisa, sino porque hasta que una cosa no está delante de alguien no sabes si sirve.",
+          "Los estándares. Contratos claros, límites entre capas, pruebas, registros y coste vigilado. Es lo que hace que la velocidad del punto anterior no se pague el mes que viene con intereses."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y las tres juntas o ninguna, porque cada pareja sin la tercera falla de una forma distinta. Con idea clara y estándares pero sin velocidad, llegas tarde. Con velocidad e idea clara pero sin estándares, entregas algo que en tres meses nadie se atreve a tocar. Y con velocidad y estándares pero sin idea clara, construyes impecablemente algo que no hacía falta. Un ingeniero de IA que valga la pena es quien sostiene las tres a la vez teniendo una pieza poco fiable en el centro del sistema. Ese es el cargo. Todo lo demás es vocabulario."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si estás decidiendo si este cargo es para ti, mi resumen honesto es este: no es un puesto de investigación disfrazado, es ingeniería de software con una pieza poco fiable en el centro y con la obligación de demostrar que aun así el resultado es correcto. Si eso te parece un buen problema, te va a gustar. Puedes ver en qué ando yo en [mis proyectos](/projects) y cómo trabajo con empresas en [para empresas](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[The Rise of the AI Engineer](https://www.latent.space/p/ai-engineer) — Shawn «swyx» Wang, 2023: el ensayo que puso nombre al cargo. Léelo aunque solo sea para entender de dónde viene el título que aparece en las ofertas.",
+          "[AI Engineering: Building Applications with Foundation Models](https://www.oreilly.com/library/view/ai-engineering/9781098166298/) — Chip Huyen, O'Reilly, 2025: el libro de referencia sobre construir encima de modelos existentes, con la mejor explicación de evaluación que he leído.",
+          "[Common pitfalls when building generative AI applications](https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html) — Chip Huyen, 2025: seis errores caros explicados en una tarde. Si solo lees una cosa de esta lista, que sea esta.",
+          "[Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — Anthropic, 2024: la guía que recomienda empezar por lo más simple y subir la complejidad solo cuando haga falta.",
+          "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis, Perez, Piktus y otros, NeurIPS 2020: el artículo que inventó el RAG. Léelo si alguna vez te dicen que RAG entrena el modelo.",
+          "[Seven Failure Points When Engineering a Retrieval Augmented Generation System](https://arxiv.org/abs/2401.05856) — Barnett y otros, 2024: siete formas documentadas de que esto se rompa en producción, sacadas de sistemas reales en funcionamiento.",
+          "[RAG frente a ajuste fino](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning) — Red Hat: la explicación más corta y clara de la diferencia, para mandársela a quien te pida «un RAG para entrenar el modelo».",
+          "[AI engineer · National Careers Service](https://nationalcareers.service.gov.uk/job-profiles/artificial-intelligence-ai-engineer) — servicio público de empleo del Reino Unido: la ficha oficial del cargo, con tareas, rutas de entrada y rangos salariales.",
+          "[The U.S. AI Workforce](https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf) — CSET, Universidad de Georgetown, 2021: el informe que explica por qué no existe una ocupación oficial de IA y qué implica eso al medir el mercado.",
+          "[LinkedIn Jobs on the Rise 2025](https://www.linkedin.com/pulse/linkedin-jobs-rise-2025-25-fastest-growing-us-linkedin-news-gryie) — LinkedIn News, enero de 2025: la lista de los 25 empleos que más crecen en Estados Unidos, con «ingeniero de IA» en el número uno y la descripción que ellos mismos usan.",
+          "[Future of Jobs Report 2025](https://www.weforum.org/publications/the-future-of-jobs-report-2025/) — Foro Económico Mundial: los perfiles que más crecen hasta 2030, con la metodología a la vista.",
+          "[Stack Overflow Developer Survey 2025](https://survey.stackoverflow.co/2025/ai) — la encuesta con más respuestas del sector: uso de IA al alza, confianza a la baja, y el detalle del «casi correctas, pero no del todo»."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "I've spent weeks reading job ads titled \"AI Engineer\", and something odd kept happening: almost none of them describe the same job. Today, as I write this, there's one asking only for RAG and language models; another demanding Python, Docker, Kubernetes, C1 English and, all at once, four orchestration frameworks — LangChain, LangGraph, LlamaIndex and Haystack — that largely do the same job and of which, on a real project, you pick one, not four. And then there's the one that strikes me most: the one asking for \"experience with Claude, Codex or Copilot\" — that is, knowing how to use the assistant that helps you write code, which has nothing to do with building a product on top of a model. And underneath all of them, the generic role description: the sample text HR copies and pastes when posting the ad and isn't sure what to ask for. Not one of those words appears there: it talks about data science, statistics and holding a degree — computer science, software engineering or maths — but not one line about what you'll actually be doing on Monday morning. Same title, different trades. So I did what I usually do when something doesn't add up: instead of trusting the ads, I went to the documentation."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This note is what I found. What the literature says this role is, where it came from, why it doesn't appear in any official occupation catalogue, what it is NOT — the part that causes the most confusion — what the day-to-day process looks like, which tasks really fill a normal week, what they'd ask me in an interview and what take-home test they'd set, the upsides and the downsides, and what the company has to put in for any of it to be possible. I'm not selling anything: if you finish this and decide it isn't for you, the note did its job anyway."
+      },
+      {
+        "kind": "quote",
+        "text": "When it comes to shipping AI products, you want engineers, not researchers.",
+        "source": "Shawn \"swyx\" Wang · The Rise of the AI Engineer, Latent Space, June 2023",
+        "sourceUrl": "https://www.latent.space/p/ai-engineer"
+      },
+      {
+        "kind": "heading",
+        "text": "Where the role came from (and why it doesn't officially exist)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The term has a date and an author. On 30 June 2023, Shawn Wang — who writes as \"swyx\" — published an essay called [The Rise of the AI Engineer](https://www.latent.space/p/ai-engineer), which you can read in full for free. His argument was simple: things that used to take a research team and five years could suddenly be done with an API's docs and a spare afternoon. And if that's true, a new profile is needed: someone who doesn't train models but builds products on top of models that already exist."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now the part I found most revealing, and which explains the chaos in the job ads. That role does not exist in the official U.S. occupation catalogue. The system the government uses to classify occupations, the SOC, has no code for \"AI engineer\": AI work is spread across data scientists, software developers and computer research scientists. A CSET study out of Georgetown University, trying to measure how many people work in AI in the country, had to admit exactly that: there is no AI occupation, there are dozens of occupations doing AI."
+      },
+      {
+        "kind": "quote",
+        "text": "There is no single \"artificial intelligence\" occupation; AI work is spread across dozens of existing occupations.",
+        "source": "Diana Gehlhaus and Santiago Mutis · The U.S. AI Workforce, CSET (Georgetown University), January 2021",
+        "sourceUrl": "https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why does that matter, rather than being trivia? Because a role with no official definition gets its definition from the market, and the market doesn't agree. Every company fills the title with whatever it needs that quarter. So you can't read an ad and assume you know what they'll ask of you: you have to read the tasks, not the title. Further down I leave two lists: the questions I'd ask in an interview to work out which version of the role I'm walking into, and the ones that, going by this research, I'd expect to be asked myself."
+      },
+      {
+        "kind": "heading",
+        "text": "What the documentation says it is"
+      },
+      {
+        "kind": "paragraph",
+        "text": "There are two definitions in circulation, and it's worth keeping them apart because they describe different jobs."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first is the classic one, the one public employment services use. The UK's National Careers Service defines an AI engineer as someone who \"develops programs and algorithms which teach a machine or computer to carry out tasks and learn from them\": models, maths, prototypes, data analysis. In practice, that's what the industry used to call a machine learning engineer."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second is the one that dominates today's real job ads, and it's Chip Huyen's, from her book [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), published by O'Reilly in 2025 (and here's my own view, not a fact: I recommend it. It isn't a book that teaches you to code — there are no tutorials to copy — it's a book that teaches you to decide and to look at the product: when RAG and when fine-tuning, how to evaluate, what's worth building and what isn't. The author herself says she wrote it partly for people weighing up whether to go into this; that is, for whoever is reading a note like this one). She defines it as building applications on top of foundation models that are already available. The difference from classic machine learning isn't one of degree, it's one of direction: you used to spend months building a model and then put an application on top; now you start from the product, with a model that isn't yours, and only afterwards — if you need to — do you go tune the model."
+      },
+      {
+        "kind": "quote",
+        "text": "AI engineering is the process of building applications with readily available foundation models; it differs from ML engineering, which involves building and deploying models developed in-house.",
+        "source": "Chip Huyen · AI Engineering: Building Applications with Foundation Models, O'Reilly, 2025",
+        "sourceUrl": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/"
+      },
+      {
+        "kind": "paragraph",
+        "text": "If I had to put it in one sentence for someone outside the field: the ML engineer builds the engine; the AI engineer takes an engine that already works and builds the car — body, brakes, dashboard — and answers for the car arriving in one piece. Both are engineering. They are not the same trade."
+      },
+      {
+        "kind": "heading",
+        "text": "What an AI engineer is NOT"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the part that saves the most misunderstandings, and I'm putting it before the process on purpose. If an ad describes any of these five things and calls it \"AI engineer\", it isn't lying: it's using the title for something else."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Not a researcher. A researcher tries to make the model better and publishes the finding. An engineer takes the model as given and tries to make the product work. Two different goals, measured in two different ways.",
+          "Not a data scientist. A data scientist answers questions about data that already happened — what occurred, why, what this predicts. An AI engineer ships a system that runs in production, with users in front of it and a response time somebody will complain about.",
+          "Not a machine learning engineer, even though they overlap. If the job is training, labelling and tuning your own model, that's ML. If the job is evaluating, orchestrating and shipping somebody else's model, that's AI engineering.",
+          "Not a \"prompt engineer\". Writing good instructions is a skill within the trade, the same way writing good SQL is a skill within backend work. It is not the whole trade, and a company that thinks it is will find out the hard way in production.",
+          "Not \"someone who knows how to use Claude, Codex or Copilot\". This is the confusion I see most in job ads and the most expensive of the five. Using AI to write your code is a productivity tool, and a fine one. Building a product whose behaviour depends on a model is something else entirely: there, the model doesn't help you work — the model is the product, and when it gets things wrong it's the customer who notices, not you."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-engineer-map.en.svg",
+        "caption": "Where the AI engineer sits among the roles it gets confused with."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one clarification I always make, because the confusion is expensive: a model is not an agent. A model predicts text; an agent is a model with tools, a goal and a loop. I covered it in full in [what an AI agent is](/daily/what-is-an-ai-agent), and the ways to build one are in [the AI architectures people actually use](/daily/ai-architectures-people-use)."
+      },
+      {
+        "kind": "heading",
+        "text": "The process: how the work actually goes, step by step"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here's the heart of the note, and the part no job ad explains. The process doesn't start by writing a prompt — the instruction you hand the model. It starts long before, and it ends long after, and if you skip the ends the project falls over. I didn't invent this order: it's what Anthropic recommends in its engineering guide and what Chip Huyen argues in her list of common mistakes, and it matches what I've seen work."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Decide whether this needs AI at all. The first step is the most uncomfortable: check that the problem isn't solved by a query, a rule or a plain old algorithm — cheaper, faster, and always giving the same answer. It's mistake number one on Huyen's list, and it saves entire projects.",
+          "Define what \"good\" means. Before writing anything, you write down how you'll know the system got it right. Which answer is correct, which is acceptable, which is unacceptable. If you can't write it down, you can't build it — you can only have opinions about it.",
+          "Build the evaluation before the product. A set of real cases with their expected results. This is the equivalent of tests in ordinary development and it is, by far, what separates people who know from people who improvise. Without evaluation you don't have engineering, you have a demo that got lucky.",
+          "Start with the simplest thing that could work. One model, one well-written instruction, no frameworks, no vector databases, no agents. Anthropic says it plainly: find the simplest possible solution and only add complexity when the simple one falls short.",
+          "Give it the context it lacks. When the model fails because it doesn't know something about your business, you give it: documents, search results, data from your database. That's RAG, and it arrives now, not at the start.",
+          "Give it tools only if the problem asks for them. Let it call an API, run a function, search. Every tool you add is one more surface where the system can go wrong, so they get justified one at a time.",
+          "Set limits and safeguards. What it must not answer, which data must not leave, what happens when the model is unavailable, how much it may spend. In an ad this is called \"guardrails\"; in practice it's what keeps you out of the newspaper.",
+          "Measure in production and go back to step 3. Log what people actually ask, which answers failed, what each one cost. Those real failures become new cases in your evaluation. The loop never closes: that isn't a flaw in the process, it is the process."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-engineer-loop.en.svg",
+        "caption": "The AI engineer's loop: evaluation comes first, and production feeds the evaluation."
+      },
+      {
+        "kind": "quote",
+        "text": "Going from 80% to 95% accuracy often takes as much work as reaching that first 80%.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, January 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That sentence deserves a pause. The demo that wows a meeting takes two afternoons. What comes after — the 15% between \"impressive\" and \"I can charge for this\" — is the real work, and it's where the calendar goes. People who haven't been through it promise impossible dates in complete good faith."
+      },
+      {
+        "kind": "heading",
+        "text": "The tasks of a normal week"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Let's come down from the process to the calendar. This is what actually eats the hours, and it surprises people who arrive expecting to spend the day talking to a model."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Talking to whoever owns the problem. Product, business, or the client. Translating \"we want it to answer billing questions\" into a criterion you can check. It's half the job and it involves no code.",
+          "Writing and reviewing evaluation cases. Adding last week's failures to the set, reviewing a sample of answers by hand. Huyen insists that an automated judge has to be validated by human review; the judge gets things wrong too.",
+          "Coding. Yes, there's plenty of it: integrations, document processing, queues, caching, timeouts, retries, data contracts. It's ordinary software engineering with a strange component in the middle.",
+          "Tuning context and instructions. Rewriting instructions, cutting what's redundant, deciding which information goes into each call. Dull to describe, decisive in results.",
+          "Watching the spend. Every call costs money, and that cost grows with usage, not with team size. Somebody has to watch that bill, and that somebody is usually you.",
+          "Observing production. Logs, traces, latencies, what people asked, where it broke. An AI system fails in ways that don't raise an error: it answers something plausible and wrong, in the same confident tone as always.",
+          "Explaining why. To management, to legal, to support, to the client. \"The model decided\" is not an acceptable answer in any of those conversations."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "The upsides"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The demand is real and it's measured. LinkedIn puts \"AI engineer\" at the top of its 2025 list of the fastest-growing jobs in the U.S., and the World Economic Forum places AI and machine learning specialists among the three fastest-growing profiles through 2030.",
+          "You don't need a PhD, or any particular certification. That's what swyx argued back in 2023 and what today's ads confirm: most roles are application roles — shipping products on existing models — not research. You come in from software development, which is where I came from. Certifications open doors in some hiring processes, but what you defend in an interview is something you actually put into production.",
+          "You see the result. You work on problems whose effect shows up the same week, not in a quarterly report. For anyone used to projects that take a year to ship, that's addictive.",
+          "It makes you a better engineer, not a worse one. Since you can't trust the output, you have to lean harder on the classics: clear contracts, well-placed limits, tests, observability. The part of my trade that helps most here is the part I already had.",
+          "And the pay follows. To give a figure you can actually check rather than one off LinkedIn: the UK's public careers service publishes a range of £35,000 to £75,000 a year depending on experience. It varies enormously by country and company, so treat it as an order of magnitude, not a promise."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "The downsides, which rarely make it into the ad"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The system isn't deterministic. The same input can give you two different outputs. Everything you learned about debugging — reproduce the failure, fix it — gets harder: sometimes you can't reproduce it, you can only measure how often it happens.",
+          "The ground moves on its own. A new model version ships, its behaviour changes, and your product responds differently without you touching a line. That's why evaluation isn't a luxury: it's your only way of finding out before the customer does.",
+          "You work far more with data and people than with models. If you arrive expecting to train neural networks, you'll spend most of your time cleaning documents, arguing about criteria and reading logs.",
+          "The title is inflated. With no official definition, some companies call embedding a chat widget \"AI engineering\" and others demand publications. You can end up in a job that looks nothing like the one you accepted.",
+          "Trust in the sector is falling, and for good reason. In Stack Overflow's 2025 survey, 66% name \"AI solutions that are almost right, but not quite\" as their biggest frustration, and more people distrust the accuracy of those answers (46%) than trust it (33%), even as usage keeps climbing. That \"almost right\" is exactly the terrain you'll be working on.",
+          "The responsibility is yours and it doesn't delegate. When the system says something outrageous to a customer, you're the one facing them. \"The model said it\" doesn't fly, and that pressure is real."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Mistaking a bad product for bad AI is one of the most expensive errors: nearly everyone uses the same models, so the product is what makes the difference.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, January 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "heading",
+        "text": "What the ads actually ask for (I checked them today)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "So far I've reported what the books say. Now what the market says, because the two don't always agree. I went through the ads posted this July 2026, in Spain and beyond, and here's what repeats. I'm deliberately naming no companies: individual postings expire within weeks, and what matters isn't who's hiring but what's being asked for."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Python, always, and nearly always marked \"essential\". JavaScript, TypeScript or Go show up as nice-to-haves, never as the core. If you don't write Python, that's the first gap to close.",
+          "An orchestration framework: LangChain and LangGraph repeat the most, followed by LlamaIndex and Haystack. Careful with this one: they're scaffolding, not the trade, and most of them are alternatives to each other. Seeing three or four in the same ad doesn't mean all four are in use there; it usually means whoever wrote it copied the whole list just in case.",
+          "RAG and vector databases. This shows up in practically all of them: pgvector on PostgreSQL, OpenSearch, or whichever vector service the company's cloud provides.",
+          "Agents and tool calling. The newest item in the set. Some write it as \"agentic systems\", others as \"tool calling\" or \"structured output\", and they all mean the same thing: letting the model do things, not just answer.",
+          "Evaluation. The least common of the five and the one that most sets you apart if you bring it. When it does appear it's written as \"evals\", \"golden datasets\" or \"LLM-as-a-judge\", and it's the clearest sign that someone at that company has already shipped something and taken the hit.",
+          "Ordinary infrastructure: Docker, Kubernetes, some cloud, some API in FastAPI or Django. In other words, the usual job, still sitting underneath.",
+          "And in Spain, on top of that, high-level English — many ask for C1 — and a lot of remote work."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Look at the contrast, because it's this whole note in one paragraph. The standard description for the role — the one copied from template to template — talks about \"evaluating machine learning processes\", \"collecting and analyzing large amounts of data\", and asks for a degree in computer science, software engineering, maths or statistics. The ads open today talk about LangChain, RAG, pgvector and Docker. Both use the same title. The first describes the job of ten years ago; the second, the job of this week. And whoever writes the ad often copies from the first and hires for the second."
+      },
+      {
+        "kind": "heading",
+        "text": "The job-ad dictionary: what they're actually asking for"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I want to stop here, because I think this is the most useful thing I can leave you with. One of these ads is a list of words that mean nothing if you're not already inside; and worse, they sound far harder than they are. I'm going to translate them one by one, in the order they appear in a real system, using the definitions the official documentation gives rather than ones I made up. If you're a developer, you'll find you already know half of them under another name."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "\"LLM\" or \"foundation model\". The large language model: a program that, trained on enormous amounts of text, predicts what comes next after what you write. It doesn't reason and it doesn't look anything up on its own; it predicts. When an ad says \"experience with LLMs\" it means you've worked calling one of those models from your code.",
+          "\"Token\" and \"context window\". A token is the chunk the model splits text into, roughly a long syllable or a short word. The context window is how much text fits at once across what you send and what it answers. It matters for two very down-to-earth reasons: you pay per token, and past the limit, whatever's left over simply isn't seen.",
+          "\"Prompt\" or \"prompt engineering\". The instruction you write: the request, the example and the material. Writing it well is a real skill, but it isn't a trade; it's closer to knowing how to write a clear ticket than to knowing how to code.",
+          "\"Embedding\" or \"vectorising\". Anthropic's documentation defines it as a numerical representation of text that lets you measure semantic similarity. In plain terms: you turn each paragraph into a list of numbers such that two texts meaning the same thing land close together, even without sharing a single word. That's what makes it possible to search by meaning rather than by literal match.",
+          "\"Vector database\". Where you keep those numbers so you can ask \"give me the five paragraphs most similar to this\". You don't always need a new database: pgvector is a PostgreSQL extension, so often it's your usual database with one more capability.",
+          "\"Chunking\". Cutting your documents into fragments before vectorising them. It sounds like a detail and it decides the outcome: cut a table in half or separate a condition from its exception, and retrieval will hand back half-truths that the model will happily answer with.",
+          "\"RAG\", retrieval-augmented generation. The piece that appears most and is misunderstood most. It means searching your documents for the relevant fragments and pasting them to the model inside the question. It doesn't change the model, doesn't train it, doesn't teach it anything permanently: it hands it a crib sheet before each answer.",
+          "\"Fine-tuning\". This one does touch the model: additional training that modifies its internal weights. It costs more, it's done less often, and it's for changing how it answers, not for giving it new facts.",
+          "\"Agent\", \"tool calling\", \"structured output\". Three labels circling the same idea: letting the model do things as well as talk. Call a function of yours, query an API, return JSON in exactly the shape your program expects. When an ad says \"agentic systems\", this is what it's asking for.",
+          "\"Evals\". The set of questions with their expected answers that you measure the system against, and the metrics you get out of it. It's the same as your usual tests, with one uncomfortable difference: the correct answer isn't an exact string, so you have to decide by what criterion it counts as good.",
+          "\"Guardrails\". The limits: what it must not answer, what data must not leave, what happens when there's no reliable answer. It's input and output validation, exactly like the kind you already do on any form, except here what you're validating is free text.",
+          "\"Hallucination\". The fashionable word for something very specific: the model returns something false in the same confident tone it uses for the truth. It isn't lying or getting confused; its job is to produce the most plausible text, and plausible and true don't always coincide.",
+          "\"LangChain\", \"LangGraph\", \"LlamaIndex\", \"Haystack\". Libraries so you don't hand-write the glue between the model, your data and your tools. Worth knowing that LangChain and LangGraph come from the same maker but are different, separable things — their own documentation says you don't need LangChain to use LangGraph — and that none of them is mandatory: all of this can be done by calling the API directly.",
+          "\"LLMOps\" or observability. Logging what was asked, what was answered, how long it took and what it cost. It's your usual monitoring, with two new columns: the spend and the quality of the answer."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "RAG models combine pre-trained parametric and non-parametric memory for language generation.",
+        "source": "Lewis, Perez, Piktus et al. · Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks, NeurIPS 2020",
+        "sourceUrl": "https://arxiv.org/abs/2005.11401"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That sentence is the original definition of RAG, and it says exactly what so many people confuse: the model's own memory (what it learned while training) and the outside memory (your documents) are two separate things. RAG brings the two together at answer time. It does not turn the second into the first."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And look at the summary of the whole dictionary, because it's what I'd have liked someone to tell me at the start: split text, store it, search it, validate inputs and outputs, log what happens and measure against test cases. That's a backend. There's exactly one new piece — a model that returns plausible text and has to be watched — and the rest of the vocabulary is new names for things a developer already does. Which is why I think this role is scarier from the outside than it deserves to be."
+      },
+      {
+        "kind": "heading",
+        "text": "How to read a job ad without fooling yourself"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Since the title means nothing on its own, these are the questions I'd ask in the interview. The answers tell you which of the three versions of the role you're walking into, and also how mature the team is."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Do we train our own models or build on third-party ones? Separates the ML job from the AI engineering job in a single question.",
+          "How do you know today whether the system answers well? If the answer is \"we try it and it seems fine\", they have no evaluation, and you're the one who'll build it from scratch.",
+          "What's already in production, and since when? Distinguishes a team with a live product from one that's been in pilot phase for a year.",
+          "Who answers when the system gets it wrong in front of a customer? Tells you whether there's a process or whether you're the lightning rod.",
+          "How much do you spend a month on model calls? If nobody knows the number, they don't know whether the project is sustainable either.",
+          "What share of the time goes to data and to talking with the business? If they say \"not much\", either they haven't done it yet or they're not telling you."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "And what would they ask me? The interview and the take-home"
+      },
+      {
+        "kind": "paragraph",
+        "text": "At this point I was left with the question that had really been nagging at me, and it's my own, personal one: if tomorrow I send my CV to one of those ads and they call me, what exactly are they going to ask? What take-home test would they put in front of me? Because understanding the role from a book is one thing, and sitting across from someone who's spent two years wrestling with this in production is quite another."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So I went and looked, the same way I looked up everything else. And what I found reassured me, because almost all of it revolves around five topics and none of them is esoteric: roughly how a model works inside, how you give it context (RAG), when an agent is worth it, how instructions are written, and — carrying the most weight — how you evaluate. An honesty warning: I haven't sat through those interviews, so this isn't a \"they asked me\"; these are the questions that repeat the most in what I could find, and therefore the ones I'd expect to be asked myself."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "\"Design a system that answers customer questions using our documentation. How would you evaluate it?\" It's the headline question and it shows up in nearly every process. Notice it's two questions: the second half is the one that really scores.",
+          "\"What do you do when the information isn't in the documents and the model makes it up?\" The answer they're after has two layers: improve retrieval, because most made-up answers are information gaps the model fills in; and write the instruction so it's forced to cite the document and to answer \"I don't know\" when there's nothing to go on.",
+          "\"RAG or fine-tuning?\" This is the question that separates people who've done it from people who've read about it. I come back to it below, because it holds the most common confusion of all.",
+          "\"How would you split up these documents?\" It sounds like a minor detail and it isn't: how you cut a PDF into chunks decides what retrieval can find, and a bad split sinks the whole system without any log warning you.",
+          "\"How do you measure whether it's working?\" Here they're expecting three ideas: whether the answer is grounded in the retrieved documents, whether what was retrieved was actually relevant, and whether the answer addresses the question asked rather than something merely on-topic.",
+          "\"When would you use an agent and when a fixed workflow?\" The right answer is almost always the boring one: a fixed workflow, unless the problem genuinely requires deciding on the fly. I covered that in its own note.",
+          "\"What would this cost per month and how long would it take to answer?\" Cost and latency. It comes up more than you'd expect and it throws a lot of people who've only tried things on their laptop.",
+          "And the one I think really counts: \"tell me about something you put into production and what broke\". There's no improvising that answer, which is why it's worth more than the other seven combined."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "How I'd answer the big one"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Leaving the list of questions without the answers would leave you halfway, so here they are. And a note on how I'm framing them: these aren't lines to recite, they're the analysis of what I'd actually do, in order. Because what's being watched in that half hour isn't whether you know the words, it's whether you can put a problem in order. I'll start with the big one — \"design a system that answers using our documentation and tell me how you'd evaluate it\" — because nearly all the others hang off it."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Ask first, don't design. Which specific questions they want covered, who answers them today and how long it takes, and what happens when an answer is wrong: is it an annoyance or a legal problem. Without that, any architecture I sketch is guesswork. And that first reflex — not diving in — already says plenty about whoever has it.",
+          "Define what a correct answer is, with examples. I'd ask for thirty to fifty real questions with their good answers, pulled from the support history. And, crucially, several whose answer is NOT in the documentation, to check the system knows when to keep quiet.",
+          "Build a dumb baseline before anything else. Plain keyword search, or stuffing the whole documentation into the question if it fits. Then measure with the set above. This looks like a wasted step and isn't: it's the only way to know later how much everything built on top actually adds.",
+          "Now the RAG. Chunk the documents, vectorise them, retrieve the fragments closest to the question and hand them to the model with a clear instruction: answer only from this, and say where you got it. Measure again against the same set and compare with the baseline.",
+          "Measure three things, not one. Whether the answer is grounded in the retrieved fragments; whether those fragments were genuinely relevant or just noise; and whether the answer addresses what was asked. A system can fail on any of the three and the symptom from outside looks identical.",
+          "Put the guardrails up before showing it to anyone. What's out of scope, what data must not leave, a maximum response time and a spending cap. And the rule that saves the most grief: if retrieval finds nothing similar enough, the model isn't called at all; the answer is that it isn't in the documentation.",
+          "Leave it instrumented from day one. Log the question, which fragments were used, the answer, the cost and the time, plus a thumbs up or down from the user. Every real failure goes into the evaluation set, and that's where the system genuinely starts improving.",
+          "And say out loud what I would NOT do: no agent, no fine-tuning, and no orchestration framework unless they already run one in-house. Knowing how to turn down the fashionable pieces is, to me, half the answer."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice how little technology there is in that answer and how much ordering. That's deliberate, and it's what I think is being measured: that you start from the problem and from how it's measured rather than from the tools; that you can build something simple before something impressive; and that you're able to say no to half the words that were in the job ad."
+      },
+      {
+        "kind": "heading",
+        "text": "And the other seven, answered"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "When it makes things up. Three layers, from the outside in: make retrieval find better, because most inventions are gaps the model fills; make the instruction force it to cite and to say \"I don't know\"; and a third one almost nobody mentions, which I find the most effective: if no fragment clears a minimum similarity, the model isn't called at all. It's cheaper and more honest.",
+          "RAG or fine-tuning. The rule in one line: if what's missing is information, RAG; if what's wrong is the way it answers — tone, format, length — fine-tuning. Plus a warning that scores points: never use fine-tuning to load data that changes, because every change forces you to retrain and wait. They can be combined, but you start with RAG.",
+          "How to chunk the documents. Cut along the document's own structure — headings, sections, clauses — not blindly every N characters; with a small overlap so a sentence isn't split in half; and store in each fragment where it came from and how recent it is. The test I use is simple: if you read a fragment on its own and it makes no sense without the rest, it was cut wrong.",
+          "How I measure. With the three metrics above, against a set of cases that stays untouched, run on every change like any other test. I'd add two nuances that tend to land well: the automated judge has to be validated by reviewing a sample by hand, because the judge gets things wrong too; and the comparison that matters is never against zero, it's against yesterday's version.",
+          "Agent or fixed workflow. Fixed workflow by default, always. An agent only when you can't know the steps or their order in advance. The reason is boring and practical: every tool you hand it is one more surface to go wrong, more latency and more spend, and a fixed workflow gets debugged while an agent gets investigated.",
+          "Cost and latency. Cost is calls times tokens, so you bring it down in three places: trim the context you send, cache what repeats, and use a small model wherever the big one adds nothing. Latency is almost never in retrieval, it's in the model; you disguise it by streaming the answer as it's generated, and you actually fix it by shortening what you send.",
+          "What broke on you. No technique helps here: you tell a real one, with what failed, how it was spotted and what changed afterwards so it wouldn't happen again. And if you don't have one yet, say so plainly and tell the closest thing you've lived through. Inventing a war story is the fastest way to make it obvious you weren't in the war."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And I'll finish with the answer that has served me best in any interview of my life, and which is worth double here: \"I don't know, and this is how I'd find out\". In a trade that consists precisely of not trusting what sounds right, saying that doesn't count against you; it's a live demonstration that you know how to work."
+      },
+      {
+        "kind": "heading",
+        "text": "The take-home test they'd give me"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The test, from what I've seen, is nearly always the same one in different costumes: they hand you a pile of documents and ask for a system that answers questions about them. Sometimes live, with someone watching; sometimes to take home, with a weekend to do it. The interesting part is that a working system isn't what scores, because almost anyone can produce that today. What scores is everything around it."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "That you hand in, alongside the code, a set of questions with their expected answers. That is, that you measured rather than merely tried it out.",
+          "That the system can say \"this isn't in the documents\" instead of inventing something. Many tests deliberately include a question whose answer isn't there.",
+          "That every answer says which document it came from, so it can be checked.",
+          "That you explain what you decided and what you ruled out: why that chunk size, why that model, why you didn't reach for an agent.",
+          "That you talk about cost and about what happens if the model service goes down.",
+          "And something that's much appreciated and almost nobody does: saying frankly what still doesn't work in what you handed in. Showing the limits of what you built is the clearest sign that you understand what you built."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Two things I've been told that I'd now know how to answer"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first was said to me word for word: \"build me a RAG with my documents to train the model\". It sounds reasonable and it mixes two things that have nothing to do with each other. RAG trains nothing. The model stays exactly as it was; what you do is find the fragments of your documents that are relevant and paste them into the question, so it answers by reading them. It's an open-book exam: the student hasn't studied any more, you've just put the book in front of them."
+      },
+      {
+        "kind": "quote",
+        "text": "RAG does this without modifying the underlying LLM. Fine-tuning, by contrast, requires adjusting the weights and parameters of the model.",
+        "source": "Red Hat · RAG vs. fine-tuning",
+        "sourceUrl": "https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Actual training — fine-tuning — does change the model internally, costs considerably more, and serves a different purpose: teaching it to behave a certain way, not giving it new information. The rule I use is simple: if what's missing is information, RAG; if what's wrong is the way it answers, fine-tuning. And for almost everything I've been asked for so far, the answer was RAG."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second thing does more damage: \"it's six hours of work, you don't even need to know how to code any more\". The first half is true. A system that answers questions about your documents and works in the demo can be built in an afternoon, and whoever says it isn't lying: they've seen it. What they haven't seen is the following week. There's an academic paper that studied systems of this kind already running, and it reached a conclusion I find devastating."
+      },
+      {
+        "kind": "quote",
+        "text": "Validation of a RAG system is only feasible during operation, and its robustness evolves rather than being designed in at the start.",
+        "source": "Barnett, Kurniawan, Thudumu, Brannelly and Abdelrazek · Seven Failure Points When Engineering a Retrieval Augmented Generation System, 2024",
+        "sourceUrl": "https://arxiv.org/abs/2401.05856"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Read that slowly, because it answers the six-hours line better than any argument could: you can't know whether this works until it's running against real questions, and soundness is earned over time, not drawn on a whiteboard on day one. The six hours are real. What isn't real is that the work is in those six hours."
+      },
+      {
+        "kind": "heading",
+        "text": "What an AI engineer expects from the company"
+      },
+      {
+        "kind": "paragraph",
+        "text": "So far I've talked about what gets asked of the engineer. The other half is missing, and it's the half that almost never gets written down: what the company has to put in for that work to be possible at all. I'll say it plainly, because I think it's the most useful part of this note: when an AI project fails, often neither the model nor the person who built it was at fault — one of these eight things was missing from day one."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Business documentation, not just technical documentation. A model can't explain how a surcharge is calculated if that only lives in one person's head in the accounts department. Before architecture, the business rules need to be written down somewhere. And if they aren't, writing them is the project's first task, not a prerequisite somebody has to hand you finished.",
+          "Access to real data, and permission to use it. Without genuine examples — questions real customers asked, documents actually in use — nothing can be evaluated. Working with invented sample data gives a false sense that everything works, and then produces the worst kind of surprise: the one that shows up on launch day.",
+          "Someone who decides what a correct answer is. This isn't a technical decision and it isn't mine to make. I need a named person — from business, product or support — who reviews examples and says \"this one yes, this one no\". If nobody wants to sign off on that criterion, the project isn't ready to start.",
+          "One chosen use case, not a list of twenty. Chip Huyen flags this as one of the most expensive mistakes: crowdsourcing ideas across the organisation and ending up chasing many low-impact applications. One case that matters, finished and measured, beats fifteen half-done pilots whose only outcome is concluding that \"AI didn't work here\".",
+          "A clear position on data and privacy, in writing. Which information may go out to an external provider, which may not, what has to be anonymised and who answers for it. You have that conversation with legal at the start or you have it late, and late means rebuilding the whole system.",
+          "A visible, accepted budget. Every model call costs money, and the cost grows with usage. The company has to know how much it's willing to spend a month and accept that the design will be shaped by that number. If nobody knows it, the surprise arrives with the third month's bill.",
+          "Access to production and to the logs. I can't improve what I can't observe. I need to see what people actually asked, what was answered and what failed. Without that, the improvement loop breaks and all that's left is working on hunches.",
+          "Accepted time to evaluate, not only to build. If the calendar only covers the demo, the evaluation won't happen; and without evaluation there's no way to know whether the system gets worse when the model changes. That time has to be defended the same way testing time is defended in any other serious project."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Without strategic prioritisation, companies chase many low-impact applications and end up falsely concluding that AI delivers no return.",
+        "source": "Chip Huyen · Common pitfalls when building generative AI applications, January 2025",
+        "sourceUrl": "https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one idea that really tidies up my conversations with clients: almost none of those eight things is about artificial intelligence. They're written rules, accessible data, a person who decides, and a known budget. In other words, it's the same maturity any software project needs in order to go well. AI doesn't create that problem; what it does is expose it much earlier."
+      },
+      {
+        "kind": "heading",
+        "text": "What I'd do if I were starting tomorrow"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I'll finish with what I'd tell someone coming from software development who's looking at these ads, which is roughly where I was. You don't start from zero: what you already know is half the road, and it's precisely the half you can't improvise."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Don't throw away your trade. Clear contracts, boundaries between layers, tests, observability, cost. All of it is worth more here than before, precisely because the piece in the middle is unreliable.",
+          "Learn to evaluate first, not to prompt. Take a small problem of your own, write thirty cases with their expected answers, and measure. That exercise teaches more than twenty tutorials.",
+          "Build one whole thing, however tiny. From idea to production, with its measurement and its bill. One finished thing teaches more than five half-done ones, and you can show it in an interview.",
+          "Document why you decided each thing. In a field that changes every six months, judgement is the only thing that doesn't expire.",
+          "And don't believe any figure without going to the source. Mine included: every number in this note has a link below so you can check it."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "In conclusion"
+      },
+      {
+        "kind": "paragraph",
+        "text": "If I had to reduce all of this to a single idea, it would be this: companies aren't looking for someone who knows about artificial intelligence. They're looking for three old things — speed, something that works, and code you can keep extending a year from now without throwing it away — and today AI is the fastest route they've found to get them. AI is in the job title; what's in the hiring manager's head is those three."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And something has changed that's worth saying plainly: hardly anyone reads the code any more. Not the client, not the business side, and often not the colleague who inherits it. What gets looked at is the product: does it answer, is it fast, does it stay up. That can sound like the code no longer matters, and it's exactly the opposite. When nobody looks inside, the inside has to hold on its own, because there's no longer anyone to warn you in time."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The clear idea. Before writing a line, knowing what it has to do and how you'll know it does. It's step 2 and step 3 of this note, and it's the only thing separating a product from a demo.",
+          "Speed. Shipping early and in pieces you can watch working. Not because there's a rush, but because until something is in front of someone, you don't know whether it's any use.",
+          "Standards. Clear contracts, boundaries between layers, tests, logs and a watched budget. It's what stops the speed from the previous point being paid back next month with interest."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And all three or none, because each pair without the third fails in its own way. Clear idea and standards but no speed: you arrive late. Speed and a clear idea but no standards: you ship something nobody dares touch three months later. Speed and standards but no clear idea: you build, impeccably, something nobody needed. An AI engineer worth hiring is someone who holds all three at once with an unreliable piece at the centre of the system. That's the job. Everything else is vocabulary."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you're deciding whether this role is for you, my honest summary is this: it isn't a research job in disguise, it's software engineering with an unreliable piece at the centre and an obligation to prove the result is correct anyway. If that sounds like a good problem, you'll enjoy it. You can see what I'm working on in [my projects](/projects) and how I work with companies in [for companies](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[The Rise of the AI Engineer](https://www.latent.space/p/ai-engineer) — Shawn \"swyx\" Wang, 2023: the essay that named the role. Worth reading if only to understand where the title in those job ads came from.",
+          "[AI Engineering: Building Applications with Foundation Models](https://www.oreilly.com/library/view/ai-engineering/9781098166298/) — Chip Huyen, O'Reilly, 2025: the reference book on building on top of existing models, with the best explanation of evaluation I've read.",
+          "[Common pitfalls when building generative AI applications](https://huyenchip.com/2025/01/16/ai-engineering-pitfalls.html) — Chip Huyen, 2025: six expensive mistakes explained in one afternoon. If you read only one thing on this list, make it this one.",
+          "[Building effective agents](https://www.anthropic.com/engineering/building-effective-agents) — Anthropic, 2024: the guide that recommends starting with the simplest thing and adding complexity only when needed.",
+          "[Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks](https://arxiv.org/abs/2005.11401) — Lewis, Perez, Piktus and others, NeurIPS 2020: the paper that invented RAG. Read it if anyone ever tells you RAG trains the model.",
+          "[Seven Failure Points When Engineering a Retrieval Augmented Generation System](https://arxiv.org/abs/2401.05856) — Barnett and others, 2024: seven documented ways this breaks in production, drawn from real running systems.",
+          "[RAG vs. fine-tuning](https://www.redhat.com/en/topics/ai/rag-vs-fine-tuning) — Red Hat: the shortest, clearest explanation of the difference, to forward to whoever asks you for \"a RAG to train the model\".",
+          "[AI engineer · National Careers Service](https://nationalcareers.service.gov.uk/job-profiles/artificial-intelligence-ai-engineer) — the UK public careers service: the official role profile, with tasks, entry routes and salary ranges.",
+          "[The U.S. AI Workforce](https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf) — CSET, Georgetown University, 2021: the report explaining why there is no official AI occupation and what that implies when measuring the market.",
+          "[LinkedIn Jobs on the Rise 2025](https://www.linkedin.com/pulse/linkedin-jobs-rise-2025-25-fastest-growing-us-linkedin-news-gryie) — LinkedIn News, January 2025: the 25 fastest-growing jobs in the U.S., with \"AI engineer\" at number one and the description they themselves use.",
+          "[Future of Jobs Report 2025](https://www.weforum.org/publications/the-future-of-jobs-report-2025/) — World Economic Forum: the fastest-growing profiles through 2030, with the methodology on show.",
+          "[Stack Overflow Developer Survey 2025](https://survey.stackoverflow.co/2025/ai) — the sector's largest survey: AI usage up, trust down, and the detail on \"almost right, but not quite\"."
+        ]
+      }
+    ]
+  }
+}

@@ -1,5 +1,18 @@
 [
   {
+    "slug": "what-an-ai-engineer-actually-does",
+    "date": "2026-07-22",
+    "title": {
+      "es": "Ingeniero de IA: qué es de verdad, qué no es y cómo se trabaja",
+      "en": "AI engineer: what it really is, what it isn't, and how the work actually goes"
+    },
+    "summary": {
+      "es": "Llevo semanas leyendo ofertas de «ingeniero de IA» y casi ninguna dice lo mismo. Qué dice la documentación que es el cargo, qué NO es, el diccionario de la oferta traducido palabra por palabra, el proceso real, qué te preguntan en la entrevista y qué prueba técnica te ponen, lo bueno y lo malo, y qué tiene que poner la empresa.",
+      "en": "I've spent weeks reading \"AI engineer\" job ads and almost none of them agree. What the documentation says the role is, why it doesn't exist in any official occupation catalogue, what it is NOT, the real process step by step, the tasks of a normal week, the upsides and downsides without varnish, and what the company has to put in for the work to be possible."
+    },
+    "tags": ["ia", "carrera", "ingeniería", "trabajo", "ofertas"]
+  },
+  {
     "slug": "fear-laziness-and-the-tool",
     "date": "2026-07-21",
     "title": {

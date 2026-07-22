@@ -26,9 +26,9 @@
 
   <g>
     <rect x="64" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
-    <text x="90" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">0</text>
-    <text x="90" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">official occupation codes</text>
-    <text x="90" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">exist for this job title</text>
+    <text x="90" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">54</text>
+    <text x="90" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">occupations do AI work;</text>
+    <text x="90" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">none is called AI engineer</text>
 
     <rect x="430" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
     <text x="456" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">66%</text>

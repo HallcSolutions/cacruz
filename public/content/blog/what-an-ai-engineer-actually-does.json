@@ -42,13 +42,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "Ahora la parte que a mí me pareció más reveladora, y que explica el caos de las ofertas. Ese cargo no existe en el catálogo oficial de profesiones de Estados Unidos. El sistema que usa el gobierno para clasificar ocupaciones, el SOC, no tiene un código para «ingeniero de IA»: el trabajo de IA queda repartido entre científicos de datos, desarrolladores de software e investigadores en computación. Un análisis del CSET de la Universidad de Georgetown, al intentar medir cuánta gente trabaja en IA en el país, tuvo que reconocer exactamente eso: no hay una ocupación de IA, hay decenas de ocupaciones que hacen IA."
+        "text": "Ahora la parte que a mí me pareció más reveladora, y que explica el caos de las ofertas. Ese cargo no existe en el catálogo oficial de profesiones de Estados Unidos. El sistema que usa el gobierno para clasificar ocupaciones, el SOC, no tiene un código para «ingeniero de IA»: el trabajo de IA queda repartido entre científicos de datos, desarrolladores de software e investigadores en computación. Un análisis del CSET de la Universidad de Georgetown, al intentar medir cuánta gente trabaja en IA en el país, no encontró una ocupación de IA: encontró cincuenta y cuatro ocupaciones distintas que participan o podrían participar en construir productos de IA."
       },
       {
         "kind": "quote",
-        "text": "No existe una única ocupación de «inteligencia artificial»; el trabajo de IA está repartido entre decenas de ocupaciones ya existentes.",
+        "text": "Una definición de la fuerza laboral de IA basada en el sistema oficial de clasificación de ocupaciones, que identifica 54 ocupaciones que participan o podrían participar en el desarrollo de productos y aplicaciones de IA.",
         "source": "Diana Gehlhaus y Santiago Mutis · The U.S. AI Workforce, CSET (Universidad de Georgetown), enero de 2021",
-        "sourceUrl": "https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf"
+        "sourceUrl": "https://cset.georgetown.edu/publication/the-u-s-ai-workforce/"
       },
       {
         "kind": "paragraph",
@@ -68,13 +68,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "La segunda es la que domina hoy en las ofertas reales, y es la de Chip Huyen en su libro [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), publicado por O'Reilly en 2025 (y aquí va mi punto de vista, no un dato: yo lo recomiendo. No es un libro que te enseñe a programar —no vas a encontrar tutoriales que copiar—, es un libro que te enseña a decidir y a mirar el producto: cuándo RAG y cuándo ajuste fino, cómo evaluar, qué merece la pena construir y qué no. La propia autora dice que lo escribió, entre otros, para quien está valorando dedicarse a esto; es decir, para quien lee una nota como esta). Ella lo define como construir aplicaciones sobre modelos fundacionales que ya están disponibles. La diferencia con el machine learning de siempre no es de grado, es de dirección: antes pasabas meses construyendo un modelo y luego montabas una aplicación encima; ahora empiezas por el producto, con un modelo que no es tuyo, y solo después —si hace falta— te metes a ajustar el modelo."
+        "text": "La segunda es la que domina hoy en las ofertas reales, y es la de Chip Huyen en su libro [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), publicado por O'Reilly en 2025 (y aquí va mi punto de vista, no un dato: yo lo recomiendo. No es un libro que te enseñe a programar —no vas a encontrar tutoriales que copiar—, es un libro que te enseña a decidir y a mirar el producto: cuándo RAG y cuándo ajuste fino, cómo evaluar, qué merece la pena construir y qué no. Su propio repositorio dice que está pensado tanto para ingenieros como para responsables de equipo y de producto, que es justo la mezcla de gente que te vas a encontrar en estos proyectos). Ella lo define como construir aplicaciones sobre modelos fundacionales que ya están disponibles. La diferencia con el machine learning de siempre no es de grado, es de dirección: antes pasabas meses construyendo un modelo y luego montabas una aplicación encima; ahora empiezas por el producto, con un modelo que no es tuyo, y solo después —si hace falta— te metes a ajustar el modelo."
       },
       {
         "kind": "quote",
-        "text": "La ingeniería de IA es el proceso de construir aplicaciones con modelos fundacionales ya disponibles; se distingue de la ingeniería de ML, que consiste en construir y desplegar modelos propios.",
-        "source": "Chip Huyen · AI Engineering: Building Applications with Foundation Models, O'Reilly, 2025",
-        "sourceUrl": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/"
+        "text": "El aprendizaje automático tradicional pone el peso en anotar datos tabulares, construir características y entrenar modelos. La ingeniería de IA lo pone en la ingeniería de prompts, la construcción del contexto y el ajuste fino eficiente.",
+        "source": "Chip Huyen · repositorio del libro AI Engineering, 2025",
+        "sourceUrl": "https://github.com/chiphuyen/aie-book"
       },
       {
         "kind": "paragraph",
@@ -358,13 +358,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "La prueba, por lo que he visto, casi siempre es la misma con distinto disfraz: te dan un puñado de documentos y te piden un sistema que responda preguntas sobre ellos. A veces en directo, con alguien mirando; a veces para casa, con un fin de semana de plazo. Lo interesante es que el sistema funcionando no es lo que puntúa, porque eso hoy lo saca casi cualquiera. Lo que puntúa es lo que hay alrededor."
+        "text": "La prueba, por lo que he podido consultar, casi siempre es la misma con distinto disfraz: te dan un puñado de documentos y te piden un sistema que responda preguntas sobre ellos. A veces en directo, con alguien mirando; a veces para casa, con un fin de semana de plazo. Y lo que me parece más interesante, aunque aquí ya opino yo: el sistema funcionando no debería ser lo que puntúe, porque eso hoy lo saca casi cualquiera. Lo que distingue es lo que hay alrededor."
       },
       {
         "kind": "steps",
         "items": [
           "Que entregues, junto al código, un conjunto de preguntas con su respuesta esperada. Es decir, que hayas medido y no solo probado.",
-          "Que el sistema sepa decir «esto no está en los documentos» en vez de inventarse algo. Muchas pruebas incluyen a propósito una pregunta cuya respuesta no está.",
+          "Que el sistema sepa decir «esto no está en los documentos» en vez de inventarse algo. Yo daría por hecho que en los documentos hay alguna pregunta sin respuesta puesta ahí a propósito, y prepararía el sistema para eso.",
           "Que cada respuesta indique de qué documento salió, para que se pueda comprobar.",
           "Que expliques qué decisiones tomaste y qué descartaste: por qué ese tamaño de fragmento, por qué ese modelo, por qué no metiste un agente.",
           "Que hables de coste y de qué pasa si el servicio del modelo se cae.",
@@ -527,13 +527,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "Now the part I found most revealing, and which explains the chaos in the job ads. That role does not exist in the official U.S. occupation catalogue. The system the government uses to classify occupations, the SOC, has no code for \"AI engineer\": AI work is spread across data scientists, software developers and computer research scientists. A CSET study out of Georgetown University, trying to measure how many people work in AI in the country, had to admit exactly that: there is no AI occupation, there are dozens of occupations doing AI."
+        "text": "Now the part I found most revealing, and which explains the chaos in the job ads. That role does not exist in the official U.S. occupation catalogue. The system the government uses to classify occupations, the SOC, has no code for \"AI engineer\": AI work is spread across data scientists, software developers and computer research scientists. A CSET study out of Georgetown University, trying to measure how many people work in AI in the country, didn't find an AI occupation: it found fifty-four separate occupations that take part, or could take part, in building AI products."
       },
       {
         "kind": "quote",
-        "text": "There is no single \"artificial intelligence\" occupation; AI work is spread across dozens of existing occupations.",
+        "text": "A definition of the AI workforce based on the government occupational classification system, identifying 54 occupations that either participate or could participate in AI product and application development.",
         "source": "Diana Gehlhaus and Santiago Mutis · The U.S. AI Workforce, CSET (Georgetown University), January 2021",
-        "sourceUrl": "https://cset.georgetown.edu/wp-content/uploads/US-AI-Workforce_Brief-2.pdf"
+        "sourceUrl": "https://cset.georgetown.edu/publication/the-u-s-ai-workforce/"
       },
       {
         "kind": "paragraph",
@@ -553,13 +553,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "The second is the one that dominates today's real job ads, and it's Chip Huyen's, from her book [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), published by O'Reilly in 2025 (and here's my own view, not a fact: I recommend it. It isn't a book that teaches you to code — there are no tutorials to copy — it's a book that teaches you to decide and to look at the product: when RAG and when fine-tuning, how to evaluate, what's worth building and what isn't. The author herself says she wrote it partly for people weighing up whether to go into this; that is, for whoever is reading a note like this one). She defines it as building applications on top of foundation models that are already available. The difference from classic machine learning isn't one of degree, it's one of direction: you used to spend months building a model and then put an application on top; now you start from the product, with a model that isn't yours, and only afterwards — if you need to — do you go tune the model."
+        "text": "The second is the one that dominates today's real job ads, and it's Chip Huyen's, from her book [AI Engineering](https://www.oreilly.com/library/view/ai-engineering/9781098166298/), published by O'Reilly in 2025 (and here's my own view, not a fact: I recommend it. It isn't a book that teaches you to code — there are no tutorials to copy — it's a book that teaches you to decide and to look at the product: when RAG and when fine-tuning, how to evaluate, what's worth building and what isn't. Its own repository says it's aimed at engineers as much as at engineering managers and product people, which is exactly the mix of people you meet on these projects). She defines it as building applications on top of foundation models that are already available. The difference from classic machine learning isn't one of degree, it's one of direction: you used to spend months building a model and then put an application on top; now you start from the product, with a model that isn't yours, and only afterwards — if you need to — do you go tune the model."
       },
       {
         "kind": "quote",
-        "text": "AI engineering is the process of building applications with readily available foundation models; it differs from ML engineering, which involves building and deploying models developed in-house.",
-        "source": "Chip Huyen · AI Engineering: Building Applications with Foundation Models, O'Reilly, 2025",
-        "sourceUrl": "https://www.oreilly.com/library/view/ai-engineering/9781098166298/"
+        "text": "Traditional ML puts the weight on tabular data annotations, feature engineering and model training. AI engineering puts it on prompt engineering, context construction and parameter-efficient finetuning.",
+        "source": "Chip Huyen · AI Engineering book repository, 2025",
+        "sourceUrl": "https://github.com/chiphuyen/aie-book"
       },
       {
         "kind": "paragraph",
@@ -843,13 +843,13 @@
       },
       {
         "kind": "paragraph",
-        "text": "The test, from what I've seen, is nearly always the same one in different costumes: they hand you a pile of documents and ask for a system that answers questions about them. Sometimes live, with someone watching; sometimes to take home, with a weekend to do it. The interesting part is that a working system isn't what scores, because almost anyone can produce that today. What scores is everything around it."
+        "text": "The test, from what I could find, is nearly always the same one in different costumes: they hand you a pile of documents and ask for a system that answers questions about them. Sometimes live, with someone watching; sometimes to take home, with a weekend to do it. And here's the part I find most interesting, though now I'm giving an opinion: a working system shouldn't be what scores, because almost anyone can produce that today. What sets you apart is everything around it."
       },
       {
         "kind": "steps",
         "items": [
           "That you hand in, alongside the code, a set of questions with their expected answers. That is, that you measured rather than merely tried it out.",
-          "That the system can say \"this isn't in the documents\" instead of inventing something. Many tests deliberately include a question whose answer isn't there.",
+          "That the system can say \"this isn't in the documents\" instead of inventing something. I'd assume there's a question in there with no answer, planted on purpose, and I'd prepare the system for it.",
           "That every answer says which document it came from, so it can be checked.",
           "That you explain what you decided and what you ruled out: why that chunk size, why that model, why you didn't reach for an agent.",
           "That you talk about cost and about what happens if the model service goes down.",

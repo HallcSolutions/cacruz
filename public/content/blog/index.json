@@ -1,5 +1,18 @@
 [
   {
+    "slug": "how-i-code-angular-with-ai",
+    "date": "2026-07-24",
+    "title": {
+      "es": "Cómo uso la IA cuando programo con Angular: el orden del framework es lo que el modelo necesita",
+      "en": "How I use AI when I code with Angular: the framework's order is exactly what the model needs"
+    },
+    "summary": {
+      "es": "Angular es mi framework favorito por su versatilidad, pero sobre todo por su orden. Cuento cómo dirijo la IA cuando programo con Angular: el servidor MCP oficial que le da la versión de hoy y no la de su memoria, las skills que le enseñan el «cómo» idiomático, chalc que junta todo, y por qué sin documentación clara —docs/architecture.md y un README en cada carpeta— nada de esto se sostiene.",
+      "en": "Angular is my favorite framework for its versatility, but above all for its order. How I steer AI when I code with Angular: the official MCP server that hands it today's version instead of the one in its memory, the skills that teach it the idiomatic \"how\", chalc tying it all together, and why none of it holds up without clear docs — an architecture.md and a README in every folder."
+    },
+    "tags": ["angular", "ia", "mcp", "skills", "chalc"]
+  },
+  {
     "slug": "what-an-ai-engineer-actually-does",
     "date": "2026-07-22",
     "title": {

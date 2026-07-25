@@ -1,0 +1,80 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="El orden de Angular como base, más el MCP, las skills y el código limpio, da código legible con buenas prácticas y más rápido">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto">
+      <path d="M0 0 L10 5 L0 10 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .base { transform-box: fill-box; transform-origin: center; animation: pulseB 3.4s ease-in-out infinite; }
+    .add { transform-box: fill-box; transform-origin: center; animation: float 5s ease-in-out infinite; }
+    .a2 { animation-delay: -1.6s } .a3 { animation-delay: -3.2s }
+    .res { transform-box: fill-box; transform-origin: center; animation: pulseR 2.6s ease-in-out infinite; }
+    .op { animation: blink 2.8s ease-in-out infinite; }
+    .bolt { transform-box: fill-box; transform-origin: center; animation: zap 1.8s ease-in-out infinite; }
+    @keyframes pulseB { 0%,100% { stroke-opacity:.6 } 50% { stroke-opacity:1 } }
+    @keyframes pulseR { 0%,100% { transform: scale(1); opacity:.92 } 50% { transform: scale(1.05); opacity:1 } }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-5px) } }
+    @keyframes blink { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+    @keyframes zap { 0%,100% { transform: scale(1); opacity:.8 } 50% { transform: scale(1.25); opacity:1 } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="25" fill="#ece7fb">Lo que sale cuando el orden del framework suma</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">Angular + MCP + skills + código limpio = código bueno, y más rápido</text>
+
+  <!-- Angular · base -->
+  <g class="base">
+    <rect x="36" y="168" width="158" height="128" rx="14" fill="rgba(167,139,250,0.12)" stroke="#a78bfa" stroke-width="2.4"/>
+    <text x="115" y="210" text-anchor="middle" font-family="Georgia, serif" font-size="21" fill="#ece7fb">Angular</text>
+    <text x="115" y="238" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">el orden del</text>
+    <text x="115" y="254" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">framework</text>
+    <rect x="80" y="266" width="70" height="20" rx="10" fill="#0d0b16" stroke="#a78bfa" stroke-width="1.2"/>
+    <text x="115" y="280" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">la base</text>
+  </g>
+
+  <text class="op" x="207" y="248" text-anchor="middle" font-family="ui-monospace, monospace" font-size="26" fill="#a78bfa">+</text>
+
+  <!-- MCP -->
+  <g class="add">
+    <rect x="220" y="180" width="120" height="104" rx="12" fill="none" stroke="#a78bfa" stroke-width="1.8"/>
+    <text x="280" y="216" text-anchor="middle" font-size="18">🔌</text>
+    <text x="280" y="242" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">MCP</text>
+    <text x="280" y="262" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">la versión de hoy</text>
+  </g>
+
+  <text class="op" x="353" y="248" text-anchor="middle" font-family="ui-monospace, monospace" font-size="26" fill="#a78bfa">+</text>
+
+  <!-- skills -->
+  <g class="add a2">
+    <rect x="366" y="180" width="120" height="104" rx="12" fill="none" stroke="#a78bfa" stroke-width="1.8"/>
+    <text x="426" y="216" text-anchor="middle" font-size="18">📚</text>
+    <text x="426" y="242" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">skills</text>
+    <text x="426" y="262" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">el cómo idiomático</text>
+  </g>
+
+  <text class="op" x="499" y="248" text-anchor="middle" font-family="ui-monospace, monospace" font-size="26" fill="#a78bfa">+</text>
+
+  <!-- código limpio -->
+  <g class="add a3">
+    <rect x="512" y="180" width="150" height="104" rx="12" fill="none" stroke="#a78bfa" stroke-width="1.8"/>
+    <text x="587" y="216" text-anchor="middle" font-size="18">🧹</text>
+    <text x="587" y="242" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">código limpio</text>
+    <text x="587" y="262" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">Clean Code · SOLID</text>
+  </g>
+
+  <text class="op" x="675" y="248" text-anchor="middle" font-family="ui-monospace, monospace" font-size="26" fill="#34d399">=</text>
+
+  <!-- resultado -->
+  <g class="res">
+    <rect x="692" y="168" width="272" height="128" rx="14" fill="rgba(52,211,153,0.06)" stroke="#34d399" stroke-width="2.4"/>
+    <text x="716" y="206" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">✓ código legible</text>
+    <text x="716" y="232" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">✓ buenas prácticas</text>
+    <text x="716" y="258" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">✓ y más rápido</text>
+    <text class="bolt" x="936" y="284" text-anchor="middle" font-size="20">⚡</text>
+  </g>
+
+  <text x="40" y="352" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">todo deriva de la misma base: el orden que el framework ya trae</text>
+</svg>

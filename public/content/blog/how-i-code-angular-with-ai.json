@@ -1,0 +1,405 @@
+{
+  "slug": "how-i-code-angular-with-ai",
+  "date": "2026-07-24",
+  "title": {
+    "es": "Cómo uso la IA cuando programo con Angular: el orden del framework es lo que el modelo necesita",
+    "en": "How I use AI when I code with Angular: the framework's order is exactly what the model needs"
+  },
+  "summary": {
+    "es": "Angular es mi framework favorito por su versatilidad, pero sobre todo por su orden. Cuento cómo dirijo la IA cuando programo con Angular: el servidor MCP oficial que le da la versión de hoy y no la de su memoria, las skills que le enseñan el «cómo» idiomático, chalc que junta todo, y por qué sin documentación clara —docs/architecture.md y un README en cada carpeta— nada de esto se sostiene.",
+    "en": "Angular is my favorite framework for its versatility, but above all for its order. How I steer AI when I code with Angular: the official MCP server that hands it today's version instead of the one in its memory, the skills that teach it the idiomatic \"how\", chalc tying it all together, and why none of it holds up without clear docs — an architecture.md and a README in every folder."
+  },
+  "tags": ["angular", "ia", "mcp", "skills", "chalc"],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Programo en Angular desde hace cerca de doce años y sigue siendo el framework con el que más disfruto. Me gusta por dos cosas que, además, van juntas: es completo —trae de fábrica el enrutado, los formularios, el HTTP, el renderizado en servidor y las pruebas, en vez de obligarte a ensamblar diez librerías sueltas— y es ordenado, porque para casi todo hay una forma idiomática de hacerlo y el framework te empuja hacia ella. Cuando empecé a programar con IA, ese orden resultó valer doble: al modelo le da una convención a la que agarrarse en lugar de una hoja en blanco, y con una convención clara lo que me devuelve es código legible y mantenible, no algo que apenas compila y me toca reescribir. De eso va esta nota: de cómo uso ese orden para dirigir la IA."
+      },
+      {
+        "kind": "quote",
+        "text": "La IA no falla por falta de potencia; falla por falta de contexto y de orden. Angular le entrega las dos cosas casi de fábrica."
+      },
+
+      { "kind": "heading", "text": "Por qué el orden de Angular ayuda a la IA" },
+      {
+        "kind": "paragraph",
+        "text": "Un framework muy libre tiene diez maneras válidas de hacer lo mismo. El modelo elige una casi al azar y cada archivo termina distinto: el que revisa después no encuentra un patrón, encuentra diez. Angular va al revés. Hoy hay una forma idiomática para casi todo —componentes standalone, signals para el estado, inject() en vez de inyección por constructor, control de flujo con @if y @for— y esa forma es la que el framework recompensa. Cuando hay una sola diana, el modelo apunta a ella. Menos formas válidas, menos deriva."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/angular-order.es.svg",
+        "caption": "El orden del framework es la base; encima suman el MCP, las skills y el código limpio, y sale código bueno y más rápido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pero hay una trampa: Angular se mueve rápido. Lo idiomático de hace dos versiones ya no lo es hoy, y el modelo aprendió con el código que había cuando lo entrenaron. Si lo dejo suelto me escribe NgModules, @HostBinding y *ngIf con toda la seguridad del mundo —patrones que Angular dio por deprecados en la v20 y que van camino de desaparecer: el *ngIf sigue ahí, pero ya está marcado para eliminarse—. Ahí es donde dejo de confiar en su memoria y le doy la versión de hoy."
+      },
+
+      { "kind": "heading", "text": "El MCP oficial: la versión de hoy, no la que el modelo recuerda" },
+      {
+        "kind": "paragraph",
+        "text": "Un servidor MCP es un puente: le da al asistente herramientas y datos en vivo, no lo que memorizó. Y aquí está lo bueno: Angular publica el suyo, oficial, dentro del propio CLI. Lo levanto con un comando y el modelo deja de adivinar en qué versión estamos."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npx @angular/cli mcp",
+          "→ herramientas del asistente:",
+          "   get_best_practices   · las buenas prácticas de HOY",
+          "   search_documentation · busca en angular.dev en vivo",
+          "   list_projects        · lee la estructura real del workspace"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada herramienta tapa un agujero distinto. `get_best_practices` le entrega la guía vigente para la versión instalada —standalone por defecto, signals, `inject()`, control de flujo con @if y @for, fuera @HostBinding— así que el modelo no dispara con lo que recuerda. `search_documentation` consulta angular.dev en el momento: si dudo de una API, la busca en vez de inventarla. Y `list_projects` le deja ver el workspace real antes de crear nada. El equipo de Angular lo resume bien: las skills dan la guía, el MCP da las herramientas de acción."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuando no quiero levantar el servidor, Angular también publica su contexto empaquetado en [llms.txt y llms-full.txt](https://angular.dev/ai/develop-with-ai) —un índice y un compendio pensados para que un modelo lea cómo se construye Angular hoy— y un archivo de buenas prácticas que puedo pegar como instrucciones del sistema. Distinto formato, la misma idea: que el modelo no programe de memoria."
+      },
+
+      { "kind": "heading", "text": "Skills: el «cómo» idiomático que no depende de mi memoria" },
+      {
+        "kind": "paragraph",
+        "text": "Una skill es una ficha de conocimiento que el asistente abre solo cuando la tarea la necesita: no le vuelco todo de golpe, sino la guía justa para lo que va a tocar en ese momento. En mi día a día tengo skills para las distintas partes del trabajo, y no solo de Angular —también las hay de código limpio, de pruebas o de lo que el proyecto pida—; cada una dice, con ejemplos, cómo se hace esa cosa concreta hoy. No es documentación que yo tenga que recordar y repetir en cada chat: vive en el proyecto, versionada, y el siguiente que llegue —yo mañana, un compañero o un agente— abre la misma ficha y trabaja igual."
+      },
+      {
+        "kind": "quote",
+        "text": "El conocimiento no debería viajar en mi cabeza ni en una conversación que se cierra. Si vive en el proyecto, todos —personas y agentes— arrancan con el mismo criterio."
+      },
+
+      { "kind": "heading", "text": "chalc: donde el MCP, las skills y el método se juntan" },
+      {
+        "kind": "paragraph",
+        "text": "chalc es la CLI que construí para no repetir la misma preparación en cada repositorio. Entro a la carpeta, ejecuto un comando y equipa el proyecto: detecta que es Angular, carga las skills que aplican, conecta el MCP oficial y fija el método con el que trabajo —especificación, luego test, luego código—. No usa IA para detectar el stack: aplica reglas explícitas, así que es instantáneo, determinista y no gasta un solo token."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd cacruz",
+          "chalc",
+          "→ detect: angular 20 · typescript",
+          "→ skills: angular-component, clean-code, mutation-testing…",
+          "→ mcp: angular-cli (docs y buenas prácticas en vivo)",
+          "→ método: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/angular-ai-stack.es.svg",
+        "caption": "Las tres cosas que uso para dirigir al asistente, apoyadas en la documentación del proyecto."
+      },
+
+      { "kind": "heading", "text": "Y siempre con documentación, porque sin ella nada de esto se sostiene" },
+      {
+        "kind": "paragraph",
+        "text": "El orden de Angular me da la mitad; la otra mitad la pongo yo, y va escrita. Estructuro mis proyectos Angular con una arquitectura modular por features —cada parte en su capa, con reglas de dependencia claras: un feature se apoya en lo compartido y en el núcleo, nunca en otro feature—. Y eso no lo guardo en la cabeza: lo dejo en un `architecture.md`. ¿Por qué escrito y no solo en mi criterio? Porque el modelo lo lee antes de tocar un archivo: sabe qué capa le toca y dónde va cada cosa, y así deja de inventarse la estructura o de meter código donde no corresponde."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no lo dejo en un solo documento gigante. Cada carpeta lleva su propio `README.md` con su papel: el núcleo (`core`) guarda lo transversal —guards, interceptors, providers de raíz—; lo compartido (`shared`), lo reutilizable —componentes de presentación, pipes, directivas—; y cada feature vive en su carpeta, con su estado y sus rutas. Y cada README dice, además, qué skills aplican ahí: la documentación no solo describe, apunta al asistente a la ficha correcta justo cuando va a trabajar en esa carpeta."
+      },
+      {
+        "kind": "quote",
+        "text": "Un README que el modelo puede leer vale más que una convención que solo vive en mi cabeza. Y una regla que nadie escribe es una regla que el modelo no puede seguir."
+      },
+
+      { "kind": "heading", "text": "Por widgets y por módulos: piezas pequeñas que la IA toca sin romper el resto" },
+      {
+        "kind": "paragraph",
+        "text": "Dos ideas sostienen esto, y vale la pena nombrarlas antes de seguir. La primera es programar por widgets: un widget es una pieza pequeña y autónoma de la interfaz —un botón, un formulario, una tarjeta— que lleva dentro todo lo suyo: su plantilla, su estado y su estilo. En Angular esa pieza se llama componente, y una pantalla no es más que varios de ellos encajados. La segunda es la arquitectura modular: en lugar de amontonar todo el código junto, lo reparto en partes separadas —`features`, `shared` y `core`—, cada una con una sola responsabilidad y con fronteras claras entre sí."
+      },
+      {
+        "kind": "paragraph",
+        "text": "No es estética de ingeniería: es justo lo que hace que la IA no me rompa cosas. Cuando trabajo con ella no le suelto «la aplicación» entera, le doy un widget o un módulo concreto. Una pieza pequeña, con una responsabilidad clara, es un blanco acotado: el modelo tiene menos contexto que sostener y menos que estropear."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y cuando algo está aislado, un cambio equivocado también se queda aislado. Reviso un archivo, no cuarenta; si el modelo se pasa de la raya, el daño no cruza a otro feature porque las reglas de dependencia no se lo permiten —cada feature depende de `shared` y `core`, nunca de otro feature—. Programar por widgets y por módulos convierte cada tarea en una caja con bordes: más fácil de revisar para mí, más difícil de romper para la IA. Aun así no la dejo sola: reviso siempre lo que hace, y en cuanto algo no va bien la paro y la reencamino al punto, en vez de dejar que siga tirando por donde no era."
+      },
+      {
+        "kind": "quote",
+        "text": "La modularidad no es adorno: es el límite del daño. Una pieza pequeña y aislada es fácil de revisar para mí y difícil de romper para el modelo."
+      },
+
+      { "kind": "heading", "text": "Un aviso: skills y MCP no son todo el sistema" },
+      {
+        "kind": "paragraph",
+        "text": "Aquí conviene frenar, porque no quiero que esta nota te deje una idea falsa. Si te quedaste con que dirigir la IA se reduce a un MCP y unas skills, me expliqué mal: eso es solo la capa que le da contexto sobre lo que voy a construir. Debajo hay un sistema entero que no depende del framework: sería el mismo en Angular que en cualquier otra tecnología. Estas son las piezas que lo forman de verdad, y cada una daría para su propia nota:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-system.es.svg",
+        "caption": "El contexto y el método entran; dentro, el agente repite su loop con el modelo como una pieza más; solo sale lo que pasa la verificación."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El contexto y las reglas** — qué ve el modelo antes de decidir y qué límites tiene: el MCP y las skills viven aquí, junto con las instrucciones y las reglas repartidas por carpeta. Son una parte, no el todo. Lo cuento en [por qué tu IA falla](/daily/skills-mcp-harness).",
+          "**El método (spec-driven)** — antes del código va una especificación, el qué y el porqué, que se convierte en plan, tareas y tests; ninguna línea nace sin un test que primero falla. Lo cuento en [qué es el desarrollo guiado por especificación](/daily/what-is-spec-driven-development).",
+          "**Los agentes** — un agente no es un chat: es un modelo metido en un bucle, con herramientas y un objetivo, que actúa, mira el resultado y corrige. Lo cuento en [qué es realmente un agente de IA](/daily/what-is-an-ai-agent).",
+          "**El harness y su loop** — el harness es el envoltorio que gobierna al agente: qué herramientas puede tocar, qué no y cómo se comprueba lo que hace; el loop es el ciclo de actuar, observar y corregir que repite hasta cumplir el objetivo, o hasta que yo lo paro y lo reencamino. El modelo trabaja dentro, no manda.",
+          "**La verificación** — tests y mutation testing que comprueban que lo hecho es lo pedido, no que solo lo parece. Lo cuento en [cómo entrego un feature completo en horas](/daily/ship-a-feature-in-hours)."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Cuando alguien dice «la IA» piensa en el modelo. Pero el modelo es solo una pieza: lo que de verdad entrega resultados es el sistema que lo rodea —contexto, método, agentes, harness y verificación—."
+      },
+
+      { "kind": "heading", "text": "No necesitas el último modelo; necesitas las bases y una buena estructura" },
+      {
+        "kind": "paragraph",
+        "text": "Se habla mucho de cuál es el modelo más potente del mes. En mi experiencia esa no es la pregunta que mueve la aguja. Un modelo puntero sin bases sigue escribiendo un *ngIf sobre una carpeta mal pensada; un modelo más modesto, con las bases claras y un proyecto bien estructurado, entrega código que puedo mantener. Lo que decide el resultado no es la versión del modelo: es saber qué estás construyendo y haberlo ordenado antes de pedir la primera línea."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y lo digo como es: Angular no se queda quieto. Saca una versión mayor cada seis meses —hoy la última estable es Angular 22, con los Signal Forms ya estables—. Ningún modelo entrenado el año pasado conoce esos cambios. Por eso las bases pesan más que el modelo: si sé qué es una signal y por qué un componente es standalone, detecto al instante cuando la IA me devuelve un patrón viejo, tenga detrás el modelo que tenga. Y lo que cambia cada seis meses no lo dejo a su memoria: la versión de hoy se la dan el MCP y las skills, no el tamaño del modelo."
+      },
+      {
+        "kind": "quote",
+        "text": "El apalancamiento no está en tener el modelo más nuevo, sino en conocer las bases y estructurar el proyecto antes de escribir. Eso lo pone quien programa, no el modelo."
+      },
+
+      { "kind": "heading", "text": "La IA no es magia: sin alguien que la dirija, los resultados caen" },
+      {
+        "kind": "paragraph",
+        "text": "Todo lo anterior tiene un porqué de fondo, y prefiero decirlo sin rodeos: la IA no es magia. No es un genio al que le pides algo y sale terminado; es una herramienta potente que hay que dirigir y revisar. Cuando se la deja sola, los datos lo enseñan. En un ensayo controlado de [METR (2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/), programadores con experiencia tardaron un 19% más en tareas reales de proyectos que conocían a fondo cuando usaban IA —y, aun así, creyeron que habían ido un 20% más rápido—. ¿La razón? El tiempo que se va en revisar y corregir lo que el modelo propone, que suele apuntar en la dirección correcta pero casi nunca es exactamente lo que hacía falta."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no es solo velocidad; es lo que queda escrito. El análisis de [GitClear](https://www.gitclear.com/ai_assistant_code_quality_2025_research) sobre cientos de millones de líneas encontró que el código duplicado —copiar y pegar en vez de reutilizar— se disparó, y que en 2024, por primera vez, hubo más copiar-pegar que refactorizar; el código que hay que rehacer a las dos semanas subió del 3,1% al 5,7% entre 2020 y 2024. Traducido: sin alguien que la dirija, la IA produce rápido un código que después cuesta mantener. Por eso todo lo que conté antes —el orden, el contexto, el método, la verificación— existe para poner a un humano al mando, no para quitarlo."
+      },
+      {
+        "kind": "quote",
+        "text": "La IA no sustituye el criterio: lo amplifica. Con alguien que sabe qué quiere y revisa lo que sale, rinde; sin ese alguien, produce deuda a toda velocidad."
+      },
+
+      { "kind": "heading", "text": "Qué mejora de verdad" },
+      {
+        "kind": "steps",
+        "items": [
+          "El modelo usa los patrones de hoy —standalone, signals, inject()— porque consulta la versión viva, no la que recuerda de hace dos años.",
+          "Cada componente sale parecido al anterior, porque la skill fija el «cómo» y no mi humor de ese día.",
+          "Reviso menos deriva: hay una forma idiomática y el modelo apunta a ella.",
+          "El contexto no se evapora al cerrar el chat: vive en el proyecto, versionado, para el siguiente que llegue.",
+          "Cuando Angular saca una versión nueva, actualizo el MCP y las skills en un sitio, no en cada prompt."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así es como programo, y no solo en un proyecto: el orden del framework abajo, el contexto y el método encima, y la IA dirigida dentro de un sistema con límites y verificación, nunca suelta. Si quieres ver dónde lo aplico, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Para leer más" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Construir con IA — Angular](https://angular.dev/ai/develop-with-ai): la página oficial con los prompts de buenas prácticas, los archivos de reglas por IDE y el llms.txt.",
+          "[Servidor MCP del Angular CLI](https://angular.dev/ai/mcp): cómo levantarlo y qué herramientas expone (get_best_practices, search_documentation, list_projects).",
+          "[Web Codegen Scorer](https://github.com/angular/web-codegen-scorer): la herramienta con la que el equipo de Angular mide, con evidencia, la calidad del código que genera una IA.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI que equipa el proyecto, carga las skills y conecta el MCP. Documentación completa en su README.",
+          "[Impacto de la IA en programadores con experiencia](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — METR, 2025: el ensayo controlado donde la IA los hizo un 19% más lentos, aunque ellos creyeron ir más rápido.",
+          "[AI Copilot Code Quality 2025](https://www.gitclear.com/ai_assistant_code_quality_2025_research) — GitClear: qué le pasa a la calidad del código (duplicación, churn, menos reutilización) cuando la IA escribe sin supervisión."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "I've been coding in Angular for close to twelve years and it's still the framework I enjoy most. I like it for two things that also go together: it's complete — routing, forms, HTTP, server-side rendering and testing come built in, instead of forcing you to bolt together ten separate libraries — and it's orderly, because for almost everything there's an idiomatic way to do it and the framework nudges you toward it. When I started coding with AI, that order turned out to be worth double: it gives the model a convention to hold on to instead of a blank page, and with a clear convention what it hands back is readable, maintainable code, not something that barely compiles and I have to rewrite. That's what this note is about: how I use that order to steer AI."
+      },
+      {
+        "kind": "quote",
+        "text": "AI doesn't fail for lack of power; it fails for lack of context and order. Angular hands it both almost out of the box."
+      },
+
+      { "kind": "heading", "text": "Why Angular's order helps AI" },
+      {
+        "kind": "paragraph",
+        "text": "A very loose framework has ten valid ways to do the same thing. The model picks one almost at random and every file ends up different: whoever reviews it later doesn't find a pattern, they find ten. Angular works the other way. Today there is an idiomatic way for almost everything — standalone components, signals for state, inject() instead of constructor injection, control flow with @if and @for — and that way is the one the framework rewards. When there is a single target, the model aims at it. Fewer valid ways, less drift."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/angular-order.en.svg",
+        "caption": "The framework's order is the base; on top of it the MCP, the skills and clean code add up, and out comes good code, faster."
+      },
+      {
+        "kind": "paragraph",
+        "text": "But there's a catch: Angular moves fast. What was idiomatic two versions ago no longer is today, and the model learned from the code that existed when it was trained. Left on its own it writes NgModules, @HostBinding and *ngIf with total confidence — patterns Angular deprecated back in v20 that are on their way out: *ngIf is still there, but it's already marked for removal. That's where I stop trusting its memory and hand it today's version instead."
+      },
+
+      { "kind": "heading", "text": "The official MCP: today's version, not the one the model recalls" },
+      {
+        "kind": "paragraph",
+        "text": "An MCP server is a bridge: it gives the assistant live tools and data, not what it memorized. And here's the good part: Angular ships its own, official, inside the CLI itself. I start it with one command and the model stops guessing which version we're on."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npx @angular/cli mcp",
+          "→ assistant tools:",
+          "   get_best_practices   · TODAY's best practices",
+          "   search_documentation · searches angular.dev live",
+          "   list_projects        · reads the real workspace structure"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Each tool plugs a different hole. `get_best_practices` hands it the guide for the installed version — standalone by default, signals, `inject()`, control flow with @if and @for, no @HostBinding — so the model doesn't fire off what it remembers. `search_documentation` queries angular.dev on the spot: if I'm unsure about an API, it looks it up instead of inventing it. And `list_projects` lets it see the real workspace before creating anything. The Angular team puts it well: the skills give the guidance, the MCP gives the action tools."
+      },
+      {
+        "kind": "paragraph",
+        "text": "When I don't want to start the server, Angular also publishes its context packaged as [llms.txt and llms-full.txt](https://angular.dev/ai/develop-with-ai) — an index and a compendium meant for a model to read how Angular is built today — plus a best-practices file I can paste in as system instructions. Different format, same idea: keep the model from coding from memory."
+      },
+
+      { "kind": "heading", "text": "Skills: the idiomatic \"how\" that doesn't depend on my memory" },
+      {
+        "kind": "paragraph",
+        "text": "A skill is a card of knowledge the assistant opens only when the task needs it: I don't dump everything on it at once, just the right guidance for what it's about to touch. In my day-to-day I have skills for the different parts of the work, and not only for Angular — there are ones for clean code, for testing, or for whatever the project calls for — and each says, with examples, how that specific thing is done today. It isn't documentation I have to remember and repeat in every chat: it lives in the project, versioned, and whoever comes next — me tomorrow, a teammate or an agent — opens the same card and works the same way."
+      },
+      {
+        "kind": "quote",
+        "text": "Knowledge shouldn't travel in my head or in a conversation that closes. If it lives in the project, everyone — people and agents — starts with the same judgment."
+      },
+
+      { "kind": "heading", "text": "chalc: where the MCP, the skills and the method meet" },
+      {
+        "kind": "paragraph",
+        "text": "chalc is the CLI I built so I don't repeat the same setup in every repository. I go into the folder, run one command, and it equips the project: it detects that it's Angular, loads the skills that apply, connects the official MCP and pins the method I work with — specification, then test, then code. It doesn't use AI to detect the stack: it applies explicit rules, so it is instant, deterministic and costs not a single token."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd cacruz",
+          "chalc",
+          "→ detect: angular 20 · typescript",
+          "→ skills: angular-component, clean-code, mutation-testing…",
+          "→ mcp: angular-cli (live docs and best practices)",
+          "→ method: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/angular-ai-stack.en.svg",
+        "caption": "The three things I use to steer the assistant, resting on the project's documentation."
+      },
+
+      { "kind": "heading", "text": "And always with documentation, because without it none of this holds up" },
+      {
+        "kind": "paragraph",
+        "text": "Angular's order gives me half; the other half I put in myself, and it's written down. I structure my Angular projects with a modular, feature-based architecture — each part in its layer, with clear dependency rules: a feature leans on the shared code and the core, never on another feature. And I don't keep that in my head: I write it in an `architecture.md`. Why written, and not just in my judgment? Because the model reads it before it touches a file: it knows which layer it's in and where each thing goes, so it stops inventing structure or dropping code where it doesn't belong."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And I don't leave it in one giant document. Each folder carries its own `README.md` with its role: the core (`core`) holds the cross-cutting parts — guards, interceptors, root providers; the shared layer (`shared`), the reusable ones — presentation components, pipes, directives; and each feature lives in its own folder, with its state and its routes. And each README also says which skills apply there: the documentation doesn't just describe, it points the assistant to the right card exactly when it's about to work in that folder."
+      },
+      {
+        "kind": "quote",
+        "text": "A README the model can read is worth more than a convention that only lives in my head. And a rule nobody writes down is a rule the model can't follow."
+      },
+
+      { "kind": "heading", "text": "By widgets and by modules: small pieces the AI touches without breaking the rest" },
+      {
+        "kind": "paragraph",
+        "text": "Two ideas hold this up, and they're worth naming before we go on. The first is coding by widgets: a widget is a small, self-contained piece of the interface — a button, a form, a card — that carries everything of its own inside: its template, its state and its style. In Angular that piece is called a component, and a screen is just several of them fitted together. The second is modular architecture: instead of piling all the code together, I split it into separate parts — `features`, `shared` and `core` — each with a single responsibility and clear boundaries between them."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It isn't engineering aesthetics: it's exactly what keeps the AI from breaking things on me. When I work with it I don't hand it the whole \"application\", I hand it a specific widget or module. A small piece, with a clear responsibility, is a bounded target: the model has less context to hold and less to wreck."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And when something is isolated, a wrong change stays isolated too. I review one file, not forty; if the model oversteps, the damage doesn't cross into another feature because the dependency rules won't allow it — every feature depends on `shared` and `core`, never on another feature. Coding by widgets and by modules turns each task into a box with edges: easier for me to review, harder for the AI to break. Even so, I don't leave it alone: I always review what it does, and the moment something goes wrong I stop it and steer it back on track, instead of letting it keep running down the wrong path."
+      },
+      {
+        "kind": "quote",
+        "text": "Modularity isn't decoration: it's the limit of the damage. A small, isolated piece is easy for me to review and hard for the model to break."
+      },
+
+      { "kind": "heading", "text": "A caveat: skills and MCP are not the whole system" },
+      {
+        "kind": "paragraph",
+        "text": "Here it's worth stopping, because I don't want this note to leave you with a false idea. If you came away thinking that steering AI boils down to an MCP and a few skills, I explained it badly: that's only the layer that gives it context about what I'm going to build. Underneath there's a whole system that doesn't depend on the framework: it would be the same in Angular as in any other technology. These are the pieces that really make it up, and each would deserve its own note:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-system.en.svg",
+        "caption": "Context and method go in; inside, the agent repeats its loop with the model as just one piece; only what passes verification ships."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Context and rules** — what the model sees before it decides and what limits it has: the MCP and the skills live here, along with the instructions and the rules split by folder. They're a part, not the whole. I cover it in [why your AI fails](/daily/skills-mcp-harness).",
+          "**The method (spec-driven)** — before the code comes a specification, the what and the why, which becomes a plan, tasks and tests; no line is born without a test that fails first. I cover it in [what spec-driven development is](/daily/what-is-spec-driven-development).",
+          "**Agents** — an agent isn't a chat: it's a model placed inside a loop, with tools and a goal, that acts, looks at the result and corrects. I cover it in [what an AI agent really is](/daily/what-is-an-ai-agent).",
+          "**The harness and its loop** — the harness is the wrapper that governs the agent: which tools it may touch, which it may not, and how what it does gets checked; the loop is the act–observe–correct cycle it repeats until the goal is met, or until I stop it and steer it back. The model works inside it, it isn't in charge.",
+          "**Verification** — tests and mutation testing that check the work is what was asked, not just that it looks right. I cover it in [how I ship a complete feature in hours](/daily/ship-a-feature-in-hours)."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "When someone says \"the AI\" they picture the model. But the model is only one piece: what actually delivers results is the system around it — context, method, agents, harness and verification."
+      },
+
+      { "kind": "heading", "text": "You don't need the newest model; you need the fundamentals and good structure" },
+      {
+        "kind": "paragraph",
+        "text": "There's a lot of talk about which model is the most powerful this month. In my experience that isn't the question that moves the needle. A top model without fundamentals still writes an *ngIf over a badly thought-out folder; a more modest model, with clear fundamentals and a well-structured project, delivers code I can maintain. What decides the outcome isn't the model's version: it's knowing what you're building and having ordered it before you ask for the first line."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And I'll say it as it is: Angular doesn't stand still. It ships a major version every six months — today the latest stable is Angular 22, with Signal Forms already stable. No model trained last year knows those changes. That's why the fundamentals weigh more than the model: if I know what a signal is and why a component is standalone, I spot an old pattern the instant the AI hands it back, whatever model sits behind it. And what changes every six months I don't leave to its memory: today's version comes from the MCP and the skills, not from the size of the model."
+      },
+      {
+        "kind": "quote",
+        "text": "The leverage isn't in having the newest model, but in knowing the fundamentals and structuring the project before you write. That part is put in by whoever codes, not by the model."
+      },
+
+      { "kind": "heading", "text": "AI isn't magic: with no one steering it, the results drop" },
+      {
+        "kind": "paragraph",
+        "text": "All of the above has a reason underneath it, and I'd rather say it plainly: AI isn't magic. It's not a genie you ask for something and it comes out finished; it's a powerful tool you have to steer and review. When it's left alone, the data shows it. In a controlled trial by [METR (2025)](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/), experienced developers took 19% longer on real tasks in projects they knew well when using AI — and still believed they'd gone 20% faster. The reason? The time that goes into reviewing and correcting what the model proposes, which tends to point in the right direction but is almost never exactly what was needed."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it isn't only speed; it's what gets written. [GitClear's](https://www.gitclear.com/ai_assistant_code_quality_2025_research) analysis of hundreds of millions of lines found that duplicated code — copy-paste instead of reuse — spiked, and that in 2024, for the first time, there was more copy-pasting than refactoring; code that has to be redone within two weeks rose from 3.1% to 5.7% between 2020 and 2024. Translated: with no one steering it, AI quickly produces code that's costly to maintain later. That's why everything I described before — the order, the context, the method, the verification — exists to put a human in charge, not to remove one."
+      },
+      {
+        "kind": "quote",
+        "text": "AI doesn't replace judgment: it amplifies it. With someone who knows what they want and reviews what comes out, it delivers; without that someone, it produces debt at full speed."
+      },
+
+      { "kind": "heading", "text": "What actually improves" },
+      {
+        "kind": "steps",
+        "items": [
+          "The model uses today's patterns — standalone, signals, inject() — because it consults the live version, not the one it remembers from two years ago.",
+          "Every component comes out like the last one, because the skill fixes the \"how\" and not my mood that day.",
+          "I review less drift: there is one idiomatic way and the model aims at it.",
+          "Context doesn't evaporate when the chat closes: it lives in the project, versioned, for whoever comes next.",
+          "When Angular ships a new version, I update the MCP and the skills in one place, not in every prompt."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is how I code, and not just on one project: the framework's order at the bottom, context and method on top, and the AI steered inside a system with limits and verification, never loose. If you want to see where I put it to work, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+
+      { "kind": "heading", "text": "Further reading" },
+      {
+        "kind": "steps",
+        "items": [
+          "[Build with AI — Angular](https://angular.dev/ai/develop-with-ai): the official page with the best-practices prompts, the per-IDE rules files and llms.txt.",
+          "[Angular CLI MCP Server](https://angular.dev/ai/mcp): how to start it and which tools it exposes (get_best_practices, search_documentation, list_projects).",
+          "[Web Codegen Scorer](https://github.com/angular/web-codegen-scorer): the tool the Angular team uses to measure, with evidence, the quality of AI-generated code.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI that equips the project, loads the skills and connects the MCP. Full documentation in its README.",
+          "[The impact of AI on experienced developers](https://metr.org/blog/2025-07-10-early-2025-ai-experienced-os-dev-study/) — METR, 2025: the controlled trial where AI made them 19% slower, even though they believed they were faster.",
+          "[AI Copilot Code Quality 2025](https://www.gitclear.com/ai_assistant_code_quality_2025_research) — GitClear: what happens to code quality (duplication, churn, less reuse) when AI writes without supervision."
+        ]
+      }
+    ]
+  }
+}

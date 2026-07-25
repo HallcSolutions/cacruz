@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-label="El contexto y el método entran a un harness donde el agente repite su loop actuar-observar-corregir con el modelo dentro, y la salida pasa por verificación">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="ar" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/></marker>
+    <marker id="ag" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto"><path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .shell { animation: glow 4s ease-in-out infinite; }
+    .core { transform-box: fill-box; transform-origin: center; animation: pulse 3s ease-in-out infinite; }
+    .feed { transform-box: fill-box; transform-origin: center; animation: float 5s ease-in-out infinite; }
+    .f2 { animation-delay: -2.4s }
+    .wire { stroke-dasharray: 5 8; animation: flow 1.9s linear infinite; }
+    .node { transform-box: fill-box; transform-origin: center; animation: beat 2.4s ease-in-out infinite; }
+    .n2 { animation-delay: -0.8s } .n3 { animation-delay: -1.6s }
+    @keyframes glow { 0%,100% { stroke-opacity:.55 } 50% { stroke-opacity:1 } }
+    @keyframes pulse { 0%,100% { transform: scale(1); opacity:.9 } 50% { transform: scale(1.06); opacity:1 } }
+    @keyframes float { 0%,100% { transform: translateY(0) } 50% { transform: translateY(-6px) } }
+    @keyframes flow { to { stroke-dashoffset: -52 } }
+    @keyframes beat { 0%,100% { transform: scale(1); opacity:.8 } 50% { transform: scale(1.35); opacity:1 } }
+  </style>
+
+  <rect width="1000" height="480" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="25" fill="#ece7fb">El modelo es solo una pieza del sistema</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">lo que de verdad dirige a la IA cuando programo</text>
+
+  <!-- ENTRADAS -->
+  <g class="feed">
+    <rect x="30" y="112" width="214" height="118" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="50" y="140" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">Contexto y reglas</text>
+    <text x="50" y="164" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">MCP · skills</text>
+    <text x="50" y="182" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">instrucciones</text>
+    <text x="50" y="200" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">reglas por carpeta</text>
+  </g>
+  <g class="feed f2">
+    <rect x="30" y="250" width="214" height="118" rx="12" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="50" y="278" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">Método · spec-driven</text>
+    <text x="50" y="302" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">spec → plan</text>
+    <text x="50" y="320" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">→ tareas → tests</text>
+    <text x="50" y="338" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">el qué y el porqué</text>
+  </g>
+  <line x1="244" y1="171" x2="300" y2="210" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+  <line x1="244" y1="309" x2="300" y2="272" class="wire" stroke="#a78bfa" stroke-width="2" marker-end="url(#ar)"/>
+
+  <!-- HARNESS -->
+  <rect class="shell" x="300" y="96" width="430" height="300" rx="20" fill="rgba(52,211,153,0.035)" stroke="#34d399" stroke-width="2.4"/>
+  <rect x="320" y="82" width="150" height="28" rx="8" fill="#0d0b16" stroke="#34d399" stroke-width="1.5"/>
+  <text x="395" y="101" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">🦺 HARNESS</text>
+  <text x="330" y="132" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">el envoltorio que gobierna · el modelo trabaja dentro</text>
+
+  <!-- LOOP -->
+  <path class="wire" d="M515 176 Q616 205 600 314" fill="none" stroke="#a78bfa" stroke-width="2.4" marker-end="url(#ar)"/>
+  <path class="wire" d="M600 314 Q515 374 430 314" fill="none" stroke="#a78bfa" stroke-width="2.4" marker-end="url(#ar)"/>
+  <path class="wire" d="M430 314 Q416 205 515 176" fill="none" stroke="#a78bfa" stroke-width="2.4" marker-end="url(#ar)"/>
+
+  <circle class="node" cx="515" cy="176" r="5" fill="#a78bfa"/>
+  <circle class="node n2" cx="600" cy="314" r="5" fill="#a78bfa"/>
+  <circle class="node n3" cx="430" cy="314" r="5" fill="#a78bfa"/>
+  <text x="515" y="166" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">actúa</text>
+  <text x="636" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">observa</text>
+  <text x="392" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">corrige</text>
+
+  <g class="core">
+    <circle cx="515" cy="252" r="34" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="515" y="249" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">modelo</text>
+    <text x="515" y="266" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8.5" fill="#8a7fb0">una pieza</text>
+  </g>
+  <text x="515" y="384" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">el loop: actuar · observar · corregir, hasta cumplir</text>
+
+  <!-- VERIFICACIÓN -->
+  <line x1="730" y1="230" x2="784" y2="230" class="wire" stroke="#34d399" stroke-width="2.2" marker-end="url(#ag)"/>
+  <rect x="788" y="196" width="184" height="88" rx="12" fill="rgba(52,211,153,0.05)" stroke="#34d399" stroke-width="2.2"/>
+  <text x="808" y="228" font-family="ui-monospace, monospace" font-size="12.5" fill="#34d399">✓ Verificación</text>
+  <text x="808" y="252" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">tests · mutation</text>
+  <text x="808" y="270" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">¿es lo pedido?</text>
+  <text x="880" y="322" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">→ hecho</text>
+
+  <text x="40" y="456" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">entradas: contexto y método · dentro: el agente en su loop · salida: solo si pasa la verificación</text>
+</svg>

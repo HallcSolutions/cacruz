@@ -1,5 +1,24 @@
 [
   {
+    "slug": "one-contract-three-lanes",
+    "date": "2026-07-28",
+    "title": {
+      "es": "Móvil, web y API en la misma feature: un contrato, tres carriles y dos agentes que no se pisan",
+      "en": "Mobile, web and API in one feature: one contract, three lanes and two agents that don't collide"
+    },
+    "summary": {
+      "es": "Flutter, Nest y Angular en la misma feature, sin que la integración se lleve la semana. Cómo chalc arma el contrato y las specs de los tres carriles, por qué no decide nada y termina dejándote un prompt con las rutas, y cómo desde ahí Claude Code y Codex orquestan el desarrollo en carriles distintos sin perder el foco.",
+      "en": "Flutter, Nest and Angular in one feature, without integration eating the week. How chalc builds the contract and the three lanes' specs, why it decides nothing and ends by leaving you a prompt with the paths, and how from there Claude Code and Codex orchestrate the development in separate lanes without losing focus."
+    },
+    "tags": [
+      "chalc",
+      "orquestador",
+      "contratos",
+      "flutter",
+      "agentes"
+    ]
+  },
+  {
     "slug": "how-i-code-angular-with-ai",
     "date": "2026-07-24",
     "title": {
@@ -10,7 +29,13 @@
       "es": "Angular es mi framework favorito por su versatilidad, pero sobre todo por su orden. Cuento cómo dirijo la IA cuando programo con Angular: el servidor MCP oficial que le da la versión de hoy y no la de su memoria, las skills que le enseñan el «cómo» idiomático, chalc que junta todo, y por qué sin documentación clara —docs/architecture.md y un README en cada carpeta— nada de esto se sostiene.",
       "en": "Angular is my favorite framework for its versatility, but above all for its order. How I steer AI when I code with Angular: the official MCP server that hands it today's version instead of the one in its memory, the skills that teach it the idiomatic \"how\", chalc tying it all together, and why none of it holds up without clear docs — an architecture.md and a README in every folder."
     },
-    "tags": ["angular", "ia", "mcp", "skills", "chalc"]
+    "tags": [
+      "angular",
+      "ia",
+      "mcp",
+      "skills",
+      "chalc"
+    ]
   },
   {
     "slug": "what-an-ai-engineer-actually-does",
@@ -23,7 +48,13 @@
       "es": "Llevo semanas leyendo ofertas de «ingeniero de IA» y casi ninguna dice lo mismo. Qué dice la documentación que es el cargo, qué NO es, el diccionario de la oferta traducido palabra por palabra, el proceso real, qué te preguntan en la entrevista y qué prueba técnica te ponen, lo bueno y lo malo, y qué tiene que poner la empresa.",
       "en": "I've spent weeks reading \"AI engineer\" job ads and almost none of them agree. What the documentation says the role is, why it doesn't exist in any official occupation catalogue, what it is NOT, the real process step by step, the tasks of a normal week, the upsides and downsides without varnish, and what the company has to put in for the work to be possible."
     },
-    "tags": ["ia", "carrera", "ingeniería", "trabajo", "ofertas"]
+    "tags": [
+      "ia",
+      "carrera",
+      "ingeniería",
+      "trabajo",
+      "ofertas"
+    ]
   },
   {
     "slug": "fear-laziness-and-the-tool",
@@ -36,7 +67,13 @@
       "es": "En las empresas donde he estado veo gente que trata la IA como su enemiga y gente que la usa sin mirar; las dos acaban igual, sin entender la herramienta. Por qué el miedo y la pereza van al mismo sitio, por qué cuesta más de lo que parece —saber qué quieres y conseguir explicárselo a alguien que no está en tu cabeza— y cómo se dirige, con datos y gráficos.",
       "en": "At the companies I've worked in I see people treating AI as an enemy and people using it without looking; both end up the same, not understanding the tool. Why fear and laziness lead to the same place, why it takes more work than it looks —knowing what you want and explaining it to someone who isn't in your head— and how you steer it."
     },
-    "tags": ["ia", "herramientas", "criterio", "trabajo", "aprendizaje"]
+    "tags": [
+      "ia",
+      "herramientas",
+      "criterio",
+      "trabajo",
+      "aprendizaje"
+    ]
   },
   {
     "slug": "what-is-spec-driven-development",
@@ -49,7 +86,13 @@
       "es": "La nota que explica el método en sí, no cómo lo aplico: qué significa que la especificación mande y el código sea un artefacto, de dónde viene la idea (cascada, BDD, EARS) y las variantes de hoy —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordenadas por cuánto manda la spec. Y, sin adornos, cuándo NO conviene usarlo.",
       "en": "The note that explains the method itself, not how I apply it: what it means for the spec to be in charge and code to be an artifact, where the idea comes from (waterfall, BDD, EARS) and today's variants —Spec Kit, Kiro, OpenSpec, Tessl, BMAD— ordered by how much the spec rules. And, plainly, when NOT to use it."
     },
-    "tags": ["sdd", "especificación", "metodología", "ia", "calidad"]
+    "tags": [
+      "sdd",
+      "especificación",
+      "metodología",
+      "ia",
+      "calidad"
+    ]
   },
   {
     "slug": "ai-architectures-people-use",
@@ -62,7 +105,13 @@
       "es": "Qué cambia cuando pones un modelo donde antes había código, por qué casi todo lo que llaman «agente» en realidad es un workflow, y las arquitecturas más usadas ordenadas por una sola pregunta: cuánta libertad le das al modelo. Con gráficos de cada patrón, cuándo usar cada uno, dónde encaja RAG, y enlaces a la investigación original.",
       "en": "What changes when you put a model where code used to be, why most of what gets called an \"agent\" is really a workflow, and the most-used architectures ordered by a single question: how much freedom you give the model. With diagrams of each pattern, when to use each, where RAG fits, and links to the original research."
     },
-    "tags": ["ia", "agentes", "arquitectura", "rag", "workflows"]
+    "tags": [
+      "ia",
+      "agentes",
+      "arquitectura",
+      "rag",
+      "workflows"
+    ]
   },
   {
     "slug": "rules-that-can-fail",
@@ -75,7 +124,13 @@
       "es": "Un architecture.md de cuatrocientas líneas parece orden y es lo contrario: nadie sabe qué parte le aplica. Por qué cada repo y cada carpeta llevan sus propias reglas, por qué la presentación no necesita saber cómo se calcula un descuento, qué le pasa a tu factura cuando el agente lee tres líneas en vez de cuatrocientas, y por qué la única regla que sirve es la que puede fallar.",
       "en": "A four-hundred-line architecture.md looks like order and is the opposite: nobody knows which part applies to them. Why each repo and each folder carry their own rules, why presentation doesn't need to know how a discount is calculated, what happens to your bill when the agent reads three lines instead of four hundred, and why the only rule worth having is the one that can fail."
     },
-    "tags": ["arquitectura", "clean-code", "chalc", "agentes", "documentación"]
+    "tags": [
+      "arquitectura",
+      "clean-code",
+      "chalc",
+      "agentes",
+      "documentación"
+    ]
   },
   {
     "slug": "one-contract-many-repos",
@@ -88,7 +143,13 @@
       "es": "El front esperaba `userId` y el back devolvió `id`: la integración es donde se pierden los días. Qué es un orquestador —una pieza que no escribe código, solo reparte, comparte y junta—, por qué el contrato lo lidera el back y no el front, por qué el número de repos no es una propiedad del patrón sino un límite de cada implementación, y cómo la huella del contrato impide que nadie derive en silencio.",
       "en": "The frontend expected `userId` and the backend returned `id`: integration is where the days go. What an orchestrator is — a piece that writes no code, it only splits, shares and joins — why the backend owns the contract instead of the frontend, why the number of repos is not a property of the pattern but a limit of each implementation, and how the contract fingerprint stops anyone from drifting in silence."
     },
-    "tags": ["chalc", "orquestador", "contratos", "sdd", "arquitectura"]
+    "tags": [
+      "chalc",
+      "orquestador",
+      "contratos",
+      "sdd",
+      "arquitectura"
+    ]
   },
   {
     "slug": "the-software-in-minutes-trap",
@@ -101,7 +162,12 @@
       "es": "Trabajé en una empresa que prometía sistemas en minutos con solo pasar plantillas. Nunca entregó calidad. Hoy la IA vende la misma promesa a mayor escala: cuento por qué 'rápido' no es 'terminado', qué dicen los datos sobre el código que genera sin supervisión, y por qué entrenar máquinas con software malo solo agranda el problema.",
       "en": "I worked at a company that promised systems in minutes just by feeding it templates. It never delivered quality. Today AI sells the same promise at scale: I explain why 'fast' isn't 'finished', what the data says about the code it generates unsupervised, and why training machines on bad software only makes the problem bigger."
     },
-    "tags": ["ia", "calidad", "supervisión", "arquitectura"]
+    "tags": [
+      "ia",
+      "calidad",
+      "supervisión",
+      "arquitectura"
+    ]
   },
   {
     "slug": "what-is-an-ai-agent",
@@ -114,7 +180,12 @@
       "es": "Un chat no es un agente. Explico el bucle que lo convierte en uno, por qué necesita herramientas y un límite, y cómo hacer que varios agentes trabajen juntos sin pisarse: roles, artefactos y un revisor que nunca es el autor.",
       "en": "A chat is not an agent. I explain the loop that turns it into one, why it needs tools and a stopping condition, and how to make several agents work together without stepping on each other: roles, artifacts, and a reviewer who is never the author."
     },
-    "tags": ["ia", "agentes", "arquitectura", "harness"]
+    "tags": [
+      "ia",
+      "agentes",
+      "arquitectura",
+      "harness"
+    ]
   },
   {
     "slug": "ship-a-feature-in-hours",
@@ -127,7 +198,13 @@
       "es": "El flujo real que uso a diario: equipar el proyecto en 30 segundos, convertir una historia de usuario en requisitos verificables y llegar al código con tests que se prueban a sí mismos. Con gráficos de todo el proceso.",
       "en": "The real flow I use every day: equip the project in 30 seconds, turn a user story into verifiable requirements, and reach the code with tests that test themselves. With diagrams of the whole process."
     },
-    "tags": ["chalc", "sdd", "tdd", "mutation-testing", "ia"]
+    "tags": [
+      "chalc",
+      "sdd",
+      "tdd",
+      "mutation-testing",
+      "ia"
+    ]
   },
   {
     "slug": "skills-mcp-harness",
@@ -140,6 +217,12 @@
       "es": "Tres piezas explican la diferencia entre una IA que inventa y una que entrega. Qué son las skills, qué resuelve MCP, y por qué el harness es la que casi nadie tiene y la que más importa.",
       "en": "Three pieces explain the gap between an AI that makes things up and one that delivers. What skills are, what MCP solves, and why the harness is the one almost nobody has — and the one that matters most."
     },
-    "tags": ["ia", "mcp", "skills", "harness", "agentes"]
+    "tags": [
+      "ia",
+      "mcp",
+      "skills",
+      "harness",
+      "agentes"
+    ]
   }
 ]

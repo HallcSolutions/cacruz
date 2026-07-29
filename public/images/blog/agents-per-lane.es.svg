@@ -1,0 +1,110 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" role="img" aria-label="El contrato compartido alimenta a dos agentes distintos. Claude Code se queda con la web en Angular y el backend en NestJS, y lee CLAUDE.md con sus skills. Codex se queda con el móvil en Flutter y lee AGENTS.md. Ninguno ve el repositorio del otro. Lo único que comparten es el contrato, los identificadores de requisito y el estándar común.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .step { animation: pop 6.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .s2 { animation-delay: .6s; } .s3 { animation-delay: 1.2s; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.9s linear infinite; }
+    .flow-b { stroke-dasharray: 6 8; animation: dash 2.6s linear infinite; }
+    .nope { animation: blink 4s ease-in-out infinite; }
+    .lane { animation: glow 5s ease-in-out infinite; }
+    .l2 { animation-delay: .4s; }
+    @keyframes pop { 0%, 100% { opacity: .8; transform: translateY(0); } 9% { opacity: 1; transform: translateY(-4px); } 24% { opacity: .95; } }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes blink { 0%, 100% { opacity: .4; } 50% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { opacity: .75; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="540" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">Dos agentes, un carril cada uno</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">como contratar en dos sitios distintos: cambia quién trabaja y cuánto cuesta, no lo que hay que entregar</text>
+
+  <!-- contrato compartido -->
+  <g class="step">
+    <rect x="40" y="152" width="182" height="150" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="131" y="180" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">contracts/api.md</text>
+    <text x="131" y="204" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">R1 · R2 · R3…</text>
+    <text x="131" y="228" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">+ estándar común</text>
+    <text x="131" y="246" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">+ spec del carril</text>
+    <text x="131" y="272" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">lo único compartido</text>
+    <text x="131" y="290" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">idéntico en los 3 repos</text>
+  </g>
+
+  <path d="M228 200 H 262" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M228 256 H 246 V 372 H 262" class="flow-b" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- agente A: Claude Code -->
+  <g class="step s2">
+    <rect x="270" y="118" width="336" height="164" rx="14" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="290" y="146" font-family="ui-monospace, monospace" font-size="14" fill="#ece7fb">Claude Code</text>
+    <text x="586" y="146" text-anchor="end" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">lee CLAUDE.md · .claude/skills/</text>
+    <line x1="290" y1="158" x2="586" y2="158" stroke="#2a2140" stroke-width="1"/>
+    <g class="lane">
+      <rect x="290" y="172" width="140" height="44" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+      <text x="360" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">WEB · Angular</text>
+      <text x="360" y="208" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">14 skills · MCP angular-cli</text>
+    </g>
+    <g class="lane l2">
+      <rect x="446" y="172" width="140" height="44" rx="9" fill="none" stroke="#34d399" stroke-width="1.5"/>
+      <text x="516" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">BACK · NestJS</text>
+      <text x="516" y="208" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">dueño del contrato</text>
+    </g>
+    <text x="290" y="242" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">un solo lenguaje en la cabeza: TypeScript</text>
+    <text x="290" y="262" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">back primero (expone) y luego web (consume)</text>
+  </g>
+
+  <!-- agente B: Codex -->
+  <g class="step s3">
+    <rect x="270" y="308" width="336" height="128" rx="14" fill="none" stroke="#fb7185" stroke-width="2"/>
+    <text x="290" y="336" font-family="ui-monospace, monospace" font-size="14" fill="#ece7fb">Codex</text>
+    <text x="586" y="336" text-anchor="end" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">lee AGENTS.md</text>
+    <line x1="290" y1="348" x2="586" y2="348" stroke="#2a2140" stroke-width="1"/>
+    <g class="lane">
+      <rect x="290" y="362" width="140" height="44" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+      <text x="360" y="382" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">MÓVIL · Flutter</text>
+      <text x="360" y="398" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">8 skills · MCP dart</text>
+    </g>
+    <text x="446" y="380" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">un solo lenguaje: Dart</text>
+    <text x="446" y="398" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">consume el mismo contrato</text>
+  </g>
+
+  <!-- la pared: no se ven entre ellos -->
+  <path d="M636 118 V 436" stroke="#2a2140" stroke-width="2" stroke-dasharray="7 7"/>
+  <g class="nope">
+    <line x1="654" y1="266" x2="668" y2="280" stroke="#fb7185" stroke-width="2"/>
+    <line x1="668" y1="266" x2="654" y2="280" stroke="#fb7185" stroke-width="2"/>
+    <text x="682" y="279" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">ninguno ve el repo del otro</text>
+  </g>
+
+  <!-- panel derecho: por qué -->
+  <rect x="654" y="118" width="306" height="120" rx="12" fill="none" stroke="#453768" stroke-width="1.5"/>
+  <text x="674" y="144" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">por qué reparto así</text>
+  <text x="674" y="168" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">· costo y límites de uso: dos carriles a la vez</text>
+  <text x="674" y="186" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">  sin chocar con el tope de ninguno</text>
+  <text x="674" y="208" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">· los estoy probando: quiero ver cómo se</text>
+  <text x="674" y="226" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">  porta cada uno en su stack</text>
+
+  <rect x="654" y="316" width="306" height="120" rx="12" fill="none" stroke="#453768" stroke-width="1.5"/>
+  <text x="674" y="342" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">lo que NO cambia</text>
+  <text x="674" y="366" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">· el contrato y los R#</text>
+  <text x="674" y="386" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">· el estándar común (las 5 skills globales)</text>
+  <text x="674" y="406" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">· TDD y el umbral de mutantes</text>
+  <text x="674" y="426" font-family="ui-monospace, monospace" font-size="9" fill="#34d399">· quien revisa y decide: yo</text>
+
+  <!-- pie honesto -->
+  <line x1="40" y1="466" x2="960" y2="466" stroke="#2a2140" stroke-width="1"/>
+  <text x="40" y="492" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">el catálogo es neutro y los targets son adaptadores: Claude Code · Codex · Copilot · Cursor · Gemini CLI</text>
+  <text x="40" y="512" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">cada adaptador escribe el mismo catálogo en el formato de su asistente — para Codex, el AGENTS.md</text>
+</svg>

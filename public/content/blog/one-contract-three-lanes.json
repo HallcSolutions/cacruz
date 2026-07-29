@@ -1,0 +1,1113 @@
+{
+  "slug": "one-contract-three-lanes",
+  "date": "2026-07-28",
+  "title": {
+    "es": "Móvil, web y API en la misma feature: un contrato, tres carriles y dos agentes que no se pisan",
+    "en": "Mobile, web and API in one feature: one contract, three lanes and two agents that don't collide"
+  },
+  "summary": {
+    "es": "Flutter, Nest y Angular en la misma feature, sin que la integración se lleve la semana. Cómo chalc arma el contrato y las specs de los tres carriles, por qué no decide nada y termina dejándote un prompt con las rutas, y cómo desde ahí Claude Code y Codex orquestan el desarrollo en carriles distintos sin perder el foco.",
+    "en": "Flutter, Nest and Angular in one feature, without integration eating the week. How chalc builds the contract and the three lanes' specs, why it decides nothing and ends by leaving you a prompt with the paths, and how from there Claude Code and Codex orchestrate the development in separate lanes without losing focus."
+  },
+  "tags": [
+    "chalc",
+    "orquestador",
+    "contratos",
+    "flutter",
+    "agentes"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Un cliente canceló su pedido, no vio confirmación y volvió a darle al botón. Esa segunda cancelación —la misma, sobre el mismo pedido— fue la que lo destapó todo. El back hizo lo correcto: el pedido ya estaba cancelado, así que devolvió un 409 y no tocó el inventario. La web recibió ese 409 y lo pintó como «Ha ocurrido un error», sin decir en ningún momento que el pedido ya estaba cancelado, así que el cliente lo intentó una tercera vez. Y el móvil, que llevaba dos días construido sobre su propia idea de qué pasa al cancelar dos veces, leyó exactamente el mismo 409, lo dio por bueno, mostró un mensaje de éxito y descontó el inventario en pantalla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ninguno de los tres se equivocó en su repo. Los tres pasaron sus tests, los tres cumplieron lo que decía su historia y los tres lo hicieron bien. El problema es que «qué pasa al cancelar dos veces» no estaba escrito en ningún sitio que los tres leyeran: vivía en tres cabezas distintas, y las tres versiones eran razonables. Nadie lo descubrió programando. Lo descubrimos el día de integrar, mirando una app que decía que todo había salido bien mientras en el almacén no se había movido nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con un solo consumidor esto no llega a pasar. Quien pinta la pantalla es el mismo que consume la API, así que «qué se enseña cuando cancelas dos veces» se decide una vez y en un sitio; de hecho casi nunca se decide, se ve al probarlo y ya está. En cuanto hay dos, la misma respuesta del back aterriza en dos equipos que no se hablan y cada uno resuelve por su cuenta qué enseñar. Ahí se abre el hueco: que coincidan no es el encargo de nadie. De eso va esta nota, y conviene que diga desde ya qué no es: no vengo a recomendarte un método cerrado. Es cómo empecé a programar así, entendiendo poco a poco —y tropezando con problemas como este— cuál era el flujo que mejor se acopla a mi forma de trabajar. Un solo contrato para móvil, web y API, cada carril con sus reglas, y dos agentes distintos, Claude Code y Codex, avanzando en paralelo sin que ninguno pierda el foco."
+      },
+      {
+        "kind": "quote",
+        "text": "El back puede hacer su trabajo entero y el usuario ver dos productos que se contradicen. Lo que no está escrito en un sitio que todos lean, cada carril se lo inventa, y se lo inventa de forma razonable, que es justo lo que lo hace difícil de ver."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué Flutter, Nest y Angular"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Antes de nada, una aclaración honesta: no elegí estos tres stacks con un cuadro comparativo delante. Los uso porque son los que más disfruto y porque me encanta desarrollar con ellos. Angular lo llevo cerca de doce años y sigue siendo con el que mejor me muevo. Nest me da en el back el mismo orden que Angular en el front —módulos, inyección de dependencias, decoradores—, así que saltar de uno al otro no me cuesta nada. Y Flutter me deja llevar la aplicación al móvil sin cambiar de cabeza cada dos pantallas. Esta nota no va de si son los mejores: va del flujo que monté encima de ellos, y ese flujo funcionaría igual con otros tres."
+      },
+      {
+        "kind": "heading",
+        "text": "Todo sale del back, ¿y aun así el tercer carril rompe algo?"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí hay una objeción justa, y me la hice yo mismo al montar esto: si todo lo dirige el back, los consumidores no negocian entre ellos. Es verdad. Esto no es una malla donde todos hablan con todos, es una estrella: el back en el centro, la web y el móvil colgando. La web no le pide nada al móvil, ni al revés. Así que no hay tres parejas que mantener vivas, hay dos canales —back con web y back con móvil— y ya está. Quien te venda que la coordinación crece por parejas te está describiendo otra arquitectura."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Entonces, ¿por qué el tercero rompe algo? Porque lo que se multiplica no son los canales: es la interpretación. El back define lo que viaja por el cable —un 409, un campo, un código de error— pero no define qué hace cada consumidor cuando lo recibe. Aquel 409 de la anécdota era uno solo en la red y fueron dos comportamientos opuestos en pantalla: un error genérico en la web, un mensaje de éxito en el móvil. El back cumplió su parte entera y aun así el usuario vio dos productos que se contradicen."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí está la grieta de verdad: la coherencia entre la web y el móvil no es de nadie. El back no opina —a él le da igual qué mensaje pintes—; la web no puede decidirla sola, y el móvil tampoco. Es la única parte de la feature que no tiene dueño natural, y por eso es la primera que se cae cuando entra el segundo consumidor. Con uno solo el problema ni existe, porque «lo que se enseña» y «lo que se consume» viven en el mismo repo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El back contesta bien, pero contesta en privado. Lo que acordó con la web en un chat no lo ve el móvil, que estaba en otro chat, otro día.",
+          "El back y la web deciden que el 409 traiga un campo `code`. El móvil no estaba, y sigue leyendo el `message`, que ahora viene vacío.",
+          "El móvil pide un campo extra y el back se lo añade. La web no se entera, y su test sigue en verde porque prueba contra lo que el back hacía ayer.",
+          "Y el caso peor, el de la anécdota, donde nadie incumplió nada: la respuesta llega idéntica a los dos y cada uno decide por su cuenta qué enseñar."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un contrato tapa las dos grietas a la vez, y por eso no basta con que el back «dirija». La del cable, porque los endpoints, los errores y los modelos están escritos en un solo sitio en vez de acordados en dos conversaciones privadas. Y la de la interpretación, que es la que el back nunca iba a cubrir: el requisito no dice «devuelve 409», dice qué debe pasar cuando el pedido ya estaba cancelado, y eso lo leen igual los tres. Añadir un cuarto consumidor no obliga a renegociar nada ni a reenviar ningún aviso: es una lectura más del mismo documento."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/three-lanes-contract.es.svg",
+        "caption": "Una historia entra, sale un contrato, y de ahí salen los tres carriles. Abajo, la diferencia real: el back contestando en privado dos veces, con la coherencia entre pantallas en tierra de nadie, frente a un requisito que los tres leen igual."
+      },
+      {
+        "kind": "heading",
+        "text": "chalc no programa: arma el contrato, los specs y reparte las reglas"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí conviene parar y poner cada pieza en su sitio, porque los dos papeles se confunden con facilidad y todo lo que viene después depende de distinguirlos. `chalc` es una CLI local y hace bastantes más cosas de las que salen en esta nota: crea proyectos desde cero, comprueba que se respeten las fronteras de la arquitectura, gestiona el catálogo de reglas, lleva la cuenta de lo que va gastando la IA en tokens o levanta la aplicación para pasarle un agente de QA. De todos sus comandos, en este flujo solo aparecen dos, y el que manda es `chalc feature`: detecta el stack de cada repo, le equipa sus reglas, convierte la historia de usuario en un contrato de API y escribe la spec de cada carril contra ese contrato. Lo que no hace es escribir el código de la feature ni decidir cómo se implementa por dentro —al crear un proyecto de cero, `chalc init` sí te propone una arquitectura, pero es una sugerencia y eliges tú—. Cuando `chalc feature` acaba, imprime un prompt y se aparta. Y esa es la distinción sobre la que se apoya el resto de la nota: **chalc no es el orquestador**. El orquestador es lo que viene después, y llega dos secciones más abajo."
+      },
+      {
+        "kind": "quote",
+        "text": "No decide por ningún lado (no es ni el front ni el back): solo reparte, comparte el contrato y junta.",
+        "source": "Comentario de diseño en chalc · lib/featureorch.mjs",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La pregunta obvia es por qué, y me la hacen justo después. `chalc` sí usa la IA para generar el contrato y las specs, así que un modelo ya está metido ahí dentro. ¿Por qué no dejarle además decidir? Un `chalc` «listo» podría mirar los tres carriles a la vez, darse cuenta de que el móvil va a necesitar un campo que el back no expone y adelantarse. La respuesta más corta que tengo no es una opinión mía: está en las tres líneas de comentario que encabezan la función que encadena las generaciones, y en su firma."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "sed -n '32,38p' lib/featureorch.mjs",
+          "",
+          "// Orquesta el flujo: 1) contrato (back lidera) → 2) spec del back → 3) spec del front (consume el contrato).",
+          "// `back`/`front` = { stack, templates, constitution }. Impls inyectables para testear sin tokens.",
+          "// Devuelve { contract, contractTrace, back: <generateSpec>, front: <generateSpec> }.",
+          "export async function orchestrateFeature({",
+          "  cfg, userStory, language = 'español', mode = 'lite', back, front, backContext = '',",
+          "  generateContractImpl = generateContract, generateSpecImpl = generateSpec",
+          "}) {"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Las dos funciones que hablan con el modelo —la que genera el contrato y la que genera cada spec— entran como parámetros, con la implementación real puesta por defecto. Cuando corro el comando de verdad se usan esas; en el test le paso dos falsas que anotan cómo las llamaron y devuelven un contrato de mentira. No es un truco de testing que se me ocurriera después: está escrito como intención en el comentario de arriba, «Impls inyectables para testear sin tokens», y solo se puede hacer porque la función no tiene criterio propio. Si lo tuviera, ese criterio no se podría cambiar desde fuera pasándole otro argumento."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y estas son las comprobaciones de [su test](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/test/featureorch.test.mjs), tal cual están en el archivo:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node --test test/featureorch.test.mjs",
+          "",
+          "  // orden: contrato → back → front",
+          "  assert.deepEqual(calls.map((c) => c.kind), ['contract', 'spec', 'spec']);",
+          "  // el contrato vio ambos stacks",
+          "  assert.equal(calls[0].backStack, 'NestJS');",
+          "  assert.equal(calls[0].frontStack, 'Angular');",
+          "  // el doc del back lleva rol BACKEND + el contrato + la HU",
+          "  assert.match(calls[1].documentText, /<role>BACKEND<\\/role>/);",
+          "  assert.match(calls[1].documentText, /R1 — login/);             // contrato compartido embebido",
+          "  assert.match(calls[1].documentText, /iniciar sesión/);",
+          "  // el doc del front lleva rol FRONTEND + el mismo contrato",
+          "  assert.match(calls[2].documentText, /<role>FRONTEND<\\/role>/);",
+          "  assert.match(calls[2].documentText, /R1 — login/);",
+          "",
+          "# tests 2",
+          "# pass 2",
+          "# fail 0"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en lo que asertan: el orden en que se llamó a las cosas, que el contrato recibió los dos stacks, y que a cada lado le llegó su rol con el mismo contrato y la misma historia embebidos. Ni una sola comprobación sobre si lo generado es bueno, porque eso no lo decide ella. El resto del archivo son dos líneas más —que devuelve los ficheros— y un segundo test de tres líneas: que rechaza una historia de usuario vacía. Eso es todo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora intenta escribir el test de esa versión lista. ¿Qué asertas? El orden no, porque el orden ya no es fijo: depende de lo que decida en cada ejecución. El contenido tampoco, porque cambia cada vez que lo corres. Te queda algo del estilo de «comprobar que la decisión fue buena», y eso no es una aserción: es una opinión con formato de código. Ahí está la diferencia, y no es de estilo: sobre la estructura se puede asertar; sobre el criterio, como mucho, se puede evaluar. El propio chalc separa los dos verbos: la parte determinista tiene tests normales, y la parte que toca IA tiene su propio comando, `chalc eval-ia`, que corre evaluaciones locales de los prompts y los parsers sin llamar al proveedor. No es la misma garantía: un test te dice «esto se cumple siempre»; una evaluación te da una nota sobre una muestra. Cuanto más decide una pieza, más de tu confianza pasa de la primera categoría a la segunda."
+      },
+      {
+        "kind": "paragraph",
+        "text": "De ahí salen las dos consecuencias que de verdad me importan, y las dos son prácticas:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Lo que no se prueba, no avisa cuando se rompe.** El día que esa versión lista empiece a decidir peor —porque cambié de modelo, porque el proveedor actualizó el suyo, porque toqué una línea del prompt— no hay ningún test en rojo. Te enteras por el resultado, tres repos más abajo.",
+          "**Y sus errores no los atraparía ningún test.** Los tests defienden el contrato: si un carril programa algo distinto de lo que dice el papel, su test falla y lo delata. Pero eso solo funciona si el papel está bien. Imagina que el que decide es chalc y decide mal: pone en el contrato que la segunda cancelación devuelve 200. Los tres carriles lo implementan tal cual, los tres escriben sus tests contra esa regla, y los tres quedan en verde —el error está en la regla, y los tests solo comprueban que la regla se cumple—. Por eso el contrato lo apruebo yo antes de que baje a ningún carril: soy el único filtro que revisa la regla en sí, no su cumplimiento.",
+          "**Y tendría que saber de los tres stacks a la vez.** Para opinar sobre el carril móvil hace falta Dart y saber cómo se prueba un widget; para el de la web, Angular. Meter los tres en una sola cabeza es justo lo contrario de lo que hace que esto funcione, que es de lo que va el resto de esta sección: que cada carril reciba solo lo suyo."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/orchestrator-two-designs.es.svg",
+        "caption": "Los dos diseños tienen la misma forma y cambian en una sola cosa: qué hay en el centro. A la izquierda, decisiones que solo existen dentro de la salida de un modelo. A la derecha, un archivo que puedes abrir, revisar y aprobar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en lo que no estoy diciendo, porque es fácil llevárselo al extremo contrario: no digo que las decisiones sobren. Hay decisiones que tomar, y muchas —qué campos lleva la respuesta, qué pasa al cancelar dos veces, si el token caduca—. Lo que digo es dónde tienen que vivir. Un chalc listo las tomaría y las dejaría dentro de su propia salida, donde nadie las revisa porque nadie sabe que están ahí. El mío las sube al contrato: un archivo con huella que yo leo y apruebo antes de que baje a ningún carril. La decisión no desaparece, cambia de sitio, y al cambiar de sitio pasa de ser invisible a ser un diff."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y qué pierdo con eso? Una cosa real, y prefiero decirla: un `chalc` listo podría oler que la web y el móvil van a interpretar distinto el mismo 409 antes de que pase. El mío no ve eso, porque no mira dentro de ningún carril. Ese trabajo me lo quedo yo —leyendo el contrato antes de aprobarlo— y me lo devuelve el propio contrato cuando marca lo que le falta con `[NEEDS CLARIFICATION]` en vez de rellenarlo por su cuenta. Es más lento que una máquina lista. También es la única versión en la que sé quién decidió qué."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pero de ahí se saca muy fácil una conclusión falsa: que entonces chalc no manda en nada. Sí manda en algo, y es justo lo que importa. No decide cómo programa cada carril, pero sí decide qué reglas aplican en cada carril, y se las entrega equipadas antes de que nadie escriba una línea. Es la diferencia entre decirle a alguien cómo hacer su trabajo —que sobra— y darle el manual de la casa antes de que empiece —que es imprescindible—."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no reparte lo mismo a todos, porque no todos hacen lo mismo. Esto es lo que le llega a cada carril:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El contrato**, idéntico en los tres repos: `contracts/api.md`, con los endpoints, los modelos, la autenticación y los requisitos en notación EARS (`CUANDO … EL SISTEMA DEBE …`).",
+          "**Su spec, y solo la suya**, con el rol escrito dentro: el back sabe que expone la API; la web y el móvil saben que la consumen, y tienen prohibido reimplementar la lógica del back.",
+          "**Los mismos identificadores de requisito.** R2 es R2 en los tres repos: no se renumera por carril, porque si se renumera se pierde la trazabilidad cruzada y ya no puedes buscar nada.",
+          "**Sus skills, que no son las mismas para todos.** Angular recibe sus 14 —signals, http, routing, testing, responsive design…—; Nest recibe la suya de buenas prácticas; Flutter recibe sus 8 —widgets, estado, navegación, asincronía, rendimiento, testing—.",
+          "**Su servidor MCP**: `angular-cli` en la web, `dart` en el móvil, `postgres` opcional en el back. Cada carril consulta su documentación viva en vez de la versión que el modelo recuerda de cuando lo entrenaron.",
+          "**Y el estándar común, que no se negocia**: código limpio, implementación mínima, SOLID, arquitectura modular y mutation testing. Esas cinco las hereda todo repo, sea el stack que sea."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc                       # una vez en cada repo",
+          "→ api/   detect: nestjs · typescript",
+          "→        skills: nestjs-best-practices + las 5 globales",
+          "→ web/   detect: angular · typescript",
+          "→        skills: 14 de angular + las 5 globales · mcp: angular-cli",
+          "→ app/   detect: flutter · dart",
+          "→        skills: 8 de flutter + las 5 globales · mcp: dart",
+          "→ método en los tres: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/rules-per-lane.es.svg",
+        "caption": "Arriba, lo que hereda todo repo pase lo que pase. Abajo, lo propio de cada carril. chalc reparte esto y se aparta: qué escribas con ello ya es cosa tuya."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay un detalle que suena menor y no lo es: esa detección no la hace una IA. `chalc` mira señales del proyecto —una dependencia declarada en el `package.json`, un `pubspec.yaml` en la raíz— y aplica reglas explícitas de su catálogo. Es instantáneo, da el mismo resultado siempre y no gasta un solo token. La pieza que reparte las reglas es la más aburrida de todo el flujo, y por eso es la única que nunca me ha fallado."
+      },
+      {
+        "kind": "heading",
+        "text": "El flujo, de principio a fin"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Puesto todo junto y en orden, así es como arranca una feature. Entro con la historia de usuario, corro `chalc feature` y lo primero que hace es pedirme las rutas: la web, el back y, si la feature tiene app, el móvil (por flag `--movil` o preguntándomelo). A partir de ahí no vuelve a preguntarme nada hasta el final."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Me pide las rutas y detecta el stack de cada una. Me las enseña —`Front: Angular · Back: NestJS · Móvil: Flutter`— para que confirme que reconoció bien cada repo **antes** de gastar un token. Si se equivocó, paro aquí y no en la spec.",
+          "Prepara el terreno: hace `pull` en cada repo, mira si el árbol está limpio y lo equipa con sus skills, su MCP y el método. Esto no cuesta tokens, son reglas del catálogo.",
+          "Genera el contrato desde la historia: requisitos compartidos en EARS (`CUANDO … EL SISTEMA DEBE …`), endpoints, modelos y errores. Lo que la historia no diga, no se inventa: se marca `[NEEDS CLARIFICATION]`.",
+          "Especifica el back contra ese contrato ya cerrado, después la web y después el móvil, los dos contra el MISMO contrato. Cada lado recibe su rol escrito dentro y solo lo suyo.",
+          "Sella: la misma carpeta `specs/NNN-…` en todos los repos, los mismos R#, una copia idéntica de `contracts/api.md` en cada spec, la huella del contrato estampada en cada archivo y un `contract.lock.json` guardado.",
+          "Crea la rama `feat/<slug>` en todos los repos o en ninguno. Si alguno tenía cambios sin commitear, no la crea en ninguno y me avisa: prefiero que no haga nada a quedarme con media feature.",
+          "Y su último acto: imprime un prompt y termina. Ahí se acaba chalc."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "El hand-off: el prompt con las rutas donde chalc se aparta"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese prompt final es la pieza que más me costó ver como pieza, porque parece un mensaje de despedida de la consola y en realidad es el artefacto que conecta las dos mitades del flujo. No es un resumen bonito de lo que pasó: es una instrucción operativa, con las rutas absolutas de cada repo dentro, lista para pegar en el agente. Esto es lo que imprime, sin adornos:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "Eres el ORQUESTADOR de esta feature full-stack. Coordinas TRES repos",
+          "alrededor de un único contrato de API, con SDD y TDD estricto.",
+          "",
+          "📜 Contrato (fuente de verdad, idéntico en las specs): contracts/api.md",
+          "   Todo endpoint, request/response y error sale de ahí — no inventes nada fuera.",
+          "",
+          "Repos:",
+          "- BACKEND (expone la API):   D:/pedidos-api   → spec: specs/012-pedidos/",
+          "- FRONTEND (consume la API): D:/pedidos-web   → spec: specs/012-pedidos/",
+          "- MÓVIL (consume la API):    D:/pedidos-app   → spec: specs/012-pedidos/",
+          "",
+          "Cómo orquestar:",
+          "1. Empieza por el BACKEND (es dueño del contrato). Lee su contracts/api.md,",
+          "   specs/constitution.md y spec.md (R1, R2… en EARS). Sigue plan.md y ejecuta",
+          "   tasks.md UNA tarea a la vez. Implementa EXACTAMENTE los endpoints del contrato.",
+          "2. Sigue con el FRONTEND, pero CONSUMIENDO el contrato (mismas rutas/shapes);",
+          "   no reimplementes la lógica del back.",
+          "3. Luego el MÓVIL, consumiendo el MISMO contrato; no reimplementes la lógica",
+          "   del back ni dupliques la del front.",
+          "4. Los R# son COMPARTIDOS: el mismo R# se cumple en back, front y/o móvil.",
+          "5. Por tarea, TDD estricto: test que falla (Red) → mínimo código (Green) → refactor.",
+          "6. Antes de cada tarea di qué R# y en qué repo; al terminar, párate y espera mi OK.",
+          "7. Rama feat/pedidos en cada repo.",
+          "8. Si algo está [NEEDS CLARIFICATION] en el contrato o una spec, pregúntame antes.",
+          "   La spec es la fuente de verdad: si cambia el alcance, actualiza spec y contrato primero."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el punto 8, porque es el que cierra el círculo con todo lo anterior. No dice «si te falta algo, resuélvelo». Dice que cualquier cosa que haya que cambiar entra por el contrato y pasa por mí. Es la misma regla de la que hablaba al principio —un carril nunca le pide nada a otro carril— pero escrita donde de verdad importa: dentro de las instrucciones que va a leer quien escribe el código, no en un README que nadie abre."
+      },
+      {
+        "kind": "quote",
+        "text": "Un prompt no es la despedida de la CLI: es el único sitio donde las reglas llegan a quien las tiene que cumplir, en el momento exacto en que va a empezar."
+      },
+      {
+        "kind": "heading",
+        "text": "Ahí empieza la orquestación: una tarea, un test en rojo, y parada"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pego ese prompt en el agente y ahí cambia quién manda. Hasta este punto todo lo hizo una CLI determinista; a partir de aquí trabaja un modelo dentro de un bucle, y **el orquestador es él**, no chalc. Lo dice la primera línea del mensaje, literal: «Eres el ORQUESTADOR de esta feature full-stack». chalc lo único que hizo fue dejarle el terreno preparado y decirle cómo se juega."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y orquestar aquí no es una metáfora vaga, es un turno con pasos fijos. Esto es lo que hace el agente, tarea a tarea:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Lee antes de tocar nada**: el contrato, la constitución del proyecto y la spec de su carril, además de las skills que chalc le dejó equipadas en ese repo. No arranca de una hoja en blanco ni de lo que recuerde de su entrenamiento.",
+          "**Anuncia la tarea**: dice qué R# va a cumplir y en qué repo, sacado de `tasks.md`. Una sola. Esto parece burocracia y es lo que me deja pararlo a tiempo: si va a por el requisito equivocado, lo veo antes de que escriba nada.",
+          "**Escribe el test que falla** y comprueba que falla de verdad. Un test que pasa a la primera no está probando lo que crees: normalmente está probando que el código existe.",
+          "**Escribe el mínimo código** que lo pone en verde. Nada de adelantarse a los tres requisitos siguientes porque «ya que estoy».",
+          "**Refactoriza y corre los mutantes.** Si el score baja del umbral, la tarea no está terminada aunque los tests estén verdes.",
+          "**Se para y espera mi OK.** No encadena tareas por su cuenta. Aquí es donde reviso, y donde lo reencamino si se fue por donde no era."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/orchestration-turn.es.svg",
+        "caption": "El turno completo. Fíjate en las dos cosas que el agente no elige: el orden de los carriles, que viene del prompt, y la parada al final de cada tarea. Y en el camino rojo: cuando le falta algo, no cruza al carril de al lado."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El orden entre carriles tampoco lo decide él: el prompt le dice que empiece por el back, porque es el dueño del contrato, y que después vaya a la web a consumirlo sin reimplementar su lógica. Y el móvil aparece en ese mismo prompt como tercer consumidor, con su repo y su spec; esa parte se la doy a Codex, que la trabaja en su repo con el mismo `contracts/api.md` delante. Los dos agentes orquestan, cada uno lo suyo, y ninguno sabe que el otro existe."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí puede parecer que me contradigo —antes dije que chalc no decide nada y ahora digo que el agente decide—, así que conviene dejar el reparto en limpio, porque cada decisión tiene un dueño distinto. **El QUÉ lo decido yo**: qué hace la feature, qué endpoints existen, qué pasa al cancelar dos veces. Está en el contrato, y el contrato lo apruebo yo. **El CÓMO lo decide el agente**: qué servicio crear, cómo modelar el estado, dónde poner la validación, qué widget usar. Ese es su trabajo y está bien que lo haga él —dentro de las reglas de su stack, una tarea por turno y con una parada delante de mí al final de cada una—. **Y chalc no decide ni lo uno ni lo otro**: prepara el terreno y reparte los papeles. Tres piezas, tres papeles, y ninguno pisa el de al lado."
+      },
+      {
+        "kind": "heading",
+        "text": "El equipo repartido: dos agentes, un carril cada uno"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La forma más rápida que tengo de explicar esta parte es pensarla como una contratación. Imagina que montas el equipo con gente de países distintos: cada uno con su tarifa, su horario y su manera de trabajar. Eso, por sí solo, no es un problema. Lo es únicamente si cada uno entrega lo que le parece. Lo que hace que un equipo repartido funcione no es que todos sean iguales, sino que todos firmen la misma entrega y sigan el mismo estándar. A partir de ahí, quién es cada uno y cuánto cuesta pasa a ser logística."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con los agentes hago exactamente eso. Hoy Codex se queda con el carril móvil, en Flutter, y Claude Code con la web en Angular y el back en Nest. No es que uno sea mejor que el otro en abstracto: es un reparto por razones concretas, y prefiero decirlas tal cual son."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Costo y límites de uso.** Cada herramienta tiene su tope. Si meto los tres carriles en una sola, me quedo parado a media tarde esperando a que se reponga. Repartidos, los dos carriles avanzan a la vez y ninguno choca con el límite del otro.",
+          "**Los estoy probando.** Quiero ver cómo se porta cada uno en su stack, con las mismas reglas y el mismo contrato delante. Todavía no tengo una conclusión que pueda defender con datos, así que no la voy a escribir aquí: por ahora es una prueba en curso, no un veredicto.",
+          "**Un agente, un lenguaje.** El que está en Flutter piensa en Dart y en widgets toda la sesión; el que está en Angular y Nest piensa en TypeScript. Ninguno cambia de contexto a mitad, que es justo donde se pierde el foco y empiezan a mezclarse los patrones.",
+          "**Cada uno arranca con su propio contexto.** Claude Code lee el `CLAUDE.md` del repo y sus skills en `.claude/skills/`; Codex lee el `AGENTS.md`. Son archivos distintos en repos distintos: ninguno carga el ruido del otro."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Y cómo recibe cada asistente su configuración? Porque los targets de `chalc` son adaptadores: cada uno es un archivo que traduce el mismo catálogo neutro al formato de su asistente —Claude Code, Codex, Copilot, Cursor y Gemini CLI—. Para Codex, eso es el `AGENTS.md` y sus servidores MCP en `.codex/config.toml`: las mismas skills y el mismo método que los demás, escritos en su formato. Esa es la gracia de que el catálogo sea neutro: sumar un asistente nuevo es escribir un adaptador más, no repensar nada."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agents-per-lane.es.svg",
+        "caption": "Dos agentes, un carril cada uno, y una pared en medio: ninguno ve el repo del otro. Lo único que cruza esa pared es el contrato, los R# y el estándar común."
+      },
+      {
+        "kind": "quote",
+        "text": "Un equipo repartido no funciona porque todos trabajen igual, sino porque todos entregan contra lo mismo. Con agentes es idéntico: da igual cuál escriba el código si los dos responden ante el mismo contrato."
+      },
+      {
+        "kind": "heading",
+        "text": "Las pruebas nunca fueron opcionales; con un agente, además, son la única evidencia"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuando programo, un test es una red de seguridad: me avisa el día que rompa algo sin querer. Cuando el código lo escribe un agente, el test deja de ser una red y pasa a ser la única prueba de que lo entregado es lo pedido. Y conviene decir cuándo pasa esto, porque no es un defecto inevitable del modelo: pasa cuando lo dejas suelto, sin contrato, sin spec y sin un test que lo ate. Suelto, un modelo no falla como fallamos las personas. No te entrega algo a medias que se nota: rellena lo que no sabe con lo que le parece y te lo entrega completo, ordenado, con buenos nombres y compilando. Todo lo que usamos para juzgar código de un vistazo —que se lea bien, que parezca correcto— sigue impecable aunque el fondo esté mal. Las riendas de este flujo existen justo para eso."
+      },
+      {
+        "kind": "quote",
+        "text": "Un agente suelto no produce código que parezca sospechoso. Produce código que parece bueno. Por eso «lo he leído y tiene buena pinta» dejó de ser una revisión."
+      },
+      {
+        "kind": "paragraph",
+        "text": "De ahí sale la regla del método: el test va primero y tiene que fallar antes de que exista una sola línea de implementación. Y con un agente delante eso no es ceremonia, es lo único que funciona. Un test escrito **antes** es una especificación: dice qué tiene que pasar, y el agente no puede discutirla. Un test escrito **después** es una descripción: cuenta lo que el código hace, sea lo que sea. Si le pides a un agente que implemente y luego pruebe, te va a escribir un test que pasa —siempre—, porque lo escribe mirando su propio código. Habrás pagado dos veces por la misma opinión."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso el prompt le exige confirmar el rojo antes de seguir. No basta con escribir el test: hay que verlo fallar. Un test que pasa a la primera casi nunca está probando lo que crees; normalmente está probando que la función existe y devuelve algo. Es el fallo más silencioso que hay, y con tres repos se multiplica sin que nadie lo note."
+      },
+      {
+        "kind": "heading",
+        "text": "Y por qué unitarias, y con un modelo definido"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Unitarias, primero, por una razón práctica: son las únicas que puedes correr en el segundo posterior a escribirlas. El ciclo del agente es escribir, correr, mirar y corregir; si esa vuelta tarda dos minutos porque hay que levantar Docker y una base de datos, el ciclo se rompe y el agente empieza a adivinar en vez de comprobar. La prueba unitaria es rápida y no necesita a nadie más, así que cada carril se verifica solo, sin esperar a que el de al lado esté listo. Que el back y la web puedan probar R2 sin hablar entre ellos es lo que permite que vayan en paralelo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y con un modelo definido, que es la parte que más se descuida. Si a cada test lo dejas nacer como salga, en un mes tienes tres repos con tres estilos, y dentro de cada uno tantos estilos como sesiones hubo. El agente no tiene criterio propio sobre esto: escribe como le hayas enseñado, y si no le enseñas, escribe como le salga ese día. Así que la forma también está equipada de antemano:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Una skill de testing por stack**, que dice cómo se prueba ahí de verdad: `angular-testing` para la web —TestBed, componentes con signals, cómo se simula una respuesta HTTP—, `flutter-testing` para el móvil —widget tests, cómo bombear el árbol—, y las buenas prácticas de Nest para el back. No es teoría de testing genérica: es el idioma de cada stack.",
+          "**Un test, un comportamiento.** Si un test comprueba tres cosas y falla, tienes que leerlo entero para saber cuál se rompió. Si comprueba una, el nombre del test ya te lo dice.",
+          "**El nombre trazado al requisito.** El test de R2 dice R2. Así `grep R2` sigue funcionando en los tres repos, y así sé qué requisito se quedó sin cubrir cuando falta uno.",
+          "**Nada de mocks de lo que estás probando.** Se simula lo de fuera —la red, el reloj, el almacenamiento—, nunca la lógica bajo prueba. Es el atajo favorito de un modelo cuando un test se le resiste: mockear justo la pieza que tenía que verificar y dejarlo en verde.",
+          "**Y el umbral de mutantes como cierre**, porque todo lo anterior se puede cumplir al pie de la letra y seguir teniendo tests que no comprueban nada."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese último punto es el que hace que el estándar no sea decorativo. Las cuatro reglas de arriba son de forma, y la forma se puede fingir. Los mutantes son de fondo: cambian el código y preguntan si alguien se dio cuenta. Es la diferencia entre revisar que el test está bien escrito y comprobar que sirve para algo."
+      },
+      {
+        "kind": "heading",
+        "text": "Las pruebas: el mismo R# en tres lenguajes"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí es donde el contrato deja de ser documentación y empieza a defenderte. Como los identificadores de requisito son los mismos en los tres repos, un requisito se convierte en tres pruebas que hablan de lo mismo desde tres sitios distintos. Tomemos R2 —el pedido ya estaba cancelado, hay que responder 409 y no tocar el inventario— y mira cómo se prueba en cada carril:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "En el back, R2 es un test de endpoint: llamo dos veces a la cancelación, exijo un 409 en la segunda y compruebo que el inventario no se movió.",
+          "En la web, R2 es un test de pantalla: simulo el 409 que dice el contrato y exijo que salga el aviso correcto y que el botón quede deshabilitado.",
+          "En el móvil, R2 es un test de widget: mismo 409 simulado, mismo aviso, y además que un doble toque no dispare dos peticiones.",
+          "Los tres fallan primero. El contrato no te libra del TDD: le da al test algo contra qué fallar que no es mi intuición ni lo que el back hacía ayer."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "# mismo listón en los tres, distinta herramienta por lenguaje",
+          "api/   npx stryker run          (Stryker + jest-runner)",
+          "web/   npx stryker run          (Stryker + vitest-runner)",
+          "app/   dart run mutation_test   (mutation_test, de pub.dev)",
+          "→ objetivo en los tres: ≥ 80% de mutantes muertos",
+          "→ si un carril baja del umbral, esa tarea no está terminada"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/same-r-three-tools.es.svg",
+        "caption": "Un requisito escrito una sola vez, probado en tres lenguajes. Cambia la herramienta que mata los mutantes; no cambia el listón ni el identificador."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El mutation testing es el paso que más gente se salta y el único que te dice si tus tests valen algo. La idea es vieja y sencilla: se cambia una línea del código a propósito —un `>` por un `>=`, un `true` por un `false`— y se vuelve a correr la suite. Si los tests siguen en verde, ese test no estaba probando nada: solo estaba pasando. La herramienta cambia con el lenguaje —Stryker en los dos carriles de TypeScript, `mutation_test` en Dart—, pero el listón no. El mismo 80% en los tres, porque la calidad de las pruebas no puede depender de en qué repo te tocó trabajar."
+      },
+      {
+        "kind": "heading",
+        "text": "Yo doy un objetivo; el bucle hace el resto"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Puesto en una frase, mi trabajo en todo esto es dar un objetivo. No dicto pasos ni reviso línea a línea mientras escribe: entrego una historia de usuario convertida en contrato y specs, y a partir de ahí el orquestador planifica —lee el plan, mira las tareas, decide el orden dentro de su carril— y delega lo que le toca a cada quien: esto es del back, esto de la web, esto del móvil. Yo aparezco al final de cada tarea, no en medio."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que hace que eso no se convierta en un desastre es dónde encajan las pruebas, y creo que es la idea más útil de toda la nota: **el test es la relación entre el criterio y el código.** El criterio vive en la spec, escrito en EARS y con su R#. El código vive en el repo. El test es lo único que toca las dos cosas a la vez y puede decir si se corresponden. Sin él, la spec es una intención y el código una promesa, y nadie las ha puesto nunca la una frente a la otra."
+      },
+      {
+        "kind": "quote",
+        "text": "La especificación dice qué debe pasar. El código dice qué pasa. El test es lo único que las mira a las dos y responde si son la misma cosa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y con eso montado, el agente entra en un bucle que se cierra solo: escribe contra la spec, corre las pruebas, y si una falla, el código está roto —no «casi bien»— así que corrige y vuelve a correr. Repite hasta que la tarea cumple lo que el requisito pedía. No avanza porque él crea que ya está: avanza porque algo externo a él le dijo que sí."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es, tal cual, la razón que encontré de por qué en la práctica casi no me pelea con alucinaciones. Y quiero decirlo con cuidado, porque la versión fácil sería «con esto el modelo deja de inventar», y no es verdad: **el modelo sigue inventando.** Lo que cambia es que lo que inventa no sobrevive. Un campo que no existe, un endpoint que se imaginó, una firma que recordaba de otra versión: todo eso se estrella contra un test que falla en el segundo siguiente, dentro del bucle, y se corrige antes de que llegue a mí. La invención no desaparece; deja de tener salida."
+      },
+      {
+        "kind": "quote",
+        "text": "No hice que el modelo dejara de equivocarse. Hice que equivocarse tuviera consecuencias inmediatas y automáticas, en vez de aparecer tres días después en la pantalla de un usuario."
+      },
+      {
+        "kind": "heading",
+        "text": "El contexto: poco y bueno, y dejarlo pensar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Falta la otra mitad, y es la que más gente hace al revés. No le paso al agente archivos de mil líneas «por si acaso». Nunca le doy los tres repos, ni el `architecture.md` entero, ni toda la spec de la feature cuando está en una tarea concreta. Le doy su contrato, su spec, la skill que aplica a lo que va a tocar, y el README de la carpeta donde va a escribir. Poco, y elegido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Durante mucho tiempo pensé que eso era tacañería mía para gastar menos tokens. Resulta que hay una razón mejor y está documentada. En [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), el equipo de Applied AI de Anthropic lo explica así: los modelos tienen un «presupuesto de atención» finito, y a medida que crece el número de tokens en la ventana de contexto, la capacidad del modelo de recuperar con precisión la información que hay dentro **disminuye**. No es un acantilado, es una pendiente: sigue funcionando con contextos largos, pero pierde precisión al recuperar datos y al razonar sobre cosas alejadas entre sí."
+      },
+      {
+        "kind": "quote",
+        "text": "Encontrar el conjunto más pequeño posible de tokens de alta señal que maximice la probabilidad del resultado que buscas.",
+        "source": "Applied AI Team de Anthropic · Effective context engineering for AI agents, 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese principio le pone nombre a por qué todo lo anterior está partido como está. El contrato en un archivo aparte y no dentro de la spec. Las reglas repartidas por carpeta en vez de un documento de cuatrocientas líneas. Las skills que se abren solo cuando la tarea las necesita. Un carril que no ve los repos de los otros dos. No es orden por estética: es no gastarle el presupuesto de atención en cosas que no va a usar. El mismo artículo lo llama recuperación «just-in-time»: que el agente guarde referencias ligeras —rutas de archivo, enlaces— y cargue lo que necesite en el momento, en vez de tragárselo todo de entrada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí viene la parte que me parece contraintuitiva y que cambia cómo trabajo: si le doy poco contexto, lo que sí le doy es tiempo para pensar. Cuando Anthropic presentó el razonamiento extendido en Claude 3.7 Sonnet, publicó [una observación que se puede medir](https://www.anthropic.com/news/visible-extended-thinking): la precisión en preguntas de matemáticas **mejora de forma logarítmica con el número de tokens de razonamiento** que se le permite usar. Logarítmica quiere decir que sube de verdad, aunque cada vez cueste más: el primer empujón de razonamiento vale mucho, el siguiente algo menos, y así. Con un presupuesto de 64k tokens de razonamiento y muestreo en paralelo llegaron a un 84,8% en GPQA, con un 96,5% en la parte de física."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Las dos cosas juntas dan la regla con la que me quedo, y es justo la contraria de lo que hace casi todo el mundo: **poco contexto y mucho pensamiento.** Lo habitual es al revés —volcarle el repositorio entero y pedirle la respuesta ya—, y así se pierden por los dos lados: el contexto de más le diluye la atención, y la prisa le quita los pasos de razonamiento que son justo los que pagan. Yo prefiero que lea tres archivos y se lo piense, a que lea treinta y conteste rápido."
+      },
+      {
+        "kind": "heading",
+        "text": "El tercer carril entra por la puerta"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuando empecé a escribir esta nota, el carril móvil era la costura del montaje: `chalc feature` cableaba dos rutas —la web y el back— y el móvil lo metía yo a mano, copiando el contrato al repo de Flutter y generando su spec aparte. Funcionaba, pero el sellado se lo saltaba: si el contrato cambiaba, en el móvil me tocaba acordarme a mí. Escribirlo aquí me obligó a mirarle la cara al hueco, y ya no existe: el móvil entra por el mismo comando que los otros dos."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --movil ./app --branch",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS  ·  Móvil: Flutter",
+          "⠋ Orquestando: contrato → spec back → spec front → spec móvil",
+          "✓ Spec back en specs/012-pedidos",
+          "✓ Spec front en specs/012-pedidos",
+          "✓ Spec móvil en specs/012-pedidos",
+          "  Contrato compartido en cada spec: contracts/api.md",
+          "  ✓ front: rama feat/pedidos (creada)",
+          "  ✓ back: rama feat/pedidos (creada)",
+          "  ✓ móvil: rama feat/pedidos (creada)"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El móvil es un tercer consumidor, con su flag `--movil` o con una pregunta si voy en interactivo: «¿La feature tiene app móvil?». Y recibe exactamente el mismo trato que los otros dos: se le detecta el stack, se le equipan sus skills, su spec sale con rol MOBILE propio —pantallas, navegación, conectividad, consumo del contrato, con la orden de no reimplementar la lógica del back ni duplicar la del front—, comparte el mismo número y los mismos R#, lleva la huella estampada y su `contract.lock.json`, y la rama se crea en los tres repos o en ninguno."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay un detalle del contrato que me importa más que el comando: el contrato se genera UNA vez, sabiendo que existe un cliente móvil. Y cuando no lo hay, el prompt lo dice explícito —«(sin app móvil)»— para que el modelo no invente clientes que nadie pidió. Es la misma regla de siempre, la de no rellenar, aplicada a un carril entero."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y la otra costura se cerró igual: Codex ya es un target más del catálogo, junto a Claude Code, Copilot, Cursor y Gemini CLI. Su adaptador escribe el `AGENTS.md` del repo y sus servidores MCP en `.codex/config.toml`, con las mismas skills y el mismo método que los demás. El `AGENTS.md` del móvil dejó de mantenerse a mano: sale del catálogo, como todo lo demás."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El día de integrar deja de ser un evento. Si los tres cumplieron el mismo contrato, conectar es aburrido, y aburrido es justo lo que quieres que sea.",
+          "Un cambio en R2 se busca en un segundo: `grep R2` en los tres repos y ahí está todo lo que hay que tocar —contrato, spec, tareas y tests, en back, web y móvil—.",
+          "Ningún carril hereda decisiones que se tomaron en un chat en el que no estaba.",
+          "Cada agente trabaja con las reglas de su stack y con el mismo estándar común, así que el código de los tres repos se parece al de la casa y no al humor del modelo ese día.",
+          "Y cuando cambio de herramienta en un carril —o pruebo otra, que es lo que estoy haciendo ahora— no se cae nada: lo que manda es el contrato, no quién escribió el código."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres el escalón anterior —por qué el contrato lo lidera el back y no el front— está en [Un contrato manda](/daily/one-contract-many-repos). Si te interesa cómo dirijo la IA dentro de un solo repo, lo cuento en [cómo uso la IA cuando programo con Angular](/daily/how-i-code-angular-with-ai). Y si quieres ver dónde aplico todo esto, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI de la que sale todo esto. El encadenado contrato → back → front está en `lib/featureorch.mjs`, el hand-off en `lib/commands/feature.mjs`, las reglas por stack en `rules/` y los adaptadores de cada asistente en `targets/` — leyendo esas tres carpetas se entiende el reparto entero.",
+          "[Notación EARS](https://alistairmavin.com/ears/) — Mav y sus colegas en Rolls-Royce, 2009. Seis patrones para escribir requisitos que se puedan convertir en test; el contrato usa el de eventos, `CUANDO … EL SISTEMA DEBE …`, y es lo que permite que un mismo R# se pruebe en tres lenguajes.",
+          "[Contract Test](https://martinfowler.com/bliki/ContractTest.html) — Martin Fowler, 2011. Por qué un test contra el contrato te avisa cuando el proveedor cambia, en vez de enterarte en producción. Con tres consumidores en lugar de uno, esto pesa el triple.",
+          "[Stryker Mutator](https://stryker-mutator.io/): el motor de mutation testing de los dos carriles de TypeScript. Se le enchufa un runner distinto según el framework de test que ya tenga cada repo, así que no hay que montar una suite aparte.",
+          "[mutation_test](https://pub.dev/packages/mutation_test): el equivalente para Dart, en pub.dev. Misma idea —cambiar el código a propósito y ver si los tests se dan cuenta—, en línea de comandos y con las reglas de mutación configurables.",
+          "[Codex CLI](https://developers.openai.com/codex/cli): la documentación oficial, incluido cómo `AGENTS.md` le entrega las instrucciones del proyecto. Es el equivalente del `CLAUDE.md` que ya usaba en los otros dos repos, y por eso el reparto por carriles no obliga a cambiar nada del método.",
+          "[Servidor MCP del Angular CLI](https://angular.dev/ai/mcp): cómo levantarlo y qué herramientas expone. Es el que equipa el carril web para que consulte la versión de hoy y no la que el modelo recuerda.",
+          "[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — equipo de Applied AI de Anthropic, 2025. El presupuesto de atención, por qué la precisión cae según se llena la ventana de contexto, y el principio de buscar el conjunto más pequeño de tokens de alta señal. Es el que mejor explica por qué reparto las reglas en vez de amontonarlas.",
+          "[Claude's extended thinking](https://www.anthropic.com/news/visible-extended-thinking) — Anthropic, 2025. Donde publican que la precisión mejora de forma logarítmica con los tokens de razonamiento, y cómo se fija un presupuesto de pensamiento. La mitad que compensa dar poco contexto."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "A customer cancelled their order, saw no confirmation, and hit the button again. That second cancellation — the same one, on the same order — is what blew the whole thing open. The backend did the right thing: the order was already cancelled, so it returned a 409 and left the inventory alone. The web app received that 409 and painted it as \"Something went wrong\", never once saying the order had already been cancelled, so the customer tried a third time. And the mobile app, built for two days on its own idea of what happens when you cancel twice, read exactly the same 409, took it as success, showed a confirmation and decremented the inventory on screen."
+      },
+      {
+        "kind": "paragraph",
+        "text": "None of the three was wrong in its own repo. All three passed their tests, all three did what their story said, and all three did it well. The problem is that \"what happens when you cancel twice\" was written nowhere all three could read it: it lived in three separate heads, and all three versions were reasonable. Nobody caught it while coding. We caught it on integration day, looking at an app reporting success while nothing had moved in the warehouse."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With a single consumer this never comes up. Whoever paints the screen is the same person consuming the API, so \"what gets shown when you cancel twice\" is decided once and in one place — in fact it's hardly ever decided, you just see it while testing and move on. The moment there are two, the same backend response lands in two teams that don't talk to each other and each settles on its own what to show. That's where the gap opens: making them agree is nobody's job. That's what this note is about, and I should say up front what it isn't: I'm not here to recommend a finished method. It's how I started working this way, figuring out little by little — and by tripping over problems like this one — which flow actually fits the way I work. One contract for mobile, web and API, each lane with its own rules, and two different agents, Claude Code and Codex, moving in parallel without either losing focus."
+      },
+      {
+        "kind": "quote",
+        "text": "The backend can do its whole job and the user still sees two products contradicting each other. Whatever isn't written somewhere everyone reads, each lane invents — and invents reasonably, which is what makes it hard to spot."
+      },
+      {
+        "kind": "heading",
+        "text": "Why Flutter, Nest and Angular"
+      },
+      {
+        "kind": "paragraph",
+        "text": "First, an honest clarification: I didn't pick these three stacks with a comparison table in front of me. I use them because they're the ones I enjoy most and because I love building with them. I've been on Angular for close to twelve years and it's still where I move best. Nest gives me on the backend the same order Angular gives me on the frontend — modules, dependency injection, decorators — so hopping between the two costs me nothing. And Flutter lets me take the app to mobile without changing my head every two screens. This note isn't about whether they're the best: it's about the flow I built on top of them, and that flow would work just the same with another three."
+      },
+      {
+        "kind": "heading",
+        "text": "Everything comes from the backend — so why does the third lane still break things?"
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's a fair objection here, and I raised it myself while building this: if the backend directs everything, the consumers don't negotiate with each other. That's true. This isn't a mesh where everybody talks to everybody, it's a star: the backend at the centre, the web and the mobile app hanging off it. The web asks nothing of mobile, nor the other way round. So there aren't three pairs to keep alive, there are two channels — backend with web and backend with mobile — and that's it. Anyone selling you the idea that coordination grows by pairs is describing a different architecture."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So why does the third one break something? Because what multiplies isn't the channels: it's the interpretation. The backend defines what travels down the wire — a 409, a field, an error code — but not what each consumer does when it arrives. That 409 in the story was one single thing on the network and two opposite behaviours on screen: a generic error on the web, a success message on mobile. The backend did its whole part and the user still saw two products contradicting each other."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that's the real crack: consistency between the web and the mobile app belongs to nobody. The backend has no opinion — it couldn't care less which message you paint; the web can't decide it alone, and neither can mobile. It's the one part of the feature with no natural owner, which is why it's the first thing to fall over when the second consumer arrives. With only one consumer the problem doesn't even exist, because \"what gets shown\" and \"what gets consumed\" live in the same repo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The backend answers correctly, but it answers in private. What it agreed with the web in one chat is invisible to mobile, which was in another chat, on another day.",
+          "The backend and the web decide the 409 should carry a `code` field. Mobile wasn't there, and keeps reading `message`, which now comes back empty.",
+          "Mobile asks for an extra field and the backend adds it. The web never finds out, and its test stays green because it tests against what the backend did yesterday.",
+          "And the worst case, the one from the story, where nobody broke any rule: the response arrives identical to both, and each decides on its own what to show."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "A contract closes both cracks at once, and that's why the backend \"directing\" isn't enough. The wire one, because the endpoints, the errors and the models are written in a single place instead of agreed in two private conversations. And the interpretation one, which the backend was never going to cover: the requirement doesn't say \"return 409\", it says what must happen when the order was already cancelled, and all three read that the same way. Adding a fourth consumer forces no renegotiation and no memo to forward: it's one more reading of the same document."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/three-lanes-contract.en.svg",
+        "caption": "One story goes in, one contract comes out, and from there the three lanes. At the bottom, the real difference: the backend answering in private twice, with cross-screen consistency in no man's land, against one requirement all three read the same way."
+      },
+      {
+        "kind": "heading",
+        "text": "chalc doesn't code: it builds the contract, the specs, and hands out the rules"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here it is worth stopping to put each piece in its place, because the two roles are easy to confuse and everything that follows depends on telling them apart. `chalc` is a local CLI and it does quite a few more things than show up in this note: it creates projects from scratch, checks that architecture boundaries are respected, manages the rules catalog, keeps a running tally of what the AI is spending in tokens, or brings the app up to run a QA agent against it. Of all its commands, only two appear in this flow, and the one in charge is `chalc feature`: it detects each repo's stack, equips it with its rules, turns the user story into an API contract, and writes each lane's spec against that contract. What it doesn't do is write the feature's code or decide how it's implemented inside — when you create a project from scratch, `chalc init` does propose an architecture, but it's a suggestion and you're the one who chooses. When `chalc feature` finishes, it prints a prompt and steps aside. And that is the distinction the rest of this note rests on: **chalc is not the orchestrator**. The orchestrator is what comes next, and it arrives two sections below."
+      },
+      {
+        "kind": "quote",
+        "text": "It decides for neither side (it is neither the frontend nor the backend): it only splits the work, shares the contract and joins the results.",
+        "source": "Design comment in chalc · lib/featureorch.mjs",
+        "sourceUrl": "https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/featureorch.mjs"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The obvious question is why, and I get it right afterwards. `chalc` does use AI to generate the contract and the specs, so a model is already in there. Why not let it decide as well? A \"smart\" `chalc` could look at all three lanes at once, notice that mobile is going to need a field the backend doesn't expose, and get ahead of it. The shortest answer I have isn't an opinion of mine: it's in the three comment lines above the function that chains the generations together, and in its signature."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "sed -n '32,38p' lib/featureorch.mjs",
+          "",
+          "// Orquesta el flujo: 1) contrato (back lidera) → 2) spec del back → 3) spec del front (consume el contrato).",
+          "// `back`/`front` = { stack, templates, constitution }. Impls inyectables para testear sin tokens.",
+          "// Devuelve { contract, contractTrace, back: <generateSpec>, front: <generateSpec> }.",
+          "export async function orchestrateFeature({",
+          "  cfg, userStory, language = 'español', mode = 'lite', back, front, backContext = '',",
+          "  generateContractImpl = generateContract, generateSpecImpl = generateSpec",
+          "}) {"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The two functions that talk to the model — the one that generates the contract and the one that generates each spec — come in as parameters, with the real implementation wired as the default. When I actually run the command, those are the ones used; in the test I hand it two fakes that record how they were called and return a made-up contract. It isn't a testing trick I came up with afterwards: it's written as intent in the comment above — \"injectable impls so it can be tested without tokens\" — and it only works because the function has no judgment of its own. If it had any, that judgment couldn't be swapped from outside by passing a different argument."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And these are the checks in [its test](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/test/featureorch.test.mjs), exactly as they sit in the file:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node --test test/featureorch.test.mjs",
+          "",
+          "  // orden: contrato → back → front",
+          "  assert.deepEqual(calls.map((c) => c.kind), ['contract', 'spec', 'spec']);",
+          "  // el contrato vio ambos stacks",
+          "  assert.equal(calls[0].backStack, 'NestJS');",
+          "  assert.equal(calls[0].frontStack, 'Angular');",
+          "  // el doc del back lleva rol BACKEND + el contrato + la HU",
+          "  assert.match(calls[1].documentText, /<role>BACKEND<\\/role>/);",
+          "  assert.match(calls[1].documentText, /R1 — login/);             // contrato compartido embebido",
+          "  assert.match(calls[1].documentText, /iniciar sesión/);",
+          "  // el doc del front lleva rol FRONTEND + el mismo contrato",
+          "  assert.match(calls[2].documentText, /<role>FRONTEND<\\/role>/);",
+          "  assert.match(calls[2].documentText, /R1 — login/);",
+          "",
+          "# tests 2",
+          "# pass 2",
+          "# fail 0"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Look at what they assert: the order things were called in, that the contract received both stacks, and that each side got its role with the same contract and the same story embedded. Not one check on whether what was generated is any good, because that isn't its call. The rest of the file is two more lines — that it returns the files — and a second three-line test: that it rejects an empty user story. That's all of it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now try writing the test for that smart version. What do you assert? Not the order, because the order is no longer fixed: it depends on what it decides on each run. Not the content, because that changes every time you run it. What you're left with is something like \"check that the decision was a good one\", and that isn't an assertion: it's an opinion shaped like code. That's the difference, and it isn't a matter of taste: you can assert on structure; judgment, at best, you can evaluate. chalc itself keeps the two verbs apart: the deterministic part has ordinary tests, and the part that touches AI has its own command, `chalc eval-ia`, which runs local evaluations of the prompts and parsers without calling the provider. It isn't the same guarantee: a test tells you \"this always holds\"; an evaluation gives you a score over a sample. The more a piece decides, the more of your confidence moves from the first category to the second."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Two consequences follow from that, and both are practical:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**What isn't tested doesn't warn you when it breaks.** The day that smart version starts deciding worse — because I switched models, because the provider updated theirs, because I touched a line of the prompt — no test goes red. You find out from the result, three repos downstream.",
+          "**And no test would catch its mistakes.** Tests defend the contract: if a lane builds something different from what the paper says, its test fails and gives it away. But that only works if the paper is right. Imagine chalc is the one deciding and it decides wrong: it puts in the contract that the second cancellation returns 200. All three lanes implement it as written, all three write their tests against that rule, and all three stay green — the error is in the rule, and the tests only check that the rule is followed. That's why I approve the contract before it flows down to any lane: I'm the only filter that reviews the rule itself, not its compliance.",
+          "**And it would have to know all three stacks at once.** To hold an opinion on the mobile lane you need Dart and how a widget test works; for the web, Angular. Packing all three into one head is precisely the opposite of what makes this work — which is what the rest of this section is about: each lane receiving only its own."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/orchestrator-two-designs.en.svg",
+        "caption": "Both designs have the same shape and differ in exactly one thing: what sits at the centre. On the left, decisions that only exist inside a model's output. On the right, a file you can open, review and approve."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice what I'm not saying, because it's easy to take this to the opposite extreme: I'm not saying decisions are unnecessary. There are decisions to make, plenty of them — which fields the response carries, what happens when you cancel twice, whether the token expires. What I'm saying is where they have to live. A smart chalc would make them and leave them inside its own output, where nobody reviews them because nobody knows they're there. Mine pushes them up into the contract: a fingerprinted file I read and approve before it reaches any lane. The decision doesn't disappear, it moves — and by moving it goes from invisible to being a diff."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And what do I lose? Something real, and I'd rather say it: a smart `chalc` could smell that the web and mobile are about to read the same 409 differently before it happens. Mine doesn't see that, because it never looks inside any lane. That job stays with me — reading the contract before approving it — and the contract itself hands part of it back when it flags what's missing as `[NEEDS CLARIFICATION]` instead of filling it in on its own. It's slower than a clever machine. It's also the only version where I know who decided what."
+      },
+      {
+        "kind": "paragraph",
+        "text": "But it's very easy to draw a false conclusion from that: that chalc therefore rules over nothing. It does rule over something, and it's precisely the thing that matters. It doesn't decide how each lane codes, but it does decide which rules apply in each lane, and it hands them over equipped before anyone writes a line. That's the difference between telling someone how to do their job — unnecessary — and giving them the house manual before they start — essential."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it doesn't hand everyone the same thing, because not everyone does the same thing. This is what reaches each lane:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The contract**, identical in all three repos: `contracts/api.md`, with the endpoints, the models, the authentication and the requirements in EARS notation (`WHEN … THE SYSTEM SHALL …`).",
+          "**Its spec, and only its own**, with the role written inside: the backend knows it exposes the API; the web and the mobile app know they consume it, and are forbidden from reimplementing backend logic.",
+          "**The same requirement identifiers.** R2 is R2 in all three repos: it isn't renumbered per lane, because renumbering loses cross-repo traceability and then you can't search for anything.",
+          "**Its skills, which are not the same for everyone.** Angular gets its 14 — signals, http, routing, testing, responsive design…; Nest gets its best-practices one; Flutter gets its 8 — widgets, state, navigation, async, performance, testing.",
+          "**Its MCP server**: `angular-cli` on the web, `dart` on mobile, `postgres` optionally on the backend. Each lane queries its live documentation instead of the version the model remembers from training.",
+          "**And the shared standard, which isn't negotiable**: clean code, minimal implementation, SOLID, modular architecture and mutation testing. Every repo inherits those five, whatever the stack."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc                       # once in each repo",
+          "→ api/   detect: nestjs · typescript",
+          "→        skills: nestjs-best-practices + the 5 global ones",
+          "→ web/   detect: angular · typescript",
+          "→        skills: 14 angular ones + the 5 global ones · mcp: angular-cli",
+          "→ app/   detect: flutter · dart",
+          "→        skills: 8 flutter ones + the 5 global ones · mcp: dart",
+          "→ method in all three: spec-driven development ✓"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/rules-per-lane.en.svg",
+        "caption": "At the top, what every repo inherits no matter what. Below, what belongs to each lane. chalc hands this out and steps aside: what you write with it is your business."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's a detail that sounds minor and isn't: that detection isn't done by an AI. `chalc` looks at project signals — a dependency declared in `package.json`, a `pubspec.yaml` at the root — and applies explicit rules from its catalog. It's instant, it gives the same result every time, and it costs not a single token. The piece that hands out the rules is the most boring one in the whole flow, and that's exactly why it's the only one that has never failed me."
+      },
+      {
+        "kind": "heading",
+        "text": "The flow, start to finish"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Put together and in order, this is how a feature starts. I come in with the user story, run `chalc feature`, and the first thing it does is ask me for the paths: the web, the backend and, if the feature has an app, the mobile one (via the `--mobile` flag or by asking me). From there it doesn't ask me anything else until the end."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "It asks for the paths and detects each stack. It shows them to me — `Front: Angular · Back: NestJS · Mobile: Flutter` — so I can confirm it recognized each repo correctly **before** spending a token. If it got one wrong, I stop here instead of in the spec.",
+          "It prepares the ground: pulls each repo, checks whether the tree is clean, and equips it with its skills, its MCP and the method. This costs no tokens; they are catalog rules.",
+          "It generates the contract from the story: shared requirements in EARS (`WHEN … THE SYSTEM SHALL …`), endpoints, models and errors. Whatever the story doesn't say isn't invented: it's flagged `[NEEDS CLARIFICATION]`.",
+          "It specifies the backend against that already-closed contract, then the web and then the mobile app, both against the SAME contract. Each side gets its role written inside, and only its own part.",
+          "It seals: the same `specs/NNN-…` folder in every repo, the same R#, an identical copy of `contracts/api.md` in each spec, the contract fingerprint stamped into every file, and a `contract.lock.json` saved.",
+          "It creates the branch `feat/<slug>` in every repo or in none. If any of them had uncommitted changes, it creates it nowhere and tells me: I'd rather it do nothing than leave me half a feature.",
+          "And its last act: it prints a prompt and exits. That is where chalc ends."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "The hand-off: the prompt with the paths where chalc steps aside"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That final prompt is the piece it took me longest to see as a piece, because it looks like a farewell message from the console and it's actually the artifact connecting the two halves of the flow. It isn't a nice summary of what happened: it's an operating instruction, with each repo's absolute path inside, ready to paste into the agent. This is what it prints, undressed:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "You are the ORCHESTRATOR of this full-stack feature. You coordinate THREE repos",
+          "around a single API contract, with SDD and strict TDD.",
+          "",
+          "📜 Contract (source of truth, identical in the specs): contracts/api.md",
+          "   Every endpoint, request/response and error comes from there — invent nothing outside it.",
+          "",
+          "Repos:",
+          "- BACKEND (exposes the API):  D:/orders-api   → spec: specs/012-orders/",
+          "- FRONTEND (consumes the API): D:/orders-web  → spec: specs/012-orders/",
+          "- MOBILE (consumes the API):   D:/orders-app  → spec: specs/012-orders/",
+          "",
+          "How to orchestrate:",
+          "1. Start with the BACKEND (it owns the contract). Read its contracts/api.md,",
+          "   specs/constitution.md and spec.md (R1, R2… in EARS). Follow plan.md and execute",
+          "   tasks.md ONE task at a time. Implement EXACTLY the contract's endpoints.",
+          "2. Then the FRONTEND, but CONSUMING the contract (same routes/shapes);",
+          "   don't reimplement backend logic.",
+          "3. Then the MOBILE app, consuming the SAME contract; don't reimplement backend",
+          "   logic nor duplicate the frontend's.",
+          "4. R# are SHARED: the same R# is satisfied on backend, frontend and/or mobile.",
+          "5. Per task, strict TDD: failing test (Red) → minimum code (Green) → refactor.",
+          "6. Before each task, state which R# and which repo; when done, stop and wait for my OK.",
+          "7. Branch feat/orders in each repo.",
+          "8. If something is [NEEDS CLARIFICATION] in the contract or a spec, ask me first.",
+          "   The spec is the source of truth: if scope changes, update spec and contract first."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Look at point 8, because it's the one that closes the loop with everything above. It doesn't say \"if you're missing something, sort it out\". It says that anything needing to change enters through the contract and goes through me. It's the same rule I described at the start — a lane never asks anything of another lane — but written where it actually counts: inside the instructions the one writing the code is about to read, not in a README nobody opens."
+      },
+      {
+        "kind": "quote",
+        "text": "A prompt isn't the CLI's goodbye: it's the one place where the rules reach whoever has to follow them, at the exact moment they're about to start."
+      },
+      {
+        "kind": "heading",
+        "text": "That is where orchestration starts: one task, one failing test, and a stop"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I paste that prompt into the agent and that's where the authority changes hands. Up to this point everything was done by a deterministic CLI; from here on a model works inside a loop, and **the orchestrator is it**, not chalc. The first line of the message says so literally: \"You are the ORCHESTRATOR of this full-stack feature\". All chalc did was leave the ground prepared and spell out how the game is played."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And orchestrating here isn't a vague metaphor, it's a turn with fixed steps. This is what the agent does, task by task:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**It reads before touching anything**: the contract, the project's constitution and its lane's spec, plus the skills chalc left equipped in that repo. It doesn't start from a blank page or from what it remembers from training.",
+          "**It announces the task**: it states which R# it's about to satisfy and in which repo, taken from `tasks.md`. Just one. This looks like bureaucracy and it's what lets me stop it in time: if it's going after the wrong requirement, I see it before it writes anything.",
+          "**It writes the failing test** and checks that it actually fails. A test that passes on the first run isn't testing what you think: usually it's testing that the code exists.",
+          "**It writes the minimum code** that turns it green. No jumping ahead to the next three requirements because \"while I'm here\".",
+          "**It refactors and runs the mutants.** If the score drops below the threshold, the task isn't done even with all tests green.",
+          "**It stops and waits for my OK.** It doesn't chain tasks on its own. This is where I review, and where I steer it back if it went the wrong way."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/orchestration-turn.en.svg",
+        "caption": "The full turn. Note the two things the agent doesn't choose: the order of the lanes, which comes from the prompt, and the stop at the end of every task. And the red path: when it's missing something, it doesn't cross into the lane next door."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The order between lanes isn't its call either: the prompt tells it to start with the backend, because that's the contract's owner, and then move to the web to consume it without reimplementing its logic. And mobile shows up in that same prompt as a third consumer, with its repo and its spec; that part I hand to Codex, which works it in its own repo with the same `contracts/api.md` in front of it. Both agents orchestrate, each its own part, and neither knows the other exists."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here it may look like I'm contradicting myself — earlier I said chalc decides nothing, and now I'm saying the agent decides — so it's worth laying the split out cleanly, because each decision has a different owner. **The WHAT is mine**: what the feature does, which endpoints exist, what happens when you cancel twice. It's in the contract, and I'm the one who approves the contract. **The HOW is the agent's**: which service to create, how to model the state, where validation goes, which widget to use. That's its job and it's right that it does it — inside its stack's rules, one task per turn, and with a stop in front of me at the end of each one. **And chalc decides neither**: it prepares the ground and hands out the roles. Three pieces, three roles, and none steps on the next one's."
+      },
+      {
+        "kind": "heading",
+        "text": "The distributed team: two agents, one lane each"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The fastest way I have to explain this part is to think of it as hiring. Imagine you build the team with people from different countries: each with their own rate, their own hours and their own way of working. That, on its own, isn't a problem. It only becomes one if each of them ships whatever they feel like. What makes a distributed team work isn't everyone being the same, it's everyone signing the same delivery and following the same standard. From there on, who each person is and what they cost becomes logistics."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With agents I do exactly that. Today Codex takes the mobile lane, in Flutter, and Claude Code takes the web in Angular and the backend in Nest. It isn't that one is better than the other in the abstract: it's a split with concrete reasons, and I'd rather state them as they are."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Cost and usage limits.** Each tool has its cap. If I put all three lanes on one of them, I end up stuck mid-afternoon waiting for it to reset. Split up, both lanes move at once and neither runs into the other's limit.",
+          "**I'm testing them.** I want to see how each behaves on its own stack, with the same rules and the same contract in front of it. I don't yet have a conclusion I could defend with data, so I'm not going to write one here: for now it's a test in progress, not a verdict.",
+          "**One agent, one language.** The one on Flutter thinks in Dart and widgets for the whole session; the one on Angular and Nest thinks in TypeScript. Neither switches context halfway, which is exactly where focus goes and patterns start getting mixed.",
+          "**Each starts with its own context.** Claude Code reads the repo's `CLAUDE.md` and its skills in `.claude/skills/`; Codex reads `AGENTS.md`. Different files in different repos: neither carries the other's noise."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And how does each assistant receive its configuration? Because `chalc`'s targets are adapters: each one is a file that translates the same neutral catalog into its assistant's format — Claude Code, Codex, Copilot, Cursor and Gemini CLI. For Codex, that's the `AGENTS.md` plus its MCP servers in `.codex/config.toml`: the same skills and the same method as the rest, written in its format. That's the point of keeping the catalog neutral: adding a new assistant means writing one more adapter, not rethinking anything."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agents-per-lane.en.svg",
+        "caption": "Two agents, one lane each, and a wall in between: neither sees the other's repo. The only things crossing that wall are the contract, the R# and the shared standard."
+      },
+      {
+        "kind": "quote",
+        "text": "A distributed team doesn't work because everyone works the same way, but because everyone delivers against the same thing. With agents it's identical: it doesn't matter which one writes the code if both answer to the same contract."
+      },
+      {
+        "kind": "heading",
+        "text": "Tests were never optional; with an agent they're also the only evidence"
+      },
+      {
+        "kind": "paragraph",
+        "text": "When I code, a test is a safety net: it warns me the day I break something by accident. When an agent writes the code, the test stops being a net and becomes the only evidence that what was delivered is what was asked for. And it's worth saying when this happens, because it isn't an unavoidable flaw of the model: it happens when you let it run loose, with no contract, no spec and no test holding it. Loose, a model doesn't fail the way people fail. It doesn't hand you something visibly half-finished: it fills in what it doesn't know with whatever seems right to it, and hands it over complete, tidy, well named and compiling. Everything we use to judge code at a glance — that it reads well, that it looks right — stays flawless even when the substance is wrong. The reins in this flow exist precisely for that."
+      },
+      {
+        "kind": "quote",
+        "text": "A loose agent doesn't produce code that looks suspicious. It produces code that looks good. That's why \"I read it and it seems fine\" stopped being a review."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's where the method's rule comes from: the test goes first and has to fail before a single line of implementation exists. With an agent in front of you that isn't ceremony, it's the only thing that works. A test written **before** is a specification: it states what must happen, and the agent can't argue with it. A test written **after** is a description: it reports whatever the code does, whatever that is. Ask an agent to implement and then test, and it will write you a passing test — every time — because it writes it while looking at its own code. You'll have paid twice for the same opinion."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why the prompt requires confirming the red before moving on. Writing the test isn't enough: you have to watch it fail. A test that passes on the first run is almost never testing what you think; usually it's testing that the function exists and returns something. It's the quietest failure there is, and with three repos it multiplies without anyone noticing."
+      },
+      {
+        "kind": "heading",
+        "text": "And why unit tests, and to a defined pattern"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Unit tests first, for a practical reason: they're the only ones you can run in the second after writing them. The agent's cycle is write, run, look, correct; if that loop takes two minutes because Docker and a database have to come up, the loop breaks and the agent starts guessing instead of checking. A unit test is fast and needs nobody else, so each lane verifies itself without waiting for the one next door. The backend and the web being able to test R2 without talking to each other is exactly what lets them run in parallel."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And to a defined pattern, which is the part most often neglected. If you let each test be born however it comes out, in a month you have three repos with three styles, and inside each one as many styles as there were sessions. The agent has no opinion of its own about this: it writes the way you taught it, and if you didn't teach it, it writes however it feels that day. So the shape is equipped up front too:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**A testing skill per stack**, saying how testing actually works there: `angular-testing` for the web — TestBed, components with signals, how to fake an HTTP response — `flutter-testing` for mobile — widget tests, how to pump the tree — and the Nest best practices for the backend. Not generic testing theory: the idiom of each stack.",
+          "**One test, one behaviour.** If a test checks three things and fails, you have to read the whole thing to find out which one broke. If it checks one, the test name already told you.",
+          "**The name traced to the requirement.** The test for R2 says R2. That keeps `grep R2` working across all three repos, and it tells me which requirement was left uncovered when one is missing.",
+          "**No mocking the thing under test.** You fake what's outside — the network, the clock, storage — never the logic being tested. It's a model's favourite shortcut when a test resists: mock precisely the piece it was supposed to verify and call it green.",
+          "**And the mutation threshold as the closer**, because everything above can be followed to the letter and still leave you with tests that check nothing."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That last point is what keeps the standard from being decorative. The four rules above are about form, and form can be faked. Mutants are about substance: they change the code and ask whether anybody noticed. It's the difference between reviewing that a test is well written and checking that it's good for anything."
+      },
+      {
+        "kind": "heading",
+        "text": "The tests: the same R# in three languages"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is where the contract stops being documentation and starts defending you. Because the requirement identifiers are the same in all three repos, one requirement turns into three tests talking about the same thing from three different places. Take R2 — the order was already cancelled, respond 409 and don't touch the inventory — and look at how it's tested in each lane:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "On the backend, R2 is an endpoint test: I call the cancellation twice, require a 409 on the second, and check the inventory didn't move.",
+          "On the web, R2 is a screen test: I simulate the 409 the contract describes and require the right notice to appear and the button to be disabled.",
+          "On mobile, R2 is a widget test: the same simulated 409, the same notice, plus a double tap not firing two requests.",
+          "All three fail first. The contract doesn't exempt you from TDD: it gives the test something to fail against that isn't my intuition or what the backend did yesterday."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "# same bar in all three, a different tool per language",
+          "api/   npx stryker run          (Stryker + jest-runner)",
+          "web/   npx stryker run          (Stryker + vitest-runner)",
+          "app/   dart run mutation_test   (mutation_test, from pub.dev)",
+          "→ target in all three: ≥ 80% of mutants killed",
+          "→ if a lane drops below the threshold, that task isn't done"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/same-r-three-tools.en.svg",
+        "caption": "One requirement written once, tested in three languages. The tool that kills the mutants changes; the bar and the identifier don't."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mutation testing is the step most people skip and the only one that tells you whether your tests are worth anything. The idea is old and simple: you change a line of code on purpose — a `>` for a `>=`, a `true` for a `false` — and run the suite again. If the tests stay green, that test wasn't proving anything: it was only passing. The tool changes with the language — Stryker in the two TypeScript lanes, `mutation_test` in Dart — but the bar doesn't. The same 80% in all three, because test quality can't depend on which repo you happened to land in."
+      },
+      {
+        "kind": "heading",
+        "text": "I give an objective; the loop does the rest"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Put in one sentence, my job in all of this is to give an objective. I don't dictate steps or review line by line while it writes: I hand over a user story turned into a contract and specs, and from there the orchestrator plans — reads the plan, looks at the tasks, decides the order within its lane — and delegates what belongs to whom: this is the backend's, this the web's, this mobile's. I show up at the end of each task, not in the middle."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What keeps that from turning into a disaster is where the tests sit, and I think it's the most useful idea in this whole note: **a test is the relationship between the criterion and the code.** The criterion lives in the spec, written in EARS with its R#. The code lives in the repo. The test is the only thing touching both at once that can say whether they match. Without it, the spec is an intention and the code is a promise, and nobody has ever held one up against the other."
+      },
+      {
+        "kind": "quote",
+        "text": "The specification says what must happen. The code says what happens. The test is the only thing that looks at both and answers whether they are the same thing."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With that in place, the agent enters a loop that closes on its own: it writes against the spec, runs the tests, and if one fails, the code is broken — not \"nearly right\" — so it corrects and runs again. It repeats until the task satisfies what the requirement asked for. It doesn't move on because it believes it's done: it moves on because something outside it said so."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is, plainly, the reason I found for why in practice I barely fight with hallucinations. And I want to say it carefully, because the easy version would be \"this makes the model stop inventing\", and that isn't true: **the model still invents.** What changes is that what it invents doesn't survive. A field that doesn't exist, an endpoint it imagined, a signature it remembered from another version: all of it crashes into a failing test one second later, inside the loop, and gets corrected before it reaches me. The invention doesn't disappear; it stops having an exit."
+      },
+      {
+        "kind": "quote",
+        "text": "I didn't make the model stop being wrong. I made being wrong have immediate, automatic consequences, instead of showing up three days later on a user's screen."
+      },
+      {
+        "kind": "heading",
+        "text": "Context: little and good, and let it think"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The other half is missing, and it's the one most people get backwards. I don't hand the agent thousand-line files \"just in case\". I never give it all three repos, nor the whole `architecture.md`, nor the entire feature spec when it's on one specific task. I give it its contract, its spec, the skill that applies to what it's about to touch, and the README of the folder it's going to write in. Little, and chosen."
+      },
+      {
+        "kind": "paragraph",
+        "text": "For a long time I thought that was just me being stingy with tokens. It turns out there's a better reason and it's documented. In [Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents), Anthropic's Applied AI team puts it this way: models have a finite \"attention budget\", and as the number of tokens in the context window grows, the model's ability to accurately recall the information inside it **decreases**. It isn't a cliff, it's a gradient: it still works with long contexts, but it loses precision at retrieving facts and at reasoning across things far apart from each other."
+      },
+      {
+        "kind": "quote",
+        "text": "Finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.",
+        "source": "Anthropic's Applied AI Team · Effective context engineering for AI agents, 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That principle names exactly why everything above is split the way it is. The contract in its own file and not inside the spec. The rules spread per folder instead of one four-hundred-line document. Skills that open only when the task needs them. A lane that never sees the other two repos. It isn't tidiness for its own sake: it's not spending its attention budget on things it won't use. The same article calls it \"just-in-time\" retrieval: the agent keeps lightweight references — file paths, links — and loads what it needs at the moment, instead of swallowing everything up front."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here comes the part I find counter-intuitive, and that changed how I work: if I give it little context, what I do give it is time to think. When Anthropic introduced extended thinking in Claude 3.7 Sonnet, they published [an observation you can measure](https://www.anthropic.com/news/visible-extended-thinking): accuracy on maths questions **improves logarithmically with the number of thinking tokens** it is allowed to sample. Logarithmically means it genuinely goes up, though each step costs more than the last: the first push of reasoning buys a lot, the next one somewhat less, and so on. With a 64k thinking budget and parallel sampling they reached 84.8% on GPQA, with 96.5% on the physics portion."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The two together give me the rule I keep, and it's the exact opposite of what most people do: **little context and a lot of thinking.** The usual approach is the reverse — dump the whole repository in and ask for the answer now — and that loses on both sides: the excess context thins out its attention, and the rush strips away the reasoning steps that are precisely the ones that pay. I'd rather it read three files and think it over than read thirty and answer fast."
+      },
+      {
+        "kind": "heading",
+        "text": "The third lane comes in through the front door"
+      },
+      {
+        "kind": "paragraph",
+        "text": "When I started writing this note, the mobile lane was the seam in the setup: `chalc feature` wired two paths — the web and the backend — and mobile was something I brought in by hand, copying the contract into the Flutter repo and generating its spec separately. It worked, but it skipped the sealing: if the contract changed, on mobile it was on me to remember. Writing it down here forced me to look the gap in the face, and it no longer exists: mobile comes in through the same command as the other two."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --mobile ./app --branch",
+          "⚙️  chalc feature (full-stack)",
+          "  ✓ Front: Angular  ·  Back: NestJS  ·  Mobile: Flutter",
+          "⠋ Orchestrating: contract → back spec → front spec → mobile spec",
+          "✓ back spec at specs/012-orders",
+          "✓ front spec at specs/012-orders",
+          "✓ mobile spec at specs/012-orders",
+          "  Shared contract in each spec: contracts/api.md",
+          "  ✓ front: branch feat/orders (created)",
+          "  ✓ back: branch feat/orders (created)",
+          "  ✓ mobile: branch feat/orders (created)"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mobile is a third consumer, with its `--mobile` flag or an interactive question: \"Does the feature have a mobile app?\". And it gets exactly the same treatment as the other two: its stack is detected, its skills are equipped, its spec comes out with its own MOBILE role — screens, navigation, connectivity, consuming the contract, with the order not to reimplement backend logic nor duplicate the frontend's — it shares the same number and the same R#, carries the stamped fingerprint and its `contract.lock.json`, and the branch is created in all three repos or in none."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's a detail of the contract I care about more than the command: the contract is generated ONCE, knowing a mobile client exists. And when there isn't one, the prompt says so explicitly — \"(no mobile app)\" — so the model doesn't invent clients nobody asked for. It's the same rule as always, the no-padding rule, applied to an entire lane."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the other seam closed the same way: Codex is now one more target in the catalog, alongside Claude Code, Copilot, Cursor and Gemini CLI. Its adapter writes the repo's `AGENTS.md` and its MCP servers in `.codex/config.toml`, with the same skills and the same method as the rest. The mobile repo's `AGENTS.md` stopped being maintained by hand: it comes out of the catalog, like everything else."
+      },
+      {
+        "kind": "heading",
+        "text": "What actually improves"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Integration day stops being an event. If all three honored the same contract, connecting is boring — and boring is exactly what you want it to be.",
+          "A change to R2 takes a second to find: `grep R2` across the three repos and there's everything to touch — contract, spec, tasks and tests, in backend, web and mobile.",
+          "No lane inherits decisions made in a chat it wasn't part of.",
+          "Each agent works with its own stack's rules and the same shared standard, so the code in all three repos looks like the house style and not like the model's mood that day.",
+          "And when I change tools in one lane — or try another, which is what I'm doing right now — nothing falls over: what rules is the contract, not who wrote the code."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want the previous step — why the backend owns the contract instead of the frontend — it's in [One contract rules](/daily/one-contract-many-repos). If you're interested in how I steer AI inside a single repo, I cover it in [how I use AI when I code with Angular](/daily/how-i-code-angular-with-ai). And if you want to see where I put all of this to work, take a look at [my projects](/projects) or reach out from [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI all of this comes from. The contract → back → front chaining lives in `lib/featureorch.mjs`, the hand-off in `lib/commands/feature.mjs`, the per-stack rules in `rules/` and each assistant's adapter in `targets/` — reading those three folders explains the whole distribution.",
+          "[EARS notation](https://alistairmavin.com/ears/) — Mav and colleagues at Rolls-Royce, 2009. Six patterns for writing requirements that can become tests; the contract uses the event-driven one, `WHEN … THE SYSTEM SHALL …`, and that's what lets a single R# be tested in three languages.",
+          "[Contract Test](https://martinfowler.com/bliki/ContractTest.html) — Martin Fowler, 2011. Why a test against the contract warns you when the provider changes, instead of finding out in production. With three consumers instead of one, this weighs three times as much.",
+          "[Stryker Mutator](https://stryker-mutator.io/): the mutation testing engine for the two TypeScript lanes. You plug in a different runner depending on the test framework each repo already has, so there's no separate suite to build.",
+          "[mutation_test](https://pub.dev/packages/mutation_test): the Dart equivalent, on pub.dev. Same idea — change the code on purpose and see whether the tests notice — as a command line tool with configurable mutation rules.",
+          "[Codex CLI](https://developers.openai.com/codex/cli): the official documentation, including how `AGENTS.md` hands Codex the project instructions. It's the equivalent of the `CLAUDE.md` I was already using in the other two repos, which is why splitting by lanes forces no change to the method.",
+          "[Angular CLI MCP Server](https://angular.dev/ai/mcp): how to start it and which tools it exposes. It's what equips the web lane so it consults today's version instead of the one the model remembers.",
+          "[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic Applied AI team, 2025. The attention budget, why accuracy drops as the context window fills, and the principle of finding the smallest set of high-signal tokens. The best explanation of why I split the rules up instead of piling them together.",
+          "[Claude's extended thinking](https://www.anthropic.com/news/visible-extended-thinking) — Anthropic, 2025. Where they publish that accuracy improves logarithmically with thinking tokens, and how a thinking budget is set. The half that pays off for giving little context."
+        ]
+      }
+    ]
+  }
+}

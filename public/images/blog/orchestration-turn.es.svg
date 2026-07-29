@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" role="img" aria-label="El turno de orquestación, tarea a tarea. El agente lee el contrato, la constitución y la spec de su carril; anuncia qué requisito va a cumplir y en qué repo; escribe el test que falla; escribe el mínimo código para pasarlo; refactoriza; corre los mutantes; y se para a esperar el visto bueno antes de la siguiente tarea. Si algo falta o está marcado como pendiente de aclarar, no se lo pide al otro carril: vuelve al contrato pasando por la persona.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="a" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="aR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+    <marker id="aG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .st { animation: pop 7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .p2 { animation-delay: .5s; } .p3 { animation-delay: 1s; } .p4 { animation-delay: 1.5s; }
+    .p5 { animation-delay: 2s; } .p6 { animation-delay: 2.5s; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.8s linear infinite; }
+    .loop { stroke-dasharray: 5 7; animation: dash 3s linear infinite; }
+    .backline { stroke-dasharray: 5 7; animation: dashb 2.4s linear infinite; }
+    .stopper { animation: knock 3.2s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    @keyframes pop { 0%, 100% { opacity: .78; transform: translateY(0); } 7% { opacity: 1; transform: translateY(-4px); } 20% { opacity: .95; } }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes dashb { to { stroke-dashoffset: 48; } }
+    @keyframes knock { 0%, 100% { opacity: .6; transform: scale(1); } 50% { opacity: 1; transform: scale(1.05); } }
+  </style>
+
+  <rect width="1000" height="520" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="28" fill="#ece7fb">Cómo orquesta el agente: una tarea por turno</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">el prompt fija el turno · el agente no elige el orden ni se salta la parada</text>
+
+  <!-- lo que lee al empezar -->
+  <g class="st">
+    <rect x="34" y="100" width="180" height="120" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="124" y="126" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">antes de tocar nada</text>
+    <text x="124" y="150" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">contracts/api.md</text>
+    <text x="124" y="168" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">specs/constitution.md</text>
+    <text x="124" y="186" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">spec.md · plan.md</text>
+    <text x="124" y="206" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">y sus skills equipadas</text>
+  </g>
+  <path d="M220 160 H 256" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- 1. anuncia -->
+  <g class="st p2">
+    <rect x="262" y="112" width="164" height="96" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="278" y="138" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">1 · anuncia</text>
+    <text x="278" y="160" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">«voy con R2,</text>
+    <text x="278" y="176" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">en el repo del back»</text>
+    <text x="278" y="196" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">una tarea de tasks.md</text>
+  </g>
+  <path d="M432 160 H 468" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- 2. Red -->
+  <g class="st p3">
+    <rect x="474" y="112" width="150" height="96" rx="12" fill="none" stroke="#fb7185" stroke-width="2"/>
+    <text x="490" y="138" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185">2 · Red</text>
+    <text x="490" y="160" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">test primero</text>
+    <text x="490" y="178" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">y comprobar</text>
+    <text x="490" y="196" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">que FALLA de verdad</text>
+  </g>
+  <path d="M630 160 H 666" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- 3. Green -->
+  <g class="st p4">
+    <rect x="672" y="112" width="150" height="96" rx="12" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text x="688" y="138" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">3 · Green</text>
+    <text x="688" y="160" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">el MÍNIMO código</text>
+    <text x="688" y="178" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">que lo pone en verde</text>
+    <text x="688" y="196" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">nada de adelantarse</text>
+  </g>
+  <path d="M828 160 H 864" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- 4. refactor + mutantes -->
+  <g class="st p5">
+    <rect x="822" y="232" width="144" height="92" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="838" y="258" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">4 · refactor</text>
+    <text x="838" y="280" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">y mutantes</text>
+    <text x="838" y="298" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">≥ 80% o no está</text>
+    <text x="838" y="313" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">terminada</text>
+  </g>
+  <path d="M894 208 V 226" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- 5. PARADA -->
+  <g class="stopper">
+    <rect x="600" y="238" width="196" height="80" rx="12" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="698" y="264" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">5 · PARADA 🛑</text>
+    <text x="698" y="286" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">se para y espera mi OK</text>
+    <text x="698" y="304" text-anchor="middle" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0">no encadena tareas solo</text>
+  </g>
+  <path d="M816 278 H 802" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+
+  <!-- bucle a la siguiente tarea -->
+  <path d="M600 278 H 352 V 218" class="loop" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#a)"/>
+  <text x="470" y="298" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">OK → siguiente tarea</text>
+
+  <!-- orden de carriles -->
+  <rect x="34" y="352" width="440" height="96" rx="12" fill="none" stroke="#453768" stroke-width="1.5"/>
+  <text x="54" y="378" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">y el orden entre carriles lo fija el prompt</text>
+  <text x="54" y="402" font-family="ui-monospace, monospace" font-size="9" fill="#34d399">1º BACK — es el dueño: implementa los endpoints del contrato</text>
+  <text x="54" y="422" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">2º WEB — consume ese mismo contrato, no reimplementa su lógica</text>
+  <text x="54" y="440" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">el móvil corre en paralelo, en su repo, con el mismo contrato</text>
+
+  <!-- el camino de vuelta -->
+  <rect x="500" y="352" width="466" height="96" rx="12" fill="none" stroke="#fb7185" stroke-width="1.5"/>
+  <text x="520" y="378" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">¿le falta algo? no se lo pide al carril de al lado</text>
+  <text x="520" y="402" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">[NEEDS CLARIFICATION] o un campo que no está → me pregunta a mí</text>
+  <text x="520" y="422" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">si digo que sí: cambia el contrato primero, luego la spec, luego el código</text>
+  <text x="520" y="440" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">huella nueva → las specs viejas quedan marcadas y se regeneran</text>
+
+  <path d="M698 322 V 346" class="backline" stroke="#fb7185" stroke-width="2" fill="none" marker-end="url(#aR)"/>
+
+  <line x1="34" y1="474" x2="966" y2="474" stroke="#2a2140" stroke-width="1"/>
+  <text x="500" y="500" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">aquí sí se decide cómo se programa — dentro de las reglas que chalc dejó equipadas, y con una parada por tarea</text>
+</svg>

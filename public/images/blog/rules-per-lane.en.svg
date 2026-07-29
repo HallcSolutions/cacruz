@@ -1,0 +1,95 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 540" role="img" aria-label="At the top, the shared standard every repository inherits: clean code, minimal implementation, SOLID principles, modular architecture and mutation testing. Below, three columns with what belongs to each lane: NestJS with its best-practices skill, Angular with fourteen skills and the CLI's MCP server, and Flutter with eight skills and the Dart MCP server. chalc distributes those rules before anyone writes a line; it does not decide how anyone codes.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .chip { animation: glow 5.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .c2 { animation-delay: .3s; } .c3 { animation-delay: .6s; } .c4 { animation-delay: .9s; } .c5 { animation-delay: 1.2s; }
+    .col { animation: pop 6.5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .k2 { animation-delay: .5s; } .k3 { animation-delay: 1s; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.9s linear infinite; }
+    .flow-b { stroke-dasharray: 6 8; animation: dash 2.4s linear infinite; }
+    .flow-c { stroke-dasharray: 6 8; animation: dash 2.9s linear infinite; }
+    @keyframes glow { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+    @keyframes pop { 0%, 100% { opacity: .8; transform: translateY(0); } 10% { opacity: 1; transform: translateY(-4px); } 26% { opacity: .95; } }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+  </style>
+
+  <rect width="1000" height="540" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">chalc doesn't say how to code: it says which rules apply</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">the same standard for all three · a different dialect in each one</text>
+
+  <!-- shared standard -->
+  <rect x="40" y="96" width="920" height="96" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+  <text x="56" y="122" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">shared standard — EVERY repo inherits it, whatever the stack</text>
+
+  <g class="chip"><rect x="56" y="136" width="168" height="34" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+    <text x="140" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">clean-code</text></g>
+  <g class="chip c2"><rect x="236" y="136" width="168" height="34" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+    <text x="320" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">minimal-implementation</text></g>
+  <g class="chip c3"><rect x="416" y="136" width="168" height="34" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+    <text x="500" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">solid-principles</text></g>
+  <g class="chip c4"><rect x="596" y="136" width="168" height="34" rx="9" fill="none" stroke="#453768" stroke-width="1.5"/>
+    <text x="680" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">modular-architecture</text></g>
+  <g class="chip c5"><rect x="776" y="136" width="168" height="34" rx="9" fill="none" stroke="#34d399" stroke-width="1.5"/>
+    <text x="860" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#34d399">mutation-testing</text></g>
+
+  <!-- down to the three lanes -->
+  <path d="M185 192 V 232" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M500 192 V 232" class="flow-b" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M815 192 V 232" class="flow-c" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- column 1: NestJS -->
+  <g class="col">
+    <rect x="40" y="240" width="290" height="212" rx="14" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text x="60" y="268" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">BACKEND · NestJS</text>
+    <text x="60" y="288" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">detected by @nestjs/core</text>
+    <line x1="60" y1="300" x2="310" y2="300" stroke="#2a2140" stroke-width="1"/>
+    <text x="60" y="322" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">own skills · 1</text>
+    <text x="60" y="342" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">nestjs-best-practices</text>
+    <text x="60" y="374" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">MCP</text>
+    <text x="60" y="394" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">postgres (optional)</text>
+    <text x="60" y="426" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">↳ mutants: Stryker + jest-runner</text>
+  </g>
+
+  <!-- column 2: Angular -->
+  <g class="col k2">
+    <rect x="355" y="240" width="290" height="212" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="375" y="268" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">WEB · Angular</text>
+    <text x="375" y="288" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">detected by @angular/core</text>
+    <line x1="375" y1="300" x2="625" y2="300" stroke="#2a2140" stroke-width="1"/>
+    <text x="375" y="322" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">own skills · 14</text>
+    <text x="375" y="342" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">angular-signals · angular-http</text>
+    <text x="375" y="358" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">angular-testing · responsive-design…</text>
+    <text x="375" y="386" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">MCP</text>
+    <text x="375" y="406" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">angular-cli (live docs)</text>
+    <text x="375" y="434" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">↳ mutants: Stryker + vitest-runner</text>
+  </g>
+
+  <!-- column 3: Flutter -->
+  <g class="col k3">
+    <rect x="670" y="240" width="290" height="212" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="690" y="268" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">MOBILE · Flutter</text>
+    <text x="690" y="288" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">detected by pubspec.yaml</text>
+    <line x1="690" y1="300" x2="940" y2="300" stroke="#2a2140" stroke-width="1"/>
+    <text x="690" y="322" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">own skills · 8</text>
+    <text x="690" y="342" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">flutter-widgets · flutter-testing</text>
+    <text x="690" y="358" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">state-management · performance…</text>
+    <text x="690" y="386" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">MCP</text>
+    <text x="690" y="406" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">dart (Dart/Flutter SDK)</text>
+    <text x="690" y="434" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">↳ mutants: mutation_test (pub.dev)</text>
+  </g>
+
+  <!-- footer -->
+  <line x1="40" y1="480" x2="960" y2="480" stroke="#2a2140" stroke-width="1"/>
+  <text x="40" y="506" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">nobody picks their own rules: the rules are inherited from the catalog and arrive equipped in the repo</text>
+  <text x="40" y="526" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">detection from project signals (dependencies and files), not from AI — instant and without spending a token</text>
+</svg>

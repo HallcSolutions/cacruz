@@ -17,12 +17,12 @@
 
   <text x="96" y="92" font-family="Consolas, ui-monospace, monospace" font-size="17" letter-spacing="2.5" fill="#a78bfa">NOTAS DE DESARROLLO · CACRUZ.COM</text>
 
-  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">Móvil, web y API en la misma feature:</text>
+  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">Móvil, web y API a la vez:</text>
   <text x="96" y="232" font-family="Georgia, serif" font-size="54" fill="#a78bfa">un contrato, tres carriles</text>
   <text x="96" y="296" font-family="Georgia, serif" font-size="54" fill="#ece7fb">y dos agentes que no se pisan</text>
 
-  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">Flutter, Nest y Angular desde un solo contrato: quién reparte las reglas,</text>
-  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">quién orquesta de verdad y qué evita que integrar se lleve la semana.</text>
+  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">Así programo hoy: Flutter, NestJS y Angular desde un solo contrato,</text>
+  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">con el flujo que mejor se acopla a mi forma de trabajar.</text>
 
   <g>
     <rect x="64" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>

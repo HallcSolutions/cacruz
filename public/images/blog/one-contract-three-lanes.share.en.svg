@@ -17,12 +17,12 @@
 
   <text x="96" y="92" font-family="Consolas, ui-monospace, monospace" font-size="17" letter-spacing="2.5" fill="#a78bfa">DEV NOTES · CACRUZ.COM</text>
 
-  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">Mobile, web and API in one feature:</text>
+  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">Mobile, web and API at once:</text>
   <text x="96" y="232" font-family="Georgia, serif" font-size="54" fill="#a78bfa">one contract, three lanes</text>
   <text x="96" y="296" font-family="Georgia, serif" font-size="54" fill="#ece7fb">and two agents that don't collide</text>
 
-  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">Flutter, Nest and Angular from a single contract: who hands out the rules,</text>
-  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">who actually orchestrates, and what keeps integration from eating the week.</text>
+  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">This is how I code today: Flutter, NestJS and Angular from one contract,</text>
+  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">with the flow that best fits the way I work.</text>
 
   <g>
     <rect x="64" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>

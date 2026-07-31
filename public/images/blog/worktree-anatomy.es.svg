@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" role="img" aria-label="Comparación entre un repositorio normal y uno con worktrees. A la izquierda, un solo punto git y una sola carpeta de trabajo: cambiar de rama con git checkout reescribe los mismos archivos en el sitio, así que solo hay una rama a la vez. A la derecha, el mismo punto git sosteniendo tres carpetas de trabajo simultáneas, cada una en su propia rama, con su propio HEAD y su propio índice dentro de la carpeta privada punto git barra worktrees. El historial y los objetos son los mismos para todas.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowR" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#fb7185"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 2.2s linear infinite; }
+    .fb { animation-duration: 2.9s; } .fc { animation-duration: 2.5s; }
+    .swapA { animation: swapA 5s ease-in-out infinite; }
+    .swapB { animation: swapB 5s ease-in-out infinite; }
+    .pane { animation: breathe 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .p2 { animation-delay: .5s; } .p3 { animation-delay: 1s; }
+    .ptr { animation: blink 3.4s ease-in-out infinite; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes swapA { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
+    @keyframes swapB { 0%, 42% { opacity: 0; } 50%, 92% { opacity: 1; } 100% { opacity: 0; } }
+    @keyframes breathe { 0%, 100% { opacity: .78; } 50% { opacity: 1; } }
+    @keyframes blink { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="520" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">Qué es un worktree</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">un repositorio son dos cosas pegadas: el historial (.git) y UNA carpeta de trabajo — el worktree rompe ese «una»</text>
+
+  <!-- ================= izquierda: lo normal ================= -->
+  <text x="40" y="126" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">lo de siempre</text>
+  <rect x="40" y="140" width="180" height="92" rx="12" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+  <text x="130" y="170" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">.git</text>
+  <text x="130" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">commits · ramas · objetos</text>
+  <text x="130" y="212" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">HEAD · índice</text>
+
+  <path d="M130 236 V 286" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <rect x="40" y="292" width="180" height="88" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+  <text x="130" y="320" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">carpeta de trabajo</text>
+  <text x="130" y="346" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" class="swapA">rama: develop</text>
+  <text x="130" y="346" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" class="swapB">rama: feat/login</text>
+  <text x="130" y="366" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">tus archivos, ahora mismo</text>
+
+  <g class="ptr">
+    <path d="M236 336 H 268" stroke="#fb7185" stroke-width="2" fill="none" marker-end="url(#arrowR)"/>
+  </g>
+  <text x="240" y="316" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185">git checkout</text>
+  <text x="240" y="360" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">reescribe los MISMOS</text>
+  <text x="240" y="376" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">archivos en el sitio</text>
+  <text x="40" y="410" font-family="ui-monospace, monospace" font-size="10" fill="#fb7185">una rama a la vez · para abrir otra: stash o esperar</text>
+
+  <!-- separador -->
+  <line x1="452" y1="110" x2="452" y2="420" stroke="#2a2140" stroke-width="2" stroke-dasharray="7 7"/>
+
+  <!-- ================= derecha: con worktrees ================= -->
+  <text x="486" y="126" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">con worktrees</text>
+  <rect x="486" y="140" width="180" height="122" rx="12" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+  <text x="576" y="170" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">.git</text>
+  <text x="576" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">el MISMO historial</text>
+  <text x="576" y="212" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">y los mismos objetos</text>
+  <line x1="506" y1="224" x2="646" y2="224" stroke="#2a2140" stroke-width="1"/>
+  <text x="576" y="244" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">.git\worktrees\ · un HEAD</text>
+  <text x="576" y="256" text-anchor="middle" font-family="ui-monospace, monospace" font-size="9" fill="#a78bfa">y un índice por carpeta</text>
+
+  <path d="M672 168 H 718 V 152 H 754" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M672 200 H 736 V 240 H 754" class="flow fb" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M672 232 H 706 V 328 H 754" class="flow fc" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <g class="pane">
+    <rect x="760" y="120" width="200" height="64" rx="10" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="778" y="146" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">carpeta principal</text>
+    <text x="778" y="166" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">develop · intacta</text>
+  </g>
+  <g class="pane p2">
+    <rect x="760" y="208" width="200" height="64" rx="10" fill="none" stroke="#a78bfa" stroke-width="1.8"/>
+    <text x="778" y="234" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">007-login\</text>
+    <text x="778" y="254" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">feat/login · worktree</text>
+  </g>
+  <g class="pane p3">
+    <rect x="760" y="296" width="200" height="64" rx="10" fill="none" stroke="#a78bfa" stroke-width="1.8"/>
+    <text x="778" y="322" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">008-perfil\</text>
+    <text x="778" y="342" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">feat/perfil · worktree</text>
+  </g>
+  <text x="486" y="410" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">tres ramas vivas a la vez · sin stash · sin esperar turno</text>
+
+  <!-- pie -->
+  <line x1="40" y1="440" x2="960" y2="440" stroke="#2a2140" stroke-width="1"/>
+  <text x="40" y="468" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">dentro de 007-login\ no hay un .git de verdad: hay un archivo de texto de una línea —  gitdir: D:/proyectos/api/.git/worktrees/007-login</text>
+  <text x="40" y="490" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">por eso montarlo es instantáneo: no se copia ni un commit — y por eso la misma rama no puede estar montada en dos carpetas a la vez</text>
+</svg>

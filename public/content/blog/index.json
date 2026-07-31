@@ -1,5 +1,24 @@
 [
   {
+    "slug": "a-desk-per-story-with-worktrees",
+    "date": "2026-07-30",
+    "title": {
+      "es": "Un puesto por historia: qué es un worktree de git y cómo levanto cuatro features a la vez sin clonar nada",
+      "en": "A desk per story: what a git worktree is and how I run four features at once without cloning anything"
+    },
+    "summary": {
+      "es": "En Indra, cuatro personas en cuatro ciudades abrían cuatro historias a la vez sin pisarse: cada una tenía su puesto. Con agentes perdí eso, porque un repositorio tiene un solo árbol de trabajo. El truco de git que lo devuelve —el worktree, que no es un clon—, cómo chalc arma un workspace por historia con los dos repos dentro, qué archivos deja, cómo levanta las ventanas y qué enseña el dashboard.",
+      "en": "At Indra, four people in four cities opened four stories at once without colliding: each had their own desk. With agents I lost that, because a repository has a single working tree. The git trick that gives it back — the worktree, which is not a clone —, how chalc builds a workspace per story with both repos inside, what files it leaves, how it opens the windows and what the dashboard shows."
+    },
+    "tags": [
+      "chalc",
+      "git",
+      "worktrees",
+      "agentes",
+      "paralelismo"
+    ]
+  },
+  {
     "slug": "one-contract-three-lanes",
     "date": "2026-07-28",
     "title": {

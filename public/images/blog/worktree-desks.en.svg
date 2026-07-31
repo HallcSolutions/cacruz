@@ -1,0 +1,119 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 580" role="img" aria-label="The two original repositories, backend and frontend, stay parked on the develop branch with all their history. Working folders mounted with git worktree add hang off each of them. Every user story gets a container folder with one back worktree and one front worktree, both on the feature branch, and each side arrives equipped with its own harness: its rules, its skills, its MCP configuration and its spec. Each worktree's dot git is a text file pointing at the original repository: two repos times two stories are four worktrees and zero clones.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 2.1s linear infinite; }
+    .f2 { animation-duration: 2.8s; } .f3 { animation-duration: 2.4s; } .f4 { animation-duration: 3.1s; }
+    .card { animation: pop 7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .c2 { animation-delay: 1.1s; }
+    .still { animation: breathe 5s ease-in-out infinite; }
+    .kit { animation: glow 4.5s ease-in-out infinite; }
+    .k2 { animation-delay: .7s; } .k3 { animation-delay: 1.4s; } .k4 { animation-delay: 2.1s; }
+    .ptr { animation: blink 3.6s ease-in-out infinite; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes pop { 0%, 100% { opacity: .82; transform: translateX(0); } 10% { opacity: 1; transform: translateX(4px); } 30% { opacity: .95; } }
+    @keyframes breathe { 0%, 100% { opacity: .72; } 50% { opacity: 1; } }
+    @keyframes glow { 0%, 100% { opacity: .6; } 50% { opacity: 1; } }
+    @keyframes blink { 0%, 100% { opacity: .45; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="580" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">A desk per story</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">a worktree doesn't copy the repo — and an empty desk is useless: every side arrives equipped</text>
+
+  <!-- original repos -->
+  <g class="still">
+    <rect x="40" y="112" width="228" height="106" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="60" y="140" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">BACK repo</text>
+    <text x="60" y="160" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">D:\projects\pedidos-api</text>
+    <line x1="60" y1="172" x2="248" y2="172" stroke="#2a2140" stroke-width="1"/>
+    <text x="60" y="192" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">develop · untouched</text>
+    <text x="60" y="210" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">.git · history and objects</text>
+  </g>
+  <g class="still">
+    <rect x="40" y="262" width="228" height="106" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="60" y="290" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">FRONT repo</text>
+    <text x="60" y="310" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">D:\projects\pedidos-web</text>
+    <line x1="60" y1="322" x2="248" y2="322" stroke="#2a2140" stroke-width="1"/>
+    <text x="60" y="342" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">develop · untouched</text>
+    <text x="60" y="360" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">.git · history and objects</text>
+  </g>
+
+  <!-- the command -->
+  <text x="280" y="92" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">git worktree add -b</text>
+  <text x="280" y="106" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">feat/… target</text>
+  <text x="280" y="124" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">creates branch + folder,</text>
+  <text x="280" y="138" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">then chalc EQUIPS it</text>
+
+  <!-- flows -->
+  <path d="M274 152 H 318 V 176 H 420" class="flow" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M274 178 H 298 V 372 H 420" class="flow f2" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M274 302 H 338 V 220 H 420" class="flow f3" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+  <path d="M274 330 H 358 V 416 H 420" class="flow f4" stroke="#a78bfa" stroke-width="2" fill="none" marker-end="url(#arrow)"/>
+
+  <!-- workspace 1 -->
+  <g class="card">
+    <rect x="426" y="112" width="534" height="176" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="446" y="138" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">016-descuento-por-volumen</text>
+    <text x="940" y="138" text-anchor="end" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">workspace · a plain folder</text>
+    <line x1="446" y1="148" x2="940" y2="148" stroke="#2a2140" stroke-width="1"/>
+
+    <rect x="446" y="158" width="240" height="76" rx="9" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="462" y="176" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">back\  ·  feat/descuento-por-volumen</text>
+    <text x="462" y="194" font-family="ui-monospace, monospace" font-size="8" fill="#ece7fb" class="kit">CLAUDE.md · .claude\skills\ · .mcp.json</text>
+    <text x="462" y="210" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0" class="kit k2">specs\016-…\ spec · plan · tasks (BACK role)</text>
+    <text x="462" y="226" font-family="ui-monospace, monospace" font-size="8" fill="#34d399">+ contract api.md · its contract.lock</text>
+
+    <rect x="700" y="158" width="240" height="76" rx="9" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="716" y="176" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">front\  ·  the same branch</text>
+    <text x="716" y="194" font-family="ui-monospace, monospace" font-size="8" fill="#ece7fb" class="kit k3">CLAUDE.md · .claude\skills\ · .mcp.json</text>
+    <text x="716" y="210" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0" class="kit k4">specs\016-…\ spec · plan · tasks (FRONT role)</text>
+    <text x="716" y="226" font-family="ui-monospace, monospace" font-size="8" fill="#34d399">+ the SAME contract api.md · same fingerprint</text>
+
+    <text x="446" y="258" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">handoff.md at the root · an agent opens here and finds EVERYTHING with no explaining from me</text>
+    <text x="446" y="276" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">the skills and the MCP live in the folder, not on my machine</text>
+  </g>
+
+  <!-- workspace 2 -->
+  <g class="card c2">
+    <rect x="426" y="308" width="534" height="176" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="446" y="334" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">017-historial-de-pedidos</text>
+    <text x="940" y="334" text-anchor="end" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">workspace · a plain folder</text>
+    <line x1="446" y1="344" x2="940" y2="344" stroke="#2a2140" stroke-width="1"/>
+
+    <rect x="446" y="354" width="240" height="76" rx="9" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="462" y="372" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">back\  ·  feat/historial-de-pedidos</text>
+    <text x="462" y="390" font-family="ui-monospace, monospace" font-size="8" fill="#ece7fb" class="kit k2">its own CLAUDE.md · skills · MCP</text>
+    <text x="462" y="406" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0" class="kit k4">specs\017-…\ + ITS contract, a different one</text>
+    <text x="462" y="422" font-family="ui-monospace, monospace" font-size="8" fill="#34d399">its own rules, skills, MCP, spec and contract</text>
+
+    <rect x="700" y="354" width="240" height="76" rx="9" fill="none" stroke="#a78bfa" stroke-width="1.5"/>
+    <text x="716" y="372" font-family="ui-monospace, monospace" font-size="10" fill="#a78bfa">front\  ·  the same branch</text>
+    <text x="716" y="390" font-family="ui-monospace, monospace" font-size="8" fill="#ece7fb" class="kit k3">its own CLAUDE.md · skills · MCP</text>
+    <text x="716" y="406" font-family="ui-monospace, monospace" font-size="8" fill="#8a7fb0" class="kit">specs\017-…\ + the SAME contract as its back</text>
+    <text x="716" y="422" font-family="ui-monospace, monospace" font-size="8" fill="#34d399">another agent, desk and assignment</text>
+
+    <text x="446" y="454" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">4 stories × 2 sides = 8 harnesses set up, each with its own</text>
+    <text x="446" y="472" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">a bare worktree is not enough: the agent would work blind</text>
+  </g>
+
+  <!-- footer: the pointer and the count -->
+  <line x1="40" y1="506" x2="960" y2="506" stroke="#2a2140" stroke-width="1"/>
+  <g class="ptr">
+    <path d="M524 484 V 518 H 496" stroke="#34d399" stroke-width="1.5" fill="none" marker-end="url(#arrowG)"/>
+  </g>
+  <text x="40" y="534" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">inside back\ there is no real .git: there is a text file —  gitdir: D:/projects/pedidos-api/.git/worktrees/back</text>
+  <text x="40" y="556" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">2 repos × 2 stories = 4 worktrees · 0 clones · the two original repositories are never touched</text>
+</svg>

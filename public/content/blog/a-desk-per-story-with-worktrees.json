@@ -1,0 +1,829 @@
+{
+  "slug": "a-desk-per-story-with-worktrees",
+  "date": "2026-07-30",
+  "title": {
+    "es": "Un puesto por historia: qué es un worktree de git y cómo levanto cuatro features a la vez sin clonar nada",
+    "en": "A desk per story: what a git worktree is and how I run four features at once without cloning anything"
+  },
+  "summary": {
+    "es": "En Indra, cuatro personas en cuatro ciudades abrían cuatro historias a la vez sin pisarse: cada una tenía su puesto. Con agentes perdí eso, porque un repositorio tiene un solo árbol de trabajo. El truco de git que lo devuelve —el worktree, que no es un clon—, cómo chalc arma un workspace por historia con los dos repos dentro, qué archivos deja, cómo levanta las ventanas y qué enseña el dashboard.",
+    "en": "At Indra, four people in four cities opened four stories at once without colliding: each had their own desk. With agents I lost that, because a repository has a single working tree. The git trick that gives it back — the worktree, which is not a clone —, how chalc builds a workspace per story with both repos inside, what files it leaves, how it opens the windows and what the dashboard shows."
+  },
+  "tags": [
+    "chalc",
+    "git",
+    "worktrees",
+    "agentes",
+    "paralelismo"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "El mejor equipo en el que he estado no compartía oficina. Fue en Indra —Minsait—, entre julio de 2022 y septiembre de 2024, en remoto para España: en la misma célula había gente conectada desde ciudades y países distintos, y no todos empezábamos el día a la misma hora. Un martes cualquiera podía haber cuatro historias abiertas a la vez, una por persona, y aun así nadie se pisaba. No era el método ni la cantidad de reuniones: era que cada uno tenía su puesto. Su máquina, su copia del repositorio, su rama, su carpeta. Lo compartido era el origen y el día de integrar; el resto era suyo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "De ahí salió la idea, y es tal cual como suena: ¿y si en vez de cuatro personas pongo cuatro agentes? El reparto sería el mismo —una historia para cada uno, cada uno a lo suyo—, solo que en mis proyectos el equipo entero cabe en una máquina. Y esa es justo la parte que no venía incluida: el puesto. Los cuatro agentes caen en la misma máquina, la mía, y sobre la misma carpeta. «Un agente por historia» suena bien hasta que los cuatro quieren escribir a la vez en el mismo sitio, porque un repositorio tiene un solo árbol de trabajo: una rama montada a la vez y un único `git status` para todos. Así que la segunda historia empieza con un `stash`, la tercera con un «espera a que termine esta», y la cuarta ya no empieza. El cuello de botella no era el modelo ni mi plan de uso: era que solo tenía un puesto."
+      },
+      {
+        "kind": "quote",
+        "text": "Cuatro personas en cuatro ciudades no se pisan porque cada una tiene su puesto. Cuatro agentes en el mismo repositorio se pisan siempre, porque puesto solo hay uno."
+      },
+      {
+        "kind": "heading",
+        "text": "Antes de nada: qué es un worktree y cómo funciona"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un repositorio de git, tal y como lo usamos todos los días, son dos cosas pegadas. Por un lado la carpeta `.git`, donde vive el historial entero: todos los commits, todas las ramas, todos los objetos. Por otro, la carpeta de trabajo, que son tus archivos tal y como están ahora mismo, en la rama en la que estés. De esa segunda parte solo hay una, y de ahí viene todo el problema: por eso `git checkout` te reescribe los archivos en el sitio, porque cambiar de rama significa que tu única carpeta de trabajo pase a mostrar otra cosa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un worktree rompe ese «solo hay una». Le pides al repositorio que monte otra carpeta de trabajo, en la ruta del disco que tú quieras, posicionada en otra rama. Desde ese momento tienes dos carpetas vivas a la vez, cada una en su rama, colgando del mismo `.git`."
+      },
+      {
+        "kind": "quote",
+        "text": "Gestiona varios árboles de trabajo conectados al mismo repositorio. Un repositorio git puede sostener varios árboles de trabajo, lo que permite tener más de una rama en checkout a la vez.",
+        "source": "Documentación oficial de git · git-worktree",
+        "sourceUrl": "https://git-scm.com/docs/git-worktree"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí es donde a mí se me encendió la bombilla, porque es exactamente lo mismo que acabo de contar de aquel equipo, solo que dentro de una máquina. Cada worktree es el puesto de un desarrollador: su carpeta, su rama, sus archivos, sin enterarse de lo que pasa en las otras. La única diferencia es dónde están esos puestos: allí eran cuatro portátiles en cuatro ciudades, y aquí son cuatro carpetas en mi disco colgando del mismo historial. Lo que en la empresa costaba una máquina por persona, aquí lo da git con un comando. Y lleva ahí desde 2015: yo llevaba años haciendo `stash` y dando por hecho que un repositorio era una carpeta, simplemente porque nunca me había parado a leer esa página de la documentación."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por dentro es más simple de lo que parece, y merece la pena saberlo porque explica todo lo demás. Lo caro no se duplica: el historial y los objetos se quedan en el repositorio original y las dos carpetas comparten exactamente los mismos. Lo único que git crea aparte es una carpetita privada dentro de `.git/worktrees/` con lo que sí es propio de cada una: su `HEAD`, o sea en qué rama está, y su índice, o sea qué tiene preparado para el próximo commit. Y dentro de la carpeta nueva no queda un `.git` de verdad: queda un archivo de texto de una línea que apunta a esa carpetita. Ese es el invento entero, y por eso montar un worktree es instantáneo y ocupa lo que ocupen tus archivos de trabajo y nada más."
+      },
+      {
+        "kind": "quote",
+        "text": "Cada árbol de trabajo enlazado es un pseudo-repositorio con su propia copia de trabajo. Su `.git` es en realidad un archivo que remite al historial y las referencias del repositorio principal.",
+        "source": "GitHub Blog · Git 2.5, julio de 2015",
+        "sourceUrl": "https://github.blog/open-source/git/git-2-5-including-multiple-worktrees-and-triangular-workflows/"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/worktree-anatomy.es.svg",
+        "caption": "A la izquierda, lo de siempre: un `.git` y una sola carpeta de trabajo, así que cambiar de rama reescribe los archivos en el sitio. A la derecha, el mismo `.git` sosteniendo tres carpetas a la vez, cada una en su rama y cada una con su propio HEAD."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd D:\\proyectos\\api",
+          "git worktree add -b feat/login-google D:\\worktrees\\login-google",
+          "→ Preparing worktree (new branch 'feat/login-google')",
+          "→ HEAD is now at 4f2a91c chore: release 1.8.0",
+          "",
+          "git -C D:\\worktrees\\login-google status -sb",
+          "→ ## feat/login-google",
+          "",
+          "type D:\\worktrees\\login-google\\.git",
+          "→ gitdir: D:/proyectos/api/.git/worktrees/login-google",
+          "",
+          "git -C D:\\proyectos\\api rev-parse --abbrev-ref HEAD",
+          "→ develop"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese único comando hizo tres cosas a la vez: creó la rama (eso es el `-b`), creó la carpeta destino y la dejó posicionada en esa rama. Ojo con el `-b`, que tiene su carácter: si la rama ya existe, no la reutiliza, se planta con un `fatal: a branch named … already exists`. Para montar una rama que ya está creada hay que pedirlo sin `-b`, poniendo el nombre al final. Pero lo importante está en la última línea: el repositorio original sigue en `develop`, sin moverse ni un milímetro. Puedes tener ahí una compilación andando, un servidor levantado o una refactorización a medias, y montar un worktree no lo toca."
+      },
+      {
+        "kind": "paragraph",
+        "text": "De ahí salen las dos reglas que hay que llevar en la cabeza. La primera: una misma rama no puede estar montada en dos worktrees a la vez, y git se niega si lo intentas. Hace bien, porque si no tendrías dos carpetas escribiendo sobre la misma rama sin enterarse la una de la otra. La segunda es la que obliga a todo lo que viene después: un worktree pertenece a UN repositorio. No existe «un worktree de back y front juntos». Si tu feature vive en dos repositorios —una API por un lado y la web por otro—, git te da dos carpetas sueltas y ningún sitio donde juntarlas. Ese es exactamente el hueco que llené en chalc."
+      },
+      {
+        "kind": "heading",
+        "text": "No es un clon, y la diferencia se paga"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Porque la alternativa, la que todo el mundo prueba primero, es clonar el repositorio cuatro veces y ya está: cuatro puestos. Funciona, pero se paga. Cada clon copia el historial entero, así que en repositorios con años encima la espera y el disco se notan. Cuatro copias hay que mantenerlas al día una por una. Y hay algo peor que el disco: para el día a día dejan de ser el mismo repositorio. Una rama que creas en el clon 3 no existe para el clon 1 hasta que pasa por el remoto, y las cuatro copias empiezan a desincronizarse en silencio."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí está lo que de verdad hacía funcionar a aquel equipo de Indra, que no era la disciplina. El origen era uno solo, así que «la verdad» estaba en un sitio y no en la máquina de quien hablara más fuerte. Cada quien tenía el historial entero en local —git es distribuido, y esa parte se nos olvida—, así que trabajar no dependía de pedir permiso. Y la integración era un evento explícito con nombre y fecha: el pull request. Un worktree me devuelve lo mismo dentro de una sola máquina: puestos separados, un solo origen y la integración otra vez donde debe estar, en el pull request. Nadie hacía `stash` para que otro pudiera avanzar; el `stash` es lo que haces cuando compartes escritorio."
+      },
+      {
+        "kind": "heading",
+        "text": "Dos proyectos en uno: la carpeta que los aloja"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso chalc no habla de worktrees, habla de workspaces. Un workspace es una carpeta normal y corriente —sin git propio, sin magia— que agrupa un worktree de cada repositorio de la feature: `back/`, `front/` y `movil/` si la hay. Se llama `NNN-slug`, el mismo número y el mismo nombre que la historia, así que la carpeta te dice qué hay dentro sin abrirla. Escribas la ruta que escribas cuando te la pregunta, chalc trabaja siempre dentro de `<ruta>/chalc-workspaces`, para no regarte carpetas por el disco, y la recuerda en su configuración global para que el dashboard sepa después dónde mirar."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "D:\\proyectos\\chalc-workspaces\\",
+          "├── 016-descuento-por-volumen\\",
+          "│   ├── back\\       ← worktree de pedidos-api · rama feat/descuento-por-volumen",
+          "│   ├── front\\      ← worktree de pedidos-web · la misma rama",
+          "│   └── handoff.md  ← el prompt del orquestador para esta historia",
+          "├── 017-historial-de-pedidos\\",
+          "│   ├── back\\",
+          "│   ├── front\\",
+          "│   └── handoff.md",
+          "└── open-all.ps1    ← reabre todas las ventanas cuando cierres el equipo"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí hay cuatro worktrees y cero clones. Con cuatro historias serían ocho, y los dos repositorios originales seguirían en `develop` sin enterarse de nada. La «división» no es de repositorios: es de carpetas. Cada historia se lleva una copia de trabajo de cada repositorio, ya posicionada en su rama, y todas comparten el mismo historial de siempre."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/worktree-desks.es.svg",
+        "caption": "Dos repositorios quietos en develop y un worktree por historia y por lado. Y lo que no se suele contar: cada lado llega equipado con SU harness —reglas, skills y MCP de su stack— y con SU encargo —spec, plan, tareas y el contrato de API—, porque un worktree recién montado es una carpeta pelada."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo lo manejo con chalc: el mismo comando, una vez por repositorio"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con el concepto ya claro, lo que hace chalc no tiene misterio: ejecuta exactamente el comando que acabas de ver, una vez por cada repositorio de la feature, parado dentro de cada repo original. Ni uno más. La diferencia es que el destino no lo eliges tú a mano, sale del plan de rutas del workspace, y que la rama es la misma en los dos lados."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "# parado en el repo del BACK",
+          "cd D:\\proyectos\\pedidos-api",
+          "git worktree add -b feat/descuento-por-volumen D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\\back",
+          "",
+          "# parado en el repo del FRONT",
+          "cd D:\\proyectos\\pedidos-web",
+          "git worktree add -b feat/descuento-por-volumen D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\\front",
+          "",
+          "# si la rama ya existía, la reutiliza tal cual: sin -b y sin --force",
+          "git worktree add D:\\proyectos\\chalc-workspaces\\016-…\\back feat/descuento-por-volumen"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esos dos comandos son toda la escritura que chalc hace sobre tus repositorios en el modo worktree. El resto de su trabajo es crear carpetas y escribir archivos dentro de ellas, que no le hace daño a nadie. Los dos repos originales siguen en `develop`, cada worktree nace en `feat/descuento-por-volumen`, y las dos carpetas quedan hermanadas dentro del mismo workspace: el `back/` y el `front/` de la misma historia, uno al lado del otro y en la misma rama."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso a paso: qué hace `chalc feature --worktree`"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Puerta de entrada. Antes de pedirte nada más y antes de gastar un solo token, verifica los dos repositorios: árbol limpio y al día con su remoto. Si alguno no pasa, te dice por qué y espera; no genera nada.",
+          "Historias. Te pide una y, al terminarla, te pregunta si hay otra. Puedes soltar de un tirón las cuatro de la sesión.",
+          "Contrato y specs, con IA. Aquí todavía no se toca git. De cada historia salen su contrato de API y la spec de cada lado; y de ahí sale también el `slug` que dará nombre a la rama y a la carpeta. Las historias se generan una detrás de otra, y a cada contrato nuevo se le enseñan los que ya se escribieron en esa misma corrida para que no repita rutas que otra historia ya ocupó: es el único momento del flujo en que una historia sabe que existen las demás.",
+          "Números reservados. Se consulta una sola vez el siguiente número compartido entre los repositorios y se reparte `NNN`, `NNN+1`… entre las historias de la corrida, para que back y front de una misma historia lleven siempre el mismo.",
+          "Plan de rutas. Puro cálculo, sin tocar el disco: `<base>/NNN-slug/back`, `.../front`, `.../movil`.",
+          "Pre-flight y creación todo o nada: comprueba que cada lado sea un repositorio y que ningún destino exista. Solo entonces monta un worktree por lado sobre la rama `feat/<slug>`.",
+          "Specs dentro del worktree. Spec, plan, tareas, contrato, huella y skills se escriben en la carpeta nueva, que ya está en la rama de la feature.",
+          "Hand-off y ventanas. Un `handoff.md` en la raíz del workspace con el prompt del orquestador, el script `open-all.ps1` en la carpeta base y, si dices que sí, una ventana con un panel por historia.",
+          "Un agente por historia, y ninguno sabe de los demás. A partir de aquí cada workspace va por su cuenta: su agente abre en esa carpeta y solo ve lo suyo —sus dos worktrees, su rama, su spec y su contrato—. No hay una historia coordinando a otra, ni un agente esperando a que otro termine; lo único que comparten es el repositorio del que salieron y el día que se integran."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "La puerta merece un párrafo aparte, porque es la parte que más me ha ahorrado. Verifica antes de generar, no después: si un repositorio está sucio o divergido, generar las specs igual significa gastar tokens en algo que después no se va a poder colocar bien. Y lo que hace para ponerlo al día es deliberadamente cobarde: solo `fetch` y avance fast-forward sobre árbol limpio. Si hay commits locales sin subir, si el árbol tiene cambios o si la rama divergió, se detiene y te lo dice. Nunca hace merge, ni push, ni `--force`; esas decisiones son tuyas."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature --worktree",
+          "",
+          "🔎 Puerta: verificando repos (no se gasta ni un token hasta que estén listos)",
+          "  ✓ git back: al día",
+          "  ! git front: cambios sin commitear (no se tocó)",
+          "  ¿Reintento cuando lo resuelvas? [S/n] s",
+          "",
+          "  ✓ git back: al día",
+          "  ✓ git front: actualizado (fast-forward)"
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Todo o nada: por qué comprueba antes de crear"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Crear un workspace a medias es peor que no crearlo. Si el worktree de `back` se monta y el de `front` falla, la historia queda coja: una rama creada, una carpeta a medio poblar y un estado que hay que deshacer a mano. Y deshacerlo exigiría ejecutar `git worktree remove`, que chalc tiene prohibido: la única operación de git que ejecuta sobre tus repositorios es crear. Así que la comprobación va antes: que cada lado sea un repositorio y que ningún destino exista todavía. Hasta que eso no se cumple, no se monta nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con varias historias en la misma corrida pasa algo parecido, pero al revés: si una no se puede colocar, se reporta y las demás siguen. No tiene sentido tirar tres historias buenas por una carpeta que ya existía."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ya que estamos, conviene explicar eso del paso 3, porque dicho de corrido suena a magia: «el contrato de cada historia ve los anteriores». Lo que hay detrás es una limitación muy tonta y muy real: cada llamada al modelo empieza en blanco, sin memoria de la anterior. Si le pido cuatro contratos seguidos sin más, el de la historia 4 no tiene ni idea de que el de la 1 ya se quedó con `POST /pedidos/{id}/descuentos`, así que puede reutilizar esa ruta para otra cosa o inventar una casi igual con otro nombre. Y eso no revienta al generarlo: revienta semanas después, cuando dos ramas distintas llegan al mismo endpoint."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que chalc hace lo único que se puede hacer con un modelo sin memoria: se lo cuenta. Pega el texto de los contratos ya escritos en esa corrida dentro del prompt del siguiente —en el mismo hueco donde le pasa la arquitectura del back— y encima le pone la instrucción: son solo referencia de rutas ocupadas, no copies sus endpoints ni sus shapes, no redefinas sus rutas, tu contrato cubre únicamente la historia de abajo. No es que las historias se coordinen entre ellas; es que la cuarta escribe sabiendo qué sitio está cogido. Y por si acaso, cuando ya están todas puestas, chalc compara las rutas de todos los contratos y avisa si dos historias declararon la misma: no aborta, porque a veces es justo lo que quieres, pero prefiero enterarme ahí que el día de integrar."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué archivos deja"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto es lo que me parece más importante de todo el modo worktree, más que el truco de git: lo que hay dentro de la carpeta cuando termina. Un agente que abra ahí una sesión tiene que encontrarlo todo sin que yo le explique nada."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "016-descuento-por-volumen\\",
+          "├── handoff.md                                 ← el prompt del orquestador · rutas relativas: back/, front/",
+          "├── back\\                                      ← worktree · rama feat/descuento-por-volumen",
+          "│   ├── specs\\016-…\\spec.md                    ← el QUÉ y el PORQUÉ · requisitos en EARS (R1, R2…)",
+          "│   ├── specs\\016-…\\plan.md                    ← el CÓMO · arquitectura y decisiones",
+          "│   ├── specs\\016-…\\tasks.md                   ← tareas atómicas, cada una trazada a un R#",
+          "│   ├── specs\\016-…\\contracts\\api.md           ← el contrato · idéntico en los dos lados",
+          "│   ├── specs\\016-…\\.chalc\\contract.lock.json  ← huella del contrato + el rol de este lado",
+          "│   ├── specs\\016-…\\.chalc\\ai-trace.jsonl      ← qué se le pidió al modelo y qué devolvió",
+          "│   ├── CLAUDE.md                              ← las reglas: stack, método SDD, skills y MCP de ESTE lado",
+          "│   ├── .claude\\skills\\                        ← las skills copiadas AQUÍ dentro, no en mi máquina",
+          "│   ├── .mcp.json                              ← los servidores MCP que necesita este stack",
+          "│   └── .chalc.json                            ← manifiesto de lo equipado",
+          "└── front\\                                     ← lo mismo, pero con SU stack, SUS skills y SU MCP"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí está lo que más se pasa por alto, porque no sale en ningún tutorial de worktrees: el harness no es del proyecto, es de cada carpeta. Un worktree recién montado es una copia de trabajo pelada; si abres un agente ahí sin más, trabaja a ciegas: sin las reglas de tu stack, sin tus skills, sin los servidores MCP que necesita y, sobre todo, sin saber qué tiene que construir. Por eso chalc equipa CADA lado de CADA historia por separado, y le deja dentro cuatro cosas: sus reglas —`CLAUDE.md` para Claude Code, `AGENTS.md` para Codex, y el que toque para los demás—, sus skills copiadas ahí mismo, su configuración de MCP, y el método SDD con su constitución y sus plantillas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y encima de eso va el encargo, que es la otra mitad y la que de verdad dirige el trabajo: su `spec.md` con los requisitos en EARS, su `plan.md`, su `tasks.md` con las tareas trazadas a cada `R#`, y el contrato de API en `contracts/api.md`. Ahí hay un matiz que importa: las specs son de cada lado —la del back describe endpoints y persistencia, la del front describe pantallas y consumo—, pero el contrato es el MISMO archivo en los dos, con la misma huella en su `contract.lock.json`. Cada carpeta sabe qué construir y ninguna puede desviarse de lo acordado sin que se note. Cuatro historias por dos lados son ocho puestos así, cada uno con sus reglas, sus skills, su MCP, su spec y su contrato, y ninguno depende de cómo tenga yo configurada la máquina."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Que todo esto se escriba dentro del worktree y no en el repositorio principal no es un detalle de orden. La carpeta ya está en la rama de la feature, así que estos archivos nacen en la rama correcta: cuando el agente haga su primer commit, la spec va dentro y el pull request explica por sí solo qué se pidió y qué se acordó. El árbol principal, mientras tanto, sigue limpio en `develop`. Y las skills viajan con la carpeta, así que el agente encuentra las reglas de su stack ahí mismo, sin depender de cómo esté configurada mi máquina."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El `handoff.md` de la raíz es el único archivo pensado para que lo lea una persona. Es el prompt del orquestador escrito en rutas relativas —`back/`, `front/`— porque la sesión se abre en la raíz del workspace: por dónde empezar (el back, que es dueño del contrato), qué leer primero, que los `R#` son compartidos entre los dos lados, que cada tarea va con TDD estricto y se para a esperar mi OK, y al final el recordatorio de limpieza: cuando el PR se mergee, quita tú el worktree desde el repositorio original."
+      },
+      {
+        "kind": "heading",
+        "text": "Las ventanas: chalc abre el puesto, tú eliges el CLI"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con los workspaces creados falta lo más tonto y lo que más fricción quita: llegar hasta ellos. Si al terminar dices que sí, chalc abre una sola ventana de Windows Terminal con un panel por historia —el primero abre la ventana, los demás son divisiones—, cada uno titulado con su `NNN-slug` y ubicado en su carpeta. Todos a la vista al mismo tiempo, sin ir cambiando de pestaña."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "wt nt --title \"016-descuento-por-volumen\" -d \"D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\" `; sp --title \"017-historial-de-pedidos\" -d \"D:\\proyectos\\chalc-workspaces\\017-historial-de-pedidos\"",
+          "",
+          "# y lo mismo queda escrito en la carpeta base, para reabrirlo mañana:",
+          "D:\\proyectos\\chalc-workspaces\\open-all.ps1"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en lo que NO hay en ese comando: el nombre de ningún agente. El panel se abre vacío, en la carpeta correcta, y el comando lo escribes tú: `claude`, `codex`, `opencode`, `gemini`, el que estés usando ese día. Es a propósito. Arrancar cuatro agentes solo porque la herramienta puede sería empezar a gastar tu cuota antes de que hayas mirado siquiera lo que se generó, y ese primer vistazo al `handoff.md` y a la spec es justo donde más he corregido cosas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay un matiz honesto en ese «el que quieras». El panel es agnóstico, pero las reglas que el agente lee dentro del repositorio no: las escribe el adaptador que hayas equipado, y hoy hay cinco —Claude Code, Codex CLI, Copilot, Cursor y Gemini CLI—, cada uno en el formato de su asistente. Lo que sí es transversal es el `AGENTS.md`, el formato abierto que escribe el adaptador de Codex y que leen ya más de veinte herramientas, opencode entre ellas. Si tu CLI lo lee, hereda las mismas instrucciones sin que exista un adaptador con su nombre."
+      },
+      {
+        "kind": "heading",
+        "text": "El dashboard: cuatro puestos, un solo tablero"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El primer día con cuatro paneles abiertos descubrí el problema siguiente, y otra vez era uno que en Indra ya estaba resuelto. Allí, para saber cómo iba el equipo, nadie iba máquina por máquina: había un tablero y un rato de diez minutos por la mañana. Con cuatro agentes trabajando a la vez, la pregunta tampoco es «¿cómo va?», es «¿a cuál voy ahora?». Y recorrer cuatro paneles leyendo scrollback es exactamente la locura de terminales que el modo worktree venía a evitar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "`chalc dashboard` es la respuesta, y lo que más me gusta es de dónde saca los datos: de ningún sitio nuevo. No hay telemetría, ni un agente reportando su progreso, ni un formato propio que mantener. Lee el `tasks.md` de cada lado —cuenta casillas marcadas sobre el total— y le pregunta a git lo que git ya sabe. El progreso que ves es el mismo archivo que el agente va marcando mientras trabaja, así que no puede mentir por estar desactualizado. Se refresca cada cinco segundos."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "La rama de cada lado, para ver de un vistazo que back y front van por la misma.",
+          "El progreso de tareas: casillas marcadas sobre el total de su `specs/NNN-slug/tasks.md`, con su barra.",
+          "La tarea en curso, que es la primera casilla sin marcar: limpia de marcas de markdown y recortada, y en la página con una flecha para desplegar el texto entero.",
+          "Si el árbol está limpio o con cambios. Tener cambios es lo normal mientras un agente trabaja, así que no cuenta como problema: el estado de la historia lo deciden solo las tareas.",
+          "Cuántos commits lleva la rama sobre su base (`develop`, `main` o `master`, la primera que exista) y el asunto del último.",
+          "El estado agregado: sin arrancar, en curso, completa o rota. Rota es un worktree movido, borrado o sin specs legibles; se marca esa fila y las demás siguen mostrándose."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc dashboard",
+          "✓ Sirviendo http://localhost:4321 — leyendo D:\\proyectos\\chalc-workspaces",
+          "",
+          "016-descuento-por-volumen  en curso  feat/descuento-por-volumen",
+          "  back   ██████░░░░ 7/12  limpio        ↑5  feat(pedidos): valida el rango de fechas",
+          "         → Test en rojo para el 409 cuando el descuento ya existe (R4)",
+          "  front  ███░░░░░░░ 3/10  con cambios   ↑2  feat(web): formulario del descuento",
+          "         → Estado del formulario con signals y validación cruzada (R6)",
+          "",
+          "017-historial-de-pedidos  sin arrancar  feat/historial-de-pedidos",
+          "  back   ░░░░░░░░░░ 0/9   limpio        ↑0  chore: specs de la historia 017",
+          "  front  ░░░░░░░░░░ 0/8   limpio        ↑0  chore: specs de la historia 017",
+          "",
+          "actividad",
+          "  10:14:32  016-descuento… · back — tarea completada: contrato del descuento por volumen (R1)",
+          "  10:16:05  016-descuento… · front — nuevo commit: feat(web): formulario del descuento"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese bloque de actividad del final es lo que convierte el tablero en algo que se puede dejar abierto. En cada refresco compara el estado nuevo con el anterior y anota lo que cambió: una tarea que se marcó —con el nombre de la que estaba en curso— o un commit nuevo. Con eso, mirar el monitor de al lado dos veces por hora basta para saber qué se movió, y solo entro al panel de la historia que lo pide."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una decisión de la que no pienso moverme: el dashboard es de solo lectura por construcción, no por promesa. Únicamente responde peticiones GET, escucha solo en 127.0.0.1, no tiene ni una dependencia externa —es el servidor http que trae node— y no ejecuta ninguna operación que modifique un repositorio ni lanza procesos de agentes. Un tablero que además pudiera actuar sería un botón rojo al lado de cuatro agentes trabajando, y ese botón no me hace falta."
+      },
+      {
+        "kind": "heading",
+        "text": "`chalc dashboard --console`: el puesto de mando"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La última pieza junta las dos anteriores en una sola ventana. Con `--console`, el primer panel corre el dashboard vivo —el mismo estado que la página, pintado como texto que se refresca en su sitio, sin apilar refrescos en el historial— y a su lado se abre un panel por workspace, cada uno ubicado en su carpeta y esperando a que escribas tu comando. Empiezas el día abriendo una ventana y ya estás en la mesa completa: el tablero a la izquierda y los puestos a la derecha."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/command-center.es.svg",
+        "caption": "El puesto de mando: un panel con el tablero vivo y uno por historia. El tablero solo lee dos cosas que ya existían —el tasks.md y git— y las refresca cada cinco segundos."
+      },
+      {
+        "kind": "heading",
+        "text": "En vídeo: los cuatro puestos, en directo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Todo lo anterior en una captura se queda quieto, y la gracia está justo en el movimiento: los puestos montándose, los paneles abriéndose y el tablero al lado marcando tareas. Así que lo grabé funcionando y lo dejo aquí mismo, sin salir de la nota."
+      },
+      {
+        "kind": "video",
+        "youtubeId": "EPOqpGNwVFw",
+        "caption": "Cuatro agentes de IA, cuatro ramas, un solo repositorio: el flujo completo en directo"
+      },
+      {
+        "kind": "heading",
+        "text": "Dónde está la rapidez de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Conviene ser preciso con esto, porque es fácil vender humo. Sí, montar un worktree es prácticamente instantáneo comparado con clonar, porque no copia objetos; pero eso se hace una vez por historia y da igual si tarda dos segundos o quince. La rapidez que sí se nota es otra, y es más aburrida: no esperar. Las cuatro historias avanzan a la vez porque ninguna necesita que otra suelte el repositorio, y yo dejo de ser el semáforo que decide a quién le toca ahora."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Desaparece el `stash`, y con él la pila de cambios guardados que nadie recuerda de qué eran.",
+          "Desaparece el cambio de rama constante, y con él la recompilación completa cada vez que saltas de una historia a otra.",
+          "Desaparece el «no toques develop que estoy probando algo», porque el árbol principal ya no lo usa nadie para trabajar.",
+          "Desaparece la búsqueda de la carpeta correcta: el panel ya está donde tiene que estar y se llama como la historia.",
+          "Y desaparece el turno. Cuatro historias no son cuatro esperas encadenadas; son cuatro carpetas."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que cuesta, y lo que chalc no hace"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Las dependencias no se comparten. El historial sí, pero cada worktree instala su `node_modules` (o el entorno que use) aparte. Cuatro historias son cuatro instalaciones y cuatro veces ese espacio: es el precio real, y se paga en disco, no en tiempo.",
+          "No muevas la carpeta del workspace. Cada worktree guarda la ruta absoluta hacia su repositorio; si la cambias de sitio, el enlace se rompe y el dashboard te marca esa historia como rota.",
+          "La limpieza es tuya. Cuando el PR de un lado se mergea, su worktree se quita desde el repositorio original con `git worktree remove <ruta>`. chalc no lo hace por ti, y es a propósito.",
+          "chalc no commitea, no hace push, no mergea, no borra y no lanza el agente. Verifica, genera, escribe y abre ventanas. Todo lo que puede destruir trabajo lo decides tú.",
+          "El paralelismo lo limitan tu plan de uso y tu cabeza, no la herramienta. Cuatro agentes a la vez son cuatro conversaciones que revisar y cuatro pull requests que leer con atención."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí está la lección que me traje de aquel equipo repartido, que no va de git: el paralelismo no regala tiempo, lo mueve de sitio. Lo que cuatro puestos se ahorran en esperas reaparece al final, cuando toca juntar cuatro ramas que llevan días sin mirarse: cuanto más avanzó cada una por su cuenta, más lejos quedan entre ellas y más trabajo cuesta unirlas. Por eso el modo worktree no fue lo primero que construí: antes tuve que resolver que las cuatro historias hablaran el mismo idioma, y de eso va [un contrato, tres carriles](/daily/one-contract-three-lanes). Separar los puestos solo sale bien cuando lo que se junta al final estaba acordado desde el principio; si no, no son cuatro historias en paralelo, son cuatro versiones distintas de la misma API esperando a chocar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres ver dónde aplico todo esto, pásate por [mis proyectos](/projects), y si te interesa cómo trabajo con equipos, está en [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[git-worktree — documentación oficial](https://git-scm.com/docs/git-worktree): la referencia completa del comando, con `add`, `list`, `remove` y `prune`, y la explicación de qué guarda git dentro de `.git/worktrees/`. Es corta y se lee en diez minutos; después de leerla, esta nota es solo una aplicación de lo que ya dice.",
+          "[Git 2.5, including multiple worktrees and triangular workflows](https://github.blog/open-source/git/git-2-5-including-multiple-worktrees-and-triangular-workflows/) — GitHub Blog, julio de 2015. El anuncio original de la función, con la frase que mejor la resume: el `.git` de un árbol de trabajo enlazado es un archivo que remite al repositorio principal, no una copia de él.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): todo lo de esta nota está en cuatro archivos pequeños. `lib/gitworktree.mjs` es el único sitio que ejecuta `worktree add`, `lib/workspace.mjs` tiene la puerta, el plan de rutas y la creación todo o nada, `lib/terminals.mjs` arma las ventanas y `lib/dashboard.mjs` es el tablero entero. Las specs que los originaron están en `specs/005-feature-worktree/` y `specs/006-feature-dashboard/`.",
+          "[Argumentos de línea de comandos de Windows Terminal](https://learn.microsoft.com/windows/terminal/command-line-arguments): de dónde salen `nt`, `sp`, `--title` y `-d`, y por qué desde PowerShell hay que escapar el `;` con un acento grave. Con esa página se entiende en cinco minutos cómo montar tu propia ventana de trabajo, uses chalc o no.",
+          "[AGENTS.md](https://agents.md): el formato abierto para dar instrucciones a los agentes de código, hoy bajo la Agentic AI Foundation de la Linux Foundation. Ahí está la lista de herramientas que lo leen —Codex, Cursor, Gemini CLI, opencode y unas cuantas más—, que es lo que hace que el panel pueda ser agnóstico del CLI que escribas."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "The best team I have ever been on did not share an office. It was at Indra — Minsait — between July 2022 and September 2024, remote for Spain: the same squad had people connected from different cities and countries, and we did not all start the day at the same hour. On any given Tuesday there could be four stories open at once, one per person, and still nobody collided with anyone. It was not the method or the number of meetings: it was that each of us had a desk. Our own machine, our own copy of the repository, our own branch, our own folder. What we shared was the origin and integration day; the rest was ours."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is where the idea came from, and it is exactly as it sounds: what if instead of four people I put four agents? The split would be the same — one story each, each one to their own — except that in my projects the whole team fits on one machine. And that is precisely the part that did not come included: the desk. All four agents land on the same machine, mine, and over the same folder. \"One agent per story\" sounds fine until all four want to write in the same place at once, because a repository has a single working tree: one branch checked out at a time and one `git status` for everybody. So the second story starts with a `stash`, the third with a \"wait until this one finishes\", and the fourth never starts. The bottleneck was neither the model nor my usage plan: it was that I only had one desk."
+      },
+      {
+        "kind": "quote",
+        "text": "Four people in four cities don't collide because each one has a desk. Four agents in the same repository always collide, because there is only one."
+      },
+      {
+        "kind": "heading",
+        "text": "First things first: what a worktree is and how it works"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A git repository, the way we all use it every day, is two things glued together. On one side the `.git` folder, where the entire history lives: every commit, every branch, every object. On the other, the working folder, which is your files exactly as they are right now, on whatever branch you are on. There is only one of that second part, and that is where the whole problem comes from: it is why `git checkout` rewrites your files in place, because switching branches means your one and only working folder now has to show something else."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A worktree breaks that \"only one\". You ask the repository to mount another working folder, at whatever path on disk you want, checked out on another branch. From that moment you have two live folders at once, each on its own branch, hanging off the same `.git`."
+      },
+      {
+        "kind": "quote",
+        "text": "Manage multiple working trees attached to the same repository. A git repository can support multiple working trees, allowing you to check out more than one branch at a time.",
+        "source": "git official documentation · git-worktree",
+        "sourceUrl": "https://git-scm.com/docs/git-worktree"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And this is where it clicked for me, because it is exactly what I just described about that team, only inside a single machine. Each worktree is one developer's desk: their folder, their branch, their files, oblivious to what goes on in the others. The only difference is where those desks are: over there they were four laptops in four cities, and here they are four folders on my disk hanging off the same history. What cost the company one machine per person, git hands you with one command. And it has been there since 2015: I had spent years running `stash`, taking for granted that a repository was a folder, simply because I had never stopped to read that page of the documentation."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Inside, it is simpler than it looks, and it is worth knowing because it explains everything else. The expensive part is not duplicated: history and objects stay in the original repository and both folders share exactly the same ones. The only thing git creates on the side is a small private folder inside `.git/worktrees/` holding what really belongs to each one: its `HEAD`, meaning which branch it is on, and its index, meaning what it has staged for the next commit. And inside the new folder there is no real `.git`: there is a one-line text file pointing at that private folder. That is the whole invention, and it is why mounting a worktree is instant and takes up exactly what your working files take up and nothing more."
+      },
+      {
+        "kind": "quote",
+        "text": "Each linked working tree is a pseudo-repository with its own checked-out working copy. Its `.git` is actually a file that refers to the history and references from the main repository.",
+        "source": "GitHub Blog · Git 2.5, July 2015",
+        "sourceUrl": "https://github.blog/open-source/git/git-2-5-including-multiple-worktrees-and-triangular-workflows/"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/worktree-anatomy.en.svg",
+        "caption": "On the left, the usual: one `.git` and a single working folder, so switching branches rewrites the files in place. On the right, the same `.git` holding three folders at once, each on its own branch and each with its own HEAD."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cd D:\\projects\\api",
+          "git worktree add -b feat/login-google D:\\worktrees\\login-google",
+          "→ Preparing worktree (new branch 'feat/login-google')",
+          "→ HEAD is now at 4f2a91c chore: release 1.8.0",
+          "",
+          "git -C D:\\worktrees\\login-google status -sb",
+          "→ ## feat/login-google",
+          "",
+          "type D:\\worktrees\\login-google\\.git",
+          "→ gitdir: D:/projects/api/.git/worktrees/login-google",
+          "",
+          "git -C D:\\projects\\api rev-parse --abbrev-ref HEAD",
+          "→ develop"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That single command did three things at once: it created the branch (that is the `-b`), created the destination folder, and left it checked out on that branch. Watch out for `-b`, which has a temper: if the branch already exists it does not reuse it, it stops with a `fatal: a branch named … already exists`. To mount a branch that already exists you ask for it without `-b`, putting the name at the end. But the important part is the last line: the original repository is still on `develop`, without moving an inch. You can have a build running there, a server up or half a refactor in flight, and mounting a worktree does not touch any of it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Two rules come out of this and you want both in your head. First: the same branch cannot be checked out in two worktrees at once, and git refuses if you try. Rightly so, because otherwise you would have two folders writing over the same branch without either knowing about the other. Second, and this is the one that forces everything that follows: a worktree belongs to ONE repository. There is no such thing as \"a worktree of back and front together\". If your feature lives in two repositories — an API on one side and the web app on the other — git hands you two loose folders and nowhere to put them together. That gap is exactly what I filled in chalc."
+      },
+      {
+        "kind": "heading",
+        "text": "It is not a clone, and the difference costs you"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Because the alternative, the one everyone tries first, is to clone the repository four times and be done with it: four desks. It works, but you pay for it. Every clone copies the entire history, so on repositories with years behind them the wait and the disk both show. Four copies have to be kept current one by one. And there is something worse than disk: for day-to-day work they stop being the same repository. A branch you create in clone 3 does not exist for clone 1 until it goes through the remote, and the four copies start drifting apart quietly."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And there you have what really made that Indra team work, which was not discipline. There was a single origin, so \"the truth\" lived in one place and not on the machine of whoever spoke loudest. Everyone had the entire history locally — git is distributed, and we tend to forget that part — so working never depended on asking permission. And integration was an explicit event with a name and a date: the pull request. A worktree gives me the same thing back inside a single machine: separate desks, one origin, and integration back where it belongs, in the pull request. Nobody ran `stash` so that someone else could move forward; `stash` is what you do when you share a desk."
+      },
+      {
+        "kind": "heading",
+        "text": "Two projects in one: the folder that hosts them"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is why chalc does not talk about worktrees, it talks about workspaces. A workspace is a plain ordinary folder — no git of its own, no magic — grouping one worktree per repository of the feature: `back/`, `front/` and `movil/` if there is a mobile app. It is named `NNN-slug`, the same number and name as the story, so the folder tells you what is inside without opening it. Whatever path you type when it asks, chalc always works inside `<path>/chalc-workspaces`, so it never scatters folders across your disk, and it remembers that path in its global config so the dashboard knows where to look later."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "D:\\proyectos\\chalc-workspaces\\",
+          "├── 016-descuento-por-volumen\\",
+          "│   ├── back\\       ← worktree of pedidos-api · branch feat/descuento-por-volumen",
+          "│   ├── front\\      ← worktree of pedidos-web · the same branch",
+          "│   └── handoff.md  ← the orchestrator prompt for this story",
+          "├── 017-historial-de-pedidos\\",
+          "│   ├── back\\",
+          "│   ├── front\\",
+          "│   └── handoff.md",
+          "└── open-all.ps1    ← reopens every window after you shut the machine down"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is four worktrees and zero clones. With four stories it would be eight, and the two original repositories would still be sitting on `develop`, none the wiser. The \"split\" is not by repository: it is by folder. Each story takes a working copy of each repository, already checked out on its branch, and they all share the same history as always."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/worktree-desks.en.svg",
+        "caption": "Two repositories parked on develop and one worktree per story and per side. And the part rarely told: each side arrives with ITS harness — its stack rules, skills and MCP — and with ITS assignment — spec, plan, tasks and the API contract — because a freshly mounted worktree is a bare folder."
+      },
+      {
+        "kind": "heading",
+        "text": "How I handle it with chalc: the same command, once per repository"
+      },
+      {
+        "kind": "paragraph",
+        "text": "With the concept clear, what chalc does holds no mystery: it runs exactly the command you just saw, once per repository of the feature, standing inside each original repo. Not one more. The difference is that you do not pick the destination by hand — it comes from the workspace path plan — and that the branch is the same on both sides."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "# standing in the BACK repo",
+          "cd D:\\proyectos\\pedidos-api",
+          "git worktree add -b feat/descuento-por-volumen D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\\back",
+          "",
+          "# standing in the FRONT repo",
+          "cd D:\\proyectos\\pedidos-web",
+          "git worktree add -b feat/descuento-por-volumen D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\\front",
+          "",
+          "# if the branch already existed, it reuses it as is: no -b and no --force",
+          "git worktree add D:\\proyectos\\chalc-workspaces\\016-…\\back feat/descuento-por-volumen"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Those two commands are every write chalc makes to your repositories in worktree mode. The rest of its work is creating folders and writing files inside them, which harms nobody. Both original repos stay on `develop`, each worktree is born on `feat/descuento-por-volumen`, and the two folders end up as siblings inside the same workspace: the `back/` and the `front/` of the same story, side by side and on the same branch."
+      },
+      {
+        "kind": "heading",
+        "text": "Step by step: what `chalc feature --worktree` does"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The gate. Before asking you anything else and before spending a single token, it checks both repositories: clean tree and up to date with their remote. If one does not pass, it tells you why and waits; nothing is generated.",
+          "Stories. It asks for one and, when you finish, whether there is another. You can drop in all four of the session in one go.",
+          "Contract and specs, with AI. Git is still untouched here. Each story yields its API contract and each side’s spec; and that is where the `slug` comes from, the one that names the branch and the folders. The stories are generated one after another, and every new contract is shown the ones already written in that same run so it does not repeat routes another story has taken: it is the only moment in the flow when one story knows the others exist.",
+          "Reserved numbers. It looks up the next shared number across the repositories once, and hands out `NNN`, `NNN+1`… among the stories of the run, so that back and front of the same story always carry the same one.",
+          "Path plan. Pure computation, no disk touched: `<base>/NNN-slug/back`, `.../front`, `.../movil`.",
+          "Pre-flight and all-or-nothing creation: it verifies that each side is a repository and that no destination exists yet. Only then does it mount one worktree per side on the `feat/<slug>` branch.",
+          "Specs inside the worktree. Spec, plan, tasks, contract, fingerprint and skills are written into the new folder, which is already on the feature branch.",
+          "Hand-off and windows. A `handoff.md` at the root of the workspace with the orchestrator prompt, the `open-all.ps1` script in the base folder and, if you say yes, one window with a pane per story.",
+          "One agent per story, and none of them knows about the others. From here each workspace goes on its own: its agent opens in that folder and sees only its own — its two worktrees, its branch, its spec and its contract. No story coordinates another, no agent waits for another to finish; all they share is the repository they came from and the day they get integrated."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The gate deserves its own paragraph, because it is the part that has saved me the most. It checks before generating, not after: if a repository is dirty or diverged, generating the specs anyway means spending tokens on something that will not land properly afterwards. And what it does to bring a repo up to date is deliberately cowardly: only `fetch` and a fast-forward advance on a clean tree. If there are unpushed local commits, if the tree has changes or if the branch diverged, it stops and tells you. It never merges, pushes or forces anything; those decisions are yours."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature --worktree",
+          "",
+          "🔎 Gate: checking repos (not a single token is spent until they are ready)",
+          "  ✓ git back: up to date",
+          "  ! git front: uncommitted changes (left untouched)",
+          "  Retry once you have fixed it? [Y/n] y",
+          "",
+          "  ✓ git back: up to date",
+          "  ✓ git front: updated (fast-forward)"
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "All or nothing: why it checks before creating"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Creating half a workspace is worse than not creating it. If the `back` worktree mounts and `front` fails, the story is left lame: a branch created, a half-populated folder and a state you have to undo by hand. And undoing it would mean running `git worktree remove`, which chalc is forbidden to do: the only git operation it ever runs on your repositories is create. So the check comes first — each side is a repository, no destination exists yet — and only then does anything get mounted."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With several stories in the same run it works the other way around: if one cannot be placed, it is reported and the rest carry on. There is no sense in throwing away three good stories over a folder that already existed."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And while we are here, that bit from step 3 deserves an explanation, because said quickly it sounds like magic: \"each story's contract sees the previous ones\". Behind it there is a very dumb, very real limitation: every call to the model starts blank, with no memory of the previous one. If I ask for four contracts in a row and nothing else, the one for story 4 has no idea that story 1 already claimed `POST /pedidos/{id}/descuentos`, so it may reuse that route for something else or invent a near-identical one under another name. And that does not blow up at generation time: it blows up weeks later, when two different branches reach the same endpoint."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So chalc does the only thing you can do with a memoryless model: it tells it. It pastes the text of the contracts already written in that run into the next one's prompt — in the same slot where it passes the back's architecture — and puts the instruction on top: these are only a reference of routes already taken, do not copy their endpoints or their shapes, do not redefine their routes, your contract covers only the story below. It is not that the stories coordinate with each other; it is that the fourth one writes knowing which seats are taken. And just in case, once they are all placed, chalc compares the routes across every contract and warns if two stories declared the same one: it does not abort, because sometimes that is exactly what you want, but I would rather find out there than on integration day."
+      },
+      {
+        "kind": "heading",
+        "text": "What files it leaves"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the part of the whole worktree mode I care about most, more than the git trick: what is inside the folder when it finishes. An agent opening a session there has to find everything without me explaining anything."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "016-descuento-por-volumen\\",
+          "├── handoff.md                                 ← the orchestrator prompt · relative paths: back/, front/",
+          "├── back\\                                      ← worktree · branch feat/descuento-por-volumen",
+          "│   ├── specs\\016-…\\spec.md                    ← the WHAT and the WHY · requirements in EARS (R1, R2…)",
+          "│   ├── specs\\016-…\\plan.md                    ← the HOW · architecture and decisions",
+          "│   ├── specs\\016-…\\tasks.md                   ← atomic tasks, each traced to an R#",
+          "│   ├── specs\\016-…\\contracts\\api.md           ← the contract · identical on both sides",
+          "│   ├── specs\\016-…\\.chalc\\contract.lock.json  ← contract fingerprint + this side’s role",
+          "│   ├── specs\\016-…\\.chalc\\ai-trace.jsonl      ← what the model was asked and what it returned",
+          "│   ├── CLAUDE.md                              ← the rules: stack, SDD method, skills and MCP for THIS side",
+          "│   ├── .claude\\skills\\                        ← the skills copied IN HERE, not on my machine",
+          "│   ├── .mcp.json                              ← the MCP servers this stack needs",
+          "│   └── .chalc.json                            ← manifest of what was equipped",
+          "└── front\\                                     ← the same, but with ITS stack, ITS skills and ITS MCP"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here is the part most easily missed, because no worktree tutorial mentions it: the harness does not belong to the project, it belongs to each folder. A freshly mounted worktree is a bare working copy; open an agent in there and nothing else, and it works blind: no stack rules, no skills, none of the MCP servers it needs and, above all, no idea what it is supposed to build. That is why chalc equips EACH side of EACH story separately, leaving four things inside: its rules — `CLAUDE.md` for Claude Code, `AGENTS.md` for Codex, whichever fits the rest —, its skills copied right there, its MCP configuration, and the SDD method with its constitution and templates."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And on top of that comes the assignment, which is the other half and the one actually steering the work: its `spec.md` with the requirements in EARS, its `plan.md`, its `tasks.md` with every task traced to an `R#`, and the API contract in `contracts/api.md`. There is a nuance that matters here: the specs belong to each side — the back one describes endpoints and persistence, the front one describes screens and consumption — but the contract is the SAME file on both, with the same fingerprint in its `contract.lock.json`. Every folder knows what to build, and none of them can drift from what was agreed without it showing. Four stories across two sides are eight desks like that, each with its rules, its skills, its MCP, its spec and its contract, and not one of them depends on how my machine happens to be configured."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That all of this is written inside the worktree and not in the main repository is not a tidiness detail. The folder is already on the feature branch, so these files are born on the right branch: when the agent makes its first commit, the spec goes in with it and the pull request explains by itself what was asked and what was agreed. The main tree, meanwhile, stays clean on `develop`. And the skills travel with the folder, so the agent finds its stack rules right there, without depending on how my machine happens to be configured."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The `handoff.md` at the root is the only file meant for a person to read. It is the orchestrator prompt written in relative paths — `back/`, `front/` — because the session opens at the root of the workspace: where to start (the back, which owns the contract), what to read first, that the `R#` are shared across both sides, that every task goes through strict TDD and stops to wait for my OK, and at the end the cleanup reminder: once the PR merges, you remove the worktree yourself from the original repository."
+      },
+      {
+        "kind": "heading",
+        "text": "The windows: chalc opens the desk, you pick the CLI"
+      },
+      {
+        "kind": "paragraph",
+        "text": "With the workspaces created, what is left is the silliest thing and the one that removes the most friction: actually getting to them. If you say yes at the end, chalc opens a single Windows Terminal window with one pane per story — the first opens the window, the rest are splits — each titled with its `NNN-slug` and sitting in its folder. All visible at once, no tab-hopping."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "wt nt --title \"016-descuento-por-volumen\" -d \"D:\\proyectos\\chalc-workspaces\\016-descuento-por-volumen\" `; sp --title \"017-historial-de-pedidos\" -d \"D:\\proyectos\\chalc-workspaces\\017-historial-de-pedidos\"",
+          "",
+          "# and the same thing is written to the base folder, to reopen it tomorrow:",
+          "D:\\proyectos\\chalc-workspaces\\open-all.ps1"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice what is NOT in that command: any agent's name. The pane opens empty, in the right folder, and you type the command: `claude`, `codex`, `opencode`, `gemini`, whichever you are using that day. That is on purpose. Firing up four agents just because the tool can would mean spending your quota before you have even looked at what was generated, and that first look at the `handoff.md` and the spec is exactly where I have corrected the most."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There is an honest caveat in \"whichever you want\". The pane is agnostic, but the rules the agent reads inside the repository are not: they are written by whichever adapter you equipped, and today there are five — Claude Code, Codex CLI, Copilot, Cursor and Gemini CLI — each in its assistant's format. What does cut across all of them is `AGENTS.md`, the open format written by the Codex adapter and already read by more than twenty tools, opencode among them. If your CLI reads it, it inherits the same instructions without an adapter carrying its name."
+      },
+      {
+        "kind": "heading",
+        "text": "The dashboard: four desks, one board"
+      },
+      {
+        "kind": "paragraph",
+        "text": "On day one with four panes open I discovered the next problem, and again it was one Indra had already solved. Over there, nobody walked machine by machine to see how the team was doing: there was a board and ten minutes in the morning. With four agents working at once the question is not \"how is it going?\" either, it is \"which one do I go to now?\". And walking through four panes reading scrollback is exactly the terminal madness that worktree mode was meant to avoid."
+      },
+      {
+        "kind": "paragraph",
+        "text": "`chalc dashboard` is the answer, and what I like best is where it gets its data: from nowhere new. There is no telemetry, no agent reporting its progress, no bespoke format to maintain. It reads each side's `tasks.md` — counting ticked boxes over the total — and asks git what git already knows. The progress you see is the same file the agent ticks as it works, so it cannot lie by being stale. It refreshes every five seconds."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Each side's branch, so you can see at a glance that back and front are on the same one.",
+          "Task progress: boxes ticked over the total in its `specs/NNN-slug/tasks.md`, with a bar.",
+          "The task in progress, which is the first unticked box: stripped of markdown marks and trimmed, and on the page with an arrow to expand the full text.",
+          "Whether the tree is clean or has changes. Having changes is normal while an agent works, so it does not count as a problem: only the tasks decide the story's status.",
+          "How many commits the branch has over its base (`develop`, `main` or `master`, whichever exists first) and the subject of the last one.",
+          "The aggregate status: not started, in progress, complete or broken. Broken means a worktree that was moved, deleted or has no readable specs; that row is flagged and the rest keep showing."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc dashboard",
+          "✓ Serving http://localhost:4321 — reading D:\\proyectos\\chalc-workspaces",
+          "",
+          "016-descuento-por-volumen  in progress  feat/descuento-por-volumen",
+          "  back   ██████░░░░ 7/12  clean         ↑5  feat(pedidos): validate the date range",
+          "         → Failing test for the 409 when the discount already exists (R4)",
+          "  front  ███░░░░░░░ 3/10  has changes   ↑2  feat(web): discount form",
+          "         → Form state with signals and cross-field validation (R6)",
+          "",
+          "017-historial-de-pedidos  not started  feat/historial-de-pedidos",
+          "  back   ░░░░░░░░░░ 0/9   clean         ↑0  chore: specs for story 017",
+          "  front  ░░░░░░░░░░ 0/8   clean         ↑0  chore: specs for story 017",
+          "",
+          "activity",
+          "  10:14:32  016-descuento… · back — task completed: contract for the volume discount (R1)",
+          "  10:16:05  016-descuento… · front — new commit: feat(web): discount form"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That activity block at the bottom is what turns the board into something you can leave open. On every refresh it compares the new state with the previous one and notes what changed: a task that got ticked — naming the one that was in progress — or a new commit. With that, glancing at the second monitor twice an hour is enough to know what moved, and I only step into the pane of the story that asks for it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one decision I am not moving on: the dashboard is read-only by construction, not by promise. It answers GET requests only, listens on 127.0.0.1 only, has not a single external dependency — it is the http server node ships with — and runs no operation that modifies a repository, and never spawns agent processes. A board that could also act would be a red button sitting next to four working agents, and I do not need that button."
+      },
+      {
+        "kind": "heading",
+        "text": "`chalc dashboard --console`: the command center"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The last piece puts the previous two into a single window. With `--console`, the first pane runs the live dashboard — the same state as the page, painted as text that refreshes in place instead of stacking refreshes in the scrollback — and next to it one pane per workspace opens, each in its folder, waiting for you to type your command. You start the day by opening one window and you are already at the full desk: the board on the left, the workstations on the right."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/command-center.en.svg",
+        "caption": "The command center: one pane with the live board and one per story. The board only reads two things that already existed — tasks.md and git — and refreshes them every five seconds."
+      },
+      {
+        "kind": "heading",
+        "text": "On video: the four desks, live"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Everything above sits still in a screenshot, and the whole point is the movement: the desks being set up, the panes opening and the board next to them ticking tasks off. So I recorded it running and left it right here, without leaving the note."
+      },
+      {
+        "kind": "video",
+        "youtubeId": "EPOqpGNwVFw",
+        "caption": "Cuatro agentes de IA, cuatro ramas, un solo repositorio: the whole flow live (in Spanish)"
+      },
+      {
+        "kind": "heading",
+        "text": "Where the speed actually is"
+      },
+      {
+        "kind": "paragraph",
+        "text": "It is worth being precise here, because this is easy to oversell. Yes, mounting a worktree is practically instant compared to cloning, because it copies no objects; but that happens once per story and it hardly matters whether it takes two seconds or fifteen. The speed you do notice is a different, duller one: not waiting. The four stories move at the same time because none of them needs another to let go of the repository, and I stop being the traffic light deciding whose turn it is."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "`stash` disappears, and with it the pile of saved changes nobody remembers the reason for.",
+          "Constant branch switching disappears, and with it the full rebuild every time you jump from one story to another.",
+          "\"Don't touch develop, I'm testing something\" disappears, because nobody uses the main tree to work anymore.",
+          "Hunting for the right folder disappears: the pane is already where it should be and is named after the story.",
+          "And the turn-taking disappears. Four stories are not four chained waits; they are four folders."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "What it costs, and what chalc does not do"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Dependencies are not shared. History is, but each worktree installs its own `node_modules` (or whichever environment it uses) separately. Four stories are four installs and four times that space: that is the real price, and it is paid in disk, not in time.",
+          "Do not move the workspace folder. Each worktree stores the absolute path to its repository; move it and the link breaks, and the dashboard flags that story as broken.",
+          "Cleanup is yours. When one side's PR merges, its worktree is removed from the original repository with `git worktree remove <path>`. chalc does not do it for you, and that is on purpose.",
+          "chalc does not commit, push, merge, delete or launch the agent. It checks, generates, writes and opens windows. Everything that can destroy work is your call.",
+          "Parallelism is limited by your usage plan and your head, not by the tool. Four agents at once are four conversations to review and four pull requests to read carefully."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And there is the lesson I brought back from that distributed team, and it is not about git: parallelism does not give you time, it moves it. What four desks save in waiting comes back at the end, when four branches that have not looked at each other for days have to be merged: the further each one went on its own, the further apart they are and the more work it takes to bring them together. That is why worktree mode was not the first thing I built: first I had to make the four stories speak the same language, and that is what [one contract, three lanes](/daily/one-contract-three-lanes) is about. Separating the desks only works when what comes together at the end was agreed at the start; otherwise they are not four stories in parallel, they are four different versions of the same API waiting to collide."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want to see where I apply all of this, have a look at [my projects](/projects), and if you are interested in how I work with teams, it is in [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[git-worktree — official documentation](https://git-scm.com/docs/git-worktree): the full reference for the command, with `add`, `list`, `remove` and `prune`, and the explanation of what git keeps inside `.git/worktrees/`. It is short and reads in ten minutes; after that, this note is just one application of what it already says.",
+          "[Git 2.5, including multiple worktrees and triangular workflows](https://github.blog/open-source/git/git-2-5-including-multiple-worktrees-and-triangular-workflows/) — GitHub Blog, July 2015. The original announcement of the feature, with the sentence that sums it up best: a linked working tree's `.git` is a file that refers back to the main repository, not a copy of it.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): everything in this note lives in four small files. `lib/gitworktree.mjs` is the only place that runs `worktree add`, `lib/workspace.mjs` holds the gate, the path plan and the all-or-nothing creation, `lib/terminals.mjs` builds the windows and `lib/dashboard.mjs` is the whole board. The specs behind them are in `specs/005-feature-worktree/` and `specs/006-feature-dashboard/`.",
+          "[Windows Terminal command line arguments](https://learn.microsoft.com/windows/terminal/command-line-arguments): where `nt`, `sp`, `--title` and `-d` come from, and why from PowerShell you have to escape the `;` with a backtick. That page is enough to build your own working window in five minutes, with or without chalc.",
+          "[AGENTS.md](https://agents.md): the open format for instructing coding agents, now stewarded by the Agentic AI Foundation under the Linux Foundation. It lists the tools that read it — Codex, Cursor, Gemini CLI, opencode and quite a few more — which is what lets the pane stay agnostic about the CLI you type into it."
+        ]
+      }
+    ]
+  }
+}

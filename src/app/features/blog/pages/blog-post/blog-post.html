@@ -96,6 +96,22 @@
                     </figcaption>
                   </figure>
                 }
+                @case ('video') {
+                  <figure class="post__figure">
+                    <div class="post__video">
+                      <iframe
+                        [src]="videoUrl(block.youtubeId)"
+                        [title]="block.caption"
+                        loading="lazy"
+                        allow="accelerometer; clipboard-write; encrypted-media; picture-in-picture"
+                        allowfullscreen
+                      ></iframe>
+                    </div>
+                    <figcaption class="post__video-caption">
+                      <span class="md__mark">!</span>[{{ block.caption }}]
+                    </figcaption>
+                  </figure>
+                }
                 @default {
                   <p class="post__paragraph">
                     @for (span of spans(block.text); track $index) {

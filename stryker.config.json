@@ -20,6 +20,7 @@
     "src/app/features/blog/services/blog-content-urls.ts",
     "src/app/features/blog/services/sort-posts.ts",
     "src/app/features/blog/services/format-post-date.ts",
+    "src/app/features/blog/services/youtube-embed-url.ts",
     "src/app/shared/directives/reveal-on-scroll.directive.ts"
   ],
   "thresholds": { "high": 90, "low": 80, "break": 80 },

@@ -17,6 +17,7 @@ const POST = {
       { kind: 'steps', items: ['Paso uno', 'Paso dos'] },
       { kind: 'terminal', lines: ['chalc init'] },
       { kind: 'image', src: 'images/blog/spec-flow.es.svg', caption: 'El flujo' },
+      { kind: 'video', youtubeId: 'EPOqpGNwVFw', caption: 'El flujo, en directo' },
       {
         kind: 'quote',
         text: 'Una cita.',
@@ -76,6 +77,23 @@ describe('BlogPostPage', () => {
     );
     expect(host.querySelector('.post__figure figcaption')?.textContent).toContain('El flujo');
     expect(host.querySelector('.post__quote')?.textContent).toContain('Una cita.');
+  });
+
+  // R71 — el bloque de vídeo se reproduce dentro de la nota
+  it('embeds a playable video inside the post (R71)', async () => {
+    const fixture = create('mi-entrada');
+    TestBed.inject(HttpTestingController).expectOne('content/blog/mi-entrada.json?v=2').flush(POST);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    const host = fixture.nativeElement as HTMLElement;
+    const iframe = host.querySelector<HTMLIFrameElement>('.post__video iframe')!;
+    expect(iframe.getAttribute('src')).toBe('https://www.youtube-nocookie.com/embed/EPOqpGNwVFw');
+    expect(iframe.getAttribute('title')).toBe('El flujo, en directo');
+    expect(iframe.getAttribute('allowfullscreen')).not.toBeNull();
+    expect(host.querySelector('.post__video-caption')?.textContent).toContain(
+      'El flujo, en directo',
+    );
   });
 
   // R58 — la cita muestra su autoría, enlazada a la referencia original

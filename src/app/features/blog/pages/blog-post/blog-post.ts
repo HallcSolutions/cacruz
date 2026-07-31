@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, input } from '@angular/core';
+import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
 import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../../core/i18n/translation.service';
@@ -6,6 +7,7 @@ import { RevealOnScrollDirective } from '../../../../shared/directives/reveal-on
 import { BlogService } from '../../services/blog.service';
 import { formatPostDate } from '../../services/format-post-date';
 import { isExternalLink, parseRichText, TextSpan } from '../../services/parse-rich-text';
+import { youtubeEmbedUrl } from '../../services/youtube-embed-url';
 
 @Component({
   selector: 'app-blog-post',
@@ -20,6 +22,8 @@ export class BlogPostPage {
   protected readonly i18n = inject(TranslationService);
   protected readonly post = inject(BlogService).postResource(() => this.slug());
 
+  private readonly sanitizer = inject(DomSanitizer);
+
   protected formatDate(isoDate: string): string {
     return formatPostDate(isoDate, this.i18n.language());
   }
@@ -30,5 +34,9 @@ export class BlogPostPage {
 
   protected isExternal(url: string): boolean {
     return isExternalLink(url);
+  }
+
+  protected videoUrl(youtubeId: string): SafeResourceUrl {
+    return this.sanitizer.bypassSecurityTrustResourceUrl(youtubeEmbedUrl(youtubeId));
   }
 }

@@ -298,6 +298,20 @@
   display: block;
 }
 
+.post__video {
+  aspect-ratio: 16 / 9;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  overflow: hidden;
+}
+
+.post__video iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+}
+
 .post__figure figcaption {
   margin-top: 0.7rem;
   font-size: 0.85rem;

@@ -156,6 +156,9 @@ con un diseño editorial (sin cards) y animaciones memorables.
 - **R69** — WHEN un producto está en línea THE SYSTEM SHALL permitir plegar y volver a abrir su detalle con una transición suave, sin apagar el servicio ni alterar el contador.
 - **R70** — WHERE un producto tenga app publicada THE SYSTEM SHALL mostrar en su ficha los enlaces de descarga reales (App Store y Google Play).
 
+### Vídeo reproducible dentro de una nota _(enmienda 2026-07-30 u: "coloca este vídeo en la nota que se vea para que la gente pueda dar play")_
+- **R71** — WHERE una entrada del blog incluya un bloque de vídeo THE SYSTEM SHALL mostrarlo como reproductor incrustado dentro de la nota, con su pie de foto, para que el lector le dé play sin salir de la página. _(Amplía R54.)_
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

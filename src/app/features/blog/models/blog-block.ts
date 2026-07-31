@@ -4,4 +4,5 @@ export type BlogBlock =
   | { kind: 'quote'; text: string; source?: string; sourceUrl?: string }
   | { kind: 'steps'; items: string[] }
   | { kind: 'terminal'; lines: string[] }
-  | { kind: 'image'; src: string; caption: string };
+  | { kind: 'image'; src: string; caption: string }
+  | { kind: 'video'; youtubeId: string; caption: string };

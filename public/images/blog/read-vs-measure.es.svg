@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 500" role="img" aria-label="Leer el código o medirlo: las dos posturas y dónde encaja el portón">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .panel { transform-box: fill-box; transform-origin: center; animation: breathe 4.4s ease-in-out infinite; }
+    .p2 { animation-delay: 2.2s }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.7s linear infinite; }
+    .dot { animation: pulse 2.6s ease-in-out infinite; }
+    .d2 { animation-delay: .35s } .d3 { animation-delay: .7s } .d4 { animation-delay: 1.05s } .d5 { animation-delay: 1.4s }
+    @keyframes breathe { 0%,100% { opacity:.86 } 50% { opacity:1 } }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes pulse { 0%,100% { opacity:.45 } 50% { opacity:1 } }
+  </style>
+
+  <rect width="1000" height="500" fill="url(#bg)"/>
+  <text x="40" y="48" font-family="Georgia, serif" font-size="27" fill="#ece7fb">Leer el código o medirlo: las dos posturas</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">el debate de 2026 sobre qué hacer con el código que escribe un agente</text>
+
+  <!-- Izquierda: medir -->
+  <g class="panel">
+    <rect x="40" y="104" width="440" height="256" rx="16" fill="none" stroke="#34d399" stroke-width="2.5"/>
+    <text x="64" y="136" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">MEDIRLO · Robert C. Martin</text>
+    <text x="64" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">«No reviso el código que escriben los agentes.»</text>
+    <text x="64" y="184" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">lo que sí mira, en cifras que salen de herramientas:</text>
+
+    <circle class="dot" cx="72" cy="212" r="4" fill="#34d399"/>
+    <text x="88" y="217" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">cobertura de tests</text>
+    <circle class="dot d2" cx="72" cy="240" r="4" fill="#34d399"/>
+    <text x="88" y="245" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">estructura de dependencias</text>
+    <circle class="dot d3" cx="72" cy="268" r="4" fill="#34d399"/>
+    <text x="88" y="273" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">complejidad ciclomática</text>
+    <circle class="dot d4" cx="72" cy="296" r="4" fill="#34d399"/>
+    <text x="88" y="301" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">tamaño de los módulos</text>
+    <circle class="dot d5" cx="72" cy="324" r="4" fill="#34d399"/>
+    <text x="88" y="329" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">mutation testing</text>
+  </g>
+
+  <!-- Derecha: leer -->
+  <g class="panel p2">
+    <rect x="520" y="104" width="440" height="256" rx="16" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="544" y="136" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">LEERLO · Grady Booch</text>
+    <text x="544" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">«Reviso todo el código que generan los agentes.»</text>
+    <text x="544" y="184" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">lo que ninguna cifra le contesta:</text>
+
+    <circle class="dot" cx="552" cy="212" r="4" fill="#fb7185"/>
+    <text x="568" y="217" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">¿metió una vulnerabilidad?</text>
+    <circle class="dot d2" cx="552" cy="240" r="4" fill="#fb7185"/>
+    <text x="568" y="245" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">¿dejó código muerto?</text>
+    <circle class="dot d3" cx="552" cy="268" r="4" fill="#fb7185"/>
+    <text x="568" y="273" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">¿se saltó una factorización que importa?</text>
+    <circle class="dot d4" cx="552" cy="296" r="4" fill="#fb7185"/>
+    <text x="568" y="301" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">«confía, pero verifica»</text>
+    <text x="568" y="329" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">la experiencia huele lo que la métrica no ve</text>
+  </g>
+
+  <line x1="500" y1="120" x2="500" y2="344" stroke="#3a3050" stroke-width="1.5" stroke-dasharray="4 6"/>
+
+  <!-- Cierre -->
+  <line x1="260" y1="368" x2="260" y2="404" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+  <line x1="740" y1="368" x2="740" y2="404" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <rect x="40" y="410" width="920" height="62" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+  <text x="64" y="437" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">LO QUE HAGO YO · no elijo bando: reparto el trabajo</text>
+  <text x="64" y="459" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">el portón mide lo medible · un agente revisor lee lo que hay que leer · yo leo la spec y el informe</text>
+</svg>

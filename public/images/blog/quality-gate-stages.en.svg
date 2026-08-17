@@ -1,0 +1,107 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="The seven stages of the quality gate and its verdict">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .st { transform-box: fill-box; transform-origin: center; animation: breathe 4s ease-in-out infinite; }
+    .s2 { animation-delay: .4s } .s3 { animation-delay: .8s } .s4 { animation-delay: 1.2s }
+    .s5 { animation-delay: 1.6s } .s6 { animation-delay: 2s } .s7 { animation-delay: 2.4s }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    .chip { transform-box: fill-box; transform-origin: center; animation: pulse 3s ease-in-out infinite; }
+    .c2 { animation-delay: 1s } .c3 { animation-delay: 2s }
+    @keyframes breathe { 0%,100% { opacity:.85 } 50% { opacity:1 } }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes pulse { 0%,100% { opacity:.55 } 50% { opacity:1 } }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="27" fill="#ece7fb">The gate: seven stages, one verdict</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">node .chalc/gate.mjs — runs over the files changed since the branch base</text>
+
+  <!-- Row 1 -->
+  <g class="st">
+    <rect x="42" y="98" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="60" y="124" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">1 · TESTS</text>
+    <text x="60" y="146" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">the repo's own suite</text>
+    <text x="60" y="166" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">if they fail, no mutation</text>
+  </g>
+  <line x1="268" y1="142" x2="278" y2="142" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="st s2">
+    <rect x="282" y="98" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="300" y="124" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">2 · MUTATION</text>
+    <text x="300" y="146" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">mark and survivors</text>
+    <text x="300" y="166" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">from the tool's own report</text>
+  </g>
+  <line x1="508" y1="142" x2="518" y2="142" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="st s3">
+    <rect x="522" y="98" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="540" y="124" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">3 · CODE</text>
+    <text x="540" y="146" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">one thing per file</text>
+    <text x="540" y="166" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">lengths, empty catch, any</text>
+  </g>
+  <line x1="748" y1="142" x2="758" y2="142" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="st s4">
+    <rect x="762" y="98" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="780" y="124" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">4 · DUPLICATION</text>
+    <text x="780" y="146" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">repeated blocks</text>
+    <text x="780" y="166" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">against the whole project</text>
+  </g>
+
+  <path d="M872 190 L872 212 L260 212 L260 234" class="flow" fill="none" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <!-- Row 2 -->
+  <g class="st s5">
+    <rect x="150" y="240" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="168" y="266" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">5 · BOUNDARIES</text>
+    <text x="168" y="288" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">layers being crossed</text>
+    <text x="168" y="308" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">the same as chalc verify</text>
+  </g>
+  <line x1="376" y1="284" x2="386" y2="284" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="st s6">
+    <rect x="390" y="240" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="408" y="266" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">6 · TRACEABILITY</text>
+    <text x="408" y="288" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">every test cites a real R#</text>
+    <text x="408" y="308" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">against specs/NNN-*/spec.md</text>
+  </g>
+  <line x1="616" y1="284" x2="626" y2="284" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="st s7">
+    <rect x="630" y="240" width="220" height="88" rx="13" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="648" y="266" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">7 · CONTRACT</text>
+    <text x="648" y="288" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">every route exists</text>
+    <text x="648" y="308" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">against contracts/api.md</text>
+  </g>
+
+  <line x1="500" y1="334" x2="500" y2="374" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <!-- Verdict -->
+  <rect x="40" y="382" width="920" height="132" rx="16" fill="none" stroke="#3a3050" stroke-width="2"/>
+  <text x="64" y="408" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">VERDICT · the same computation titles the report and decides the number the program ends with</text>
+
+  <g class="chip">
+    <rect x="64" y="422" width="270" height="72" rx="12" fill="none" stroke="#34d399" stroke-width="2.5"/>
+    <text x="84" y="450" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">PASSED · ends in 0</text>
+    <text x="84" y="474" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">every stage that ran, passed</text>
+  </g>
+  <g class="chip c2">
+    <rect x="356" y="422" width="270" height="72" rx="12" fill="none" stroke="#fb7185" stroke-width="2.5"/>
+    <text x="376" y="450" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">FAILED · ends in red</text>
+    <text x="376" y="474" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">I checked it and it's wrong</text>
+  </g>
+  <g class="chip c3">
+    <rect x="648" y="422" width="288" height="72" rx="12" fill="none" stroke="#fbbf24" stroke-width="2.5"/>
+    <text x="668" y="450" font-family="ui-monospace, monospace" font-size="13" fill="#fbbf24">BLOCKED · red as well</text>
+    <text x="668" y="474" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">I couldn't check it: never approved</text>
+  </g>
+
+  <text x="40" y="540" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">If the tests fail, mutation does not run — and the .chalc/gate.md report says which of the two happened.</text>
+</svg>

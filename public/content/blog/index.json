@@ -1,5 +1,24 @@
 [
   {
+    "slug": "close-a-task-with-evidence",
+    "date": "2026-08-17",
+    "title": {
+      "es": "Cuando la IA dice «tarea terminada», ¿cómo sabes que es verdad?",
+      "en": "When the AI says \"task done\", how do you know it's true?"
+    },
+    "summary": {
+      "es": "El agente terminaba una tarea, escribía «92%» y yo seguía a la siguiente. Un día fui a buscar el informe: no existía. Nadie le había pedido nunca un archivo, solo una frase. Qué hay de verdad detrás del «ya no leo el código de mis agentes» de Uncle Bob, por qué no significa lo que parece, y las tres piezas que monté para no volver a fiarme de una frase.",
+      "en": "The agent would finish a task, type \"92%\", and I'd move on. One day I went looking for the report: it didn't exist. Nobody had ever asked it for a file, only for a sentence. What actually sits behind Uncle Bob's \"I no longer read my agents' code\", why it doesn't mean what it sounds like, and the three pieces I built so I'd never trust a sentence again."
+    },
+    "tags": [
+      "chalc",
+      "spec-ia",
+      "calidad",
+      "mutation-testing",
+      "agentes"
+    ]
+  },
+  {
     "slug": "a-desk-per-story-with-worktrees",
     "date": "2026-07-30",
     "title": {

@@ -1,0 +1,1279 @@
+{
+  "slug": "close-a-task-with-evidence",
+  "date": "2026-08-17",
+  "title": {
+    "es": "Cuando la IA dice «tarea terminada», ¿cómo sabes que es verdad?",
+    "en": "When the AI says \"task done\", how do you know it's true?"
+  },
+  "summary": {
+    "es": "El agente terminaba una tarea, escribía «92%» y yo seguía a la siguiente. Un día fui a buscar el informe: no existía. Nadie le había pedido nunca un archivo, solo una frase. Qué hay de verdad detrás del «ya no leo el código de mis agentes» de Uncle Bob, por qué no significa lo que parece, y las tres piezas que monté para no volver a fiarme de una frase.",
+    "en": "The agent would finish a task, type \"92%\", and I'd move on. One day I went looking for the report: it didn't exist. Nobody had ever asked it for a file, only for a sentence. What actually sits behind Uncle Bob's \"I no longer read my agents' code\", why it doesn't mean what it sounds like, and the three pieces I built so I'd never trust a sentence again."
+  },
+  "tags": [
+    "chalc",
+    "spec-ia",
+    "calidad",
+    "mutation-testing",
+    "agentes"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Cuando programo, el código lo escribe una IA y yo dirijo. Mis reglas del proyecto le pedían una cosa muy concreta al terminar cada tarea: comprobar que las pruebas del código sirven de verdad, y no bajar del 80%. Existe una técnica exacta para eso —se llama mutation testing— y consiste en estropear el código a propósito, un cambio pequeño cada vez, para ver si alguna prueba se da cuenta. Si nadie protesta, esa prueba no estaba protegiendo nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El agente terminaba la tarea, escribía «92%» y yo pasaba a la siguiente. Un día abrí el proyecto y fui a buscar el informe que deja la herramienta que hace esa medición. No existía. Y no es que el modelo me hubiera mentido: es que nadie le había pedido nunca un archivo, solo una frase. Una frase se puede escribir sin ejecutar absolutamente nada, y yo llevaba meses tratando las dos cosas como si fueran lo mismo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta nota va de lo que hice para que eso no pueda repetirse, y de un debate público que me ayudó a ordenar la idea. No va de una funcionalidad concreta —de un feature, como decimos en el oficio—: va de cómo trabajo, tarea a tarea, con un agente escribiendo el código delante de mí. El método que sigo lo conté en [qué es el desarrollo guiado por especificación](/daily/what-is-spec-driven-development), y cabe en una idea: antes de tocar el código dejo escrito qué tiene que hacer el programa, en frases tan concretas que cada una se pueda convertir en una prueba. «La pantalla debe ser rápida» no vale, porque nadie sabe cuándo se cumple; «la pantalla debe cargar en menos de dos segundos» sí. A partir de ahí el código tiene un solo trabajo, que es cumplirlas. Aquí cuento la parte que hasta ahora me faltaba, que resulta ser la más importante: qué pasa exactamente cuando el agente dice «tarea terminada»."
+      },
+      {
+        "kind": "quote",
+        "text": "No reviso el código que escriben los agentes. Mido cosas como la cobertura de tests, la estructura de dependencias, la complejidad ciclomática, el tamaño de los módulos, el mutation testing. De esas métricas se puede inferir mucho sobre la calidad del código.",
+        "source": "Robert C. Martin · X, 2026",
+        "sourceUrl": "https://x.com/unclebobmartin/status/2044114698451476492"
+      },
+      {
+        "kind": "heading",
+        "text": "Antes de nada: qué es `chalc spec-ia`"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter) es la herramienta que construí para dejar de repetir la misma preparación en cada proyecto. Se usa escribiendo órdenes en la terminal, sin ventanas ni botones. Su núcleo no usa IA: lee señales del repositorio —el `package.json`, los archivos de la raíz, la estructura— y aplica reglas explícitas de un catálogo para dejarle al asistente tres cosas dentro del repositorio: sus **skills** —manuales cortos sobre cómo se hace bien cada cosa en un proyecto de ese tipo—, sus **servidores MCP** —el enchufe con el que el asistente consulta cosas de fuera, como la documentación de la versión de hoy de la tecnología que usas— y su **método de trabajo**. Siempre da el mismo resultado, es instantáneo y no gasta un solo token. Más abajo desgloso los tres, archivo por archivo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "`chalc spec-ia` es uno de los comandos que sí llaman a un modelo, y solo si tú configuras tu propia clave. Su trabajo es concreto: toma una historia de usuario —un `.md`, un Word, un ticket de Azure DevOps o de Jira, una URL o texto pegado en la terminal— y la convierte en los tres archivos del método: `spec.md` con los requisitos escritos uno a uno y de forma que se puedan comprobar, `plan.md` con la arquitectura y las decisiones, y `tasks.md` con las tareas partidas en trozos pequeños, cada una apuntando al requisito que implementa. Y termina imprimiendo un prompt listo para pegar en tu asistente. En un momento explico qué es cada archivo y para qué sirve; primero, cómo se ve al ejecutarlo."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc spec-ia                                     # interactivo: te pregunta todo",
+          "chalc spec-ia D:\\proyectos\\tienda --lang es --doc HU-descuento.docx",
+          "",
+          "# y esto es lo que queda escrito:",
+          "specs/018-descuento-por-volumen/spec.md            los requisitos, uno a uno",
+          "specs/018-descuento-por-volumen/plan.md            arquitectura y decisiones",
+          "specs/018-descuento-por-volumen/tasks.md           cada tarea, con su requisito",
+          ".chalc/gate.mjs + .chalc/gate.json                 el portón, listo para correr",
+          ".chalc/next.mjs                                    el advisor: qué toca ahora",
+          ".chalc/mail.mjs                                    el buzón entre lados",
+          ".claude/agents/revisor.md + endurecedor.md         los dos roles, sin editar código",
+          ".chalc/gate-hook.md                                los dos hooks, documentados"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Las tres últimas líneas de esa salida son lo nuevo, y son de lo que va el resto de la nota. Pero antes conviene explicar el resto del comando, porque la mitad de su valor está en lo que NO hace."
+      },
+      {
+        "kind": "heading",
+        "text": "Los tres archivos que genera, y para qué sirve cada uno"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Todo el método se apoya en tres archivos de texto plano que viven junto al código, en una carpeta `specs/`. No son documentación de esa que se escribe al final y nadie vuelve a abrir: son la **entrada** del trabajo, lo que se escribe antes. Cada uno responde una pregunta distinta y sirve para una cosa distinta."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`spec.md` — el QUÉ y el PORQUÉ.** Qué tiene que hacer el programa y para quién, sin decir nunca cómo. **Para qué sirve:** es el único sitio contra el que se puede comprobar si algo está terminado. Sin él, «terminado» es una opinión, y la opinión del que lo escribió.",
+          "**`plan.md` — el CÓMO.** Arquitectura, decisiones técnicas, qué se toca y qué se deja en paz. **Para qué sirve:** para que el agente no se invente la arquitectura sobre la marcha. Si no está escrito, elegirá lo primero que le parezca razonable, y lo elegirá distinto en cada tarea.",
+          "**`tasks.md` — el ORDEN.** El trabajo partido en tareas pequeñas, numeradas, cada una apuntando a su requisito. **Para qué sirve:** para trabajar de una en una y poder parar. A un agente al que le sueltas la feature entera te devuelve doscientos archivos que nadie va a revisar de verdad; a uno al que le das una tarea te devuelve algo que cabe en la cabeza."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Los requisitos del `spec.md` no se escriben en prosa libre, sino con una plantilla que se llama **EARS**. Suena a jerga y es de lo más simple que hay: cada requisito tiene que caber en una frase con la forma «CUANDO pasa esto, EL SISTEMA DEBE hacer aquello», o su variante para los casos raros, «SI ocurre esto, ENTONCES EL SISTEMA DEBE…». **Para qué sirve:** para que no se pueda escribir un requisito que no se pueda comprobar. «La pantalla debe ser rápida» no cabe en la plantilla; «cuando el usuario pulsa Guardar, el sistema debe mostrar el resultado en menos de dos segundos» sí, y de esa frase sale un test casi solo. De dónde viene y por qué es tan tozuda lo conté en [la nota del método](/daily/what-is-spec-driven-development)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada requisito lleva además un identificador: `R1`, `R2`, `R3`. Parece burocracia y es la pieza que lo cose todo. La tarea dice qué `R#` implementa; el test cita el `R#` que comprueba; el portón se niega a cerrar la tarea si un test que cambiaste no cita ninguno. **Para qué sirve:** para que la pregunta «¿esto quién lo pidió?» tenga respuesta seis meses después, cuando ya nadie se acuerde y la persona que lo escribió esté en otra empresa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y el orden de trabajo dentro de cada tarea es **TDD**, que también suena peor de lo que es. Son tres pasos: escribes primero la prueba, compruebas que **falla** —si pasa a la primera, esa prueba no estaba comprobando nada—, escribes el mínimo código para que pase, y solo entonces lo ordenas. **Para qué sirve:** para que no exista código sin una prueba que lo justifique, y sobre todo para que la prueba se escriba mirando el requisito y no el código. Una prueba escrita después, mirando el código que ya existe, tiende a comprobar que el código hace lo que hace. Que es siempre verdad, y no sirve de nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La última pieza del vocabulario es el **hand-off**, que es como llamo al prompt que el comando imprime al terminar. Es un encargo por escrito: qué archivos leer y en qué orden, cómo trabajar, qué tiene prohibido hacer, y qué hacer al cerrar cada tarea. **Para qué sirve:** para que la sesión no empiece con «implementa esto» y ochenta suposiciones metidas de contrabando. Es literalmente el texto que copias y pegas en tu asistente, y es la pieza que ha cambiado con todo lo nuevo: ahora lleva dentro el ciclo de cierre."
+      },
+      {
+        "kind": "heading",
+        "text": "La regla que gobierna el comando: la IA estructura, no inventa"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El riesgo obvio de pedirle a un modelo que escriba una especificación es que rellene los huecos. Le pasas media página sobre un descuento por volumen y te devuelve requisitos sobre auditoría, límites de importe y notificaciones por correo que nadie pidió. Eso no es una especificación: es una lista de deseos que alguien va a implementar creyendo que se acordó."
+      },
+      {
+        "kind": "heading",
+        "text": "La sesión entera, pregunta por pregunta"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En modo interactivo el comando hace cinco preguntas, ni una más, y siempre en este orden. Esta es la sesión completa, de principio a fin:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npm run spec-ia",
+          "",
+          "⚙️  chalc spec-ia",
+          "  IA: anthropic · claude-opus-5",
+          "",
+          "? ¿La HU tiene backend? [y/N] n",
+          "? Ruta del proyecto a equipar: D:\\proyectos\\tienda",
+          "? ¿En qué idioma genero el spec? (el de tu proyecto)",
+          "  ❯ Español",
+          "    English",
+          "    Otro (escribir)",
+          "",
+          "  El proyecto no tenía SDD: monté specs/ (constitución + plantillas).",
+          "  Portón de calidad listo: `node .chalc/gate.mjs` al cerrar cada tarea.",
+          "",
+          "? ¿De dónde viene la historia de usuario?",
+          "  ❯ Archivo local (.md / .txt / Word / PDF / Excel→CSV)",
+          "    Azure DevOps (URL del work item + PAT)",
+          "    Jira (URL del issue + email + token)",
+          "    Google Drive / URL",
+          "    Pegar el texto",
+          "? Ruta del documento: HU-descuento.docx",
+          "",
+          "  Generando spec con claude-opus-5…  (esto consume tokens)",
+          "",
+          "✓ Spec generado en specs\\018-descuento-por-volumen"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Te enseña el cerebro antes de nada.** Qué proveedor y qué modelo va a usar, y por tanto a cobrarte. Si no lo tienes configurado, te lleva a hacerlo ahí mismo.",
+          "**«¿La HU tiene backend?» decide qué comando toca.** Si dices que sí, se aparta y le pasa el trabajo a `chalc feature`: una historia con back y front necesita primero un contrato de API que mande sobre los dos, y eso lo conté en [un contrato manda](/daily/one-contract-many-repos).",
+          "**La ruta del proyecto es dónde va a escribir.** Al entrar lee las señales del repositorio —las librerías del `package.json`, los archivos de la raíz— y deduce el stack, que es el conjunto de tecnologías con las que está hecho. Esto no lo hace la IA: son reglas explícitas de un catálogo, así que es instantáneo y no cuesta un token.",
+          "**El idioma del spec no es el de la CLI.** Yo tengo chalc en español y puedo generar la documentación de un cliente en inglés. Se pregunta antes de escribir nada, porque de esa respuesta salen la constitución, las plantillas, el revisor y hasta los mensajes que imprimirá el portón dentro de meses.",
+          "**Y con la historia delante, genera y comprueba.** La IA devuelve los tres archivos y chalc los audita antes de escribirlos: que haya requisitos, que ninguno esté duplicado, que tengan forma EARS de verdad, que las tareas no citen un requisito inexistente. Un spec que no pasa esa puerta no llega a tu disco."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Qué queda escrito en tu repositorio, y qué es cada cosa"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Este es el resultado de equipar un repositorio Angular con Claude Code como asistente. Cambia según el stack que detecte y según el asistente que uses, pero la forma es siempre esta:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "D:\\proyectos\\tienda\\",
+          "├── CLAUDE.md                      # las reglas que el asistente lee siempre",
+          "├── .chalc.json                    # manifiesto: qué se detectó y qué se aplicó",
+          "├── .mcp.json                      # servidores MCP (fusionado, no pisa los tuyos)",
+          "├── .claude\\",
+          "│   ├── skills\\                    # una carpeta por skill, copia real",
+          "│   │   ├── angular-component\\  angular-signals\\  angular-testing\\  …",
+          "│   │   ├── clean-code\\  solid-principles\\  modular-architecture\\",
+          "│   │   └── minimal-implementation\\  mutation-testing\\",
+          "│   └── agents\\                    # revisor.md y endurecedor.md, sin editar código",
+          "├── .chalc\\",
+          "│   ├── gate.mjs                   # el portón: node .chalc/gate.mjs",
+          "│   ├── next.mjs                   # el advisor: node .chalc/next.mjs",
+          "│   ├── mail.mjs                   # el buzón entre lados",
+          "│   ├── gate\\                      # sus módulos, sin dependencias",
+          "│   ├── gate.json                  # lo único que editas tú",
+          "│   └── gate-hook.md               # los dos hooks, documentados y sin instalar",
+          "└── specs\\",
+          "    ├── constitution.md            # los principios no negociables",
+          "    ├── _template\\                 # spec.md, plan.md, tasks.md en blanco",
+          "    └── 018-descuento-por-volumen\\",
+          "        ├── spec.md                # R1…R7 en EARS",
+          "        ├── plan.md",
+          "        ├── tasks.md",
+          "        └── .chalc\\ai-trace.jsonl  # qué modelo generó esto, con hashes"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`CLAUDE.md`** — las reglas que el asistente lee siempre. chalc escribe solo dentro de una sección suya, marcada al principio y al final; lo que tengas fuera no se toca. Cada asistente tiene su archivo equivalente y chalc usa el que toque.",
+          "**`.claude/skills/`** — los manuales del «cómo». No se enlazan: se **copian enteros** dentro de tu proyecto, así que viajan con él y siguen funcionando aunque quien lo clone no tenga chalc. Un repositorio Angular recibe las catorce suyas, más las cinco que van en cualquier proyecto de cualquier lenguaje.",
+          "**`.mcp.json`** — el enchufe a herramientas de fuera. En Angular engancha el servidor oficial del CLI, que le da la documentación de hoy en lugar de la que el modelo recuerde de su entrenamiento. Se fusiona: lo que ya tuvieras sigue ahí.",
+          "**`specs/`** — la constitución y las plantillas. Viene en dos tallas: `lite` para proyectos pequeños y `full` para los grandes. Darle a un proyecto de tres pantallas la ceremonia de uno de tres años es la forma más rápida de que nadie use el método.",
+          "**`.chalc/` y `.claude/agents/`** — el portón, el advisor, el revisor y el endurecedor. De esos cuatro va el resto de la nota."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nada de eso toca tu código: no añade librerías, no cambia cómo se compila el proyecto y no modifica una línea de lo que ya habías escrito. Las claves de la IA se quedan fuera, en tu ordenador. Y todo lo demás se guarda **con** el proyecto, que es justo el objetivo: quien se lo descargue mañana recibe las mismas reglas y el mismo portón, tenga chalc o no. Si quieres quitarlo, son dos carpetas y una sección de un archivo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un detalle que no se ve pero se agradece: cada llamada a la IA queda registrada y `chalc tokens` te dice cuánto llevas gastado en ese proyecto, por comando, por tarea y por modelo. Si le voy a pedir dinero a una herramienta, quiero la factura desglosada."
+      },
+      {
+        "kind": "heading",
+        "text": "El agujero que tenía: las reglas que nadie comprobaba"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí, todo lo anterior lleva funcionando meses. El problema estaba después: `spec-ia` no implementa nada. Genera la spec, el plan y las tareas, imprime el hand-off, y a partir de ahí el que ejecuta es el asistente: Claude Code, Codex, el que sea. Y todo el control de calidad de esa ejecución vivía en **frases**."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Dos frases, para ser exacto, y las dos tenían el mismo defecto. La primera: las reglas del método decían «corre mutation testing apoyándote en la skill» —una skill es un manual corto que el asistente abre cuando la tarea lo pide—, y esa misma skill reconocía por escrito que chalc no lo ejecutaba. Nadie verificaba nada: no quedaba ningún archivo que enseñar, ni un resultado que se pudiera comprobar, ni una fecha. La segunda: la revisión de código —una cosa por archivo, fronteras de capa, code smells, si el test comprueba de verdad el requisito— dependía del criterio del mismo agente que había escrito el código, en el mismo contexto, con la misma conversación de por medio. Es como pedirle a alguien que corrija su propio examen justo después de escribirlo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo irónico es que chalc ya tenía las piezas: un revisor, un portón que siempre da el mismo veredicto, un detector de partes del código que llaman a otras a las que no deberían llamar, y un lector de contratos. Pero estaban todas encerradas dentro de `chalc-cli`, su propia shell de agentes. El flujo que uso a diario —`spec-ia` y `feature` con Claude Code— no las veía."
+      },
+      {
+        "kind": "heading",
+        "text": "No me pasa solo a mí: lo que dicen los datos"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El primero es el informe DORA de Google, que lleva más de una década midiendo cómo entregan software los equipos. En su edición de 2025 el 90% de los profesionales encuestados ya usa IA en su trabajo diario, con una mediana de dos horas al día. Más del 80% dice que le ha subido la productividad y el 59% que le ha mejorado la calidad del código. Y ahora el dato incómodo: el 30% dice que confía poco o nada en el código que la IA le devuelve. Usamos a diario, durante horas, algo en lo que un tercio de nosotros no confía."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El segundo hallazgo de ese informe es el que a mí me colocó las piezas. En 2024 la IA se asociaba con entregar **menos**; en 2025 esa relación se dio la vuelta y ya se asocia con entregar **más**. Pero sigue asociada a más inestabilidad en la entrega. Traducido al idioma de cualquiera: sale más software, y se rompe más a menudo."
+      },
+      {
+        "kind": "quote",
+        "text": "La adopción de IA está ahora ligada a una mayor capacidad de entrega de software, lo que significa que los equipos publican más software y más aplicaciones: un giro positivo respecto a los hallazgos del año pasado.",
+        "source": "DORA · State of AI-assisted Software Development, 2025",
+        "sourceUrl": "https://blog.google/innovation-and-ai/technology/developers-tools/dora-report-2025/"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El segundo informe es de GitClear, que en vez de preguntar a la gente mira el código de verdad: 623 millones de cambios reales entre 2023 y 2026. Sus tres números son bastante crudos. Los bloques de código duplicados subieron un 81% respecto a 2023. Copiar y pegar pasó del 9,4% de las líneas que cambian en 2022 al 15,7% en la primera mitad de 2026. Y el que más me duele: el código **movido** —que es la huella que deja alguien ordenando lo que ya estaba escrito— se desplomó del 21% en 2022 al 3,8% hoy."
+      },
+      {
+        "kind": "quote",
+        "text": "A medida que la autoría de la IA ha crecido hasta ser un porcentaje sustancial de todos los commits, los hábitos estructurales que mantienen mantenible una base de código se han erosionado.",
+        "source": "GitClear · The Maintainability Gap, 2026",
+        "sourceUrl": "https://www.gitclear.com/the_ai_code_quality_maintainability_gap"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Quiero ser honesto con lo que dicen y con lo que no dicen esos números. Ninguno de los dos dice «no uses IA»; el de DORA dice justo lo contrario en la parte de velocidad. Lo que dicen es que la velocidad **sin comprobación** se paga en mantenimiento, y que la parte del trabajo que la IA no está haciendo es precisamente la de ordenar y quitar lo repetido. Por eso el portón mide duplicación y fronteras, y por eso al revisor le pregunto si la abstracción es la correcta: son exactamente las dos cosas que los datos dicen que se están perdiendo."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que dijo Uncle Bob, y por qué me sirvió para ordenarlo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mientras le daba vueltas a esto, Robert C. Martin —Uncle Bob, el autor de Clean Code— dijo en público que ya no lee el código que escriben sus agentes. No una parte: nada. Su argumento es de productividad, y es incómodo precisamente porque viene de quien viene: los humanos somos lentos leyendo código, así que para aprovechar la velocidad de un agente hay que desengancharse del código y dirigir desde un nivel más alto. Lo que sí mira son cifras, pero cifras que producen herramientas y no él: cuánto del código llegan a tocar las pruebas, cómo se enganchan unas partes del programa con otras, cuántos caminos distintos puede tomar una función —cuantos más, más fácil es que uno se quede sin probar—, el tamaño de cada pieza, y el mutation testing del principio de esta nota."
+      },
+      {
+        "kind": "heading",
+        "text": "«No reviso el código» no significa lo que parece"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí es donde casi todo el mundo lo entiende al revés, yo el primero cuando lo leí. «No reviso el código» suena a «le suelto la orden a la IA y acepto lo que salga». Es exactamente lo contrario, y para comprobarlo basta con abrir lo que Bob tiene publicado al lado de esa frase: un repositorio que se llama [swarm-forge](https://github.com/unclebob/swarm-forge) y que él describe como una plataforma **disciplinada** de orquestación de agentes."
+      },
+      {
+        "kind": "paragraph",
+        "text": "No es un agente. En su configuración más completa son seis, y cada uno tiene un solo trabajo: uno escribe el comportamiento en ejemplos y los procedimientos de prueba de punta a punta; otro implementa con TDD estricto; otro limpia y mejora cobertura sin cambiar comportamiento; otro revisa la estructura y la dirección de las dependencias; otro endurece pasando la mutación; y el último convierte esos procedimientos en scripts y verifica por la interfaz. Cada uno en su propio worktree, y no se hablan: se pasan el trabajo por entregas que un script valida."
+      },
+      {
+        "kind": "quote",
+        "text": "Corre el comando de verificación local que corresponda antes de entregar, siempre que el proyecto tenga uno.",
+        "source": "swarm-forge · swarmforge/constitution/articles/engineering.prompt, 2026",
+        "sourceUrl": "https://github.com/unclebob/swarm-forge"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y el detalle que más me importa es dónde está la persona. El especificador pide aprobación antes de entregarle nada al programador, y el ciclo se cierra avisando de que terminó — en la configuración de cuatro, volviendo al propio especificador. El humano no desapareció: se movió. Dejó de estar al final leyendo un diff y pasó a estar al principio, decidiendo qué se construye. Así que la frase, leída entera, dice otra cosa: no es «la IA lo hace todo y yo miro», es «dejo de leer el código porque he montado alrededor tanta comprobación que leerlo aporta menos que mantenerlas». Quedarse con el titular y tirar el andamiaje es justo la lectura que produce los desastres que luego se le echan en cara a la IA."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Unas reglas que todos leen.** Él las llama constitución; en chalc se llaman exactamente igual y se montan en el repositorio al equiparlo.",
+          "**Un puesto de trabajo aislado por cada línea.** Él le da un worktree de git a cada rol; chalc da uno por historia de usuario, con los repositorios de la feature dentro.",
+          "**El que revisa nunca es el que escribió.** Él separa roles en sesiones distintas; chalc mete un revisor que entra al cerrar cada tarea y no puede tocar el código.",
+          "**Nadie avanza sin verificar, y la persona aprueba antes.** Su constitución obliga a correr la verificación del proyecto antes de entregar, y su especificador pide aprobación antes de pasar el trabajo. Es, punto por punto, lo que hacen el portón y el advisor."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/swarm-vs-chalc.es.svg",
+        "caption": "Seis agentes con un rol cada uno, o uno que escribe y dos que comprueban. Distinto reparto, misma idea: en verde, los puntos donde decide una persona."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La respuesta más seria se la dio Grady Booch, que no es precisamente un recién llegado. Su objeción es específica y no la despacha ninguna métrica: la cobertura y la complejidad te dan confianza sobre si **funciona**, pero no te dicen absolutamente nada sobre si el agente metió una vulnerabilidad, dejó código muerto que degradará el mantenimiento en silencio, o se saltó una factorización que importa para el rendimiento."
+      },
+      {
+        "kind": "quote",
+        "text": "A diferencia de Bob, yo reviso todo el código que generan los agentes. Confía, pero verifica. Como desarrollador con experiencia, conozco el olor de lo que está bien y de lo que no.",
+        "source": "Grady Booch, recogido por M. V. Radhakrishna · Tech Tips, Tricks & Trivia, 15 de abril de 2026",
+        "sourceUrl": "https://mvark.blogspot.com/2026/04/uncle-bob-vs-grady-booch-rethinking.html"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/read-vs-measure.es.svg",
+        "caption": "Las dos posturas del debate, y la salida que elegí: no es «leer o medir», es repartir el trabajo entre quien sabe medir y quien sabe leer."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Yo no me sitúo del todo en ninguno de los dos lados, y me parece que ahí está lo interesante. Bob tiene razón en el diagnóstico: leer línea a línea todo lo que produce un agente es exactamente lo que anula la ventaja de tenerlo. Booch tiene razón en el límite: hay cosas que solo se ven leyendo, y una cifra verde no las tapa, simplemente no las mira. La conclusión que saqué no es elegir bando, es **repartir el trabajo en tres**: lo que se puede medir lo mide un programa que corre solo y no opina, lo que hay que juzgar lo lee un agente distinto del que escribió el código, y yo leo la especificación y los dos informes."
+      },
+      {
+        "kind": "heading",
+        "text": "El portón: lo medible lo mide un script, no el modelo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuando `spec-ia` equipa un repositorio, ahora le deja dentro un portón de calidad: `.chalc/gate.mjs`. Es código real, sin dependencias, que corre con Node a secas, esté chalc instalado en esa máquina o no, y lo tenga o no quien clone el repositorio. No es una plantilla de texto que se rellena: es un árbol de módulos que se copia tal cual desde el catálogo de chalc, con sus propios tests."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no corre sobre el repositorio entero, sino sobre los archivos que tocó **esta tarea**. Suena obvio y no lo era: durante un tiempo medía el cambio de toda la rama, con las tareas anteriores ya cerradas dentro, y eso hacía las dos cosas malas a la vez — sacar hallazgos de deuda vieja, y darle al asistente la excusa de que «casi todo esto es trabajo de antes» para no revisar. Ahora, al cerrar una tarea, el portón sella ese momento; y para saber qué tocó la siguiente no lo deduce: quien escribe lo va anotando, una ruta por línea, y ese registro **es** el alcance. Si no lo hay, cae al cambio desde el sello. Y si no puede acotarlo de ninguna de las dos formas, no revisa nada y lo dice — antes que revisar el proyecto entero y llamarlo tarea."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/gate.mjs",
+          "",
+          "Portón de calidad: NO PASA  ·  .chalc/gate.md",
+          "  src/app/features/cart/cart.service.ts:18 — \"CartItem\" es la declaración pública nº 2 del archivo; va en su propio archivo junto a \"CartService\"",
+          "  src/app/features/cart/apply-discount.ts:14 — mutante no detectado (Survived, ConditionalExpression); score 74% < 80%",
+          "  src/app/features/cart/cart.service.spec.ts:1 — el test no cita ningún requisito de specs/018-descuento-por-volumen/spec.md: sin cita nadie puede saber qué cubre"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Tests.** La suite del propio repositorio. Si fallan, la mutación no se ejecuta: mutar sobre pruebas en rojo son minutos tirados. El informe dice que se omitió por eso, y no por el modo rápido.",
+          "**Mutación.** La nota y la lista de mutantes que sobrevivieron, con archivo, línea y qué se cambió. Umbral por defecto: 80%.",
+          "**Código.** Una cosa por archivo, largo de archivo y de función, número de parámetros, anidamiento, `catch` vacío, salida de depuración olvidada y tipos sin tipar.",
+          "**Duplicación.** Compara lo que tocaste contra todo el resto del código y señala los bloques repetidos, con las dos copias. Caza lo que nadie más veía: copiaste de un archivo que ni abriste.",
+          "**Fronteras.** Que la parte que pinta la pantalla no llame directamente a la base de datos, ni un módulo se meta por dentro de otro. Es el mismo detector que usa `chalc verify`.",
+          "**Trazabilidad.** Cada test que cambiaste tiene que citar un requisito que exista de verdad. Uno que no cita nada no dice qué cubre; uno que cita un requisito inexistente es peor, porque parece que sí.",
+          "**Contrato.** Que cada ruta del contrato aparezca en el código, con el verbo correcto: el back la **expone**, el front y el móvil la **consumen**."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/quality-gate-stages.es.svg",
+        "caption": "Las siete etapas y el veredicto. El mismo cálculo que titula el informe decide el código de salida: si el archivo dijera «APROBADO» y el proceso saliera con 1, la evidencia dejaría de serlo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El veredicto tiene tres estados y no dos, y esa es la decisión de diseño de la que estoy más contento. «APROBADO» y «NO PASA» son los evidentes. El tercero es «BLOQUEADO», y significa «no lo pude comprobar». Se arregla de forma distinta a un fallo —uno se corrige en el código, el otro instalando algo o ajustando una ruta— y quien lea el informe necesita saber cuál de los dos tiene delante. Lo importante es lo que **no** hace: lo que no se puede comprobar nunca se aprueba. Sale con código distinto de cero igual que un fallo."
+      },
+      {
+        "kind": "heading",
+        "text": "De dónde sale el score (y de dónde no)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es la parte que de verdad resuelve el problema del principio, y es una sola frase: la nota y la lista de supervivientes salen de **abrir el archivo de resultados que la propia herramienta escribió y sacar las cifras de ahí dentro**. Nunca de lo que la herramienta imprimió por pantalla, y nunca de un resumen escrito por un asistente. Un modelo puede escribir «score 92%»; lo que no puede es fabricar un reporte de Stryker con fecha, con la lista de mutadores, y que además coincida con lo que ves cuando corres el portón tú mismo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y hay tres formas de quedarse sin score, todas bloqueantes. Que la herramienta no esté instalada; eso se comprueba antes de ejecutar, porque el código de salida no distingue «no instalada» de «corrió y falló». Que el comando corriera pero no dejara reporte. Y la más sutil, que es la que más me gusta: que el reporte sea **anterior** al archivo fuente más reciente de la corrida. Un reporte viejo mide otra versión del código, y aprobar con él es exactamente el mismo problema de antes con un archivo delante para disimular."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/gate.mjs",
+          "",
+          "Portón de calidad: BLOQUEADO  ·  .chalc/gate.md",
+          "  mutación — la herramienta de mutación no está instalada (stryker); instálala con: npm i -D @stryker-mutator/core @stryker-mutator/karma-runner",
+          "",
+          "# y el otro caso, el que pasa desapercibido:",
+          "  mutación — el reporte de mutación es anterior a \"src/app/features/cart/apply-discount.ts\": mide otra versión del código, vuelve a correr npx --no-install stryker run"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "La configuración del portón no la inventa nadie: se deduce de lo que el proyecto tiene de verdad: las librerías y los comandos declarados en `package.json`, o un `pom.xml`, un `pubspec.yaml`, un `.csproj`, un `Cargo.toml`, un `composer.json`. De ahí salen el comando con el que se lanzan las pruebas, la herramienta que estropea el código y dónde deja su informe: Stryker para JavaScript y TypeScript, Stryker.NET para C#, mutmut para Python, PIT para Java. Y una regla dura: lo que no se puede determinar **con certeza** se deja vacío y marcado como pendiente. Un comando inventado es peor que un hueco, porque el hueco se ve y se corrige, y el inventado falla en silencio o, peor todavía, aprueba."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Todo eso vive en un archivo de datos por lenguaje, y eso tiene una consecuencia práctica de la que estoy contento: **añadir un lenguaje nuevo es añadir un archivo**. No hay que tocar la detección, ni el portón, ni el texto de ninguna skill. Antes esa misma información estaba escrita en tres sitios distintos —la detección, la skill que lee el asistente y el lector de informes— y que los tres coincidieran dependía de que alguien se acordara de tocar los tres. Ahora la pregunta «¿puede el portón comprobar la mutación en este lenguaje?» se contesta cruzando dos datos, y donde la respuesta es no, la propia skill lo dice sola en vez de prometer algo que no va a pasar."
+      },
+      {
+        "kind": "heading",
+        "text": "El revisor: lo que ningún script puede medir"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El portón mide y no opina. Al lado, cada repositorio recibe ahora un **agente revisor** en el formato de su asistente: un subagente de verdad en `.claude/agents/revisor.md` para Claude Code, una regla en `.cursor/rules/` para Cursor, y una sección del bloque gestionado para Codex, Copilot y Gemini. El texto es el mismo; lo que cambia es el sitio donde cada asistente lo lee."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Entra cuando una tarea termina y antes de empezar la siguiente. Lee cuatro cosas: `.chalc/gate.md` —y si no existe o quedó más viejo que el último cambio, lo dice y para, porque sin portón no hay nada que revisar encima—, la sección «Alcance de la tarea» de esa misma evidencia, que es la lista de archivos que la tarea cambió y **su alcance completo**: no puede ampliarla ni al archivo de al lado, la constitución y la spec, y las skills activas de **ese** repositorio. Esto último no es decorativo: un revisor del back no puede auditar contra reglas de Flutter, así que la lista de skills se inyecta en su texto al equipar."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**¿El test comprueba el requisito, o solo lo acompaña?** Un test verde que pasaría igual con el código roto es peor que no tener test: da confianza falsa, y esa confianza es la que evita que alguien mire.",
+          "**¿La abstracción es la correcta?** Una interfaz con un único implementador que nunca tendrá otro, un servicio que solo reenvía llamadas, una capa que no decide nada.",
+          "**¿El nombre dice lo que hace?** Y si no lo dice, ¿el problema es el nombre o que la función hace dos cosas?",
+          "**¿La solución es la mínima que resuelve el requisito?** Configuración, opciones y puntos de extensión que nadie pidió son deuda desde el primer día.",
+          "**¿Se respetan la constitución y las skills?** Citando el artículo o la regla concreta, no «no sigue buenas prácticas»."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Devuelve `OK` y nada más, o una lista numerada con `archivo:línea`, el problema concreto y por qué importa. Y lleva dentro una instrucción que me importa tanto como el resto: que no invente hallazgos para parecer útil. Un informe con tres problemas de verdad se lee y se arregla; uno con quince observaciones de estilo se ignora entero, y con él se van los tres que importaban."
+      },
+      {
+        "kind": "paragraph",
+        "text": "No modifica el código: eso no se le pide, se le **concede**, y el permiso se le recorta al crearlo. Con una única excepción, que parece contradecirlo y no lo hace: puede escribir su propia bitácora, y solo añadiendo al final. La razón la vas a ver en la sección siguiente — sin ese rastro, nadie puede comprobar después que la revisión ocurrió."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y eso no lo sostiene mi memoria. El alcance de cada rol se declara **una sola vez, como dato**: qué herramientas se le conceden, qué puede escribir y qué tiene prohibido. Si alguien le pusiera ahí una herramienta de editar archivos, chalc no la recorta en silencio: se niega a arrancar y lo dice. Es la idea del portón aplicada a los permisos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ya no está solo. Al lado del revisor hay un segundo rol, el **endurecedor**, con otra pregunta y otro ritmo. El revisor entra al cerrar **cada tarea** y mira lo que se acaba de escribir. El endurecedor entra al cerrar **la feature entera**, una sola vez, y pregunta lo que nadie pregunta con una tarea delante: qué pasa cuando la entrada es inválida, cuando la red falla, cuando el caso es el raro. Que sea una vez por feature y no una por tarea no es un descuido: cada pasada es una llamada a un modelo, y eso se paga."
+      },
+      {
+        "kind": "heading",
+        "text": "Y ahora tampoco el orden depende del modelo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Durante un tiempo eso lo pedía yo por escrito, en el encargo: corre el portón, pega su salida tal cual, arregla lo que salga, llama al revisor, marca la tarea. Funcionaba, pero tenía un fallo que tardé en ver. El problema no era la lista: era **quién llevaba la cuenta**. El asistente decidía él solo si ya la había cumplido, y el único que atraparía un olvido era el revisor, al que también llamaba él. Los modos de fallo son concretos y me los encontré todos: correr el portón, seguir tocando código y marcar la tarea con una evidencia ya rancia; saltarse al revisor porque el portón salió verde; cerrar con el modo rápido porque también salió verde; o pasar a la siguiente tarea con hallazgos abiertos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el patrón, porque es exactamente el mismo del principio de esta nota. Yo había sacado la **cifra** de la cabeza del modelo poniéndola en un archivo. Pero el **orden** seguía dentro: dependía de que se acordara. Así que hice lo mismo una segunda vez."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora el encargo no recita ningún paso. Dice una sola cosa: pregunta qué toca y haz eso. Al equipar el repositorio queda dentro un segundo programa, `.chalc/next.mjs`, que también corre solo y también es de solo lectura. Se le pregunta y contesta con **una única** acción, la siguiente, y el motivo por el que la manda."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "",
+          "NEXT_ACTION: run_gate",
+          "REASON: Tocaste código a las 15:04 y la evidencia es de las 14:32: mide lo de antes.",
+          "COMMAND: node .chalc/gate.mjs"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y lo importante es de dónde saca esa respuesta: del disco, no de la conversación. Mira la hora del informe del portón contra la hora del último archivo que tocaste, el veredicto de esa corrida, la bitácora que dejó el revisor, las casillas marcadas en `tasks.md` y qué archivos han cambiado. De todo eso deduce en qué punto va la tarea. Ninguna de esas cosas está en la memoria de nadie."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "`blocked_config` — falta algo por configurar: la herramienta de mutación sin instalar, por ejemplo. Antes de resolverlo no hay nada que medir.",
+          "`run_gate` — o no hay evidencia, o la que hay es más vieja que el código. Mide otra vez.",
+          "`fix_gate` — el portón salió en rojo. Arregla lo que reportó; no vale reintentar a ver si suena la flauta.",
+          "`call_role` — el portón está verde y falta que pase un rol: el revisor al cerrar la tarea, el endurecedor al cerrar la feature. No se llama `call_revisor` a propósito — el rol viaja dentro del mensaje, así que añadir uno nuevo no inventa una acción nueva.",
+          "`fix_review` — ese rol dejó hallazgos abiertos en su bitácora.",
+          "`tick_task` — ya está todo: marca la tarea.",
+          "`work_task` — no hay nada que cerrar, ponte con la siguiente.",
+          "`done` — no queda nada por hacer aquí.",
+          "**`ask_human`** — y esta es la que más me gusta: no puede saber en qué punto va esto. En vez de adivinar, para el bucle y me devuelve el control."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/task-closing-cycle.es.svg",
+        "caption": "El advisor, y las cinco cosas del disco de las que deduce en qué punto va la tarea. Devuelve una sola acción, y «no lo sé» es una respuesta válida: ahí para y me devuelve el control."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí es donde encaja la excepción de antes, la del cuaderno del revisor. Si el revisor no dejara escrito que pasó por aquí y qué vio, esto no podría funcionar: no habría forma de distinguir «el revisor dijo que está bien» de «nadie ha llamado al revisor». Por eso puede escribir su bitácora, y por eso solo puede añadir al final. Un permiso mínimo, con una razón concreta detrás."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Visto entero, el recorrido de esta nota es una misma operación hecha tres veces: sacar cosas de la cabeza del modelo y ponerlas en el disco, donde se pueden mirar. Primero la cifra, con el portón. Después el juicio, con un revisor que no es quien escribió el código. Y ahora el orden, con un programa que lleva la cuenta y no se cansa. Lo único que sigue dependiendo de una persona son las dos decisiones que deben depender de una persona: qué se construye, y si esto está terminado."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuando son varios repositorios: el contrato que se mueve, y el buzón"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Todo lo anterior vale igual para un proyecto solo. Cuando la historia toca back y front, cada lado tiene su portón y su advisor, y se cierran por separado: el del back mide el contrato que **expone** y el del front el que **consume**, así que cerrar uno no dice nada del otro. Pero además aparece un problema que no arregla ningún portón, y es el que más días me ha costado en mi vida laboral."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El contrato de la API se copia idéntico dentro de la spec de cada lado. Y a media feature el back descubre que el endpoint necesita un campo más, que aquel error 409 en realidad era un 422, o que la ruta se llamaba en singular. Edita su copia y sigue trabajando, que es lo lógico. Las otras copias se quedan viejas, y el front pasa dos días implementando contra algo que ya no existe."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El portón no lo pilla, y quiero ser preciso con el porqué: comprueba que cada ruta del contrato **exista** en el código, no que tenga la forma que dice. Una ruta que cambia de forma o de código de error sigue estando ahí. Así que la comprobación la hace el advisor, y no tiene ningún misterio: en el modo de trabajo donde los dos lados son carpetas hermanas, compara los dos archivos que deberían ser idénticos."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "",
+          "NEXT_ACTION: sync_contract",
+          "REASON: El contrato de `back` cambió y tu copia quedó vieja (2 línea(s) de diferencia).",
+          "        Mira QUÉ cambió antes de seguir: implementar contra el contrato viejo se descubre al integrar.",
+          "COMMAND: diff specs/003-pago/contracts/api.md ../back/specs/003-pago/contracts/api.md"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Queda lo que no está en ningún archivo: «estoy parado esperando el endpoint de pagos». Para eso cada repositorio lleva un buzón, que es exactamente igual de tonto que suena y por eso funciona."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/mail.mjs send --to front --message \"Cambié el 422 a 409 en /pagos.\"",
+          "node .chalc/mail.mjs read"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Sin servidor y sin nada corriendo de fondo: los dos lados están en el mismo disco, así que quien escribe deja el aviso directamente donde el otro lo va a leer, en una carpeta que queda **fuera** de los dos proyectos para no ensuciarle a nadie la lista de cambios. Y hay una asimetría a propósito: **enviar es opcional, leer no**. Mientras queden avisos sin abrir, el advisor te manda leerlos antes de seguir. Así uno escrito se ve seguro, que era el problema de fondo. En un proyecto solo las dos cosas se apagan y no dicen nada: no hay nadie con quien coordinarse."
+      },
+      {
+        "kind": "heading",
+        "text": "Los dos hooks que no instalo, y por qué"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Claude Code puede hacer dos cosas solo: anotar cada archivo que escribe, y correr el portón en cuanto termina un turno. Chalc **no instala** ninguna de las dos. Un hook se ejecuta por su cuenta, y el archivo donde se configura se guarda con el proyecto: activarlo desde una herramienta se lo impondría a todo el que se descargue ese repositorio, que no pidió nada. Así que los bloques quedan escritos y explicados en `.chalc/gate-hook.md`, con la recomendación de empezar por `settings.local.json` —que es solo tuyo— y de acordarlo con el equipo antes de tocar el otro."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El primero es el del registro de antes, y es el que más cambia lo que ves: cada vez que el asistente escribe un archivo, apunta la ruta. Es de una sola cosa —recibe la ruta, la apunta, y si falla sale sin ruido, porque un hook que rompe el turno es peor que no tener hook. Sin él el portón sigue funcionando, pero mide desde la última tarea cerrada, y si commiteas al final de la feature en vez de tarea a tarea, eso revisa bastante de más. La evidencia dice siempre de cuál de los dos salió el alcance, así que no hay forma de confundirse."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El segundo, el del aviso al terminar el turno, usa `--fast`: corre las etapas rápidas y omite la mutación. Y por eso mismo una corrida `--fast` **no cierra una tarea**: sirve para enterarte pronto de que algo se rompió, no para dar la tarea por buena. Un hook que lanzara la mutación entera en cada turno haría la sesión inusable, y acabarías quitando el hook o, mucho peor, cerrando tareas sin él."
+      },
+      {
+        "kind": "heading",
+        "text": "Dónde no le doy la razón a Bob"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Sería deshonesto vender esto como «monté lo que dijo Uncle Bob». Hay una diferencia y quiero dejarla escrita. Bob confía en un conjunto de métricas; yo no confío en métricas, confío en **archivos con fecha** que puedo abrir. No es lo mismo un número que un archivo con la fecha, la rama, el comando y su código de salida. La cifra es la conclusión; el archivo es lo que te deja discutirla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y la objeción de Booch sigue de pie, así que la digo sin adornos: el portón **no** busca vulnerabilidades. No es un análisis de seguridad y no pretende serlo. Detecta código muerto solo de refilón —por los límites de largo y por las fronteras—, y no tiene ninguna opinión sobre rendimiento. Ese hueco lo cubre el revisor a medias, y a medias lo cubro yo. El propio Bob, por cierto, dice que hay algo que sí lee: los tests de aceptación y los procedimientos de QA que escriben sus agentes. Yo hago lo mismo por otro camino: leo la spec antes de que exista una línea de código, y leo los dos informes al cerrar cada tarea. Lo que dejé de leer es el diff línea a línea. No es lo mismo dejar de leer que dejar de mirar."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que cuesta, porque cuesta"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Sería facilísimo contar todo esto como si fuera gratis. No lo es, y creo que lo justo es poner las pegas por escrito, ordenadas de la que más molesta a la que menos."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Es más lento por tarea.** El agente se para constantemente: una tarea, portón, revisor, mi visto bueno, siguiente. Lo que se ahorra está al final, en la tarde que no me paso intentando entender qué hizo, pero el día a día se siente más trabado.",
+          "**La mutación tarda minutos.** Estropear el código mil veces y volver a probar no es gratis. Por eso existe el modo rápido, y por eso ese modo no cierra tarea: la tentación está ahí y hay que ponerla difícil.",
+          "**Gasta dinero y necesitas tu propia cuenta.** Redactar la spec usa un modelo caro y el revisor entra una vez por tarea. No es una fortuna, pero sube con el proyecto, y por eso `chalc tokens` desglosa el gasto. El portón, en cambio, no cuesta nada: es un programa que corre en tu máquina.",
+          "**Se cae entero si alguien quita un paso.** Todo se apoya en que la evidencia entre en la conversación tal cual salió. Si alguien borra esa línea del encargo porque le parece verborrea, vuelve el problema del principio con más archivos para disimularlo.",
+          "**No sirve para todo.** Para un script de una tarde o un prototipo que voy a tirar, esto es ceremonia pura. Forzarlo ahí es la forma más rápida de que un equipo abandone el método entero."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una pega que no es del método sino mía: mantenerlo. El portón es código, y el código se rompe. Cada herramienta de pruebas que quiero soportar significa entender el formato de su informe, y cada versión nueva de esa herramienta puede cambiarlo. Es trabajo que no se ve en ninguna demo y que hay que hacer igual."
+      },
+      {
+        "kind": "heading",
+        "text": "Así trabajo hoy, en un día normal"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto no es una propuesta ni un experimento de fin de semana: es lo que hago cada día. Escrito de corrido, un día normal se ve así."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Llega la historia de usuario, de donde llegue: un Word, un ticket, o dos frases sueltas en un chat que yo mismo paso a un archivo de texto.",
+          "`chalc spec-ia` la convierte en especificación, plan y tareas. Esto tarda menos de un minuto.",
+          "**Y aquí me paro yo.** Leo la especificación entera y contesto las preguntas que la IA dejó abiertas. Es el único rato del día en el que leo con lupa, y es antes de que exista una sola línea de código. Si la especificación está mal, todo lo que venga detrás va a estar mal y ejecutado muy rápido.",
+          "Pego el encargo en Claude Code y le dejo la primera tarea. Una sola.",
+          "Al terminarla le pregunta al advisor qué toca, hace lo que le diga y vuelve a preguntar. Eso normalmente son tres o cuatro vueltas: correr el portón, arreglar lo que salga, llamar al revisor, arreglar sus hallazgos.",
+          "**Leo dos cosas: el informe del portón y la lista del revisor.** El código no, salvo que alguno de los dos me mande a un archivo concreto. Doy el visto bueno y va la siguiente tarea.",
+          "Al cerrar la feature, el informe de la última corrida es lo que enseño si alguien me pregunta por qué doy esto por terminado."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Me lo salto alguna vez? Sí, y ya he dicho cuándo: en un script de una tarde, en una prueba que sé que voy a tirar, o cuando estoy explorando y todavía no sé ni qué quiero. Ahí el método sobra y no pasa nada. Lo que ya no hago es empezar así «solo un momento» y descubrir dos semanas después que aquello se quedó, que hay gente usándolo y que nadie sabe qué debía hacer."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo concreto, sin adjetivos. Antes, cerrar una tarea era una frase del asistente y mi confianza; ahora es un archivo con fecha que puedo abrir tres semanas después. Antes, el que revisaba el código era el mismo que lo había escrito, en la misma conversación; ahora es otro agente, con otro contexto, que no puede tocar nada. Antes, una regla del método era una recomendación; ahora tiene un código de salida distinto de cero detrás. Y lo que no se puede comprobar, en vez de pasar por bueno, detiene el trabajo y te dice el comando exacto para desbloquearlo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El beneficio real no es que el código salga mejor —eso lo dirá el tiempo—, es que ahora puedo **saber** si salió mejor, y puedo enseñárselo a otro. La diferencia entre confiar y verificar no es una cuestión de carácter: es tener o no tener un archivo delante."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres ver dónde aplico todo esto, está en [mis proyectos](/projects); y si te interesa cómo trabajo dentro de un equipo, lo cuento en [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la herramienta de la que va toda la nota, con su documentación en español y en inglés.",
+          "[El mensaje de Robert C. Martin](https://x.com/unclebobmartin/status/2044114698451476492) — X, 2026: la fuente de la cita.",
+          "[swarm-forge](https://github.com/unclebob/swarm-forge) — Robert C. Martin: lo que de verdad hay detrás de su frase. Los seis archivos de `roles/` son media hora y explican mejor que ningún artículo qué es tener agentes bajo disciplina.",
+          "[Uncle Bob vs. Grady Booch](https://mvark.blogspot.com/2026/04/uncle-bob-vs-grady-booch-rethinking.html) — M. V. Radhakrishna, abril de 2026: las dos posturas enfrentadas, y de donde tomo la cita de Booch.",
+          "[State of AI-assisted Software Development](https://blog.google/innovation-and-ai/technology/developers-tools/dora-report-2025/) — DORA, Google, 2025: el 90% que usa IA a diario, el 30% que no se fía, y lo de entregar más con más inestabilidad.",
+          "[The Maintainability Gap](https://www.gitclear.com/the_ai_code_quality_maintainability_gap) — GitClear, 2026: 623 millones de cambios reales. No pregunta opiniones, mide el código.",
+          "[Hints on Test Data Selection](https://ieeexplore.ieee.org/document/1646911) — DeMillo, Lipton y Sayward, IEEE Computer, 1978: el artículo que fundó el mutation testing.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): la herramienta cuyo informe lee el portón para sacar las cifras."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "When I program, an AI writes the code and I steer. My project rules asked it for one very specific thing at the end of every task: check that the code's tests are actually worth something, and don't drop below 80%. There is an exact technique for that — it's called mutation testing — and it works by breaking the code on purpose, one small change at a time, to see whether any test notices. If nobody complains, that test wasn't protecting anything."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The agent would finish the task, write \"92%\", and I would move on to the next one. One day I opened the project and went looking for the report the tool that takes that measurement leaves behind. It did not exist. And it's not that the model had lied to me: nobody had ever asked it for a file, only for a sentence. A sentence can be written without running anything at all, and I had spent months treating the two as if they were the same thing."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This note is about what I did so that can't happen again, and about a public argument that helped me put the idea in order. It isn't about one particular feature: it's about how I work, task by task, with an agent writing the code in front of me. The method I follow I told in [what spec-driven development is](/daily/what-is-spec-driven-development), and it fits into one idea: before touching the code I write down what the program has to do, in sentences concrete enough that each one can be turned into a test. \"The screen must be fast\" doesn't count, because nobody can tell when it's met; \"the screen must load in under two seconds\" does. From there the code has exactly one job, which is to satisfy them. Here I tell the part that was missing until now, which turns out to be the important one: what exactly happens when the agent says \"task done\"."
+      },
+      {
+        "kind": "quote",
+        "text": "I don't review code written by agents. I measure things like test coverage, dependency structure, cyclomatic complexity, module sizes, mutation testing. Much can be inferred about the quality of the code from those metrics.",
+        "source": "Robert C. Martin · X, 2026",
+        "sourceUrl": "https://x.com/unclebobmartin/status/2044114698451476492"
+      },
+      {
+        "kind": "heading",
+        "text": "First things first: what `chalc spec-ia` is"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter) is the CLI I built to stop repeating the same setup in every project. Its core uses no AI: it reads repository signals — `package.json`, the root files, the structure — and applies explicit catalog rules to leave the assistant three things inside the repository: its **skills** — short manuals on how each thing is done properly in a project like that one — its **MCP servers** — the socket the assistant uses to consult things outside the conversation, such as today's documentation for the technology you're on — and its **working method**. It always gives the same result, it's instant, and it costs not a single token. Further down I break all three apart, file by file."
+      },
+      {
+        "kind": "paragraph",
+        "text": "`chalc spec-ia` is one of the commands that do call a model, and only if you configure your own key. Its job is specific: it takes a user story — a `.md`, a Word document, an Azure DevOps or Jira ticket, a URL, or text pasted into the terminal — and turns it into the method's three files: `spec.md` with the requirements written one by one and in a form that can be checked, `plan.md` with the architecture and the decisions, and `tasks.md` with the work split into small tasks, each pointing at the requirement it implements. Then it prints a prompt ready to paste into your assistant. In a moment I'll explain what each file is and what it's for; first, what it looks like when you run it."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc spec-ia                                     # interactive: it asks you everything",
+          "chalc spec-ia D:\\projects\\shop --lang en --doc volume-discount.docx",
+          "",
+          "# and this is what it leaves written:",
+          "specs/018-volume-discount/spec.md                  the requirements, one by one",
+          "specs/018-volume-discount/plan.md                  architecture and decisions",
+          "specs/018-volume-discount/tasks.md                 every task, with its requirement",
+          ".chalc/gate.mjs + .chalc/gate.json                 the gate, ready to run",
+          ".chalc/next.mjs                                    the advisor: what comes next",
+          ".chalc/mail.mjs                                    the mailbox between sides",
+          ".claude/agents/revisor.md + endurecedor.md         both roles, no code editing",
+          ".chalc/gate-hook.md                                both hooks, documented"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The last three lines of that output are what's new, and they're what the rest of this note is about. But the rest of the command deserves an explanation first, because half of its value is in what it does NOT do."
+      },
+      {
+        "kind": "heading",
+        "text": "The three files it generates, and what each one is for"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The whole method rests on three plain-text files that live next to the code, in a `specs/` folder. They aren't the kind of documentation written at the end that nobody ever opens again: they are the **input** to the work, what gets written first. Each answers a different question and each is for a different thing."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`spec.md` — the WHAT and the WHY.** What the program has to do and for whom, never saying how. **What it's for:** it's the only place against which you can check whether something is finished. Without it, \"done\" is an opinion — the opinion of whoever wrote it.",
+          "**`plan.md` — the HOW.** Architecture, technical decisions, what gets touched and what gets left alone. **What it's for:** so the agent doesn't invent the architecture as it goes. If it isn't written down, it will pick the first thing that looks reasonable, and it will pick differently on every task.",
+          "**`tasks.md` — the ORDER.** The work split into small tasks, numbered, each pointing at its requirement. **What it's for:** to work one at a time and be able to stop. Hand an agent the whole feature and it returns two hundred files nobody will really review; hand it one task and it returns something that fits in your head."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The requirements in `spec.md` aren't written in free prose but with a template called **EARS**. It sounds like jargon and it's about as simple as things get: every requirement has to fit in a sentence shaped like \"WHEN this happens, THE SYSTEM SHALL do that\", or its variant for the odd cases, \"IF this occurs, THEN THE SYSTEM SHALL…\". **What it's for:** so you can't write a requirement that can't be checked. \"The screen must be fast\" doesn't fit the template; \"when the user presses Save, the system shall show the result in under two seconds\" does, and a test almost writes itself from that sentence. Where it comes from and why it's so stubborn I told in [the note about the method](/daily/what-is-spec-driven-development)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Every requirement also carries an identifier: `R1`, `R2`, `R3`. It looks like bureaucracy and it's the piece that stitches everything together. The task says which `R#` it implements; the test cites the `R#` it checks; the gate refuses to close the task if a test you changed cites none. **What it's for:** so the question \"who asked for this?\" still has an answer six months later, when nobody remembers and the person who wrote it works somewhere else."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the working order inside each task is **TDD**, which also sounds worse than it is. Three steps: you write the test first, you check that it **fails** — if it passes on the first go, that test wasn't checking anything — you write the minimum code to make it pass, and only then you tidy it up. **What it's for:** so no code exists without a test justifying it, and above all so the test is written looking at the requirement rather than at the code. A test written afterwards, looking at code that already exists, tends to check that the code does what the code does. Which is always true, and useless."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The last piece of vocabulary is the **hand-off**, which is what I call the prompt the command prints at the end. It's a written commission: which files to read and in what order, how to work, what is forbidden, and what to do when each task closes. **What it's for:** so the session doesn't start with \"implement this\" and eighty assumptions smuggled in behind it. It is literally the text you copy and paste into your assistant, and it's the piece all the new work has changed: it now carries the closing cycle inside it."
+      },
+      {
+        "kind": "heading",
+        "text": "The rule that governs the command: the AI structures, it does not invent"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The obvious risk in asking a model to write a specification is that it fills in the blanks. You hand it half a page about a volume discount and it returns requirements about auditing, amount limits and email notifications that nobody asked for. That isn't a specification: it's a wish list that someone is going to implement believing it was agreed."
+      },
+      {
+        "kind": "heading",
+        "text": "The whole session, question by question"
+      },
+      {
+        "kind": "paragraph",
+        "text": "In interactive mode the command asks five questions, not one more, and always in this order. Here is the full session, start to finish:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "npm run spec-ia",
+          "",
+          "⚙️  chalc spec-ia",
+          "  AI: anthropic · claude-opus-5",
+          "",
+          "? Does the user story have a backend? [y/N] n",
+          "? Project path to equip: D:\\projects\\shop",
+          "? In which language should I generate the spec? (your project's)",
+          "  ❯ English",
+          "    Español",
+          "    Other (type it)",
+          "",
+          "  The project had no SDD: set up specs/ (constitution + templates).",
+          "  Quality gate ready: `node .chalc/gate.mjs` when closing each task.",
+          "",
+          "? Where is the user story from?",
+          "  ❯ Local file (.md / .txt / Word / PDF / Excel→CSV)",
+          "    Azure DevOps (work item URL + PAT)",
+          "    Jira (issue URL + email + token)",
+          "    Google Drive / URL",
+          "    Paste the text",
+          "? Document path: volume-discount.docx",
+          "",
+          "  Generating spec with claude-opus-5…  (this uses tokens)",
+          "",
+          "✓ Spec generated in specs\\018-volume-discount"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**It shows you the brain first.** Which provider and model it will use, and therefore charge you for. If you have none configured, it takes you there right then.",
+          "**\"Does the story have a backend?\" decides which command applies.** If you say yes, it steps aside and hands the work to `chalc feature`: a story with a back and a front needs an API contract ruling both first, and I told that in [one contract rules](/daily/one-contract-many-repos).",
+          "**The project path is where it will write.** On entry it reads the repository signals — the libraries in `package.json`, the root files — and infers the stack, which is the set of technologies it is built with. The AI doesn't do this: these are explicit catalog rules, so it's instant and costs no tokens.",
+          "**The spec language isn't the CLI language.** I run chalc in Spanish and can still generate a client's documentation in English. It's asked before anything is written, because the constitution, the templates, the reviewer and even the messages the gate prints months from now all come from that answer.",
+          "**And with the story in hand, it generates and checks.** The AI returns the three files and chalc audits them before writing: that there are requirements, that none is duplicated, that they really have EARS shape, that the tasks don't cite a requirement that doesn't exist. A spec that fails that door never reaches your disk."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "What ends up written in your repository, and what each thing is"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the result of equipping an Angular repository with Claude Code as the assistant. It changes with the stack it detects and with the assistant you use, but the shape is always this:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "D:\\projects\\shop\\",
+          "├── CLAUDE.md                      # the rules the assistant always reads",
+          "├── .chalc.json                    # manifest: what was detected and applied",
+          "├── .mcp.json                      # MCP servers (merged, never clobbers yours)",
+          "├── .claude\\",
+          "│   ├── skills\\                    # one folder per skill, a real copy",
+          "│   │   ├── angular-component\\  angular-signals\\  angular-testing\\  …",
+          "│   │   ├── clean-code\\  solid-principles\\  modular-architecture\\",
+          "│   │   └── minimal-implementation\\  mutation-testing\\",
+          "│   └── agents\\                    # revisor.md and endurecedor.md, no code editing",
+          "├── .chalc\\",
+          "│   ├── gate.mjs                   # the gate: node .chalc/gate.mjs",
+          "│   ├── next.mjs                   # the advisor: node .chalc/next.mjs",
+          "│   ├── mail.mjs                   # the mailbox between sides",
+          "│   ├── gate\\                      # its modules, no dependencies",
+          "│   ├── gate.json                  # the only thing you edit",
+          "│   └── gate-hook.md               # both hooks, documented, not installed",
+          "└── specs\\",
+          "    ├── constitution.md            # the non-negotiable principles",
+          "    ├── _template\\                 # blank spec.md, plan.md, tasks.md",
+          "    └── 018-volume-discount\\",
+          "        ├── spec.md                # R1…R7 in EARS",
+          "        ├── plan.md",
+          "        ├── tasks.md",
+          "        └── .chalc\\ai-trace.jsonl  # which model generated this, with hashes"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`CLAUDE.md`** — the rules the assistant always reads. chalc writes only inside a section of its own, marked at both ends; whatever you have outside is untouched. Every assistant has its equivalent file and chalc uses the right one.",
+          "**`.claude/skills/`** — the manuals for the \"how\". They aren't linked: they are **copied whole** into your project, so they travel with it and keep working even if whoever clones it has no chalc. An Angular repository gets its fourteen, plus the five that go into any project in any language.",
+          "**`.mcp.json`** — the socket into outside tools. On Angular it wires up the official CLI server, which hands over today's documentation instead of whatever the model remembers from training. It merges: whatever you already had stays.",
+          "**`specs/`** — the constitution and the templates. It comes in two sizes: `lite` for small projects and `full` for large ones. Giving a three-screen project the ceremony of a three-year one is the fastest way to make sure nobody uses the method.",
+          "**`.chalc/` and `.claude/agents/`** — the gate, the advisor, the reviewer and the hardener. The rest of this note is about those four."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "None of that touches your code: it adds no libraries, it doesn't change how the project is built, and it modifies not one line of what you had already written. The AI keys stay outside, on your machine. And everything else is saved **with** the project, which is exactly the point: whoever downloads it tomorrow gets the same rules and the same gate, chalc or no chalc. If you want it gone, it's two folders and one section of a file."
+      },
+      {
+        "kind": "paragraph",
+        "text": "One detail you don't see but do appreciate: every AI call is logged, and `chalc tokens` tells you how much you've spent on that project, per command, per task and per model. If a tool is going to cost me money, I want the bill itemized."
+      },
+      {
+        "kind": "heading",
+        "text": "The hole I had: rules nobody was checking"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Everything above has been working for months. The problem came after: `spec-ia` implements nothing. It generates the spec, the plan and the tasks, prints the hand-off, and from there the one executing is the assistant — Claude Code, Codex, whichever. And all the quality control of that execution lived in **sentences**."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Two sentences, to be exact, and both had the same defect. The first: the method rules said \"run mutation testing with the help of the skill\", and the skill itself admitted chalc didn't execute it. Nobody verified anything: no file left to show, no result anyone could check, no date. The second: code review — one thing per file, layer boundaries, code smells, whether the test actually checks the requirement — depended on the judgement of the very same agent that had written the code, in the same context, with the same conversation in between. It's like asking someone to mark their own exam right after writing it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The ironic part is that chalc already had the pieces: a reviewer, a gate that always gives the same verdict, a detector for parts of the code calling parts they shouldn't, and a contract reader. But they were all locked inside `chalc-cli`, its own agent shell. The flow I use every day — `spec-ia` and `feature` with Claude Code — couldn't see them."
+      },
+      {
+        "kind": "heading",
+        "text": "It isn't just me: what the data says"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first is Google's DORA report, which has spent over a decade measuring how teams deliver software. In its 2025 edition, 90% of the professionals surveyed already use AI in their daily work, with a median of two hours a day. Over 80% say it has raised their productivity and 59% say it has improved their code quality. And now the uncomfortable figure: 30% say they trust the code the AI hands back a little or not at all. We use something for hours every day that a third of us don't trust."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second finding in that report is the one that put the pieces in place for me. In 2024, AI was associated with delivering **less**; in 2025 that relationship reversed and it's now associated with delivering **more**. But it remains associated with greater instability in delivery. Translated into everyone's language: more software ships, and it breaks more often."
+      },
+      {
+        "kind": "quote",
+        "text": "AI adoption is now linked to higher software delivery throughput, meaning teams are releasing more software and applications, which is a positive reversal of last year's findings.",
+        "source": "DORA · State of AI-assisted Software Development, 2025",
+        "sourceUrl": "https://blog.google/innovation-and-ai/technology/developers-tools/dora-report-2025/"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second report is GitClear's, which instead of asking people looks at the actual code: 623 million real changes between 2023 and 2026. Its three numbers are fairly brutal. Duplicated blocks of code rose 81% against 2023. Copy/paste went from 9.4% of changed lines in 2022 to 15.7% in the first half of 2026. And the one that stings most: **moved** code — the fingerprint left by somebody tidying up what was already written — collapsed from 21% in 2022 to 3.8% today."
+      },
+      {
+        "kind": "quote",
+        "text": "As AI authorship has scaled to become a substantial percent of all commits, the structural habits that keep codebases maintainable have eroded.",
+        "source": "GitClear · The Maintainability Gap, 2026",
+        "sourceUrl": "https://www.gitclear.com/the_ai_code_quality_maintainability_gap"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I want to be honest about what those numbers say and what they don't. Neither says \"don't use AI\"; the DORA one says the opposite on the speed side. What they say is that speed **without checking** gets paid back in maintenance, and that the part of the job the AI isn't doing is precisely the tidying and the removing of what's repeated. That's why the gate measures duplication and boundaries, and why I ask the reviewer whether the abstraction is the right one: they're exactly the two things the data says are being lost."
+      },
+      {
+        "kind": "heading",
+        "text": "What Uncle Bob said, and why it helped me sort it out"
+      },
+      {
+        "kind": "paragraph",
+        "text": "While I was turning this over, Robert C. Martin — Uncle Bob, the author of Clean Code — said publicly that he no longer reads the code his agents write. Not part of it: none of it. His argument is about productivity, and it's uncomfortable precisely because of who it comes from: humans are slow at reading code, so to take advantage of an agent's speed you have to disengage from the code and manage from a higher level. What he does look at are numbers, but numbers produced by tools and not by him: how much of the code the tests actually touch, how the parts of the program hook into each other, how many different paths a function can take — the more there are, the easier it is for one to go untested — the size of each piece, and the mutation testing from the start of this note."
+      },
+      {
+        "kind": "heading",
+        "text": "\"I don't review the code\" doesn't mean what it sounds like"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And this is where almost everyone reads it backwards, me included the first time. \"I don't review the code\" sounds like \"I fire off an order at the AI and accept whatever comes out\". It is exactly the opposite, and to check that you only have to open what Bob publishes right next to that sentence: a repository called [swarm-forge](https://github.com/unclebob/swarm-forge), which he describes as a **disciplined** agent orchestration platform."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It isn't one agent. In its fullest configuration it's six, and each has exactly one job: one writes the behaviour as examples plus the end-to-end test procedures; another implements with strict TDD; another cleans up and improves coverage without changing behaviour; another reviews the structure and the direction of dependencies; another hardens by running mutation; and the last turns those procedures into scripts and verifies through the interface. Each in its own worktree, and they don't talk: they pass work through handoffs that a script validates."
+      },
+      {
+        "kind": "quote",
+        "text": "Run the relevant local verification command before handoff whenever the project has one.",
+        "source": "swarm-forge · swarmforge/constitution/articles/engineering.prompt, 2026",
+        "sourceUrl": "https://github.com/unclebob/swarm-forge"
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the detail that matters most to me is where the person sits. The specifier asks for approval before handing anything to the coder, and the cycle closes by notifying that it's done — in the four-role setup, by looping back to the specifier itself. The human didn't disappear: they moved. They stopped being at the end reading a diff and moved to the front, deciding what gets built. So the sentence, read in full, says something else: it isn't \"the AI does everything and I watch\", it's \"I stop reading the code because I've built so much checking around it that reading adds less than maintaining the checks\". Keeping the headline and throwing away the scaffolding is precisely the reading that produces the disasters people later blame on AI."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Rules everyone reads.** He calls them a constitution; in chalc they're called exactly the same and are set up in the repository when it's equipped.",
+          "**An isolated desk per line of work.** He gives each role a git worktree; chalc gives one per user story, with the feature's repositories inside.",
+          "**The reviewer is never the author.** He separates roles into distinct sessions; chalc adds a reviewer that comes in when each task closes and cannot touch the code.",
+          "**Nobody moves on without verifying, and the person approves first.** His constitution mandates running the project's verification before handing off, and his specifier asks for approval before passing the work on. That is, point for point, what the gate and the advisor do."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/swarm-vs-chalc.en.svg",
+        "caption": "Six agents with one role each, or one that writes and two that check. Different split, same idea: in green, the points where a person decides."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The most serious answer came from Grady Booch, who is hardly a newcomer either. His objection is specific and no metric dismisses it: coverage and complexity give you confidence about whether it **works**, but they tell you nothing at all about whether the agent introduced a vulnerability, left dead code that will silently degrade maintainability, or missed a factorization that matters for performance."
+      },
+      {
+        "kind": "quote",
+        "text": "Unlike Bob, I review all code generated by agents. Trust but verify. As an experienced developer, I know the smell of what is good and what is not.",
+        "source": "Grady Booch, quoted by M. V. Radhakrishna · Tech Tips, Tricks & Trivia, 15 April 2026",
+        "sourceUrl": "https://mvark.blogspot.com/2026/04/uncle-bob-vs-grady-booch-rethinking.html"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/read-vs-measure.en.svg",
+        "caption": "The two positions in the argument, and the way out I picked: it isn't \"read or measure\", it's splitting the work between what can measure and what can read."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I don't land entirely on either side, and I think that's where it gets interesting. Bob is right about the diagnosis: reading line by line everything an agent produces is exactly what cancels out the advantage of having it. Booch is right about the limit: some things are only visible by reading, and a green number doesn't hide them — it simply isn't looking at them. My conclusion wasn't to pick a side, it was to **split the work three ways**: what can be measured is measured by a program that runs on its own and has no opinions, what has to be judged is read by an agent other than the author, and I read the specification and both reports."
+      },
+      {
+        "kind": "heading",
+        "text": "The gate: a script measures the measurable, not the model"
+      },
+      {
+        "kind": "paragraph",
+        "text": "When `spec-ia` equips a repository, it now leaves a quality gate inside it: `.chalc/gate.mjs`. It's real code, with no dependencies, that runs on plain Node — whether or not chalc is installed on that machine, and whether or not whoever clones the repository has it. It isn't a text template that gets filled in: it's a tree of modules copied verbatim from chalc's catalog, with its own tests."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it doesn't run over the whole repository, but over the files **this task** touched. That sounds obvious and it wasn't: for a while it measured the whole branch's change, with the previously closed tasks inside it, and that did both bad things at once — surfacing findings from old debt, and handing the assistant the excuse that \"most of this is earlier work\" to skip reviewing. Now, when a task closes, the gate seals that moment; and to know what the next one touched it doesn't deduce it: whoever writes notes it down, one path per line, and that record **is** the scope. If there isn't one, it falls back to whatever changed since the seal. And if it can't narrow it either way, it reviews nothing and says so — rather than review the whole project and call it a task."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/gate.mjs",
+          "",
+          "Quality gate: FAILED  ·  .chalc/gate.md",
+          "  src/app/features/cart/cart.service.ts:18 — \"CartItem\" is public declaration nº 2 in this file; it belongs in its own file next to \"CartService\"",
+          "  src/app/features/cart/apply-discount.ts:14 — mutant not detected (Survived, ConditionalExpression); score 74% < 80%",
+          "  src/app/features/cart/cart.service.spec.ts:1 — the test cites no requirement from specs/018-volume-discount/spec.md: without a citation nobody can tell what it covers"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Tests.** The repository's own suite. If they fail, mutation doesn't run: mutating on red tests is minutes thrown away. The report says it was skipped for that, not for fast mode.",
+          "**Mutation.** The mark and the list of mutants that survived, with file, line and what was changed. Default threshold: 80%.",
+          "**Code.** One thing per file, file and function length, parameter count, nesting, empty `catch`, forgotten debug output and untyped values.",
+          "**Duplication.** It compares what you touched against all the rest of the code and flags repeated blocks, with both copies. It catches what nothing else could see: you copied from a file you never opened.",
+          "**Boundaries.** That the part painting the screen doesn't call the database directly, and that one module doesn't reach inside another. It's the same detector `chalc verify` uses.",
+          "**Traceability.** Every test you changed has to cite a requirement that really exists. One citing nothing says nothing about what it covers; one citing a non-existent requirement is worse, because it looks like it does.",
+          "**Contract.** That every route in the contract shows up in the code, with the right verb: the back **exposes** it, the front and mobile **consume** it."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/quality-gate-stages.en.svg",
+        "caption": "The seven stages and the verdict. The same computation that titles the report decides the exit code: if the file said \"PASSED\" and the process exited 1, the evidence would stop being evidence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The verdict has three states rather than two, and that's the design decision I'm happiest about. \"PASSED\" and \"FAILED\" are the obvious ones. The third is \"BLOCKED\", and it means \"I couldn't check it\". It gets fixed differently from a failure — one is fixed in the code, the other by installing something or adjusting a path — and whoever reads the report needs to know which of the two they have in front of them. What matters is what it does **not** do: what cannot be checked is never approved. It exits non-zero exactly like a failure."
+      },
+      {
+        "kind": "heading",
+        "text": "Where the score comes from (and where it doesn't)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the part that actually solves the problem I opened with, and it's one sentence: the mark and the list of survivors come from **opening the results file the tool itself wrote and pulling the numbers out of it**. Never from what the tool printed on screen, and never from a summary written by an assistant. A model can type \"score 92%\"; what it cannot do is fabricate a Stryker report with a date and a list of mutators that also matches what you see when you run the gate yourself."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And there are three ways to end up with no score, all of them blocking. The tool isn't installed — checked before running, because an exit code doesn't distinguish \"not installed\" from \"ran and failed\". The command ran but left no report. And the subtle one, which is my favourite: the report is **older** than the most recent source file in the run. An old report measures a different version of the code, and approving on it is exactly the original problem with a file in front of it for cover."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/gate.mjs",
+          "",
+          "Quality gate: BLOCKED  ·  .chalc/gate.md",
+          "  mutation — the mutation tool is not installed (stryker); install it with: npm i -D @stryker-mutator/core @stryker-mutator/karma-runner",
+          "",
+          "# and the other case, the one that slips by unnoticed:",
+          "  mutation — the mutation report is older than \"src/app/features/cart/apply-discount.ts\": it measures a different version of the code, run npx --no-install stryker run again"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nobody invents the gate's configuration: it's worked out from what the project actually has — the libraries and commands declared in `package.json`, or a `pom.xml`, a `pubspec.yaml`, a `.csproj`, a `Cargo.toml`, a `composer.json`. That's where the command that launches the tests comes from, the tool that breaks the code, and where it leaves its report: Stryker for JavaScript and TypeScript, Stryker.NET for C#, mutmut for Python, PIT for Java. And one hard rule: whatever cannot be determined **with certainty** is left empty and marked as pending. An invented command is worse than a gap, because the gap is visible and gets fixed, and the invented one fails silently or, worse still, approves."
+      },
+      {
+        "kind": "paragraph",
+        "text": "All of that lives in one data file per language, and that has a practical consequence I'm happy about: **adding a new language means adding a file**. You don't touch the detection, or the gate, or the text of any skill. That same information used to be written in three separate places — the detection, the skill the assistant reads, and the report reader — and the three agreeing depended on someone remembering to touch all three. Now the question \"can the gate verify mutation in this language?\" is answered by crossing two pieces of data, and where the answer is no, the skill says so itself instead of promising something that won't happen."
+      },
+      {
+        "kind": "heading",
+        "text": "The reviewer: what no script can measure"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The gate measures and doesn't opine. Alongside it, every repository now gets a **reviewer agent** in its assistant's own format: a real subagent at `.claude/agents/revisor.md` for Claude Code, a rule in `.cursor/rules/` for Cursor, and a section of the managed block for Codex, Copilot and Gemini. The text is the same; what changes is where each assistant reads it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It comes in when a task finishes and before the next one starts. It reads four things: `.chalc/gate.md` — and if it doesn't exist, or is older than the last change, it says so and stops, because with no gate there's nothing to review on top of — the \"Task scope\" section of that same evidence, which is the list of files the task changed and **its entire scope**: it may not widen it, not even to the file next door, the constitution and the spec, and the active skills of **that** repository. That last one isn't decorative: a backend reviewer cannot audit against Flutter rules, so the skill list is injected into its text when the repo is equipped."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Does the test check the requirement, or merely accompany it?** A green test that would pass just the same with the code broken is worse than no test: it gives false confidence, and that confidence is what stops anyone from looking.",
+          "**Is the abstraction the right one?** An interface with a single implementer that will never have another, a service that only forwards calls, a layer that decides nothing.",
+          "**Does the name say what it does?** And if it doesn't, is the problem the name or the fact that the function does two things?",
+          "**Is the solution the minimum that satisfies the requirement?** Configuration, options and extension points nobody asked for are debt from day one.",
+          "**Are the constitution and the skills respected?** Citing the concrete article or rule, not \"it doesn't follow best practices\"."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "It returns `OK` and nothing else, or a numbered list with `file:line`, the concrete problem and why it matters. And it carries an instruction I care about as much as the rest: don't invent findings to look useful. A report with three real problems gets read and fixed; one with fifteen style observations gets ignored wholesale, and the three that mattered go with it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It doesn't modify the code: that isn't asked of it, it's **granted**, and the permission is trimmed when it's created. With one exception, which looks like a contradiction and isn't: it can write its own logbook, and only by appending. You'll see the reason in the next section — without that trail, nobody can check afterwards that the review happened."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And my memory isn't what holds that up. Each role's scope is declared **once, as data**: which tools it gets, what it may write and what is forbidden. If someone put a file-editing tool in there, chalc doesn't quietly trim it: it refuses to start and says so. It's the gate's idea applied to permissions."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it's no longer alone. Beside the reviewer sits a second role, the **hardener**, with a different question and a different rhythm. The reviewer comes in when **each task** closes and looks at what was just written. The hardener comes in when **the whole feature** closes, once, and asks what nobody asks with a single task in front of them: what happens when the input is invalid, when the network fails, when the case is the odd one. That it runs once per feature and not once per task isn't an oversight: every pass is a call to a model, and that gets paid for."
+      },
+      {
+        "kind": "heading",
+        "text": "And now the order doesn't depend on the model either"
+      },
+      {
+        "kind": "paragraph",
+        "text": "For a while I asked for that in writing, in the commission: run the gate, paste its output verbatim, fix what comes out, call the reviewer, tick the task. It worked, but it had a flaw I took a while to see. The problem wasn't the list: it was **who kept count**. The assistant decided by itself whether it had done it all, and the only one who'd catch a lapse was the reviewer — whom it also called. The failure modes are concrete and I hit every one: run the gate, keep touching code, then tick the task with stale evidence; skip the reviewer because the gate came out green; close with fast mode because that came out green too; or move on with findings still open."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Look at the pattern, because it's exactly the one from the start of this note. I had taken the **number** out of the model's head by putting it in a file. But the **order** was still in there: it depended on the model remembering. So I did the same thing a second time."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now the commission recites no steps. It says one thing: ask what's next and do that. When the repository is equipped, a second program is left inside it, `.chalc/next.mjs`, which also runs on its own and is also read-only. You ask it, and it answers with **one** action — the next one — and the reason it's asking for it."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "",
+          "NEXT_ACTION: run_gate",
+          "REASON: You touched code at 15:04 and the evidence is from 14:32: it measures the old version.",
+          "COMMAND: node .chalc/gate.mjs"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And what matters is where that answer comes from: the disk, not the conversation. It looks at the time on the gate's report against the time of the last file you touched, the verdict of that run, the log the reviewer left, the ticked boxes in `tasks.md` and which files have changed. From all of that it works out where the task stands. None of it lives in anyone's memory."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "`blocked_config` — something is still unconfigured: the mutation tool not installed, for instance. Until that's sorted there is nothing to measure.",
+          "`run_gate` — either there's no evidence, or what there is is older than the code. Measure again.",
+          "`fix_gate` — the gate came out red. Fix what it reported; retrying to see if it sticks doesn't count.",
+          "`call_role` — the gate is green and a role still has to pass: the reviewer when the task closes, the hardener when the feature does. It isn't called `call_reviewer` on purpose — the role travels inside the message, so adding a new one doesn't invent a new action.",
+          "`fix_review` — that role left findings open in its log.",
+          "`tick_task` — everything's in place: tick the task.",
+          "`work_task` — there's nothing to close, get on with the next one.",
+          "`done` — nothing left to do here.",
+          "**`ask_human`** — and this is my favourite: it cannot tell where this stands. Rather than guess, it stops the loop and hands control back to me."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/task-closing-cycle.en.svg",
+        "caption": "The advisor, and the five things on disk it works out the task's position from. It returns one action, and \"I don't know\" is a valid answer: there it stops and hands control back to me."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And this is where the earlier exception fits, the reviewer's notebook. If the reviewer left nothing in writing about having come through and what it saw, none of this could work: there'd be no way to tell \"the reviewer said it's fine\" from \"nobody has called the reviewer\". That's why it can write its log, and why it can only append. A minimal permission, with a concrete reason behind it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Seen whole, the arc of this note is one operation performed three times: taking things out of the model's head and putting them on disk, where they can be looked at. First the number, with the gate. Then the judgement, with a reviewer that isn't the author. And now the order, with a program that keeps count and doesn't get tired. The only things still depending on a person are the two decisions that should depend on a person: what gets built, and whether this is finished."
+      },
+      {
+        "kind": "heading",
+        "text": "When it's several repositories: the contract that moves, and the mailbox"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Everything above holds just the same for a single project. When the story touches back and front, each side has its own gate and its own advisor, and they close separately: the backend's measures the contract it **exposes** and the frontend's the one it **consumes**, so closing one says nothing about the other. But on top of that a problem appears that no gate fixes, and it's the one that has cost me the most days in my working life."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The API contract is copied identically inside each side's spec. And halfway through the feature the backend discovers that the endpoint needs one more field, that the 409 error was really a 422, or that the route was named in the singular. It edits its copy and carries on, which is the sensible thing to do. The other copies go stale, and the frontend spends two days implementing against something that no longer exists."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The gate doesn't catch it, and I want to be precise about why: it checks that every route in the contract **exists** in the code, not that it has the shape the contract says. A route that changes shape or error code is still there. So the check is done by the advisor, and there's no mystery to it: in the working mode where both sides are sibling folders, it compares the two files that ought to be identical."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "",
+          "NEXT_ACTION: sync_contract",
+          "REASON: The `back` contract changed and your copy is stale (2 line(s) of difference).",
+          "        Look at WHAT changed before going on: building against the old contract surfaces at integration.",
+          "COMMAND: diff specs/003-payment/contracts/api.md ../back/specs/003-payment/contracts/api.md"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That leaves what isn't in any file: \"I'm stuck waiting for the payments endpoint\". For that, each repository carries a mailbox, which is exactly as dumb as it sounds and works for that reason."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/mail.mjs send --to front --message \"I changed the 422 to a 409 on /payments.\"",
+          "node .chalc/mail.mjs read"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "No server and nothing running in the background: both sides sit on the same disk, so whoever writes leaves the message directly where the other will read it, in a folder that sits **outside** both projects so nobody's change list gets dirty. And there's a deliberate asymmetry: **sending is optional, reading isn't**. While unopened messages remain, the advisor tells you to read them before going on. That way a message once written is certain to be seen, which was the underlying problem. In a single project both things switch off and say nothing: there's nobody to coordinate with."
+      },
+      {
+        "kind": "heading",
+        "text": "The two hooks I don't install, and why"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Claude Code can do two things by itself: note down every file it writes, and run the gate the moment a turn ends. Chalc **installs neither**. A hook runs on its own, and the file where it's configured is saved with the project: enabling it from a tool would impose it on everyone who downloads that repository, who asked for nothing. So the blocks are written out and explained in `.chalc/gate-hook.md`, with the recommendation to start with `settings.local.json` — which is only yours — and to agree it with the team before touching the other one."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first is the record from earlier, and it's the one that changes what you see the most: every time the assistant writes a file, it notes the path down. It does one thing — takes the path, notes it, and if it fails it exits quietly, because a hook that breaks the turn is worse than no hook. Without it the gate still works, but it measures from the last closed task, and if you commit at the end of the feature rather than task by task, that reviews quite a lot more than it should. The evidence always says which of the two the scope came from, so there's no way to get confused."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second one, the end-of-turn heads-up, uses `--fast`: it runs the quick stages and skips mutation. And for that very reason a `--fast` run **does not close a task**: it's there to tell you early that something broke, not to call the task done. A hook that launched full mutation on every turn would make the session unusable, and you'd end up removing the hook or, far worse, closing tasks without it."
+      },
+      {
+        "kind": "heading",
+        "text": "Where I don't agree with Bob"
+      },
+      {
+        "kind": "paragraph",
+        "text": "It would be dishonest to sell this as \"I built what Uncle Bob said\". There's a difference and I want it on the record. Bob trusts a set of metrics; I don't trust metrics, I trust **dated files** I can open. A number and a file with the date, the branch, the command and its exit code are not the same thing. The number is the conclusion; the file is what lets you argue about it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And Booch's objection still stands, so let me say it plainly: the gate does **not** look for vulnerabilities. It isn't a security analysis and doesn't pretend to be. It catches dead code only obliquely — through the length limits and the boundaries — and it has no opinion whatsoever about performance. The reviewer covers half of that gap, and I cover the other half. Bob himself, by the way, says there is something he does read: the acceptance tests and the QA procedures his agents write. I do the same by another route: I read the spec before a single line of code exists, and I read both reports when each task closes. What I stopped reading is the diff, line by line. Not reading and not looking are not the same thing."
+      },
+      {
+        "kind": "heading",
+        "text": "What it costs, because it costs"
+      },
+      {
+        "kind": "paragraph",
+        "text": "It would be very easy to tell all this as if it were free. It isn't, and I think the fair thing is to put the drawbacks in writing, ordered from the most annoying to the least."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**It's slower per task.** The agent stops constantly: one task, gate, reviewer, my sign-off, next. What you save sits at the end, in the afternoon I don't spend working out what it did, but the day-to-day feels more clogged.",
+          "**Mutation takes minutes.** Breaking the code a thousand times and re-testing isn't free. That's why fast mode exists, and why that mode doesn't close a task: the temptation is there and it has to be made hard.",
+          "**It costs money and needs your own account.** Drafting the spec uses an expensive model and the reviewer runs once per task. Not a fortune, but it grows with the project, which is why `chalc tokens` breaks the spend down. The gate costs nothing: it's a program on your machine.",
+          "**It collapses if someone removes one step.** All of it rests on the evidence entering the conversation exactly as it came out. If someone deletes that line from the commission because it reads like padding, the original problem is back with more files for cover.",
+          "**It isn't for everything.** For an afternoon's script or a prototype I'll throw away, this is pure ceremony. Forcing it there is the fastest way to make a team abandon the method entirely."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one drawback that isn't the method's but mine: maintaining it. The gate is code, and code breaks. Every testing tool I want to support means understanding the format of its report, and every new version of that tool can change it. It's work that shows up in no demo and has to be done anyway."
+      },
+      {
+        "kind": "heading",
+        "text": "How I actually work today, on a normal day"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This isn't a proposal or a weekend experiment: it's what I do every day. Written out end to end, a normal day looks like this."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The user story arrives, from wherever it arrives: a Word document, a ticket, or two loose sentences in a chat that I paste into a text file myself.",
+          "`chalc spec-ia` turns it into specification, plan and tasks. This takes under a minute.",
+          "**And here I stop.** I read the whole specification and answer the questions the AI left open. It's the only stretch of the day when I read closely, and it happens before a single line of code exists. If the specification is wrong, everything after it will be wrong and executed very fast.",
+          "I paste the commission into Claude Code and leave it the first task. One task.",
+          "When it finishes, it asks the advisor what's next, does what it says, and asks again. That's usually three or four rounds: run the gate, fix what comes out, call the reviewer, fix its findings.",
+          "**I read two things: the gate's report and the reviewer's list.** Not the code, unless one of those two sends me to a specific file. I sign off and the next task starts.",
+          "When the feature closes, the last run's report is what I show if anyone asks me why I'm calling this finished."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Do I ever skip it? Yes, and I've already said when: an afternoon's script, a test I know I'll throw away, or when I'm exploring and don't yet know what I want. There the method is overhead and that's fine. What I no longer do is start that way \"just for a moment\" and find out two weeks later that the thing stayed, that people are using it, and that nobody knows what it was supposed to do."
+      },
+      {
+        "kind": "heading",
+        "text": "What actually improves"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The concrete part, without adjectives. Before, closing a task was a sentence from the assistant plus my trust; now it's a dated file I can open three weeks later. Before, whoever reviewed the code was the one who had written it, in the same conversation; now it's another agent, with another context, that cannot touch anything. Before, a method rule was a recommendation; now it has a non-zero exit code behind it. And what cannot be checked, instead of passing as good, stops the work and prints the exact command to unblock it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The real benefit isn't that the code comes out better — time will tell that — it's that I can now **know** whether it came out better, and show it to someone else. The difference between trusting and verifying isn't a matter of character: it's having a file in front of you, or not."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want to see where I apply all of this, it's in [my projects](/projects); and if you're interested in how I work inside a team, that's in [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the tool this whole note is about, documented in English and Spanish.",
+          "[Robert C. Martin's post](https://x.com/unclebobmartin/status/2044114698451476492) — X, 2026: the source of the quote.",
+          "[swarm-forge](https://github.com/unclebob/swarm-forge) — Robert C. Martin: what actually sits behind his sentence. The six files under `roles/` take half an hour and explain what agents under discipline look like better than any article.",
+          "[Uncle Bob vs. Grady Booch](https://mvark.blogspot.com/2026/04/uncle-bob-vs-grady-booch-rethinking.html) — M. V. Radhakrishna, April 2026: both opposing positions, and where I take the Booch quote from.",
+          "[State of AI-assisted Software Development](https://blog.google/innovation-and-ai/technology/developers-tools/dora-report-2025/) — DORA, Google, 2025: the 90% using AI daily, the 30% who don't trust it, and shipping more with more instability.",
+          "[The Maintainability Gap](https://www.gitclear.com/the_ai_code_quality_maintainability_gap) — GitClear, 2026: 623 million real changes. It doesn't ask for opinions, it measures the code.",
+          "[Hints on Test Data Selection](https://ieeexplore.ieee.org/document/1646911) — DeMillo, Lipton & Sayward, IEEE Computer, 1978: the paper that founded mutation testing.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): the tool whose report the gate reads to pull the numbers from."
+        ]
+      }
+    ]
+  }
+}

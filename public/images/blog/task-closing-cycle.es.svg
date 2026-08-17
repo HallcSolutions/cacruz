@@ -1,0 +1,82 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 520" role="img" aria-label="El advisor decide la única acción siguiente leyendo el estado real del repositorio">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="mg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .box { transform-box: fill-box; transform-origin: center; animation: breathe 4s ease-in-out infinite; }
+    .b2 { animation-delay: .7s } .b3 { animation-delay: 1.4s }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    .loop { stroke-dasharray: 6 8; animation: loop 2.4s linear infinite; }
+    .disk { animation: pulse 2.8s ease-in-out infinite; }
+    .d2 { animation-delay: .3s } .d3 { animation-delay: .6s } .d4 { animation-delay: .9s } .d5 { animation-delay: 1.2s }
+    @keyframes breathe { 0%,100% { opacity:.85 } 50% { opacity:1 } }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes loop { to { stroke-dashoffset: 56 } }
+    @keyframes pulse { 0%,100% { opacity:.5 } 50% { opacity:1 } }
+  </style>
+
+  <rect width="1000" height="520" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="27" fill="#ece7fb">Cerrar una tarea: quién lleva la cuenta</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">el asistente ya no recuerda el orden — lo pregunta, y el orden vive en el disco</text>
+
+  <g class="box">
+    <rect x="40" y="100" width="240" height="86" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="60" y="128" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">EL ASISTENTE</text>
+    <text x="60" y="152" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">pregunta qué toca ahora</text>
+    <text x="60" y="172" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">node .chalc/next.mjs</text>
+  </g>
+  <line x1="286" y1="143" x2="300" y2="143" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="box b2">
+    <rect x="306" y="100" width="300" height="86" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="326" y="128" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">EL ADVISOR</text>
+    <text x="326" y="152" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">lee el disco, no la conversación</text>
+    <text x="326" y="172" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">solo lectura · no escribe nada</text>
+  </g>
+  <line x1="612" y1="143" x2="626" y2="143" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="box b3">
+    <rect x="632" y="100" width="328" height="86" rx="14" fill="none" stroke="#34d399" stroke-width="2.5"/>
+    <text x="652" y="128" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">UNA SOLA ACCIÓN</text>
+    <text x="652" y="152" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">NEXT_ACTION · REASON · COMMAND</text>
+    <text x="652" y="172" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">la haces, y vuelves a preguntar</text>
+  </g>
+
+  <path d="M796 190 L796 214 L160 214 L160 192" class="loop" fill="none" stroke="#34d399" stroke-width="2" marker-end="url(#mg)"/>
+  <text x="420" y="232" font-family="ui-monospace, monospace" font-size="10" fill="#34d399">repite hasta que responda `done`</text>
+
+  <rect x="40" y="248" width="920" height="104" rx="14" fill="none" stroke="#3a3050" stroke-width="2"/>
+  <text x="64" y="272" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">LO QUE MIRA PARA DECIDIR — cinco cosas que están en el disco, ninguna en la memoria de nadie</text>
+
+  <g class="disk"><rect x="64" y="286" width="168" height="48" rx="10" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="80" y="306" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">la hora del informe</text>
+    <text x="80" y="322" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">¿mide lo de ahora?</text></g>
+  <g class="disk d2"><rect x="248" y="286" width="168" height="48" rx="10" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="264" y="306" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">el veredicto</text>
+    <text x="264" y="322" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">¿pasó o no pasó?</text></g>
+  <g class="disk d3"><rect x="432" y="286" width="168" height="48" rx="10" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="448" y="306" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">la bitácora</text>
+    <text x="448" y="322" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">¿revisó alguien?</text></g>
+  <g class="disk d4"><rect x="616" y="286" width="168" height="48" rx="10" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="632" y="306" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">tasks.md</text>
+    <text x="632" y="322" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">¿qué queda por hacer?</text></g>
+  <g class="disk d5"><rect x="800" y="286" width="160" height="48" rx="10" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="816" y="306" font-family="ui-monospace, monospace" font-size="9" fill="#ece7fb">archivos cambiados</text>
+    <text x="816" y="322" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">¿tocaste algo después?</text></g>
+
+  <rect x="40" y="368" width="920" height="112" rx="14" fill="none" stroke="#3a3050" stroke-width="2"/>
+  <text x="64" y="392" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">LAS RESPUESTAS POSIBLES — devuelve la primera que aplique, nunca dos</text>
+  <text x="64" y="416" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">blocked_config  ·  run_gate  ·  fix_gate  ·  call_role  ·  fix_review  ·  tick_task  ·  work_task</text>
+  <text x="64" y="440" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">done<tspan fill="#8a7fb0">  — no queda nada aquí</tspan><tspan fill="#fbbf24">        ask_human</tspan><tspan fill="#8a7fb0"> — no puede saberlo: para y te devuelve el control</tspan></text>
+  <text x="64" y="466" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">Un verde de una corrida rápida, o de otra rama, no cierra tarea: vuelve a run_gate.</text>
+
+  <text x="40" y="506" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">Primero la cifra dejó de depender del modelo. Ahora, tampoco el orden.</text>
+</svg>

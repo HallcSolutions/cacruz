@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" role="img" aria-label="La IA dijo 92%. El informe no existía. Qué hay detrás del «ya no leo el código de mis agentes» de Uncle Bob y las tres piezas que lo comprueban.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="rule" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#a78bfa" stop-opacity=".15"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0.85" cy="0.15" r="0.6">
+      <stop offset="0" stop-color="#a78bfa" stop-opacity=".18"/><stop offset="1" stop-color="#a78bfa" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="627" fill="url(#bg)"/>
+  <rect width="1200" height="627" fill="url(#glow)"/>
+  <rect x="64" y="72" width="4" height="250" fill="url(#rule)"/>
+
+  <text x="96" y="92" font-family="Consolas, ui-monospace, monospace" font-size="17" letter-spacing="2.5" fill="#a78bfa">NOTAS DE DESARROLLO · CACRUZ.COM</text>
+
+  <text x="96" y="168" font-family="Georgia, serif" font-size="54" fill="#ece7fb">La IA dijo «92%».</text>
+  <text x="96" y="232" font-family="Georgia, serif" font-size="54" fill="#a78bfa">El informe no existía.</text>
+  <text x="96" y="296" font-family="Georgia, serif" font-size="54" fill="#ece7fb">Esto es lo que monté.</text>
+
+  <text x="96" y="352" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">Qué hay detrás del «ya no leo el código de mis agentes» de</text>
+  <text x="96" y="380" font-family="Consolas, ui-monospace, monospace" font-size="19" fill="#8a7fb0">Uncle Bob, y las tres piezas que lo comprueban por mí.</text>
+
+  <g>
+    <rect x="64" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="90" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">92%</text>
+    <text x="90" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">lo que el agente escribió</text>
+    <text x="90" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">sin ejecutar nada</text>
+
+    <rect x="430" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="456" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">7</text>
+    <text x="456" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">etapas que mide un script,</text>
+    <text x="456" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">no el modelo</text>
+
+    <rect x="796" y="424" width="340" height="118" rx="14" fill="#a78bfa" fill-opacity=".06" stroke="#3a3350" stroke-width="1.5"/>
+    <text x="822" y="478" font-family="Georgia, serif" font-size="40" fill="#fb7185">0</text>
+    <text x="822" y="506" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">cifras salidas del chat:</text>
+    <text x="822" y="526" font-family="Consolas, ui-monospace, monospace" font-size="14.5" fill="#8a7fb0">todas, del archivo</text>
+  </g>
+
+  <text x="64" y="588" font-family="Consolas, ui-monospace, monospace" font-size="16" fill="#5a5375">Christian Cruz Arango · cacruz.com/daily</text>
+</svg>

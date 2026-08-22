@@ -1,0 +1,383 @@
+{
+  "slug": "land-an-idea-with-a-debate",
+  "date": "2026-08-22",
+  "title": {
+    "es": "Antes de escribir una línea, dos modelos discuten mi idea: uno la defiende y el otro la destroza",
+    "en": "Before I write a line, two models argue my idea: one defends it, the other tears it apart"
+  },
+  "summary": {
+    "es": "Una idea a medias no necesita ayuda, necesita contradicción. Cómo uso «chalc debate» para aterrizarla: dos modelos distintos, cada uno con su proveedor y su clave, la discuten con papeles opuestos, no se les deja cerrar por complacencia, y me dejan un informe que los dos firman, con lo que quedó sin decidir marcado dentro y la conversación entera como evidencia.",
+    "en": "A half-baked idea doesn't need help, it needs contradiction. How I use \"chalc debate\" to land one: two different models, each with its own provider and key, argue it from opposite stances, they aren't allowed to close out of politeness, and they leave me a report both of them sign, with whatever stayed undecided marked inside and the whole conversation as evidence."
+  },
+  "tags": [
+    "chalc",
+    "debate",
+    "ia",
+    "ideas",
+    "agentes"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Casi todo lo que termino construyendo empieza igual: una idea a medias, escrita en tres líneas, con la mitad de las decisiones sin tomar. Y lo que hacía con ella era abrir un chat y contársela. El resultado siempre era el mismo: el modelo me la ordenaba, me la ampliaba y me la devolvía con mejor cara. Lo que nunca hizo fue decirme que la idea no se sostenía, porque un modelo solo, frente a una idea que le acaban de contar, es complaciente por construcción."
+      },
+      {
+        "kind": "heading",
+        "text": "De dónde salió la idea"
+      },
+      {
+        "kind": "paragraph",
+        "text": "No la busqué: me la encontré usando mis propias herramientas. Ya tenía un comando que convierte un documento en spec, plan y tareas, y hace bien su trabajo justamente porque no opina: es un estructurador, no un autor, y lo que no esté en el documento lo marca como pendiente de aclarar en vez de inventárselo. Y tenía una shell de agentes que discute cómo implementar una tarea, pero ahí se discute el cómo, cuando el qué ya está decidido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Es decir: entre «se me ocurrió esto» y «aquí está la spec» no había nada. Y ese hueco es justo el momento en el que una idea todavía se puede tirar entera a la basura por lo que cuesta un café."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo siguiente que hice fue buscar si esto ya lo había resuelto alguien, porque una idea mía sin comprobar no vale más que la del modelo complaciente. Y sí: tiene nombre y varios años de literatura detrás. Se llama **multi-agent debate**, y describe algo muy concreto: en vez de preguntarle a un modelo, se ponen varias instancias a proponer su respuesta **con su razonamiento**, a contradecirse durante varias rondas y a converger en una respuesta común. Lo que midieron sus autores no fue la discusión, sino lo que sale de ella: cuando los modelos acaban de acuerdo, esa respuesta común resuelve mejor las preguntas de razonamiento que la de un modelo solo y se ciñe más a los hechos, con menos respuestas inventadas."
+      },
+      {
+        "kind": "quote",
+        "text": "La respuesta final que sale de ese procedimiento es más precisa en los hechos y resuelve mejor las preguntas de razonamiento.",
+        "source": "Du, Li, Torralba, Tenenbaum y Mordatch · «Improving Factuality and Reasoning in Language Models through Multiagent Debate», 2023",
+        "sourceUrl": "https://arxiv.org/abs/2305.14325"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso era exactamente lo que me faltaba. No ayuda: contradicción. Alguien cuyo trabajo fuera buscarle los huecos a mi idea antes de que yo escribiera la primera línea de la spec. De ahí salió `chalc debate`, un comando más de chalc —la herramienta con la que preparo mis proyectos—, y es lo que uso hoy para aterrizar cualquier idea que se me ocurra: dos modelos distintos, cada uno con su proveedor y su clave, la discuten con papeles opuestos —uno la sostiene, el otro la rebate— y me dejan un informe. Pero la misma literatura que promete ese resultado trae un aviso, y fue el aviso, no la promesa, lo que decidió cómo había que montarlo:"
+      },
+      {
+        "kind": "quote",
+        "text": "Los modelos cambian con frecuencia de una respuesta correcta a una incorrecta al leer el razonamiento del otro: prefieren el acuerdo a desafiar un razonamiento defectuoso.",
+        "source": "Wynn, Satija y Hadfield · «Talk Isn't Always Cheap», 2025",
+        "sourceUrl": "https://arxiv.org/abs/2509.05396"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí está la diferencia entre convencerse y rendirse, y eso cambia el objetivo entero: si el acuerdo se puede alcanzar por complacencia, un debate que termina en acuerdo no prueba nada por sí solo. Así que aquí el acuerdo no es la meta: es una salida más, y hay que ganárselo."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo lo uso para aterrizar una idea"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se configura una vez —quién debate contra quién— y a partir de ahí es una línea de terminal. La idea puedo escribirla ahí mismo o traerla de un archivo, de un texto pegado o de una historia de Jira o Azure DevOps."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc config-ia debate            # una vez: quién debate contra quién",
+          "chalc debate \"una cola de eventos para el checkout\"",
+          "→ te preguntan lo que falta, discuten y escriben el informe"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Antes de discutir nada, los dos leen la idea y me preguntan lo que no está claro. Las preguntas que son la misma se fusionan para no contestar dos veces, y lo que yo deje sin responder queda escrito como duda abierta: nunca se rellena con supuestos.",
+          "Empiezan las rondas. A sostiene la idea; B le busca huecos, riesgos y supuestos sin verificar. Cada uno recibe el turno íntegro del otro, pero nunca sabe qué modelo ni qué proveedor lo escribió.",
+          "Cada ronda la abre un lado distinto, porque quien habla al final ancla la siguiente. Si abriera siempre el mismo lado, el debate tendría ganador antes de empezar.",
+          "Si a mitad del debate me necesitan, se paran y me preguntan. Mi respuesta entra en el contexto de los dos, no solo del que preguntó.",
+          "Al cerrar, uno de los dos redacta el informe y el otro lo revisa. Si señala correcciones, se reescribe con ellas dentro antes de que llegue a mis manos."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/debate-flow.es.svg",
+        "caption": "El recorrido completo: de la idea a medias a un informe que los dos firman."
+      },
+      {
+        "kind": "heading",
+        "text": "Quién debate contra quién"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un debate se monta con dos puestos, A y B, y cada uno se declara entero: su proveedor, su modelo y su propia clave. Eso último no es un detalle de configuración, sino la razón de que funcione: una clave de OpenRouter no abre OpenAI, así que cada lado llama con lo suyo y no hereda nada del proveedor base. Es lo que me permite enfrentar de verdad a dos familias distintas —ahora mismo tengo un Opus contra un GPT— o poner un modelo local contra uno de nube."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La postura es del puesto, no del modelo: quien ocupe A propone y quien ocupe B rebate, se llame como se llame. Si los dos acaban siendo el mismo proveedor y el mismo modelo, chalc me avisa de que eso ya no es un debate, sino un modelo hablando solo, y sigue igualmente: es una configuración pobre, no un error que deba bloquearme. Y si cambio de proveedor base y un lado se queda apuntando a un modelo que allí no existe, no me revienta la llamada a mitad de un debate ya pagado: lo vuelve a anclar al modelo base y me avisa antes de empezar. Cada llamada, además, va etiquetada como gasto de la tarea `debate`, así que el consumo aparece en el resumen que imprime el comando y queda en el histórico de `chalc tokens`, desglosado por comando, tarea y modelo."
+      },
+      {
+        "kind": "heading",
+        "text": "El acuerdo hay que ganárselo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es la parte que de verdad hace que sirva. Si al retador le basta con decir «tienes razón» en su primer turno, no ha discutido: se ha rendido, y yo me quedo con la misma idea de antes y con la sensación falsa de haberla validado. Chalc no le pide al modelo que no haga eso —pedirlo por favor no es una garantía—, sino que lo comprueba al leer cada turno: si un acuerdo no dice qué objeción queda resuelta y por qué, se descarta y la conversación sigue."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/debate-guards.es.svg",
+        "caption": "Cuatro comprobaciones sobre el texto de cada turno. Ninguna depende de la buena voluntad del modelo."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que cuesta se ve antes de gastarlo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Son llamadas a modelos y las paga mi tarjeta, así que el número está acotado y se anuncia antes de empezar. No hay bucle que pueda quedarse abierto: el tope de rondas es tres, y con `--budget` pongo un freno en tokens, que es la unidad en la que de verdad pago. Si la idea es larga se resume una sola vez y ese resumen viaja en los turnos, mientras el texto íntegro se conserva para las preguntas y para el informe. Y `--dry-run` me enseña la factura sin emitirla."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc debate \"una cola de eventos para el checkout\" --dry-run",
+          "",
+          "⚙️  chalc debate  (dry-run)",
+          "",
+          "  Dos modelos distintos discuten tu idea y te dejan un informe. El acuerdo hay que justificarlo.",
+          "",
+          "  anthropic/claude-opus-4.8 (openrouter)  vs  openai/gpt-5.5 (openrouter)",
+          "",
+          "  9 llamadas previstas · 3 ronda(s) máximo",
+          "  Ronda de aclaración omitida: no hay nadie que pueda responder (--questions la fuerza).",
+          "",
+          "  dry-run: nada se llamó ni se escribió."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que me llevo cuando termina"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Tres archivos en una carpeta nueva, que no pisa la del debate anterior. `final.md` es el entregable. Arriba va la idea que traje y, justo después y antes de cualquier acta, cómo queda tras el debate —qué es, cómo funciona, qué reglas quedaron fijadas y por dónde empezar—, escrito para quien va a construirla y no para quien quiera revivir la discusión. Lo que no cerraron no tiene una sección de peleas aparte: va marcado como pendiente dentro de la propuesta, en el punto del producto al que afecta y con lo que defendió cada lado. Junto a él, `debate.md` guarda la conversación entera, para poder rastrear cualquier frase del informe hasta el turno donde se dijo, y `debate.json` deja el debate como dato por si otro comando lo consume."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y lo último que trae `final.md`, en un bloque de avisos, es quién lo firma: si el otro lado lo ratificó sin cambios, si señaló correcciones que ya están incorporadas, o si no llegó a revisarlo. «Los dos están de acuerdo» es una afirmación fuerte, y no me la creo si el documento no dice qué hizo falta para llegar ahí."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuando no se ponen de acuerdo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Casi nunca cierran del todo, y me parece bien: lo que queda sin decidir es justo lo que me toca decidir a mí. Por eso el informe no elige bando ni promedia las dos posturas —eso sería fabricar un consenso que nadie tuvo—, sino que me devuelve cada punto abierto marcado dentro de la propuesta, con lo que defendió cada lado."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si aun así quiero una opinión arbitrada, `--judge` añade un dictamen sobre lo que quedó abierto y lo evalúa en los dos órdenes posibles: un juez tiende a quedarse con la primera opción que le enseñan, así que si el veredicto cambia al invertir el orden, chalc lo declara empate en vez de darme un ganador falso. Si no configuro un juez aparte, dictamina el propio A, y entonces el informe deja escrito que quien dictaminó también sostenía una postura. Y si un proveedor se cae a mitad, no pierdo lo pagado: se escribe un informe parcial diciendo en qué ronda y de qué lado falló."
+      },
+      {
+        "kind": "heading",
+        "text": "Dónde está esto hoy"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El comando funciona y ya lo he usado con ideas reales. Su spec va por 48 requisitos y 127 tests, y buena parte de ellos nació de una corrida que salió mal: el primer informe declaró quince desacuerdos abiertos donde había unos seis, y el fallo no era de los modelos, sino mío, de cómo contaba yo lo que decían. El último bloque —que el informe consolidado lo firmen los dos de verdad y que la evidencia viva en su propio archivo— se cerró esta misma semana."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node --test test/debate-*.test.mjs",
+          "ℹ tests 127",
+          "ℹ pass 127",
+          "ℹ fail 0"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ninguno de esos tests llegó después del código, porque el método del proyecto no lo permite: primero el requisito en la spec, después el test que lo exige y falla, y solo entonces el código que lo pone en verde. Cuento cómo funciona ese ciclo en [las notas anteriores](/daily) y qué sale de él en [mis proyectos](/projects)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Talk Isn't Always Cheap: Understanding Failure Modes in Multi-Agent Debate](https://arxiv.org/abs/2509.05396) — Wynn, Satija y Hadfield, 2025: el debate puede dejar la precisión por debajo de la de un solo modelo, y explica por qué.",
+          "[Peacemaker or Troublemaker: How Sycophancy Shapes Multi-Agent Debate](https://arxiv.org/abs/2509.23055) — Yao, Shang, Du y otros, 2025: qué es exactamente la complacencia cuando hay varios agentes, y cómo se mide.",
+          "[Improving Factuality and Reasoning in Language Models through Multiagent Debate](https://arxiv.org/abs/2305.14325) — Du, Li, Torralba, Tenenbaum y Mordatch, 2023: el trabajo que puso el debate entre modelos sobre la mesa.",
+          "[GroupDebate: Enhancing the Efficiency of Multi-Agent Debate](https://arxiv.org/abs/2409.14051) — Liu, Wang, Huang y otros, 2024: por qué el coste en tokens es el límite real de esta técnica, y por qué mi tope son tres rondas."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "Almost everything I end up building starts the same way: a half-baked idea, three lines long, with half the decisions still open. And what I used to do with it was open a chat and tell it. The result was always the same: the model tidied it up, expanded it and handed it back looking better. What it never did was tell me the idea didn't hold up, because a single model facing an idea it has just been told is agreeable by construction."
+      },
+      {
+        "kind": "heading",
+        "text": "Where the idea came from"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I didn't go looking for it: I ran into it using my own tools. I already had a command that turns a document into spec, plan and tasks, and it does its job well precisely because it holds no opinion: it's a structurer, not an author, and whatever isn't in the document gets marked as needing clarification instead of invented. I also had an agent shell that argues how to implement a task, but there the how is argued once the what is already decided."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In other words: between \"I just had an idea\" and \"here is the spec\" there was nothing. And that gap is exactly the moment when an idea can still be thrown away whole for the price of a coffee."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The next thing I did was check whether someone had already solved this, because an idea of mine that hasn't been checked is worth no more than the agreeable model's. And they had: it has a name and several years of literature behind it. It's called **multi-agent debate**, and it describes something very concrete: instead of asking one model, you have several instances propose their answer **along with their reasoning**, contradict each other over several rounds, and converge on a shared answer. What its authors measured wasn't the argument itself, but what comes out of it: when the models end up agreeing, that shared answer solves reasoning questions better than a single model's and sticks closer to the facts, with fewer made-up answers."
+      },
+      {
+        "kind": "quote",
+        "text": "The final answer generated after such a procedure is both more factually accurate and solves reasoning questions more accurately.",
+        "source": "Du, Li, Torralba, Tenenbaum and Mordatch · \"Improving Factuality and Reasoning in Language Models through Multiagent Debate\", 2023",
+        "sourceUrl": "https://arxiv.org/abs/2305.14325"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That was exactly what I was missing. Not help: contradiction. Someone whose job was to hunt for the gaps in my idea before I wrote the first line of the spec. That's where `chalc debate` came from — one more command in chalc, the tool I use to set up my projects — and it's what I use today to land any idea that occurs to me: two different models, each with its own provider and key, argue it from opposite stances — one defends it, the other rebuts it — and leave me a report. But the same literature that promises that result carries a warning, and it was the warning, not the promise, that decided how it had to be built:"
+      },
+      {
+        "kind": "quote",
+        "text": "Models frequently shift from correct to incorrect answers in response to peer reasoning, favoring agreement over challenging flawed reasoning.",
+        "source": "Wynn, Satija and Hadfield · \"Talk Isn't Always Cheap\", 2025",
+        "sourceUrl": "https://arxiv.org/abs/2509.05396"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's the difference between being convinced and giving up, and it changes the whole goal: if agreement can be reached out of politeness, a debate that ends in agreement proves nothing on its own. So here agreement isn't the goal, it's one more way out — and it has to be earned."
+      },
+      {
+        "kind": "heading",
+        "text": "How I use it to land an idea"
+      },
+      {
+        "kind": "paragraph",
+        "text": "You configure it once — who debates against whom — and from then on it's one terminal line. The idea can be typed right there or come from a file, a pasted document, or a Jira or Azure DevOps story."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc config-ia debate            # once: who debates against whom",
+          "chalc debate \"an event queue for checkout\"",
+          "→ they ask what's missing, argue it out and write the report"
+        ]
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Before arguing anything, both read the idea and ask me what isn't clear. Questions that turn out to be the same one get merged so I don't answer twice, and whatever I leave unanswered is written down as an open question: it's never filled in with assumptions.",
+          "The rounds start. A defends the idea; B hunts for gaps, risks and unverified assumptions. Each one receives the other's full turn, but never learns which model or which provider wrote it.",
+          "A different side opens each round, because whoever speaks last anchors the next one. If the same side always opened, the debate would have a winner before it began.",
+          "If they need me halfway through the debate, they stop and ask. My answer goes into both sides' context, not just that of the one who asked.",
+          "At the close, one of them writes the report and the other reviews it. If it flags corrections, the report is rewritten with them inside before it reaches me."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/debate-flow.en.svg",
+        "caption": "The whole journey: from a half-baked idea to a report both of them sign."
+      },
+      {
+        "kind": "heading",
+        "text": "Who debates against whom"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A debate is built from two seats, A and B, and each one is declared in full: its provider, its model and its own key. That last part isn't a configuration detail but the reason the thing works: an OpenRouter key doesn't open OpenAI, so each side calls with what belongs to it and inherits nothing from the base provider. That's what lets me genuinely pit two different families against each other — right now I have an Opus against a GPT — or set a local model against a cloud one."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The stance belongs to the seat, not to the model: whoever sits in A proposes and whoever sits in B rebuts, whatever they are called. If both end up being the same provider and the same model, chalc warns me that this is no longer a debate but one model talking to itself, and carries on anyway: it's a poor configuration, not an error that should block me. And if I switch base provider and one side is left pointing at a model that doesn't exist there, it doesn't blow up the call halfway through a debate I've already paid for: it re-anchors that side to the base model and tells me beforehand. Every call is also tagged as `debate` spending, so the consumption shows up in the summary the command prints and stays in the `chalc tokens` history, broken down by command, task and model."
+      },
+      {
+        "kind": "heading",
+        "text": "Agreement has to be earned"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the part that actually makes it worth running. If saying \"you're right\" on the first turn is enough for the challenger, it didn't argue: it gave up, and I'm left with the same idea I had plus the false sense of having validated it. Chalc doesn't ask the model not to do that — asking nicely is not a guarantee — it checks while reading each turn: if an agreement doesn't name which objection it settles, and why, it is thrown out and the conversation carries on."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/debate-guards.en.svg",
+        "caption": "Four checks made on the text of each turn. None of them relies on the model's good will."
+      },
+      {
+        "kind": "heading",
+        "text": "The bill is shown before it's spent"
+      },
+      {
+        "kind": "paragraph",
+        "text": "These are model calls and my card pays for them, so the number is bounded and shown before anything starts. There's no loop that can stay open: the round cap is three, and with `--budget` I set a brake in tokens, the unit I actually pay in. If the idea is long it gets summarised once and that summary travels through the turns, while the full text is kept for the questions and for the report. And `--dry-run` shows me the invoice without issuing it."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc debate \"an event queue for checkout\" --dry-run",
+          "",
+          "⚙️  chalc debate  (dry-run)",
+          "",
+          "  Two different models argue your idea and leave you a report. Agreement has to be earned.",
+          "",
+          "  anthropic/claude-opus-4.8 (openrouter)  vs  openai/gpt-5.5 (openrouter)",
+          "",
+          "  9 calls planned · 3 round(s) max",
+          "  Clarification round skipped: there is nobody to answer (--questions forces it).",
+          "",
+          "  dry-run: nothing was called and nothing was written."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "What I walk away with"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Three files in a new folder that never overwrites the previous debate's. `final.md` is the deliverable. At the top sits the idea I brought and, right after it and before any minutes, how it stands after the debate — what it is, how it works, which rules got settled and where to start —, written for whoever is going to build it and not for whoever wants to relive the argument. What they didn't close doesn't get its own fight section: it's marked as pending inside the proposal, at the point of the product it affects and with what each side argued. Next to it, `debate.md` keeps the whole conversation, so any sentence in the report can be traced back to the turn where it was said, and `debate.json` leaves the debate as data in case another command consumes it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And the last thing `final.md` carries, in a block of notes, is who signs it: whether the other side ratified it with no changes, whether it flagged corrections that are already folded in, or whether it never got to review it. \"Both of them agree\" is a strong claim, and I don't buy it unless the document says what it took to get there."
+      },
+      {
+        "kind": "heading",
+        "text": "When they don't agree"
+      },
+      {
+        "kind": "paragraph",
+        "text": "They almost never close everything, and that's fine: whatever stays undecided is exactly what's mine to decide. That's why the report picks no side and averages no stances — that would manufacture a consensus nobody reached — and instead hands me each open point marked inside the proposal, with what each side argued."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If I still want an arbitrated opinion, `--judge` adds a ruling on what stayed open and evaluates it in both possible orders: a judge tends to keep the first option it is shown, so if the verdict flips when the order is swapped, chalc calls it a tie instead of handing me a fake winner. If I don't configure a separate judge, A itself rules, and the report then states that whoever ruled was also holding a stance. And if a provider goes down mid-run, I don't lose what I paid for: a partial report is written, saying on which round and on which side it failed."
+      },
+      {
+        "kind": "heading",
+        "text": "Where this stands today"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The command works and I've already used it on real ideas. Its spec is up to 48 requirements and 127 tests, and a good part of them came out of a run that went badly: the first report declared fifteen open disagreements where there were about six, and the fault wasn't the models' but mine, in how I was counting what they said. The last block — making the consolidated report genuinely signed by both, and giving the evidence its own file — closed this week."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node --test test/debate-*.test.mjs",
+          "ℹ tests 127",
+          "ℹ pass 127",
+          "ℹ fail 0"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "None of those tests came after the code, because the project's method doesn't allow it: first the requirement in the spec, then the test that demands it and fails, and only then the code that turns it green. I go through that cycle in [the earlier notes](/daily) and show what comes out of it in [my projects](/projects)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Talk Isn't Always Cheap: Understanding Failure Modes in Multi-Agent Debate](https://arxiv.org/abs/2509.05396) — Wynn, Satija and Hadfield, 2025: debate can push accuracy below that of a single model, and it explains why.",
+          "[Peacemaker or Troublemaker: How Sycophancy Shapes Multi-Agent Debate](https://arxiv.org/abs/2509.23055) — Yao, Shang, Du and others, 2025: what sycophancy is exactly once several agents are involved, and how it's measured.",
+          "[Improving Factuality and Reasoning in Language Models through Multiagent Debate](https://arxiv.org/abs/2305.14325) — Du, Li, Torralba, Tenenbaum and Mordatch, 2023: the work that put debate between models on the table.",
+          "[GroupDebate: Enhancing the Efficiency of Multi-Agent Debate](https://arxiv.org/abs/2409.14051) — Liu, Wang, Huang and others, 2024: why token cost is the real limit of this technique, and why my cap is three rounds."
+        ]
+      }
+    ]
+  }
+}

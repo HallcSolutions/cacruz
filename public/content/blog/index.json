@@ -1,5 +1,24 @@
 [
   {
+    "slug": "land-an-idea-with-a-debate",
+    "date": "2026-08-22",
+    "title": {
+      "es": "Antes de escribir una línea, dos modelos discuten mi idea: uno la defiende y el otro la destroza",
+      "en": "Before I write a line, two models argue my idea: one defends it, the other tears it apart"
+    },
+    "summary": {
+      "es": "Una idea a medias no necesita ayuda, necesita contradicción. Cómo uso «chalc debate» para aterrizarla: dos modelos distintos, cada uno con su proveedor y su clave, la discuten con papeles opuestos, no se les deja cerrar por complacencia, y me dejan un informe que los dos firman, con lo que quedó sin decidir marcado dentro y la conversación entera como evidencia.",
+      "en": "A half-baked idea doesn't need help, it needs contradiction. How I use \"chalc debate\" to land one: two different models, each with its own provider and key, argue it from opposite stances, they aren't allowed to close out of politeness, and they leave me a report both of them sign, with whatever stayed undecided marked inside and the whole conversation as evidence."
+    },
+    "tags": [
+      "chalc",
+      "debate",
+      "ia",
+      "ideas",
+      "agentes"
+    ]
+  },
+  {
     "slug": "close-a-task-with-evidence",
     "date": "2026-08-17",
     "title": {

@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="The chalc debate journey: idea, questions, rounds between two models, minutes, ratification and two files">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .step { animation: pop 7s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .s2 { animation-delay: .6s; } .s3 { animation-delay: 1.2s; } .s4 { animation-delay: 2.4s; } .s5 { animation-delay: 3s; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.6s linear infinite; }
+    .turnA { animation: talk 4s ease-in-out infinite; }
+    .turnB { animation: talk 4s ease-in-out infinite; animation-delay: 2s; }
+    @keyframes pop { 0%, 100% { opacity: .78; transform: translateY(0); } 8% { opacity: 1; transform: translateY(-4px); } 22% { opacity: .95; } }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes talk { 0%, 45% { opacity: .28; } 55%, 95% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">From a half-baked idea to a signed report</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">chalc debate · two different models, opposite stances</text>
+
+  <!-- 1. idea -->
+  <g class="step">
+    <rect x="40" y="112" width="140" height="98" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="110" y="150" text-anchor="middle" font-size="26">💡</text>
+    <text x="110" y="178" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">your idea</text>
+    <text x="110" y="196" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">half-baked</text>
+  </g>
+  <line x1="186" y1="161" x2="216" y2="161" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 2. preguntas -->
+  <g class="step s2">
+    <rect x="222" y="112" width="176" height="98" rx="14" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="310" y="146" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#a78bfa">they ask you</text>
+    <text x="310" y="170" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">both of them, before arguing</text>
+    <text x="310" y="192" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">matching questions get merged</text>
+  </g>
+  <line x1="404" y1="161" x2="434" y2="161" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 3. el debate -->
+  <g class="step s3">
+    <rect x="440" y="96" width="290" height="176" rx="16" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <text x="585" y="122" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">3 rounds · the opener alternates</text>
+
+    <g class="turnA">
+      <rect x="462" y="136" width="112" height="52" rx="10" fill="#a78bfa" fill-opacity=".08" stroke="#453768"/>
+      <text x="518" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">A · proposes</text>
+      <text x="518" y="176" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">defends the idea</text>
+    </g>
+    <g class="turnB">
+      <rect x="596" y="136" width="112" height="52" rx="10" fill="#a78bfa" fill-opacity=".08" stroke="#453768"/>
+      <text x="652" y="158" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185">B · rebuts</text>
+      <text x="652" y="176" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">hunts for the gaps</text>
+    </g>
+
+    <path d="M574 150 L596 150" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+    <path d="M596 176 L574 176" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+    <text x="585" y="216" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">neither knows who the other is</text>
+    <text x="585" y="240" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">full turn, no name and no model</text>
+  </g>
+  <line x1="736" y1="184" x2="766" y2="184" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- 4. acta + ratificación -->
+  <g class="step s4">
+    <rect x="772" y="112" width="188" height="66" rx="12" fill="none" stroke="#453768" stroke-width="2"/>
+    <text x="866" y="140" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">one side writes it</text>
+    <text x="866" y="160" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the idea, now cooked</text>
+  </g>
+  <line x1="866" y1="184" x2="866" y2="204" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+  <g class="step s5">
+    <rect x="772" y="210" width="188" height="66" rx="12" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text x="866" y="238" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">the other ratifies it</text>
+    <text x="866" y="258" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">and if it corrects, it is rewritten</text>
+  </g>
+
+  <!-- salida -->
+  <line x1="866" y1="282" x2="866" y2="316" class="flow" stroke="#a78bfa" stroke-width="2"/>
+  <line x1="866" y1="316" x2="180" y2="316" class="flow" stroke="#a78bfa" stroke-width="2"/>
+  <line x1="180" y1="316" x2="180" y2="344" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <g class="step s5">
+    <rect x="40" y="352" width="280" height="68" rx="12" fill="#a78bfa" fill-opacity=".06" stroke="#453768"/>
+    <text x="180" y="380" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">final.md</text>
+    <text x="180" y="402" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the whole idea, ratified by both</text>
+  </g>
+  <g class="step s5">
+    <rect x="352" y="352" width="280" height="68" rx="12" fill="#a78bfa" fill-opacity=".06" stroke="#453768"/>
+    <text x="492" y="380" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">debate.md</text>
+    <text x="492" y="402" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the full conversation, as evidence</text>
+  </g>
+  <g class="step s5">
+    <rect x="664" y="352" width="296" height="68" rx="12" fill="#a78bfa" fill-opacity=".06" stroke="#453768"/>
+    <text x="812" y="380" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">debate.json</text>
+    <text x="812" y="402" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the debate as data, for another command</text>
+  </g>
+</svg>

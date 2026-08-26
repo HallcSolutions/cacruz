@@ -47,6 +47,7 @@ export class WorldCanvas implements OnDestroy {
   /** Punteros táctiles activos, para el pellizco. */
   private readonly touches = new Map<number, { x: number; y: number }>();
   private pinchStart: { distance: number; zoom: number } | null = null;
+  private lastCentroid: { x: number; y: number } | null = null;
 
   constructor() {
     afterNextRender(() => void this.start());
@@ -129,11 +130,18 @@ export class WorldCanvas implements OnDestroy {
     if (this.touches.size === 2) {
       /* Segundo dedo: empieza el pellizco y se cancela el arrastre. */
       this.pinchStart = { distance: this.pinchDistance(), zoom: this.scene?.getZoom() ?? 1 };
+      this.lastCentroid = this.centroid();
       this.dragOrigin = null;
       this.push({ x: 0, z: 0 });
       return;
     }
     this.dragOrigin = { x: event.clientX, y: event.clientY };
+  }
+
+  private centroid(): { x: number; y: number } {
+    const points = [...this.touches.values()];
+    const sum = points.reduce((acc, p) => ({ x: acc.x + p.x, y: acc.y + p.y }), { x: 0, y: 0 });
+    return { x: sum.x / Math.max(points.length, 1), y: sum.y / Math.max(points.length, 1) };
   }
 
   private pinchDistance(): number {
@@ -192,6 +200,12 @@ export class WorldCanvas implements OnDestroy {
     if (this.pinchStart && this.touches.size === 2) {
       const ratio = this.pinchStart.distance / Math.max(this.pinchDistance(), 1);
       this.scene?.setZoom(this.pinchStart.zoom * ratio);
+      /* Y el desplazamiento del centro de los dos dedos mueve la cámara. */
+      const centroid = this.centroid();
+      if (this.lastCentroid) {
+        this.scene?.panByPixels(centroid.x - this.lastCentroid.x, centroid.y - this.lastCentroid.y, this.host().nativeElement.clientHeight);
+      }
+      this.lastCentroid = centroid;
       return;
     }
     if (!this.dragOrigin) {
@@ -210,6 +224,7 @@ export class WorldCanvas implements OnDestroy {
     this.touches.delete(event.pointerId);
     if (this.touches.size < 2) {
       this.pinchStart = null;
+      this.lastCentroid = null;
     }
     this.dragOrigin = null;
     this.push({ x: 0, z: 0 });

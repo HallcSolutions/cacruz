@@ -14,6 +14,11 @@
   min-height: 30rem;
   overflow: hidden;
   background: var(--bg);
+  /* Sin doble toque del navegador: dos toques seguidos en un botón son dos acciones, no un zoom. */
+  touch-action: manipulation;
+  -webkit-user-select: none;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .world__loading,
@@ -102,6 +107,7 @@
 }
 
 .world__enter {
+  touch-action: manipulation;
   display: inline-flex;
   align-items: center;
   gap: 0.9rem;
@@ -139,6 +145,7 @@
 
 /* Acciones del HUD: cristal oscuro, icono, etiqueta y la tecla que lo dispara. */
 .world__action {
+  touch-action: manipulation;
   display: inline-flex;
   align-items: center;
   gap: 0.55rem;

@@ -1,0 +1,81 @@
+<div class="pipeline">
+  <p class="pipeline__counter">
+    <span class="pipeline__prompt" aria-hidden="true">❯</span>
+    {{ 'education.jobs' | t }} — {{ passedCount() }}/{{ entries().length }}
+    {{ 'education.passed' | t }}
+  </p>
+
+  <ol class="pipeline__jobs">
+    @for (entry of entries(); track jobId(entry)) {
+      <li
+        class="pipeline__job"
+        [class.pipeline__job--running]="stateOf(entry).status === 'running'"
+        [class.pipeline__job--passed]="stateOf(entry).status === 'passed'"
+      >
+        <div class="pipeline__row">
+          <span class="pipeline__status" aria-hidden="true"></span>
+          <span class="pipeline__icon" aria-hidden="true">🎓</span>
+          <div class="pipeline__meta">
+            <span class="pipeline__degree">{{ entry.degree }}</span>
+            <span class="pipeline__institution"
+              >{{ entry.institution }} · {{ entry.period }} · {{ entry.location }}</span
+            >
+          </div>
+          @if (stateOf(entry).status === 'pending') {
+            <button type="button" class="pipeline__run" (click)="run(entry)">
+              <span class="pipeline__angle" aria-hidden="true">&lt;</span>{{ 'education.run' | t
+              }}<span class="pipeline__angle" aria-hidden="true">/&gt;</span>
+            </button>
+          } @else {
+            <span class="pipeline__badge">{{
+              (stateOf(entry).status === 'passed' ? 'education.passedOne' : 'education.running')
+                | t
+            }}</span>
+          }
+          @if (stateOf(entry).status === 'passed') {
+            <button
+              type="button"
+              class="pipeline__toggle"
+              [attr.aria-expanded]="!stateOf(entry).collapsed"
+              [attr.aria-label]="
+                (stateOf(entry).collapsed ? 'software.expand' : 'software.collapse') | t
+              "
+              (click)="toggle(entry)"
+            >
+              {{ stateOf(entry).collapsed ? '[+]' : '[–]' }}
+            </button>
+          }
+        </div>
+
+        @if (stateOf(entry).status !== 'pending') {
+          <div
+            class="pipeline__terminal"
+            [class.pipeline__terminal--closed]="stateOf(entry).collapsed"
+          >
+            <div class="pipeline__terminal-inner">
+              @for (line of stateOf(entry).lines; track $index) {
+                <p class="pipeline__log">{{ line }}</p>
+              }
+            </div>
+          </div>
+        }
+      </li>
+    }
+  </ol>
+
+  @if (allPassed()) {
+    <p class="pipeline__achievement">🏆 {{ 'education.achievement' | t }}</p>
+  }
+
+  <div class="pipeline__packages">
+    <p class="pipeline__packages-cmd">$ npm ls --global certifications</p>
+    <ul class="pipeline__packages-list">
+      @for (course of courses(); track course) {
+        <li class="pipeline__package-line">
+          <span class="pipeline__tree" aria-hidden="true">{{ $last ? '└─' : '├─' }}</span>
+          <span class="pipeline__package">{{ course }}</span>
+        </li>
+      }
+    </ul>
+  </div>
+</div>

@@ -1,0 +1,14 @@
+<section class="section" id="education">
+  <header class="section__head" appRevealOnScroll>
+    <p class="section__kicker">{{ 'education.subtitlePipeline' | t }}</p>
+    <h2 class="section__title">{{ 'education.title' | t }}</h2>
+  </header>
+
+  @if (profile.content.value(); as content) {
+    <app-build-pipeline
+      [entries]="content.education"
+      [courses]="content.courses"
+      appRevealOnScroll
+    />
+  }
+</section>

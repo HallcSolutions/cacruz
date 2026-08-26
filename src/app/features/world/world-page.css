@@ -14,8 +14,8 @@
   min-height: 30rem;
   overflow: hidden;
   background: var(--bg);
-  /* Sin doble toque del navegador: dos toques seguidos en un botón son dos acciones, no un zoom. */
-  touch-action: manipulation;
+  /* El navegador no gestiona gestos aquí: ni doble toque ni pellizco (Chrome los permite con `manipulation`). */
+  touch-action: none;
   -webkit-user-select: none;
   user-select: none;
   -webkit-tap-highlight-color: transparent;

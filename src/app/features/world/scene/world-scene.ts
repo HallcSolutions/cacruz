@@ -189,6 +189,8 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   let jumpRequested = false;
   let eye: Vector2 = { ...character.position };
   let zoom = 1;
+  /* Desplazamiento manual de la cámara (dos dedos). Se deshace al caminar o con C. */
+  let pan: Vector2 = { x: 0, z: 0 };
   let activeZone: WorldZone | null = null;
   let elapsed = 0;
   let last = 0;
@@ -333,8 +335,13 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
 
   function placeCamera(delta: number): void {
     eye = followCamera(eye, character.position, delta);
-    camera.position.set(eye.x + CAMERA_OFFSET.x * zoom, CAMERA_OFFSET.y * zoom, eye.z + CAMERA_OFFSET.z * zoom);
-    target.set(eye.x, 1.2, eye.z);
+    if (speedOf(character) > 0.4) {
+      pan = followCamera(pan, { x: 0, z: 0 }, delta, 0.5);
+    }
+    const focusX = eye.x + pan.x;
+    const focusZ = eye.z + pan.z;
+    camera.position.set(focusX + CAMERA_OFFSET.x * zoom, CAMERA_OFFSET.y * zoom, focusZ + CAMERA_OFFSET.z * zoom);
+    target.set(focusX, 1.2, focusZ);
     camera.lookAt(target);
   }
 
@@ -368,7 +375,18 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   return {
     setDirection: (next) => { direction = next; },
     jump: () => { jumpRequested = true; },
-    recenter: () => { eye = { ...character.position }; },
+    recenter: () => {
+      eye = { ...character.position };
+      pan = { x: 0, z: 0 };
+    },
+    panByPixels: (dx, dy, viewportHeight) => {
+      /* Píxeles → unidades de mundo a la distancia de la cámara: lo que mide el alto visible entre el alto en píxeles. */
+      const distance = CAMERA_OFFSET.length() * zoom;
+      const visibleHeight = 2 * Math.tan((camera.fov * Math.PI) / 360) * distance;
+      const unitsPerPixel = visibleHeight / Math.max(viewportHeight, 1);
+      /* La cámara mira hacia -z: arrastrar hacia abajo en pantalla trae terreno de +z. */
+      pan = { x: pan.x - dx * unitsPerPixel, z: pan.z - dy * unitsPerPixel };
+    },
     setZoom: (factor) => { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, factor)); },
     getZoom: () => zoom,
     runCommand: () => {

@@ -96,3 +96,11 @@
 - [ ] **T59** — `scene/character-animator.ts` con salto; `scene/world-scene.ts` con cámara en perspectiva, terreno, salto y recentrado. _(R89, R90, R93)_
 - [ ] **T60** — `world-canvas.ts`: teclas espacio y `c`, botón de salto táctil. _(R87, R89, R90)_
 - [ ] **T61** — Borrar `platforms.ts`, `build-portals.ts`, `build-platforms.ts`; suite en verde; Stryker sobre `logic/*` ≥ 80%; `ng build`. _(Artículo 7)_
+
+## Bloque 14 — Formación como pipeline de CI (R95–R99, enmienda x)
+
+- [x] **T62** — Tests Rojo → `education/build-script.ts`: guion determinista por título, rama en kebab-case sin acentos, última línea con institución y periodo. _(R97)_
+- [x] **T63** — Tests Rojo → `education/sections/build-pipeline/*`: jobs pendientes con contador `0/N`, ejecutar teclea el guion y supera el job, cursos como paquetes, logro al completar. _(R96, R97, R98, R99)_
+- [x] **T64** — `education/education-page.*` + `education.routes.ts` en `/education`; enlace en el navbar y traducciones ES/EN. _(R95)_
+- [x] **T66** — Tests Rojo → plegar/reabrir el log de un job superado. _(R100)_
+- [x] **T65** — Suite en verde + Stryker sobre `build-script.ts` ≥ 80% + `ng build`. _(Artículo 7)_

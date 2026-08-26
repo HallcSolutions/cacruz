@@ -205,6 +205,17 @@ R72–R87 siguen vigentes salvo lo que aquí se redefine. Los modelos 3D son CC0
 - **R93** — WHILE el personaje está quieto, camina, corre, salta o se sienta THE SYSTEM SHALL reproducir la animación esquelética correspondiente del modelo, con transición suave entre estados.
 - **R94** — WHERE el terreno termine THE SYSTEM SHALL impedir que el personaje caiga fuera del mundo. _(Mantiene R76.)_
 
+### Formación como pipeline de CI _(enmienda 2026-08-26 x: "en el navbar crear un apartado donde sea lo que estudié, maestría, etc. — como el despliegue, algo llamativo")_
+
+**Alcance:** la formación (R28, R37) ya no vive en el inicio —la raíz es el mundo 3D— y pasa a una página propia, presentada con la misma mecánica jugable que el software (R62–R69).
+
+- **R95** — WHEN el visitante abre el menú THE SYSTEM SHALL ofrecer un destino "Formación" (`/education`) junto a Trayectoria, con página propia y carga perezosa.
+- **R96** — WHEN la página de formación se muestra THE SYSTEM SHALL listar cada título (máster, ingeniería, tecnólogo) como un *job* de pipeline pendiente, con institución, título y periodo visibles, y un contador `0/N` de jobs superados.
+- **R97** — WHEN el visitante ejecuta un job THE SYSTEM SHALL teclear línea a línea un guion de build en inglés (rama de estudio, `npm run learn`, exámenes en verde, merge a la carrera) y marcar el job como superado al terminar, incrementando el contador.
+- **R98** — WHEN la página de formación se muestra THE SYSTEM SHALL presentar los cursos complementarios como paquetes instalados (`npm ls`), uno por línea.
+- **R100** — WHEN el visitante pulsa el pliegue de un job superado THE SYSTEM SHALL ocultar su log sin deshacer el job, y volver a mostrarlo al pulsar de nuevo (como R69).
+- **R99** — WHEN todos los jobs están superados THE SYSTEM SHALL mostrar un logro desbloqueado, como en R66.
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

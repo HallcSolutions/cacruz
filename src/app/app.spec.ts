@@ -29,6 +29,7 @@ describe('App', () => {
     const links = Array.from(render().querySelectorAll('a')).map((a) => a.getAttribute('href'));
     expect(links).toContain('/');
     expect(links).toContain('/experience');
+    expect(links).toContain('/education');
     expect(links).toContain('/stack');
     expect(links).toContain('/projects');
     expect(links).toContain('/software');

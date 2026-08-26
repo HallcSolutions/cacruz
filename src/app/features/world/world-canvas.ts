@@ -44,6 +44,9 @@ export class WorldCanvas implements OnDestroy {
   private destroyed = false;
   private readonly keys = new Set<string>();
   private dragOrigin: { x: number; y: number } | null = null;
+  /** Punteros táctiles activos, para el pellizco. */
+  private readonly touches = new Map<number, { x: number; y: number }>();
+  private pinchStart: { distance: number; zoom: number } | null = null;
 
   constructor() {
     afterNextRender(() => void this.start());
@@ -108,6 +111,7 @@ export class WorldCanvas implements OnDestroy {
     window.addEventListener('blur', this.onBlur);
     window.addEventListener('pointermove', this.onPointerMove);
     window.addEventListener('pointerup', this.onPointerUp);
+    window.addEventListener('pointercancel', this.onPointerUp);
   }
 
   private detachInput(): void {
@@ -116,11 +120,25 @@ export class WorldCanvas implements OnDestroy {
     window.removeEventListener('blur', this.onBlur);
     window.removeEventListener('pointermove', this.onPointerMove);
     window.removeEventListener('pointerup', this.onPointerUp);
+    window.removeEventListener('pointercancel', this.onPointerUp);
   }
 
   protected startDrag(event: PointerEvent): void {
     this.scene?.armAudio();
+    this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    if (this.touches.size === 2) {
+      /* Segundo dedo: empieza el pellizco y se cancela el arrastre. */
+      this.pinchStart = { distance: this.pinchDistance(), zoom: this.scene?.getZoom() ?? 1 };
+      this.dragOrigin = null;
+      this.push({ x: 0, z: 0 });
+      return;
+    }
     this.dragOrigin = { x: event.clientX, y: event.clientY };
+  }
+
+  private pinchDistance(): number {
+    const [a, b] = [...this.touches.values()];
+    return a && b ? Math.hypot(a.x - b.x, a.y - b.y) : 0;
   }
 
   /** Botón táctil de comando. */
@@ -168,6 +186,14 @@ export class WorldCanvas implements OnDestroy {
   };
 
   private readonly onPointerMove = (event: PointerEvent): void => {
+    if (this.touches.has(event.pointerId)) {
+      this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
+    }
+    if (this.pinchStart && this.touches.size === 2) {
+      const ratio = this.pinchStart.distance / Math.max(this.pinchDistance(), 1);
+      this.scene?.setZoom(this.pinchStart.zoom * ratio);
+      return;
+    }
     if (!this.dragOrigin) {
       return;
     }
@@ -180,7 +206,11 @@ export class WorldCanvas implements OnDestroy {
     );
   };
 
-  private readonly onPointerUp = (): void => {
+  private readonly onPointerUp = (event: PointerEvent): void => {
+    this.touches.delete(event.pointerId);
+    if (this.touches.size < 2) {
+      this.pinchStart = null;
+    }
     this.dragOrigin = null;
     this.push({ x: 0, z: 0 });
   };

@@ -94,26 +94,46 @@ export function buildPickups(library: AssetLibrary, spots: readonly { x: number;
   });
 }
 
-/** Reserva de balas: robots-bug del kit, rojos, que giran mientras vuelan hacia ti. */
+/**
+ * Reserva de balas: robots-bug del kit, rojos, que giran mientras vuelan hacia ti.
+ * El modelo trae esqueleto y en GPUs móviles el skinning puede fallar en silencio (malla
+ * invisible). Se "hornea" una vez a malla estática en pose de reposo y se clona esa.
+ */
 export function buildBulletPool(library: AssetLibrary, size: number): Object3D[] {
+  const baked = bakeStatic(placeSkinnedProp(library, 'Robot_Cube'));
+  fit(baked, { size: 0.7 });
+  baked.traverse((node) => {
+    const mesh = node as Mesh;
+    if (!mesh.isMesh) {
+      return;
+    }
+    const standard = (mesh.material as MeshStandardMaterial).clone();
+    standard.emissive?.set(PALETTE.danger);
+    standard.emissiveIntensity = 0.9;
+    mesh.material = standard;
+  });
   return Array.from({ length: size }, () => {
-    /* Robot_Cube trae esqueleto: un clone() normal lo deja invisible; hay que clonar con huesos. */
-    const bug = fit(placeSkinnedProp(library, 'Robot_Cube'), { size: 0.7 });
-    bug.traverse((node) => {
-      const mesh = node as Mesh;
-      if (!mesh.isMesh) {
-        return;
-      }
-      for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-        const standard = (material as MeshStandardMaterial).clone();
-        standard.emissive?.set(PALETTE.danger);
-        standard.emissiveIntensity = 0.9;
-        mesh.material = standard;
-      }
-    });
+    const bug = baked.clone(true);
     bug.visible = false;
     return bug;
   });
+}
+
+/** Copia un objeto sustituyendo cada malla con esqueleto por una malla normal con la misma geometría. */
+function bakeStatic(source: Object3D): Group {
+  const baked = new Group();
+  source.updateMatrixWorld(true);
+  source.traverse((node) => {
+    const mesh = node as Mesh;
+    if (!mesh.isMesh) {
+      return;
+    }
+    const plain = new Mesh(mesh.geometry, mesh.material);
+    plain.applyMatrix4(mesh.matrixWorld);
+    plain.castShadow = true;
+    baked.add(plain);
+  });
+  return baked;
 }
 
 /** Reserva de agentes: cerebros de IA, rosa con halo cian. */

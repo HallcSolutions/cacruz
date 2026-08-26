@@ -7,6 +7,9 @@ export interface SceneHandle {
   jump(): void;
   /** Recoloca la cámara detrás del personaje al instante (R90). */
   recenter(): void;
+  /** Distancia de cámara: 1 = por defecto; menor acerca, mayor aleja (pellizco en táctil). */
+  setZoom(factor: number): void;
+  getZoom(): number;
   /** Ejecuta un comando de IA: lanza un agente a la máquina con bugs más cercana. */
   runCommand(): void;
   /** Arma el audio tras el primer gesto del usuario. */

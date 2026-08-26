@@ -62,6 +62,10 @@ export interface WorldSceneOptions {
 
 const MAX_DELTA = 1 / 20;
 const CAMERA_OFFSET = new Vector3(0, 15, 13);
+/** Ángulo horizontal que se conserva: en pantallas estrechas la cámara abre el vertical para compensar. */
+const HORIZONTAL_FOV = 58;
+const ZOOM_MIN = 0.6;
+const ZOOM_MAX = 1.9;
 const SEAT = { x: 0, z: 0.9 };
 const SEAT_FACING = Math.PI;
 const BULLET_HEIGHT = 0.6;
@@ -117,6 +121,9 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     const width = host.clientWidth;
     const height = Math.max(host.clientHeight, 1);
     camera.aspect = width / height;
+    /* Se fija el campo horizontal: en vertical (aspect < 1) el vertical crece y se ve el mismo ancho de mundo. */
+    const horizontal = (HORIZONTAL_FOV * Math.PI) / 180;
+    camera.fov = Math.min(110, (2 * Math.atan(Math.tan(horizontal / 2) / camera.aspect) * 180) / Math.PI);
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
     composer.setSize(width, height);
@@ -181,6 +188,7 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   let direction: Vector2 = { x: 0, z: 0 };
   let jumpRequested = false;
   let eye: Vector2 = { ...character.position };
+  let zoom = 1;
   let activeZone: WorldZone | null = null;
   let elapsed = 0;
   let last = 0;
@@ -325,7 +333,7 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
 
   function placeCamera(delta: number): void {
     eye = followCamera(eye, character.position, delta);
-    camera.position.set(eye.x + CAMERA_OFFSET.x, CAMERA_OFFSET.y, eye.z + CAMERA_OFFSET.z);
+    camera.position.set(eye.x + CAMERA_OFFSET.x * zoom, CAMERA_OFFSET.y * zoom, eye.z + CAMERA_OFFSET.z * zoom);
     target.set(eye.x, 1.2, eye.z);
     camera.lookAt(target);
   }
@@ -361,6 +369,8 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     setDirection: (next) => { direction = next; },
     jump: () => { jumpRequested = true; },
     recenter: () => { eye = { ...character.position }; },
+    setZoom: (factor) => { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, factor)); },
+    getZoom: () => zoom,
     runCommand: () => {
       if (heroAnimator.isSeated) {
         return;

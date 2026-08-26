@@ -64,6 +64,8 @@ const MAX_DELTA = 1 / 20;
 const CAMERA_OFFSET = new Vector3(0, 15, 13);
 /** Ángulo horizontal que se conserva: en pantallas estrechas la cámara abre el vertical para compensar. */
 const HORIZONTAL_FOV = 58;
+/** Campo vertical de escritorio; nunca se baja de aquí. */
+const DEFAULT_FOV = 48;
 const ZOOM_MIN = 0.6;
 const ZOOM_MAX = 1.9;
 const SEAT = { x: 0, z: 0.9 };
@@ -121,9 +123,14 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     const width = host.clientWidth;
     const height = Math.max(host.clientHeight, 1);
     camera.aspect = width / height;
-    /* Se fija el campo horizontal: en vertical (aspect < 1) el vertical crece y se ve el mismo ancho de mundo. */
+    /*
+     * En pantallas verticales se garantiza un ancho visible mínimo (abriendo el vertical); en
+     * horizontales manda el vertical de siempre. Sin el mínimo, una pantalla ultra-ancha
+     * encogía el vertical y la cámara quedaba pegada al personaje.
+     */
     const horizontal = (HORIZONTAL_FOV * Math.PI) / 180;
-    camera.fov = Math.min(110, (2 * Math.atan(Math.tan(horizontal / 2) / camera.aspect) * 180) / Math.PI);
+    const fromWidth = (2 * Math.atan(Math.tan(horizontal / 2) / camera.aspect) * 180) / Math.PI;
+    camera.fov = Math.min(110, Math.max(DEFAULT_FOV, fromWidth));
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
     composer.setSize(width, height);

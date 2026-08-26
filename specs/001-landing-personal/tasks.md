@@ -68,3 +68,31 @@
 
 - [x] **T25** — Suite completa en verde + `ng build` sin errores. _(todos)_
 - [x] **T26** — Stryker instalado y configurado; mutation testing sobre lógica crítica (i18n, blog, profile, directiva) con score 100% (52/52 mutantes muertos). _(Artículo 7)_
+
+## Bloque 12 — El mundo voxel en la raíz (R72–R87, enmienda v)
+
+- [ ] **T40** — Tests Rojo → `world/model/*` + `world/logic/step-character.ts`: aceleración, rozamiento, tope de velocidad, orientación de avance y recorte a los límites. _(R74, R76)_
+- [ ] **T41** — Tests Rojo → `world/logic/follow-camera.ts`: la cámara persigue al personaje con retardo y sin sobrepasarlo. _(R75)_
+- [ ] **T42** — Tests Rojo → `world/logic/world-zones.ts`: las ocho zonas con posición, clave i18n y destino; sin destinos duplicados. _(R77, R79, R80, R81)_
+- [ ] **T43** — Tests Rojo → `world/logic/nearest-zone.ts`: zona activa por proximidad dentro del radio, la más cercana si hay varias. _(R78)_
+- [ ] **T44** — Tests Rojo → `world/logic/read-move-input.ts`: teclas y arrastre a vector normalizado. _(R74, R87)_
+- [ ] **T45** — Tests Rojo → `world/logic/terrain-blocks.ts`: generación determinista del suelo. _(R72)_
+- [ ] **T46** — `world/scene/*`: terreno instanciado, muñeco con el avatar, zonas y luces. Sin Angular. _(R72, R73, R77)_
+- [ ] **T47** — `world/world-canvas.ts`: `afterNextRender`, `import()` dinámico, `runOutsideAngular`, guarda `destroyed` y `dispose()` completo. _(R85, skill `angular-threejs`)_
+- [ ] **T48** — `world/world-page.*`: capa accesible en HTML siempre presente + canvas encima + fallback sin WebGL. _(R82, R83, R84)_
+- [ ] **T49** — Mover `sections/hero/` y `sections/education/` a `world/`, borrar `features/home/`, montar `world.routes.ts` en `''`. _(R72, R81)_
+- [ ] **T50** — Traducciones ES/EN de los nombres de zona y de los controles. _(R78)_
+- [ ] **T51** — Suite en verde + mutation testing sobre `world/logic/*` (score ≥ 80%) + `ng build`. _(Artículo 7)_
+
+## Bloque 13 — El mundo continuo del desarrollador (R88–R94, enmienda w)
+
+- [ ] **T52** — Tests Rojo → `logic/terrain-height.ts`: determinista, acotada, `isInsideWorld` falso fuera del radio. _(R88, R94)_
+- [ ] **T53** — Tests Rojo → `logic/step-character.ts` vertical: gravedad, salto solo desde el suelo, aterrizaje sobre `terrainHeightAt`, sin salir del mundo. _(R89, R94)_
+- [ ] **T54** — Tests Rojo → `logic/follow-camera.ts` 3D + `recenter()`. _(R90)_
+- [ ] **T55** — Tests Rojo → `logic/read-move-input.ts`: espacio → salto, `c` → centrar. _(R89, R90)_
+- [ ] **T56** — `logic/world-zones.ts`: ocho zonas sobre el terreno con huella y entrada. _(R91, R92)_
+- [ ] **T57** — `scene/build-terrain.ts` + `scene/build-decor.ts` adaptado. _(R88)_
+- [ ] **T58** — `scene/build-landmarks.ts`: construcciones con piezas glTF reales + cartel de madera. _(R91, R92)_
+- [ ] **T59** — `scene/character-animator.ts` con salto; `scene/world-scene.ts` con cámara en perspectiva, terreno, salto y recentrado. _(R89, R90, R93)_
+- [ ] **T60** — `world-canvas.ts`: teclas espacio y `c`, botón de salto táctil. _(R87, R89, R90)_
+- [ ] **T61** — Borrar `platforms.ts`, `build-portals.ts`, `build-platforms.ts`; suite en verde; Stryker sobre `logic/*` ≥ 80%; `ng build`. _(Artículo 7)_

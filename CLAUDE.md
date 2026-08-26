@@ -34,6 +34,9 @@ Antes de crear o mover CUALQUIER archivo, lee `docs/architecture.md` — define 
 - `modular-architecture`
 - `mutation-testing`
 - `dev-note` — cómo redactar y publicar una nota de `/daily` (formato de bloques tipo `.md`, tono, gráficos SVG)
+- `angular-threejs` — cómo se integra three.js en este proyecto: dónde vive la escena, carga perezosa, bucle fuera de NgZone, limpieza del contexto WebGL y testing. **Ábrela siempre antes que las `threejs-*`.**
+- `threejs-fundamentals`, `threejs-geometry`, `threejs-materials`, `threejs-lighting`, `threejs-textures`, `threejs-animation`, `threejs-loaders`, `threejs-shaders`, `threejs-postprocessing`, `threejs-interaction` — referencia de la API de three.js (agnósticas de framework)
+- `webgpu-threejs-tsl` — WebGPU + TSL (Three.js Shading Language): `WebGPURenderer`, node materials, compute shaders, post-proceso y WGSL. Solo si la tarea pide WebGPU/TSL; el proyecto renderiza hoy con `WebGLRenderer`. Fuente: [dgreenheck/webgpu-claude-skill](https://github.com/dgreenheck/webgpu-claude-skill) (MIT), ajustada a three r185.
 
 ### Servidores MCP
 - `angular-cli` — Servidor MCP oficial del Angular CLI (on-demand, no requiere instalar nada).

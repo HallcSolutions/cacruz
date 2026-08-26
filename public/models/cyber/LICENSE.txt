@@ -1,0 +1,3 @@
+Cyberpunk Game Kit — by Quaternius (https://quaternius.com), distributed via poly.pizza.
+License: CC0 1.0 Universal (Public Domain). https://creativecommons.org/publicdomain/zero/1.0/
+Files renamed to their node names for readability.

@@ -1,0 +1,104 @@
+<section class="world" [class.world--fallback]="worldFailed()" [class.world--hit]="flashing()">
+  @if (!worldFailed()) {
+    <app-world-canvas
+      (zoneChange)="activeZone.set($event)"
+      (ready)="onReady($event)"
+      (progress)="progress.set($event)"
+      (health)="hp.set($event)"
+      (hit)="onHit()"
+      (enter)="enter()"
+    />
+    <div class="world__lives" [attr.aria-label]="'world.lives' | t">
+      @for (i of hearts; track i) {
+        <span class="world__heart" [class.world__heart--lost]="i >= hp()">♥</span>
+      }
+    </div>
+  }
+
+  @if (loading()) {
+    <p class="world__loading">
+      {{ 'world.loading' | t }}
+      @if (progress() > 0) {
+        <span class="world__loading-pct">{{ (progress() * 100).toFixed(0) }}%</span>
+      }
+    </p>
+  }
+
+  <!-- Capa accesible: siempre en el DOM para que se indexe y se pueda navegar sin jugar (R82, R84). -->
+  <div class="world__layer">
+    <h1 class="world__name">Christian Cruz Arango</h1>
+    <p class="world__role">{{ 'hero.role' | t }}</p>
+
+    @if (worldFailed()) {
+      <p class="world__fallback-note">{{ 'world.fallbackBody' | t }}</p>
+    }
+
+    <nav class="world__index" [attr.aria-label]="'world.fallbackTitle' | t">
+      @for (zone of zones; track zone.id) {
+        @if (zone.route) {
+          <a class="world__index-link" [routerLink]="zone.route">{{ zone.labelKey | t }}</a>
+        }
+      }
+    </nav>
+  </div>
+
+  @if (!worldFailed()) {
+    <div class="world__hud">
+      @if (activeZone(); as zone) {
+        <button type="button" class="world__enter" (click)="enter()">
+          <span class="world__enter-label">{{ zone.labelKey | t }}</span>
+          <span class="world__enter-action">{{ 'world.enter' | t }} <kbd class="world__enter-key">↵</kbd></span>
+        </button>
+      } @else {
+        <p class="world__hint">{{ 'world.hint' | t }}</p>
+      }
+      <button type="button" class="world__action" (click)="canvasJump()">
+        <span class="world__action-icon" aria-hidden="true">⤒</span>
+        <span class="world__action-label">{{ 'world.jump' | t }}</span>
+        <kbd class="world__action-key">␣</kbd>
+      </button>
+      <button type="button" class="world__action world__action--command" (click)="canvasCommand()">
+        <span class="world__action-icon" aria-hidden="true">$_</span>
+        <span class="world__action-label">{{ 'world.command' | t }}</span>
+        <kbd class="world__action-key">F</kbd>
+      </button>
+    </div>
+  }
+</section>
+
+@if (aboutOpen()) {
+  <div class="about" role="dialog" aria-modal="true" (click)="closeAbout()">
+    <article class="about__panel" (click)="$event.stopPropagation()">
+      <img class="about__avatar" src="images/avatar.png" alt="" />
+      <h2 class="about__name">Christian Cruz Arango</h2>
+      <p class="about__role">{{ 'hero.role' | t }}</p>
+      <p class="about__degree">{{ 'hero.degree' | t }}</p>
+      <dl class="about__stats">
+        <div><dt>12+</dt><dd>{{ 'hero.stats.years' | t }}</dd></div>
+        <div><dt>57</dt><dd>{{ 'hero.stats.repos' | t }}</dd></div>
+        <div><dt>2</dt><dd>{{ 'hero.stats.masters' | t }}</dd></div>
+      </dl>
+
+      <!-- Sentado al escritorio, en pantalla salen los proyectos (R81). -->
+      @if (profile.content.value(); as content) {
+        <h3 class="about__subtitle">{{ 'nav.projects' | t }}</h3>
+        <ul class="about__projects">
+          @for (project of content.projects; track project.name) {
+            <li>
+              <a [href]="project.repoUrl" target="_blank" rel="noopener">
+                <img [src]="project.imageUrl" alt="" loading="lazy" />
+                <span class="about__project-name">{{ project.name }}</span>
+                <span class="about__project-lang">{{ project.language }}</span>
+              </a>
+            </li>
+          }
+        </ul>
+      }
+      <button type="button" class="about__close" (click)="closeAbout()">✕</button>
+    </article>
+  </div>
+}
+
+@if (contactOpen()) {
+  <app-contact-modal (closed)="contactOpen.set(false)" />
+}

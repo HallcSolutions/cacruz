@@ -159,6 +159,52 @@ con un diseño editorial (sin cards) y animaciones memorables.
 ### Vídeo reproducible dentro de una nota _(enmienda 2026-07-30 u: "coloca este vídeo en la nota que se vea para que la gente pueda dar play")_
 - **R71** — WHERE una entrada del blog incluya un bloque de vídeo THE SYSTEM SHALL mostrarlo como reproductor incrustado dentro de la nota, con su pie de foto, para que el lector le dé play sin salir de la página. _(Amplía R54.)_
 
+### El mundo voxel sustituye la landing _(enmienda 2026-08-25 v: "quiero como yo en muñeco y que se vaya moviendo... algo bien chevere como el mundo de desarrollador de Christian"; "la landing page ya no existiría, sería el mundo que vas a crear y que cada uno vaya a lo que tenemos en el menú")_
+
+**Alcance de la enmienda:** la ruta raíz deja de ser una página editorial y pasa a ser un mundo 3D
+navegable. Las páginas de destino (`/experience`, `/stack`, `/projects`, `/software`,
+`/for-companies`, `/daily`) **no cambian**: el mundo es la nueva puerta de entrada, no un reemplazo
+del sitio. El contenido que hoy vive solo en el inicio (hero, constelación, formación) se reubica
+como zona del mundo y no se pierde.
+
+**El mundo**
+- **R72** — WHEN un visitante entra a la ruta raíz THE SYSTEM SHALL mostrar un mundo 3D de estilo voxel a pantalla completa, construido con la paleta del sitio, en lugar de la landing editorial. _(Deroga R1, R2, R22, R34, R35, R42 y R43 como sección editorial de la raíz; su contenido se reubica según R81.)_
+- **R73** — WHEN el mundo se muestra THE SYSTEM SHALL representar a Christian como un personaje voxel con su avatar como rostro, bajo control del visitante.
+- **R74** — WHEN el visitante pulsa WASD o las flechas, o arrastra en una pantalla táctil, THE SYSTEM SHALL desplazar al personaje con aceleración y frenado progresivos, orientándolo hacia su dirección de avance.
+- **R75** — WHILE el personaje se desplaza THE SYSTEM SHALL seguirlo con una cámara que acompaña con retardo, sin saltos ni giros bruscos.
+- **R76** — IF el personaje alcanza el límite del mundo THEN THE SYSTEM SHALL frenarlo dentro de los límites sin detenerlo en seco ni dejarlo caer.
+
+**Las zonas**
+- **R77** — WHEN el mundo se muestra THE SYSTEM SHALL construir una zona reconocible por cada destino del menú (trayectoria, stack, proyectos, software, para empresas, día a día), más una zona de presentación y una de contacto.
+- **R78** — WHEN el personaje se aproxima a una zona THE SYSTEM SHALL destacarla visualmente y anunciar su nombre en el idioma activo.
+- **R79** — WHEN el visitante activa la zona en la que está THE SYSTEM SHALL navegar a la ruta correspondiente del sitio, que se conserva sin cambios.
+- **R80** — WHEN el visitante activa la zona de contacto THE SYSTEM SHALL abrir el modal de contacto existente (R46-R53) sin abandonar el mundo.
+- **R81** — WHEN el visitante activa la zona de presentación THE SYSTEM SHALL mostrar quién es Christian —nombre, rol, años de experiencia, repositorios, formación académica y redes—, que es el contenido hoy repartido entre el hero y la sección de formación del inicio.
+
+**Que nadie se quede fuera**
+- **R82** — WHERE la raíz se muestre THE SYSTEM SHALL mantener visible la navegación del sitio sobre el mundo, operable con teclado y lectores de pantalla, de modo que todo destino sea alcanzable sin jugar.
+- **R83** — IF el navegador no soporta WebGL THEN THE SYSTEM SHALL mostrar en la raíz la presentación y la navegación en HTML, sin errores ni pantalla en negro.
+- **R84** — WHEN se sirve el HTML de la raíz THE SYSTEM SHALL incluir en el DOM el texto de presentación (nombre, rol y descripción) y conservar las etiquetas Open Graph del sitio, para que el enlace se indexe y se comparta como hoy. _(Extiende R59-R61.)_
+
+**Rendimiento y movimiento**
+- **R85** — WHILE el mundo se está cargando THE SYSTEM SHALL mostrar un estado de carga y no bloquear el primer pintado de la página.
+- **R86** — WHILE el visitante tenga activada la preferencia de movimiento reducido THE SYSTEM SHALL mantener el mundo jugable pero sin movimientos automáticos de cámara ni oscilaciones decorativas. _(Matiza R38 solo para el mundo 3D: R38 sigue vigente para fades, typewriter, marquee y fondo.)_
+- **R87** — WHEN el mundo se muestra en una pantalla angosta THE SYSTEM SHALL ofrecer controles táctiles y ajustar la carga de render para mantener el movimiento fluido.
+
+### El mundo continuo del desarrollador _(enmienda 2026-08-25 w: "un mundo de un desarrollador, que se pueda navegar en todo lado, saltar, centrarse; esos cuadros cámbialos por algo más bonito y que sea un mundo completo")_
+
+**Alcance:** sustituye el archipiélago de islas de la enmienda v por **un solo terreno continuo**.
+R72–R87 siguen vigentes salvo lo que aquí se redefine. Los modelos 3D son CC0 reales
+(Quaternius, Kenney), ya instalados en `public/models/`.
+
+- **R88** — WHEN el visitante entra a la raíz THE SYSTEM SHALL mostrar un único terreno continuo con relieve y vegetación, recorrible en toda su extensión, ambientado como el mundo de un desarrollador. _(Deroga las islas y puentes de la enmienda v.)_
+- **R89** — WHEN el visitante pulsa espacio (o el botón de salto en pantalla táctil) THE SYSTEM SHALL hacer saltar al personaje con su animación de salto y devolverlo al suelo por gravedad, sin poder encadenar un segundo salto en el aire.
+- **R90** — WHILE el personaje se desplaza THE SYSTEM SHALL seguirlo con la cámara manteniéndolo centrado en el encuadre; WHEN el visitante pulsa la tecla de centrar THE SYSTEM SHALL recolocar la cámara tras el personaje de inmediato.
+- **R91** — WHERE haya una zona THE SYSTEM SHALL representarla con una construcción reconocible de un mundo de desarrollador (oficina, sala de servidores, taller, biblioteca, buzón…), levantada con modelos reales, sin letreros de neón cuadrados. _(Deroga los portales de la enmienda v.)_
+- **R92** — WHEN el personaje llega a la entrada de una construcción THE SYSTEM SHALL mostrar su nombre en el idioma activo y permitir entrar. _(Mantiene R78–R81.)_
+- **R93** — WHILE el personaje está quieto, camina, corre, salta o se sienta THE SYSTEM SHALL reproducir la animación esquelética correspondiente del modelo, con transición suave entre estados.
+- **R94** — WHERE el terreno termine THE SYSTEM SHALL impedir que el personaje caiga fuera del mundo. _(Mantiene R76.)_
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

@@ -1,5 +1,24 @@
 [
   {
+    "slug": "why-the-test-comes-first",
+    "date": "2026-08-29",
+    "title": {
+      "es": "Por qué escribo el test antes que el código, ahora que el código lo escribe una IA",
+      "en": "Why I write the test before the code, now that an AI writes the code"
+    },
+    "summary": {
+      "es": "Me lo preguntan siempre: ¿no es más lento escribir la prueba primero? Lo que dice la investigación, incluida la parte que no me da la razón; por qué con un agente el orden deja de ser una preferencia; en qué se diferencian el mutation testing y el testing adversarial; y por qué sigo empezando por el test.",
+      "en": "People always ask: isn't writing the test first slower? What the research says, including the part that doesn't back me up; why with an agent the order stops being a preference; how mutation testing and adversarial testing differ; and why I still start with the test."
+    },
+    "tags": [
+      "tdd",
+      "mutation-testing",
+      "ia",
+      "calidad",
+      "sdd"
+    ]
+  },
+  {
     "slug": "land-an-idea-with-a-debate",
     "date": "2026-08-22",
     "title": {

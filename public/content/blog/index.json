@@ -1,5 +1,24 @@
 [
   {
+    "slug": "many-agents-one-repository",
+    "date": "2026-09-01",
+    "title": {
+      "es": "Varios agentes en un mismo repositorio: el tablero que evita que se pisen",
+      "en": "Many agents, one repository: the board that keeps them from colliding"
+    },
+    "summary": {
+      "es": "Dos archivos JSON que casi nadie mira hacen aquí lo que en un equipo hace el tablero: qué historias están abiertas, quién las abrió, en qué punto van y cuáles están cerradas con su evidencia. Sin worktrees y sin una rama por agente: un solo árbol de trabajo, cinco historias a la vez y un portón que se niega a medir si la historia no está en el tablero.",
+      "en": "Two JSON files almost nobody looks at do here what a board does in a team: which stories are open, who opened them, where they stand and which are closed with their evidence. No worktrees and no branch per agent: one working tree, five stories at once, and a gate that refuses to measure if the story isn't on the board."
+    },
+    "tags": [
+      "chalc",
+      "agentes",
+      "sdd",
+      "paralelismo",
+      "calidad"
+    ]
+  },
+  {
     "slug": "why-the-test-comes-first",
     "date": "2026-08-29",
     "title": {

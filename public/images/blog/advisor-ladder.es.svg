@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Las once acciones del consejero en orden de prioridad, de blocked_config a ask_human. La primera que aplica es la única que se ejecuta. work_task, implementar, está en el puesto nueve de once; ask_human es la guarda final.">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowG" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 2.1s linear infinite; }
+    .flow-b { stroke-dasharray: 6 8; animation: dash 3.1s linear infinite; }
+    .pulse { animation: glow 4.4s ease-in-out infinite; }
+    .p2 { animation-delay: .7s; } .p3 { animation-delay: 1.4s; }
+    .p4 { animation-delay: 2.1s; } .p5 { animation-delay: 2.8s; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes glow { 0%, 100% { opacity: .62; } 50% { opacity: 1; } }
+  </style>
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="28" fill="#ece7fb">Once acciones, y solo gana la primera</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">el agente no decide qué toca ahora: lee el estado del disco y obedece una sola acción</text>
+  <rect class="scan" x="40" y="104" width="620" height="32" rx="8" fill="#a78bfa" opacity=".14"/>
+  <style>.scan { animation: sweep 8s ease-in-out infinite; } @keyframes sweep { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(380px); } }</style>
+  <rect x="40" y="104" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="125" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">01</text>
+  <text x="88" y="125" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">blocked_config</text>
+  <text x="230" y="125" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">la configuración del portón está incompleta</text>
+  <rect x="40" y="142" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="163" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">02</text>
+  <text x="88" y="163" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">sync_contract</text>
+  <text x="230" y="163" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">el contrato del que dependes cambió</text>
+  <rect x="40" y="180" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="201" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">03</text>
+  <text x="88" y="201" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">read_mail</text>
+  <text x="230" y="201" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">tienes avisos sin leer</text>
+  <rect x="40" y="218" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="239" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">04</text>
+  <text x="88" y="239" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">run_gate</text>
+  <text x="230" y="239" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">hay código tocado sin medir</text>
+  <rect x="40" y="256" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="277" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">05</text>
+  <text x="88" y="277" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">fix_gate</text>
+  <text x="230" y="277" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">la última medición salió en rojo</text>
+  <rect x="40" y="294" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="315" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">06</text>
+  <text x="88" y="315" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">call_role</text>
+  <text x="230" y="315" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">falta que pase el revisor</text>
+  <rect x="40" y="332" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="353" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">07</text>
+  <text x="88" y="353" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">fix_review</text>
+  <text x="230" y="353" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">el revisor dejó hallazgos</text>
+  <rect x="40" y="370" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="391" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">08</text>
+  <text x="88" y="391" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">tick_task</text>
+  <text x="230" y="391" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">todo verde: marca la tarea</text>
+  <rect x="40" y="408" width="620" height="32" rx="8" fill="none" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="56" y="429" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">09</text>
+  <text x="88" y="429" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">work_task</text>
+  <text x="230" y="429" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">toca implementar la siguiente</text>
+  <rect x="40" y="446" width="620" height="32" rx="8" fill="none" stroke="#3a2f5c" stroke-width="1.2"/>
+  <text x="56" y="467" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">10</text>
+  <text x="88" y="467" font-family="ui-monospace, monospace" font-size="13" fill="#c9bfe8">done</text>
+  <text x="230" y="467" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">todas las tareas marcadas</text>
+  <rect x="40" y="484" width="620" height="32" rx="8" fill="none" stroke="#a78bfa" stroke-width="1.6"/>
+  <text x="56" y="505" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">11</text>
+  <text x="88" y="505" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">ask_human</text>
+  <text x="230" y="505" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">no puedo saber en qué punto va esto</text>
+  <rect class="pulse" x="700" y="104" width="260" height="260" rx="14" fill="none" stroke="#a78bfa" stroke-width="2"/>
+  <text x="718" y="134" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">· la primera que aplica gana</text>
+  <text x="718" y="154" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb"></text>
+  <text x="718" y="174" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">work_task —implementar— está</text>
+  <text x="718" y="194" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">en el puesto 9 de 11. Antes van</text>
+  <text x="718" y="214" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">los avisos, la medición y la</text>
+  <text x="718" y="234" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">revisión de otro agente.</text>
+  <text x="718" y="254" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb"></text>
+  <text x="718" y="274" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">ask_human no es una fila más:</text>
+  <text x="718" y="294" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">es la guarda que se dispara</text>
+  <text x="718" y="314" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">cuando el estado del disco no</text>
+  <text x="718" y="334" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">se puede leer sin ambigüedad.</text>
+  <text x="700" y="412" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">Un agente que no sabe dónde está</text>
+  <text x="700" y="432" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">tiene una única salida: preguntar.</text>
+</svg>

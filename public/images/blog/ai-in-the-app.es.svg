@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Dónde corre la IA de una app móvil">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="arrowg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 1.7s linear infinite; }
+    .slow { stroke-dasharray: 5 9; animation: dash 3.2s linear infinite; }
+    .sw { animation: toggle 4.5s ease-in-out infinite; }
+    .box { animation: pop 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .b2 { animation-delay: .6s; } .b3 { animation-delay: 1.2s; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes toggle { 0%, 48% { fill: #34d399; } 52%, 100% { fill: #fb7185; } }
+    @keyframes pop { 0%, 100% { opacity: .82; transform: translateY(0); } 12% { opacity: 1; transform: translateY(-3px); } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Dónde corre cada cosa</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">lo que sí tiene sentido en el teléfono · lo que nunca sale del servidor</text>
+
+  <!-- teléfono -->
+  <text x="46" y="118" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">EN EL TELÉFONO</text>
+  <rect x="40" y="128" width="216" height="252" rx="18" fill="none" stroke="#453768" stroke-width="2"/>
+  <g class="box"><rect x="56" y="156" width="184" height="52" rx="10" fill="none" stroke="#6b5a94" stroke-width="1.6"/>
+    <text x="148" y="180" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">modelo pequeño</text>
+    <text x="148" y="197" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">clasificar · resumir</text></g>
+  <g class="box b2"><rect x="56" y="220" width="184" height="52" rx="10" fill="none" stroke="#34d399" stroke-width="1.8"/>
+    <text x="148" y="244" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">funciona sin red</text>
+    <text x="148" y="261" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">sin sacar datos del móvil</text></g>
+  <g class="box b3"><rect x="56" y="284" width="184" height="52" rx="10" fill="none" stroke="#6b5a94" stroke-width="1.6"/>
+    <text x="148" y="308" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#ece7fb">pregunta si está encendida</text>
+    <text x="148" y="325" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">dibuja la interfaz según eso</text></g>
+  <text x="148" y="364" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#fb7185">aquí NO vive ninguna clave</text>
+
+  <line x1="262" y1="230" x2="336" y2="230" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+  <text x="299" y="218" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">mi API</text>
+
+  <!-- servidor -->
+  <text x="348" y="118" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">EN MI SERVIDOR</text>
+  <rect x="342" y="128" width="324" height="252" rx="16" fill="none" stroke="url(#ac)" stroke-width="2.4"/>
+  <circle class="sw" cx="374" cy="166" r="9"/>
+  <text x="394" y="171" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">interruptor por variable de entorno</text>
+  <text x="394" y="189" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">por defecto, apagado</text>
+  <rect x="366" y="208" width="276" height="52" rx="10" fill="none" stroke="#34d399" stroke-width="1.8"/>
+  <text x="504" y="232" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#34d399">guardia de entrada</text>
+  <text x="504" y="249" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">rechaza datos personales antes de llamar</text>
+  <rect x="366" y="272" width="276" height="52" rx="10" fill="none" stroke="#453768" stroke-width="1.6"/>
+  <text x="504" y="296" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb">medición del gasto</text>
+  <text x="504" y="313" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">en un sitio, no en un millón de teléfonos</text>
+  <text x="504" y="352" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">la clave del proveedor vive aquí</text>
+
+  <line x1="672" y1="230" x2="746" y2="230" class="slow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- proveedor -->
+  <text x="758" y="118" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">PROVEEDOR</text>
+  <rect x="752" y="128" width="208" height="130" rx="14" fill="none" stroke="#453768" stroke-width="1.8"/>
+  <text x="856" y="176" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">modelo grande</text>
+  <text x="856" y="200" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">razonar · datos frescos</text>
+  <text x="856" y="226" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">se cambia sin tocar el móvil</text>
+
+  <!-- salida determinista -->
+  <line x1="148" y1="414" x2="504" y2="414" class="flow" stroke="#34d399" stroke-width="1.8" marker-end="url(#arrowg)"/>
+  <text x="326" y="400" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#34d399">si la IA no está, la función sigue existiendo: salida determinista</text>
+  <text x="40" y="444" font-family="ui-monospace, monospace" font-size="12.5" fill="#8a7fb0">Apagar una función de IA no necesita publicar una versión ni pasar por una tienda.</text>
+</svg>

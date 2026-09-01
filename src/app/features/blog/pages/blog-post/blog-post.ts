@@ -4,15 +4,15 @@ import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../../../core/i18n/translate.pipe';
 import { TranslationService } from '../../../../core/i18n/translation.service';
 import { RevealOnScrollDirective } from '../../../../shared/directives/reveal-on-scroll.directive';
+import { RichText } from '../../components/rich-text/rich-text';
 import { BlogService } from '../../services/blog.service';
 import { formatPostDate } from '../../services/format-post-date';
-import { isExternalLink, parseRichText, TextSpan } from '../../services/parse-rich-text';
 import { youtubeEmbedUrl } from '../../services/youtube-embed-url';
 
 @Component({
   selector: 'app-blog-post',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [RouterLink, TranslatePipe, RevealOnScrollDirective],
+  imports: [RouterLink, TranslatePipe, RevealOnScrollDirective, RichText],
   templateUrl: './blog-post.html',
   styleUrl: './blog-post.css',
 })
@@ -26,14 +26,6 @@ export class BlogPostPage {
 
   protected formatDate(isoDate: string): string {
     return formatPostDate(isoDate, this.i18n.language());
-  }
-
-  protected spans(text: string): TextSpan[] {
-    return parseRichText(text);
-  }
-
-  protected isExternal(url: string): boolean {
-    return isExternalLink(url);
   }
 
   protected videoUrl(youtubeId: string): SafeResourceUrl {

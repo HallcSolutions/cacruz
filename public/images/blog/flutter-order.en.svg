@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="The order Flutter doesn't impose is the order I write">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .open { animation: drift 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .o2 { animation-delay: .6s; } .o3 { animation-delay: 1.2s; } .o4 { animation-delay: 1.8s; }
+    .fix { animation: lock 5s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .f2 { animation-delay: .5s; } .f3 { animation-delay: 1s; } .f4 { animation-delay: 1.5s; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.6s linear infinite; }
+    @keyframes drift { 0%, 100% { transform: translateX(0); opacity: .7; } 50% { transform: translateX(7px); opacity: 1; } }
+    @keyframes lock { 0%, 100% { opacity: .8; } 12% { opacity: 1; } }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Flutter ships no order; I write it myself</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">what the framework leaves open · what I close in writing</text>
+
+  <!-- izquierda: lo abierto -->
+  <text x="40" y="122" font-family="ui-monospace, monospace" font-size="13" fill="#fb7185">WHAT FLUTTER LEAVES OPEN</text>
+  <rect x="40" y="136" width="330" height="242" rx="14" fill="none" stroke="#4a2f45" stroke-width="2" stroke-dasharray="7 6"/>
+  <g class="open"><rect x="66" y="158" width="278" height="42" rx="9" fill="none" stroke="#6b4a62" stroke-width="1.6"/>
+    <text x="205" y="185" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#e7dcf2">you pick the state</text></g>
+  <g class="open o2"><rect x="66" y="210" width="278" height="42" rx="9" fill="none" stroke="#6b4a62" stroke-width="1.6"/>
+    <text x="205" y="237" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#e7dcf2">you pick the navigation</text></g>
+  <g class="open o3"><rect x="66" y="262" width="278" height="42" rx="9" fill="none" stroke="#6b4a62" stroke-width="1.6"/>
+    <text x="205" y="289" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#e7dcf2">you pick the folders</text></g>
+  <g class="open o4"><rect x="66" y="314" width="278" height="42" rx="9" fill="none" stroke="#6b4a62" stroke-width="1.6"/>
+    <text x="205" y="341" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#e7dcf2">you pick the styling</text></g>
+
+  <line x1="386" y1="256" x2="452" y2="256" class="flow" stroke="#a78bfa" stroke-width="2.4" marker-end="url(#arrow)"/>
+  <text x="419" y="240" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">I write it</text>
+
+  <!-- derecha: el orden escrito -->
+  <text x="470" y="122" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">THE ORDER I WRITE ON TOP</text>
+  <rect x="470" y="136" width="490" height="242" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.4"/>
+  <g class="fix"><rect x="492" y="144" width="446" height="52" rx="9" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="512" y="166" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">layers</text>
+    <text x="512" y="184" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">domain · application · infra · presentation</text></g>
+  <g class="fix f2"><rect x="492" y="202" width="446" height="52" rx="9" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="512" y="224" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">dependency</text>
+    <text x="512" y="242" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">a feature holds no other feature inside</text></g>
+  <g class="fix f3"><rect x="492" y="260" width="446" height="52" rx="9" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="512" y="282" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">limits</text>
+    <text x="512" y="300" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">300 lines · 40 per function · 4 parameters</text></g>
+  <g class="fix f4"><rect x="492" y="318" width="446" height="52" rx="9" fill="none" stroke="#34d399" stroke-width="1.8"/>
+    <text x="512" y="340" font-family="ui-monospace, monospace" font-size="12.5" fill="#34d399">as a test</text>
+    <text x="512" y="358" font-family="ui-monospace, monospace" font-size="11.5" fill="#ece7fb">a rule that can fail, fails in red</text></g>
+
+  <text x="500" y="420" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">One single target: the model aims there and stops improvising.</text>
+</svg>

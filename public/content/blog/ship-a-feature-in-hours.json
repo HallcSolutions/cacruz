@@ -125,7 +125,7 @@
       },
       {
         "kind": "quote",
-        "text": "Parten de la hipótesis del programador competente: el código con defectos suele estar muy cerca del código correcto. Los errores reales son pequeños —y por eso los mutantes pequeños son la mejor forma de cazarlos.",
+        "text": "Los programadores, sin embargo, tienen una gran ventaja que casi nunca se explota de verdad: ¡crean programas que están cerca de ser correctos!",
         "source": "DeMillo, Lipton y Sayward · IEEE Computer, 1978",
         "sourceUrl": "https://ieeexplore.ieee.org/document/1646911"
       },
@@ -290,7 +290,7 @@
       },
       {
         "kind": "quote",
-        "text": "They start from the competent programmer hypothesis: buggy code is usually very close to correct code. Real defects are small — and that's exactly why small mutants are the best way to hunt them.",
+        "text": "Programmers, however, have one great advantage that is almost never really exploited: they create programs that are close to being correct!",
         "source": "DeMillo, Lipton & Sayward · IEEE Computer, 1978",
         "sourceUrl": "https://ieeexplore.ieee.org/document/1646911"
       },

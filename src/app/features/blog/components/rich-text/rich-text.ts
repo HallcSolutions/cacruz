@@ -2,8 +2,8 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
 import { isExternalLink, parseRichText, TextSpan } from '../../services/parse-rich-text';
 
 /**
- * Pinta el texto de una nota con sus marcas: enlaces (R55), destacados (R95),
- * código en línea (R96) y código dentro de un destacado (R98). Vive en un solo sitio porque párrafos y pasos
+ * Pinta el texto de una nota con sus marcas: enlaces (R55), destacados (R101),
+ * código en línea (R102) y código dentro de un destacado (R104). Vive en un solo sitio porque párrafos y pasos
  * lo renderizan igual.
  */
 @Component({

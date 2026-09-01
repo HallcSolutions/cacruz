@@ -44,8 +44,8 @@ describe('parseRichText', () => {
 });
 
 describe('parseRichText — énfasis y código', () => {
-  // R95 — el texto entre dobles asteriscos se destaca y los asteriscos desaparecen
-  it('extracts a strong fragment between plain text (R95)', () => {
+  // R101 — el texto entre dobles asteriscos se destaca y los asteriscos desaparecen
+  it('extracts a strong fragment between plain text (R101)', () => {
     expect(parseRichText('el build va **después** del cambio')).toEqual([
       { kind: 'text', text: 'el build va ' },
       { kind: 'strong', spans: [{ kind: 'text', text: 'después' }] },
@@ -53,15 +53,15 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  it('extracts a strong fragment that opens the text (R95)', () => {
+  it('extracts a strong fragment that opens the text (R101)', () => {
     expect(parseRichText('**Reproducir primero.** Un bug entra en rojo')).toEqual([
       { kind: 'strong', spans: [{ kind: 'text', text: 'Reproducir primero.' }] },
       { kind: 'text', text: ' Un bug entra en rojo' },
     ]);
   });
 
-  // R96 — el texto entre comillas invertidas se muestra como código
-  it('extracts a code fragment between plain text (R96)', () => {
+  // R102 — el texto entre comillas invertidas se muestra como código
+  it('extracts a code fragment between plain text (R102)', () => {
     expect(parseRichText('corre `flutter test` y mira')).toEqual([
       { kind: 'text', text: 'corre ' },
       { kind: 'code', text: 'flutter test' },
@@ -69,7 +69,7 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  it('extracts several code fragments in the same text (R96)', () => {
+  it('extracts several code fragments in the same text (R102)', () => {
     expect(parseRichText('`core` y `shared`')).toEqual([
       { kind: 'code', text: 'core' },
       { kind: 'text', text: ' y ' },
@@ -77,8 +77,8 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  // R95 + R96 + R55 — las tres marcas conviven en el mismo texto
-  it('mixes links, strong and code in one text (R95, R96, R55)', () => {
+  // R101 + R102 + R55 — las tres marcas conviven en el mismo texto
+  it('mixes links, strong and code in one text (R101, R102, R55)', () => {
     expect(parseRichText('**Ojo:** lee [la guía](https://x.com) y corre `ng test`')).toEqual([
       { kind: 'strong', spans: [{ kind: 'text', text: 'Ojo:' }] },
       { kind: 'text', text: ' lee ' },
@@ -88,26 +88,26 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  it('does not treat a link label as emphasis (R55, R95)', () => {
+  it('does not treat a link label as emphasis (R55, R101)', () => {
     expect(parseRichText('[**no** es fuerte](https://x.com)')).toEqual([
       { kind: 'link', text: '**no** es fuerte', url: 'https://x.com' },
     ]);
   });
 
-  // R97 — marcas sin cerrar o vacías se dejan tal cual, sin perder caracteres
-  it('leaves an unclosed strong mark untouched (R97)', () => {
+  // R103 — marcas sin cerrar o vacías se dejan tal cual, sin perder caracteres
+  it('leaves an unclosed strong mark untouched (R103)', () => {
     expect(parseRichText('esto **no cierra')).toEqual([{ kind: 'text', text: 'esto **no cierra' }]);
   });
 
-  it('leaves an unclosed code mark untouched (R97)', () => {
+  it('leaves an unclosed code mark untouched (R103)', () => {
     expect(parseRichText('esto `no cierra')).toEqual([{ kind: 'text', text: 'esto `no cierra' }]);
   });
 
-  it('leaves empty marks untouched (R97)', () => {
+  it('leaves empty marks untouched (R103)', () => {
     expect(parseRichText('vacío **** y ``')).toEqual([{ kind: 'text', text: 'vacío **** y ``' }]);
   });
 
-  it('never loses characters (R97)', () => {
+  it('never loses characters (R103)', () => {
     const original = 'a **b** c `d` e [f](/g) h ** i ` j';
     const rebuilt = parseRichText(original)
       .map(function rebuild(span): string {
@@ -120,14 +120,14 @@ describe('parseRichText — énfasis y código', () => {
     expect(rebuilt).toBe(original);
   });
 
-  // R98 — el destacado puede contener código en línea, y el código no interpreta nada dentro
-  it('renders code inside a strong fragment (R98)', () => {
+  // R104 — el destacado puede contener código en línea, y el código no interpreta nada dentro
+  it('renders code inside a strong fragment (R104)', () => {
     expect(parseRichText('**`story`**')).toEqual([
       { kind: 'strong', spans: [{ kind: 'code', text: 'story' }] },
     ]);
   });
 
-  it('mixes code and text inside the same strong fragment (R98)', () => {
+  it('mixes code and text inside the same strong fragment (R104)', () => {
     expect(parseRichText('**`spec.md` — el QUÉ**')).toEqual([
       {
         kind: 'strong',
@@ -139,7 +139,7 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  it('keeps a strong fragment around its nested code (R98)', () => {
+  it('keeps a strong fragment around its nested code (R104)', () => {
     expect(parseRichText('el **campo `note`** manda')).toEqual([
       { kind: 'text', text: 'el ' },
       {
@@ -153,11 +153,11 @@ describe('parseRichText — énfasis y código', () => {
     ]);
   });
 
-  it('does not interpret marks inside a code fragment (R98)', () => {
+  it('does not interpret marks inside a code fragment (R104)', () => {
     expect(parseRichText('`a **b** c`')).toEqual([{ kind: 'code', text: 'a **b** c' }]);
   });
 
-  it('never loses characters with nested marks (R97, R98)', () => {
+  it('never loses characters with nested marks (R103, R104)', () => {
     const original = 'x **`a` y `b`** z `c` ** d';
     const rebuilt = parseRichText(original)
       .map(function rebuild(span): string {

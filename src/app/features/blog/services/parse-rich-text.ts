@@ -5,14 +5,14 @@ export type TextSpan =
   | { kind: 'code'; text: string };
 
 /**
- * Enlace `[texto](url)`, destacado `**texto**` o código `` `texto` `` (R55, R95, R96).
+ * Enlace `[texto](url)`, destacado `**texto**` o código `` `texto` `` (R55, R101, R102).
  * El enlace va primero: dentro de su etiqueta las demás marcas no se interpretan.
  * Cada marca exige contenido y cierre, así que `****`, ``` `` ``` o una marca a
- * medias no casan y el texto queda intacto (R97).
+ * medias no casan y el texto queda intacto (R103).
  */
 const RICH_PATTERN = /\[([^\]]+)\]\(([^)\s]+)\)|\*\*([^*]+)\*\*|`([^`]+)`/g;
 
-/** Lo único que se interpreta dentro de un destacado (R98). El código no anida nada. */
+/** Lo único que se interpreta dentro de un destacado (R104). El código no anida nada. */
 const CODE_PATTERN = /`([^`]+)`/g;
 
 /** Parte el texto en fragmentos: cada coincidencia del patrón, y lo que queda entre ellas. */
@@ -49,7 +49,7 @@ function toRichSpan([, linkText, url, strongText, codeText]: RegExpMatchArray): 
   return { kind: 'code', text: codeText };
 }
 
-/** Convierte el texto de una nota en fragmentos renderizables (R55, R95, R96, R97, R98). */
+/** Convierte el texto de una nota en fragmentos renderizables (R55, R101, R102, R103, R104). */
 export function parseRichText(text: string): TextSpan[] {
   return scan(text, RICH_PATTERN, toRichSpan);
 }

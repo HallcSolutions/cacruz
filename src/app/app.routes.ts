@@ -11,6 +11,11 @@ export const routes: Routes = [
       import('./features/experience/experience.routes').then((m) => m.EXPERIENCE_ROUTES),
   },
   {
+    path: 'education',
+    loadChildren: () =>
+      import('./features/education/education.routes').then((m) => m.EDUCATION_ROUTES),
+  },
+  {
     path: 'projects',
     loadChildren: () =>
       import('./features/projects/projects.routes').then((m) => m.PROJECTS_ROUTES),

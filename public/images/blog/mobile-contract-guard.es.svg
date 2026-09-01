@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Un contrato, tres consumidores y las tres redes que evitan que se separen">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <marker id="arrow" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 6 8; animation: dash 1.7s linear infinite; }
+    .lane { animation: pop 6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .p2 { animation-delay: .5s; } .p3 { animation-delay: 1s; }
+    .pulse { animation: beat 2.4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .net { animation: fade 5s ease-in-out infinite; }
+    .n2 { animation-delay: .8s; } .n3 { animation-delay: 1.6s; }
+    @keyframes dash { to { stroke-dashoffset: -56; } }
+    @keyframes pop { 0%, 100% { opacity: .8; transform: translateY(0); } 12% { opacity: 1; transform: translateY(-4px); } }
+    @keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    @keyframes fade { 0%, 100% { opacity: .55; } 40% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Un contrato, tres consumidores y tres redes</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">el móvil no es el último de la fila: lee lo mismo que los demás</text>
+
+  <!-- contrato -->
+  <g class="pulse">
+    <rect x="386" y="108" width="228" height="78" rx="14" fill="none" stroke="url(#ac)" stroke-width="2.6"/>
+    <text x="500" y="138" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" fill="#a78bfa">contracts/api.md</text>
+    <text x="500" y="162" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">de él salen las tres specs</text>
+  </g>
+
+  <line x1="440" y1="192" x2="196" y2="232" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="500" y1="192" x2="500" y2="232" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+  <line x1="560" y1="192" x2="804" y2="232" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#arrow)"/>
+
+  <!-- consumidores -->
+  <g class="lane"><rect x="60" y="240" width="248" height="76" rx="12" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="184" y="270" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13.5" fill="#ece7fb">backend · NestJS</text>
+    <text x="184" y="292" text-anchor="middle" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0">dueño del dato y de la autorización</text></g>
+  <g class="lane p2"><rect x="376" y="240" width="248" height="76" rx="12" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="500" y="270" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13.5" fill="#ece7fb">web · Angular</text>
+    <text x="500" y="292" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">consumidor</text></g>
+  <g class="lane p3"><rect x="692" y="240" width="248" height="76" rx="12" fill="none" stroke="#34d399" stroke-width="2.2"/>
+    <text x="816" y="270" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13.5" fill="#34d399">móvil · Flutter</text>
+    <text x="816" y="292" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">consumidor, con una regla extra</text></g>
+
+  <!-- las tres redes -->
+  <text x="40" y="356" font-family="ui-monospace, monospace" font-size="12.5" fill="#8a7fb0">LO QUE IMPIDE QUE UNA COPIA SE QUEDE ATRÁS</text>
+  <g class="net"><rect x="60" y="368" width="280" height="56" rx="10" fill="none" stroke="#453768" stroke-width="1.6"/>
+    <text x="200" y="392" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">huella entre specs</text>
+    <text x="200" y="411" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">si dos copias se separan, veo el diff</text></g>
+  <g class="net n2"><rect x="360" y="368" width="280" height="56" rx="10" fill="none" stroke="#453768" stroke-width="1.6"/>
+    <text x="500" y="392" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa">buzón entre repos</text>
+    <text x="500" y="411" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">enviar es opcional, leer no</text></g>
+  <g class="net n3"><rect x="660" y="368" width="280" height="56" rx="10" fill="none" stroke="#34d399" stroke-width="1.6"/>
+    <text x="800" y="392" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12.5" fill="#34d399">guardia dentro del código</text>
+    <text x="800" y="411" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">el manifiesto Dart se genera del OpenAPI</text></g>
+</svg>

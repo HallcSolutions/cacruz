@@ -1,0 +1,1153 @@
+{
+  "slug": "ship-a-flutter-app-with-ai",
+  "date": "2026-09-01",
+  "title": {
+    "es": "Cómo construyo una app móvil en Flutter con IA: el test va antes que el código",
+    "en": "How I build a Flutter mobile app with AI: the test comes before the code"
+  },
+  "summary": {
+    "es": "Angular trae la mitad del orden de fábrica; Flutter no trae ninguno. Cómo lo pongo yo antes de la primera línea: por qué elijo Flutter —y por qué es criterio mío, no un veredicto—, cómo escribo la especificación con una fila para el móvil, cómo pruebo y por qué el test va primero, cómo un contrato sincroniza backend, web y app, y por qué nada se cierra sin compilar para las dos tiendas.",
+    "en": "Angular ships half the order for free; Flutter ships none. How I supply it before the first line: why I pick Flutter — and why that's my judgement, not a verdict —, how I write the spec with a row for mobile, how I test and why the test comes first, how one contract syncs backend, web and app, and why nothing closes without a build for both stores."
+  },
+  "tags": [
+    "flutter",
+    "ia",
+    "tdd",
+    "arquitectura",
+    "sdd"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Le pides a la IA una pantalla en Flutter y sale bien. Le pides la siguiente y también sale bien, pero no se parece en nada a la primera: otro sitio para el estado, otra forma de navegar, otro criterio para las carpetas. A la décima ya no tienes una app, tienes diez apps pequeñas cosidas. Y en móvil ese desorden se paga distinto que en la web: no recargas la página, publicas una versión y esperas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El motivo no es el modelo, es el terreno. Angular trae decidido casi todo de fábrica: cómo se guarda el estado de la aplicación, cómo se navega entre pantallas, cómo se reparten las carpetas. Para cada cosa hay una manera de hacerla que el framework recompensa, y el modelo la conoce. Flutter decide mucho menos, y no por descuido: te da las piezas para dibujar la interfaz y el resto lo eliges tú. Para guardar el estado puedes usar Riverpod, Bloc, Provider o ninguno de los tres; para navegar, GoRouter o el navegador que Flutter trae de serie; y las carpetas las ordenas como te parezca. Ninguna de esas opciones es la equivocada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí aparece el problema con un agente. Yo elijo una manera y me acuerdo de ella mañana. El modelo no: en la pantalla de perfil usa Riverpod, en la de ajustes usa Provider, y en la tercera se inventa una clase con variables sueltas. Por separado las tres funcionan. Juntas son tres formas distintas de resolver lo mismo dentro de la misma aplicación, y el que la mantenga después —yo dentro de seis meses— tiene que aprenderse las tres."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que el orden lo pongo yo, por escrito y antes de pedir la primera línea. Así trabajo hoy: por qué elijo Flutter —y por qué es criterio mío, no un veredicto—, cómo escribo la especificación con una fila para el móvil, cómo pruebo y por qué el test va antes que el código, cómo un solo contrato mantiene sincronizados backend, web y app, cómo trato un bug, y qué se puede montar con IA dentro de una app para que además se sostenga."
+      },
+      {
+        "kind": "quote",
+        "text": "En Angular el framework pone la mitad del orden. En Flutter lo pongo yo entero, y por escrito: el modelo no puede seguir una convención que solo vive en mi cabeza."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué me gusta tanto Flutter (mi percepción, no un veredicto)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Empiezo por dejar clara una cosa, porque es fácil confundirla: lo que viene ahora es mi preferencia, formada trabajando en mis proyectos y con mis prioridades. No estoy diciendo que Flutter sea mejor que React Native o que el desarrollo nativo. Estoy diciendo por qué, cuando el proyecto es mío y decido yo, casi siempre acabo eligiéndolo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que me gana es esto, y todas son cosas que noto en el día a día, no en una tabla comparativa:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Flutter pinta sus propios píxeles.** No traduce mis widgets a los componentes del sistema: los dibuja él, con su propio motor gráfico. La consecuencia práctica es que lo que Flutter dibuja sale igual en los dos sistemas, y las diferencias que queden son las que yo decida dejar. Ese motor hoy es [Impeller](https://docs.flutter.dev/perf/impeller): en iOS es el único que hay —ya no se puede volver al anterior— y en Android viene activado desde la API 29, con Vulkan por delante y OpenGL de respaldo cuando el dispositivo no da para más. Su promesa está escrita en la documentación y es concreta: compila los shaders al construir el motor, para que no se compilen mientras la app corre.",
+          "**El hot reload cambia cómo se trabaja.** Guardo el archivo y el cambio aparece en menos de un segundo con el estado de la app intacto: sigo en el mismo formulario, con los mismos datos. Con IA eso pesa el doble, porque el ciclo «el modelo cambia algo, yo lo miro» pasa de minutos a segundos, y mirar es justamente lo que no hay que dejar de hacer.",
+          "**Todo es un widget, y los widgets se componen.** No hay plantillas por un lado y clases por otro: la interfaz es código, y una pantalla es la suma de piezas pequeñas encajadas. Eso encaja perfecto con cómo le paso trabajo a la IA: le doy una pieza con bordes, no una pantalla entera.",
+          "**Dart me avisa antes de ejecutar.** Tipado estático, nulos comprobados por el compilador y un analizador estricto. Buena parte de lo que un modelo se inventa —un método que no existe, un campo que puede ser nulo y no se comprueba— muere en `flutter analyze` en vez de morir en el teléfono de alguien.",
+          "**Un solo lenguaje y un solo proyecto para las dos tiendas.** No mantengo dos bases de código ni negocio entre dos equipos qué versión lleva qué. Para un equipo pequeño —o para uno solo— eso no es comodidad, es lo que hace viable el proyecto."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y lo que acepto a cambio, porque también existe: el binario pesa más que el de una app nativa equivalente; como Flutter dibuja su propia interfaz, hay detalles que no se sienten exactamente como los del sistema si no los cuidas; y para hablar con el sistema operativo dependo de plugins, así que cuando Apple o Google sacan una API nueva a veces toca esperar —o escribir yo el puente—. Si un proyecto vive de estrenar APIs del sistema el mismo día, nativo gana. Si el equipo ya es fuerte en JavaScript, React Native es una elección perfectamente razonable. Yo elijo Flutter por control del píxel y velocidad de iteración; alguien con otras prioridades acertará eligiendo otra cosa."
+      },
+      {
+        "kind": "quote",
+        "text": "Flutter no es la mejor herramienta del mercado. Es la que mejor encaja con mi forma de trabajar: piezas pequeñas, un ciclo cortísimo y un compilador que me contradice temprano."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué el móvil es el terreno más difícil para la IA"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Antes de contar el método hay que entender qué cambia respecto a la web, porque es lo que justifica ser tan estricto. En la web, un fallo se corrige y se despliega: quien recarga la página ya tiene el arreglo. En móvil no. Cada cambio pasa por un compilador nativo, por Gradle y por Xcode; publicas una versión, la revisa una tienda, y el fallo se queda instalado en el teléfono de la gente hasta que actualice. Ese es el coste real de equivocarse en móvil, y es de otro orden."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A eso se le suma algo que engaña mucho cuando trabajas con un agente: en Flutter, un test verde no prueba que la app arranque. `flutter test` corre en una máquina virtual de Dart, sin dispositivo y sin código nativo. Puedes tener la suite entera en verde y que `flutter build ios` reviente por un plugin, un permiso que falta en el `Info.plist` o una versión mínima de Android. Por eso mi puerta para cerrar una tarea no es el test: es el build de las dos plataformas."
+      },
+      {
+        "kind": "heading",
+        "text": "Primero la especificación, y con una fila para el móvil"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Trabajo por especificación: antes del código escribo un documento que dice **qué** tiene que pasar y **por qué**, sin decir cómo se implementa. Los criterios van en un formato fijo y aburrido a propósito —«cuando ocurre X, el sistema debe hacer Y»— y cada uno lleva un identificador: `R1`, `R2`, `R3`. Ese identificador es el que después aparece en la tarea, en el test y en la evidencia. Si algo no se puede escribir así, normalmente es que todavía no lo entiendo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que añadí al llegar al móvil es una fila. Cada requisito de la spec dice a qué superficie pertenece: backend, web o Flutter. Y cuando una superficie no participa, no se omite: se escribe `N/A` con el motivo. Parece burocracia hasta que te pasa lo de siempre: si el móvil no tiene su fila desde el principio, se entera de los cambios cuando ya no compila, y entonces cualquier discusión de contrato llega tarde y cuesta una versión."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --movil ./app",
+          "→ contrato compartido   specs/017-clase-en-vivo/contracts/api.md",
+          "→ spec backend  NestJS  R1 R2 R3 · R7 N/A",
+          "→ spec web      Angular R1 R4 R5",
+          "→ spec móvil    Flutter R1 R4 R6 R7",
+          "→ mismo número en los tres repos · huella del contrato estampada"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el detalle que más me importa de esa salida: el contrato se genera **primero** y las tres specs salen de él. La app móvil es un consumidor más del mismo contrato, no un caso aparte. En cuanto el móvil tiene endpoints propios «porque le vienen mejor», hay dos verdades sobre la misma funcionalidad, y una de las dos está mal sin que nadie lo sepa todavía."
+      },
+      {
+        "kind": "quote",
+        "text": "El móvil no es el último eslabón de la cadena: es un consumidor más del mismo contrato. En cuanto tiene endpoints propios, tienes dos verdades y una de las dos está mal."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué se está trabajando ahora mismo lo dice un archivo, no mi memoria"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con una persona esto no hace falta: sabes lo que estás haciendo. Con agentes se rompe enseguida. Abres una historia, la dejas a medias porque falta una decisión, empiezas otra, vuelves dos días después… y el agente que entra no tiene forma de saber qué está autorizado a tocar, qué quedó bloqueado y qué no debe reabrir. Si eso vive en la conversación, se pierde al cerrarla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que vive en un archivo versionado. Antes de ejecutar nada, el agente se añade a sí mismo a la lista de historias activas; si ya estaba, actualiza su nota. No es un tablero bonito: son cuatro campos por entrada."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specs/active-story.json",
+          "",
+          "{ \"schemaVersion\": 2,",
+          "  \"activeStories\": [",
+          "    { \"story\":      \"015-child-world-home\",",
+          "      \"selectedBy\": \"owner\",",
+          "      \"selectedAt\": \"2026-08-28\",",
+          "      \"note\":       \"25/28 tareas. T26 y T27 cerradas con su evidencia.",
+          "                      T13 bloqueada: R1 espera la representación",
+          "                      completa del avatar de la historia 012.\" },",
+          "    …",
+          "  ] }"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "La nota es lo que de verdad importa, y por eso es larga y fea: dice en qué punto está, qué tarea cerró con qué evidencia, qué está bloqueado y por culpa de quién, y qué **no** hay que tocar. Quien selecciona es el propietario —`selectedBy: \"owner\"`—, no el agente: pedirle a un agente que ayude, continúe o corrija una historia identificable es la orden que la activa; una pregunta informativa o mencionar un número no lo es."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pueden estar varias activas a la vez, y hoy lo están. Eso no es descontrol: cada agente coge **una** entrada, trabaja una sola tarea de ella y anota en su nota lo que el resto necesita saber. Lo que no puede pasar es que un agente dé por completada una tarea ajena, ni que arrastre el estado de una superficie a otra."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y cerrar es la operación inversa, hecha de una sola vez: se marcan las tareas con su evidencia, se retira la entrada de las activas y la historia entra en el registro de cerradas, que dice **en qué superficies** se completó y **dónde está la prueba**. Si Backend, Angular y Flutter no están los tres verdes o justificados como `N/A`, la historia no entra ahí; se queda activa con el bloqueo escrito."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specs/completed-stories.json",
+          "",
+          "{ \"story\":       \"001-platform-foundation\",",
+          "  \"completedAt\": \"2026-08-25\",",
+          "  \"completedBy\": \"owner\",",
+          "  \"surfaces\":    [\"backend\", \"angular\", \"flutter\"],",
+          "  \"evidence\":    [\"specs/001-platform-foundation/tasks.md\",",
+          "                  \"specs/001-platform-foundation/implementation-evidence.md\"],",
+          "  \"note\":        \"23 de 23 tareas. …\" }"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Un agente no recuerda la conversación de ayer, y yo tampoco del todo. Lo que está en marcha, lo que está bloqueado y lo que ya se cerró tienen que ser archivos, o no existen."
+      },
+      {
+        "kind": "heading",
+        "text": "La arquitectura, escrita antes de la primera línea"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La estructura no cambia de un proyecto a otro: el código se reparte por funcionalidad, no por tipo de archivo. Cada feature vive en su carpeta —`lib/features/perfil/`, `lib/features/ventas/`— y dentro se ordena en capas: `domain` es el negocio en Dart puro, sin Flutter dentro; `application` son los casos de uso; `infrastructure` habla con el mundo —HTTP, base de datos, sensores—; y `presentation` son las pantallas y los widgets. `core` guarda lo transversal y `shared` lo realmente reutilizable. La regla de dependencia es una sola y está escrita en las reglas del proyecto: un feature se apoya en `core` y en `shared`, y no mete dentro la lógica de otro feature."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Encima de eso escribo reglas concretas, del tipo que un modelo puede seguir y yo puedo revisar de un vistazo:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Una carpeta nace con su primer archivo real.** Nada de crear las cuatro capas por simetría ni de reservar el nombre con un archivo vacío. Si la carpeta se queda sin contenido, se borra. Los agentes tienden a montar el andamio entero «por si acaso», y ese andamio después nadie lo quita.",
+          "**Ningún color escrito a mano.** Un widget nunca pone `Colors.white`: lee del tema (`Theme.of(context).colorScheme`). Es una regla que se comprueba leyendo y que el modelo no puede negociar, y es lo que hace que el modo oscuro no se rompa en la pantalla número cuarenta.",
+          "**Los enums y las interfaces, en su propio archivo.** Nunca dentro de un modelo, un provider o un widget. Cuando un enum vive escondido en una pantalla, la siguiente pantalla se inventa el suyo.",
+          "**Límites medidos, no opinados.** 300 líneas por archivo, 40 por función, 4 parámetros, 3 niveles de anidamiento. No son gusto mío: los mide la herramienta y fallan solos.",
+          "**Un widget pequeño por archivo.** Cuando le paso una tarea a la IA le paso ese archivo, no la pantalla. Una pieza pequeña con una responsabilidad clara es un blanco acotado: menos contexto que sostener y menos que estropear."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una cosa que aprendí a base de repetirme: una regla que solo vive en un documento se incumple en silencio. Así que las que puedo, las convierto en test. Tengo un archivo de prueba cuyo único trabajo es hacer fallar `flutter test` si aparecen carpetas de plataformas que están fuera del alcance —`web/`, `macos/`, `windows/`— o si vuelve a colarse un archivo vacío de relleno dentro de `lib/`. Nadie tiene que acordarse de esa regla: si se rompe, la suite se pone roja y se ve."
+      },
+      {
+        "kind": "quote",
+        "text": "Una regla que solo vive en un documento se incumple sin ruido. La misma regla escrita como test se incumple en rojo."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/flutter-order.es.svg",
+        "caption": "Flutter deja abiertas las decisiones que Angular ya trae cerradas. El orden que la IA necesita lo escribo yo encima: capas, reglas y límites que se miden solos."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo pruebo, y por qué el test va antes que el código"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta es la parte que más me preguntan y la que más gente se salta, así que voy con el porqué antes que con el cómo. Formas de tener un criterio de «terminado» que no dependa de mi opinión hay unas cuantas —revisión de otra persona, QA manual, pruebas escritas después, telemetría en producción—, y ninguna es tontería. El test primero es la que a mí mejor me ha funcionado, y creo que por una razón concreta: si escribo el código primero y después el test, el test se parece al código que ya escribí —lo confirma— y por eso pasa. Si escribo el test primero, el test se parece al requisito, y entonces sí mide algo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con un agente delante eso pasa de buena práctica a necesidad. Un modelo te dice «listo» con la misma seguridad esté listo o no, y en móvil no puedes recargar la página para comprobarlo. El test que ya falla antes de que el agente escriba nada es lo que convierte «listo» en una afirmación comprobable: o pone en verde ese test concreto, o no ha terminado. Y no es una opinión mía sobre su trabajo, es un código de salida."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El ciclo es el clásico, y lo respeto tarea a tarea: escribo el test desde el criterio de aceptación, **lo veo fallar** —este paso no me lo salto: un test que nunca estuvo en rojo no ha demostrado que sepa detectar nada—, escribo el mínimo código que lo pone en verde, y solo entonces limpio. Cada grupo de tests lleva el identificador del requisito en el nombre, así que abrir la salida de `flutter test` es leer directamente qué requisito está en pie y cuál no."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En Flutter eso se reparte en una escalera de pruebas, y cada peldaño responde a una pregunta distinta:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Unitarias** (`test/features/<x>/domain`) — el negocio en Dart puro, sin Flutter. Son las más rápidas y las que más veces corro. Si una regla de negocio necesita un widget para probarse, la regla está en el sitio equivocado.",
+          "**De widget** (`testWidgets`) — monto la pieza en un árbol de verdad, la pinto y compruebo lo que el usuario vería: que aparece el texto, que el botón se puede pulsar, que el estado vacío se dibuja. Sin dispositivo y sin red, en milisegundos.",
+          "**Golden** — comparo la pantalla renderizada contra una imagen aprobada. Las guardo por ancho, idioma y variantes de accesibilidad, así que un cambio de espaciado que descoloca la pantalla en 390 px aparece como una diferencia de píxeles, no como un «se ve raro» de alguien tres semanas después.",
+          "**De accesibilidad y de idioma** — que los objetivos táctiles se puedan pulsar, que los textos tengan su etiqueta semántica, y que la pantalla siga cabiendo cuando el idioma alarga las palabras. Esto en móvil no es un extra: es lo que revisa una tienda.",
+          "**De integración y de rendimiento** (`integration_test`) — la app real sobre un emulador o un dispositivo, recorriendo un flujo entero. Aquí es donde se cae lo que ningún test unitario ve: permisos, arranque, plugins, y cuánto tarda en pintarse cada fotograma —mido la mediana y el percentil 95— cuando la pantalla tiene animación de verdad."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "flutter test                       # unitarias, widget, golden, accesibilidad",
+          "→ 06:48 +795: All tests passed!",
+          "",
+          "flutter test integration_test/     # la app real, sobre dispositivo",
+          "→ recorrido completo, con el tiempo de cada fotograma medido"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Dos reglas más que me ahorran problemas. La primera: `flutter test` no toca la red ni datos reales, nunca. Las dependencias de fuera se sustituyen por dobles —fixtures escritas a mano en una carpeta `support/`, o `mocktail` cuando el doble se merece una librería— y así la suite corre igual en mi portátil, en el de otro y en integración continua, sin depender de que un servidor esté vivo. La segunda: cada archivo de prueba empieza con un comentario que dice a qué requisito responde. Cuando en seis meses alguien —o yo— quiera cambiar ese test, lo primero que lee es qué se supone que estaba protegiendo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí va lo que más me convenció de todo esto. Donde arranqué escribiendo el test primero hay hoy 138 archivos de prueba y 795 pruebas que corren en menos de siete minutos. Donde no lo hice, con más features y más años encima, hay tres archivos. No fue falta de ganas: arrancó sin esa regla, y a partir de ahí siempre hubo algo más urgente que escribir el primer test. Añadir pruebas a una app que ya está hecha es un proyecto en sí mismo; escribirlas primero no cuesta prácticamente nada. Ese es todo el truco, y es la razón real por la que el orden importa."
+      },
+      {
+        "kind": "quote",
+        "text": "Un test escrito después del código se parece al código y por eso pasa. Un test escrito antes se parece al requisito, y por eso sirve para algo."
+      },
+      {
+        "kind": "heading",
+        "text": "Mutantes: cómo sé que esos tests valen algo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Tener muchos tests en verde no prueba que sean buenos. Para eso uso pruebas de mutación: la herramienta cambia el código a propósito —un `>` por un `>=`, un `true` por un `false`, una condición borrada— y vuelve a correr la suite. Si los tests siguen en verde después de romper el código, ese test no estaba comprobando nada. En Dart lo hago con el paquete `mutation_test`, y el listón es matar al menos el 80% de esos mutantes."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "dart run mutation_test -f all -o reports/mutation mutation.hu015-t13.xml",
+          "→ mutantes generados: 131",
+          "→ sobrevivieron: 5",
+          "→ detectados: 96,18%   (umbral 80%)"
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "mutation.hu017-lifecycle.xml   ← una de las 29",
+          "",
+          "<mutations version=\"1.2\">",
+          "  <!-- CLASS-T12 · R20/R24: el juego Flame que cambié -->",
+          "  <files>",
+          "    <file>lib/features/game_runtime/…/flame_listen_find_graybox_game.dart</file>",
+          "  </files>",
+          "  <commands>",
+          "    <command group=\"test\" expected-return=\"0\" timeout=\"180\">",
+          "      flutter test test/…/class_scene_parity_test.dart",
+          "                   test/…/mobile_runtime_adapter_contract_test.dart",
+          "    </command>",
+          "  </commands>",
+          "  <threshold failure=\"80\"/>",
+          "</mutations>"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Son tres decisiones y ninguna es decorativa. **Qué se puede romper**: la lista de archivos que la herramienta tiene permiso para mutar, que son exactamente los que toqué en esa tarea. **Quién tiene que darse cuenta**: el comando concreto —no `flutter test` entero, sino los archivos de prueba que cubren ese código—, porque si dejo la suite completa cada mutante tarda minutos en morir y la medición deja de caber en una tarea. Y **el listón**: por debajo del 80% la puerta no deja cerrar. El comentario de arriba no es adorno: dice a qué tarea y a qué requisitos pertenece esta medición, así que dentro de seis meses se sabe qué se estaba midiendo y por qué."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso hay 29 de estos archivos en el proyecto, uno por tarea medida. Tener uno solo y global sería inútil por dos motivos: correr la mutación sobre una app Flutter entera tarda demasiado para hacerlo en cada tarea, y además mezcla mi evidencia con trabajo ajeno. Acotarlo resuelve las dos cosas a la vez: tarda minutos y el número que sale habla solo de lo que hice yo."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/test-ladder.es.svg",
+        "caption": "Cada peldaño responde una pregunta distinta y cuesta más que el anterior. Los mutantes no son un peldaño más: son la pregunta sobre los peldaños de abajo."
+      },
+      {
+        "kind": "heading",
+        "text": "El contrato: cómo sincronizo backend, web y móvil"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El fallo clásico de una feature a tres bandas no es técnico, es de comunicación. El backend cambia un 422 por un 409 a mitad de camino, edita su copia del contrato y sigue trabajando. La web y el móvil siguen programando contra algo que ya no existe y se enteran en la integración, que es justo cuando más caro sale. Contra eso tengo tres redes, y ninguna depende de que alguien se acuerde de avisar."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El contrato lleva huella.** Se copia idéntico en la spec de cada superficie. Si dos copias se separan, el flujo me lo dice antes de dejarme correr la puerta de calidad, y me enseña el `diff` en vez de sobrescribir mi copia: lo importante no es igualar los archivos, es ver **qué** cambió para adaptar el código.",
+          "**Un buzón entre repos** para lo que no está en ningún archivo: «cambié 422 por 409 en /pagos». Enviar es opcional, leer no: mientras haya notas sin leer, el flujo me lo recuerda antes de seguir.",
+          "**Un guardia dentro del código móvil.** El manifiesto Dart —versión del contrato, operaciones y schemas— se genera desde el `openapi.yaml` del backend y no se edita a mano. Al arrancar se compara con lo que el cliente Dart cree consumir, y si no coinciden falla ahí mismo, con un mensaje claro, en vez de reventar en producción contra un campo que ya no existe."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/mail.mjs send --to movil --message \"422 → 409 en POST /pagos\"",
+          "",
+          "NEXT_ACTION: sync_contract",
+          "REASON: tu copia del contrato está 2 líneas por detrás de la de `back`.",
+          "COMMAND: diff specs/017-clase/contracts/api.md ../back/specs/017-clase/contracts/api.md"
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "pnpm --dir backend generate:contracts",
+          "→ mobile/lib/core/api/generated/openapi_contract_manifest.dart",
+          "",
+          "flutter test",
+          "→ StateError: El contrato Dart no coincide con el OpenAPI canónico."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/mobile-contract-guard.es.svg",
+        "caption": "Un contrato, tres consumidores y tres redes distintas: la huella entre specs, el buzón entre repos y el guardia dentro del código móvil."
+      },
+      {
+        "kind": "heading",
+        "text": "Los modelos: el otro sitio donde el móvil se desincroniza"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aunque el contrato esté sincronizado, queda un punto donde se rompe todo: los modelos de datos. En Flutter los genero con `freezed`, y tienen que coincidir con las entidades del backend. Esa comprobación se la dejé escrita al asistente como una lista, porque es exactamente el tipo de detalle que un modelo pasa por alto: nombres de campo, tipos, qué es opcional y qué es obligatorio, los valores exactos de cada enum, el verbo HTTP correcto y la forma del envoltorio de respuesta. Seis cosas, y basta con fallar una para que la pantalla salga vacía sin ningún error visible."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y una regla propia del móvil que en la web no hace falta: leer el JSON a la defensiva. Conversiones seguras, valores por defecto para lo que falte, y nunca dar por hecho que un campo llegó. La razón es la de siempre, pero conviene decirla entera: en la web, si el backend añade un campo y algo se rompe, despliegas y ya está. En móvil hay usuarios con la versión de hace tres meses instalada, y esa versión tiene que sobrevivir a un backend que ha seguido avanzando."
+      },
+      {
+        "kind": "quote",
+        "text": "En la web, un cambio de contrato se arregla desplegando. En móvil se arregla publicando una versión y esperando a que la gente actualice. Por eso el móvil lee siempre a la defensiva."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo cierro una tarea en Flutter: el build es la puerta, no el test"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Todo lo anterior confluye en un solo comando. Una tarea no está terminada porque el agente lo diga ni porque la suite esté verde: está terminada cuando esto acaba en cero."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "bash tool/verify-task.sh",
+          "→ dart format --set-exit-if-changed lib test   ✓",
+          "→ flutter analyze                              ✓",
+          "→ flutter test                                 ✓ 795 pruebas",
+          "→ flutter build apk --debug                    ✓",
+          "→ flutter build ios --simulator                ✓"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con tres condiciones que no se relajan. El build va **después** del último cambio: si vuelvo a tocar un archivo, la evidencia caduca y se repite. Un build de Android no cierra iOS ni al revés, porque los fallos que buscas ahí son justo los que solo aparecen en una de las dos. Y si una plataforma no está disponible —no tengo un macOS delante—, la tarea se queda sin marcar y la historia se queda abierta con el bloqueo escrito. No existe el «verificado a medias»."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "Historia y tarea:       015 · T13",
+          "Superficie/plataforma:  Flutter · Android + iOS",
+          "Último cambio incluido: child_home_screen.dart",
+          "Comando:                bash tool/verify-task.sh",
+          "Código de salida:       0",
+          "Resultado:              pass"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese bloque es lo que se adjunta a la tarea en el mismo momento en que se marca como hecha. Parece exagerado hasta que recuerdas cómo es trabajar con agentes: la frase «tarea terminada» sale igual de convincente esté hecha o no. La frase no es evidencia; el código de salida sí. De dónde salió esta manía lo conté entero en [cerrar una tarea con evidencia](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "Los bugs: un defecto no abre una historia nueva, reabre la suya"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Los bugs los trato con cuatro reglas, y las cuatro existen por algo que me pasó:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Reproducir primero, en rojo.** Un bug entra al proyecto como un test que falla, no como una descripción. Si no consigo escribir ese test, todavía no entiendo el bug, y arreglar lo que no entiendes es cómo se crean dos bugs.",
+          "**El defecto vuelve a su historia, no a una carpeta de bugs.** Si el fallo pertenece a la historia que definió ese comportamiento, esa historia se reabre y conserva todo su historial. Así la especificación sigue describiendo lo que la app hace de verdad, en vez de convertirse en un documento que describe la versión ideal de hace tres meses.",
+          "**El arreglo mínimo, y el test se queda.** La prueba que reprodujo el bug pasa a ser la que impide que vuelva. Es la única prueba de la suite que ya demostró, con hechos, que sabe detectar ese fallo.",
+          "**Si el bug enseñó que la spec estaba mal, cambio la spec primero.** Un arreglo que contradice la especificación deja dos verdades en el proyecto, y la próxima persona —o el próximo agente— elegirá la equivocada."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y dos defectos reales que explican por qué no me fío solo de los tests. El primero lo destapó la mutación, y no fue en Flutter sino en la superficie web del mismo proyecto —lo cuento igual porque la lección es de las tres—: al medir un módulo que estaba en verde, el porcentaje de mutantes detectados salió en 22,03%, y al reforzar los tests hasta el 86,78% aparecieron dos cosas que nadie sabía: una parte del código sin una sola prueba, y un defecto de verdad en un aviso de guardado que la interfaz estaba dando por bueno."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El segundo no lo podía cazar ningún test unitario, y estaba en el backend. Había un caso de uso perfectamente escrito y perfectamente probado… al que nadie llamaba. El usuario pagaba y su invitación no salía nunca. Toda la suite en verde y la funcionalidad, en la práctica, no existía. Eso solo aparece ejecutando el flujo completo de verdad, y es la razón por la que la escalera de pruebas termina en `integration_test` y no en las unitarias."
+      },
+      {
+        "kind": "quote",
+        "text": "El test más peligroso es el que pasa. Un caso de uso perfectamente probado al que nadie llama da verde todo el día mientras el usuario espera un correo que no llega."
+      },
+      {
+        "kind": "heading",
+        "text": "La IA dentro de la app: la llave no vive en el teléfono"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cambio de tema: ya no cómo uso la IA para construir la app, sino cómo pongo IA dentro de la app. Y la primera decisión no se negocia: la clave del proveedor no viaja en el binario. Una app instalada es un archivo en manos de cualquiera, y una clave metida ahí es una clave publicada, por muy ofuscada que esté. El modelo se llama desde el backend: la app habla con mi API y mi API habla con el proveedor."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Encima de eso hay un detalle pequeño que cambia mucho: la app pregunta primero si la función existe. Antes de dibujar el chat hace una llamada de estado y monta la interfaz según la respuesta, en lugar de dar por hecho que está disponible. Eso permite apagar una función de IA sin publicar una versión nueva: se cambia una variable de entorno en el servidor, el endpoint responde que está deshabilitada y la app cae a su alternativa determinista. Y por defecto está apagada: si falta la configuración, la función no se enciende sola."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Apagas una función de IA en segundos, sin pasar por la revisión de una tienda ni esperar a que nadie actualice.",
+          "Filtras la entrada antes de que salga a un proveedor. Cuando lo que se envía puede llevar datos de un menor, un guardia recorre la entrada y la rechaza **antes** de cualquier llamada de red.",
+          "Mides el gasto en un sitio, no repartido en un millón de teléfonos.",
+          "Cambias de modelo o de proveedor sin tocar el móvil ni publicar nada."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "Una clave dentro de una app instalada es una clave publicada. La IA se llama desde el servidor; el móvil solo pregunta si está encendida."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-in-the-app.es.svg",
+        "caption": "Dónde corre cada cosa. El interruptor y el guardia viven en el servidor; en el teléfono solo corre lo que tiene sentido que corra ahí, y siempre con una salida determinista detrás."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué sí tiene sentido ejecutar dentro del teléfono"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo contrario también existe, y en 2026 ya no es un experimento: hay modelos pequeños corriendo dentro del dispositivo. Los uso para lo que el servidor hace mal: respuesta en milisegundos, funcionar sin cobertura y no sacar datos del teléfono. El panorama hoy, con nombres, para que puedas comprobarlo:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[flutter_gemma](https://pub.dev/packages/flutter_gemma) es el camino más rodado para meter un modelo pequeño dentro de una app Flutter: corre sobre MediaPipe y LiteRT-LM, con aceleración por GPU en Android e iOS.",
+          "[La guía de inferencia de Google AI Edge](https://developers.google.com/edge/mediapipe/solutions/genai/llm_inference) es la base de todo eso, y trae un aviso importante: la API de inferencia de MediaPipe está en mantenimiento y el camino recomendado hoy es LiteRT-LM.",
+          "[Firebase AI Logic](https://firebase.blog/posts/2026/05/google-io-2026-announcements/) es la apuesta de Google por el modo híbrido —el dispositivo primero, la nube cuando no llega—. En abril de 2026 Firebase la daba ya por disponible en Android y anunciada para iOS en mayo, y en el I/O de mayo confirmó que iOS ya la tiene; su propia documentación la sigue marcando como función experimental, sin SLA ni política de obsolescencia. Y está para Android, iOS y web: Flutter no aparece en esa lista. El paquete `firebase_ai` te da la mitad de nube; la parte de dispositivo todavía pasa por canales nativos, así que hoy el híbrido multiplataforma real viene de `flutter_gemma`, no de Firebase."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mi criterio para repartir es simple. Dentro del teléfono: clasificar, resumir algo corto, autocompletar, sugerir, y cualquier cosa que deba seguir funcionando en el metro. En el servidor: lo que necesita razonar, datos frescos o un modelo grande. Y siempre, en los dos casos, con una salida determinista detrás: si el modelo no está disponible, la función sigue existiendo con menos gracia, pero existe. Una app que se queda a medias porque no hay red no es una app con IA, es una app rota."
+      },
+      {
+        "kind": "heading",
+        "text": "Y que además sea rentable: los números que me cambian decisiones técnicas"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí hay que ser honesto, porque se vende mucho lo contrario: meter IA en una app no la hace rentable. El informe de RevenueCat de 2026, hecho sobre 115.000 apps de suscripción, deja datos incómodos en los dos sentidos."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Las apps con IA facturan más por usuario: 30,16 USD de valor realizado en el primer año, frente a 21,37 USD de las demás. Un 41% más.",
+          "Y retienen peor: las suscripciones mensuales de apps de IA retienen un 36% peor a doce meses que las de apps tradicionales.",
+          "El muro de pago duro convierte cinco veces más que el freemium —10,7% frente a 2,1% a día 35— y genera ocho veces más ingreso por instalación a día 60: 3,09 USD frente a 0,38 USD, con una retención a un año prácticamente idéntica.",
+          "En Google Play, el 31% de las cancelaciones son involuntarias —simplemente falla el cobro—, frente al 14% en la App Store."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada uno de esos números cambia algo concreto en el código móvil, y esto es lo que hago con ellos:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**La pantalla de pago es una feature, no un remate.** Tiene su spec, sus `R#` y sus tests, y se construye cuando toca, no la semana antes de publicar. Si convierte cinco veces mejor cuando se pide pronto, es la pantalla más importante de la app.",
+          "**Si la IA es la novedad, la retención hay que ganarla con otra cosa.** Lo que retiene es el hábito: contenido que cambia, progreso que se ve y notificaciones que valen la pena. Eso son features con su propio trabajo, no un efecto secundario de tener un chat.",
+          "**El coste por petición se diseña.** Cacheo lo que se repite, resumo el historial antes de enviarlo y bajo a un modelo más barato cuando la tarea no da para más. En una app que escala, la diferencia entre pensar esto al principio o al final es la diferencia entre un margen y una factura.",
+          "**Los fallos de cobro son un caso de uso, no un accidente.** Con reintento, aviso dentro de la app y una forma clara de arreglar el método de pago. Si casi un tercio de las bajas en Android son involuntarias, ahí hay ingreso que se pierde por no haber escrito una pantalla."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto se resuelve en la propia estructura: la separación entre el modo gratuito y el conectado es una carpeta, `free` y `connected`, y no una bandera. El modo gratuito funciona entero sin cuenta y sin servidor, con la base de datos dentro del teléfono: alguien puede usar la app durante meses sin que a mí me cueste un céntimo de infraestructura. El modo conectado añade lo que necesita servidor de verdad. Escalar así no es una decisión de negocio que se toma al final: es una decisión de arquitectura que se toma al principio, porque después no se mueve."
+      },
+      {
+        "kind": "quote",
+        "text": "Meter IA en una app sube lo que paga cada usuario y baja lo que aguanta. Si la IA es la novedad y no el hábito, estás alquilando crecimiento."
+      },
+      {
+        "kind": "heading",
+        "text": "Las herramientas que le doy al modelo cuando programa Flutter"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por último, la capa de contexto, que en Flutter existe igual que en Angular. Un servidor MCP es un puente que le da al asistente herramientas y datos en vivo en lugar de lo que memorizó, y Flutter publica el suyo dentro del propio SDK: no hay nada que instalar, se levanta con `dart mcp-server`. Estas son las herramientas que me devolvió al preguntarle, sobre la versión que tengo puesta:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "dart mcp-server",
+          "→ herramientas del asistente (Flutter 3.47, 11 en total):",
+          "   pub_dev_search     · busca el paquete en pub.dev antes de inventárselo",
+          "   get_runtime_errors · lee los errores de la app en ejecución",
+          "   hot_reload         · recarga la app sin perder el estado",
+          "   widget_inspector   · inspecciona el árbol de widgets que hay en pantalla"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El equipo de Flutter publica además sus propias skills oficiales —fichas de conocimiento que el asistente abre solo cuando la tarea las necesita— y hay paquetes de pub.dev que empiezan a traer las suyas. Es la misma idea que uso en Angular: que el «cómo» idiomático de hoy no dependa de lo que el modelo recuerde de hace dos años, ni de que yo lo repita en cada conversación."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Pero conviene repetir el aviso que ya di en [cómo programo Angular con IA](/daily/how-i-code-angular-with-ai): esto es solo la capa que le da contexto al modelo. Debajo está el método —especificación, test, código—, están los agentes y está la verificación. Sin eso, un MCP y unas skills solo consiguen que el modelo escriba más rápido un código que después no puedes cerrar."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El móvil deja de enterarse tarde: tiene su fila en la especificación desde el primer día y su copia del contrato con huella.",
+          "Cerrar una tarea significa que compila en Android y en iOS, con la fecha y el código de salida escritos al lado.",
+          "Un bug entra en rojo, se queda como test para siempre y devuelve la vida a su historia en vez de dejarla mintiendo.",
+          "Los tests miden algo: los mutantes dicen qué se puede romper en el código sin que ninguno se entere.",
+          "La IA de la app se apaga desde el servidor en segundos, sin pasar por la revisión de una tienda.",
+          "Las decisiones caras —qué corre en el teléfono, qué en el servidor y qué se cobra— se toman con criterio escrito, no por moda."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así construyo hoy en Flutter con IA: el orden que el framework no impone lo pongo yo por escrito, el test va antes que el código, el contrato manda sobre las tres superficies y nada se cierra sin compilar para las dos tiendas. Si quieres ver dónde lo aplico, pásate por [mis proyectos](/projects) o escríbeme desde [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Desarrollar con IA — Flutter](https://docs.flutter.dev/ai/get-started): la página oficial para instalar los complementos de agente, con el servidor MCP de Dart y Flutter y las skills de `flutter/agent-plugins`.",
+          "[El servidor MCP de Dart y Flutter](https://blog.flutter.dev/supercharge-your-dart-flutter-development-experience-with-the-dart-mcp-server-2edcc8107b49): qué herramientas expone y cómo conectarlo con tu asistente.",
+          "[Impeller, el motor de render de Flutter](https://docs.flutter.dev/perf/impeller): sus objetivos declarados, en qué plataformas está activo y qué compila antes de ejecutar.",
+          "[flutter_gemma](https://pub.dev/packages/flutter_gemma): el paquete con el que hoy se ejecuta un modelo pequeño dentro de una app Flutter.",
+          "[Guía de inferencia de LLM — Google AI Edge](https://developers.google.com/edge/mediapipe/solutions/genai/llm_inference): la referencia oficial de inferencia en dispositivo y la migración recomendada a LiteRT-LM.",
+          "[Novedades de Firebase en Google I/O 2026](https://firebase.blog/posts/2026/05/google-io-2026-announcements/): el estado real del modo híbrido dispositivo/nube.",
+          "[State of Subscription Apps 2026 — RevenueCat](https://www.revenuecat.com/state-of-subscription-apps): de donde salen los números de conversión, retención y valor por usuario que cito arriba.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la CLI con la que orquesto el contrato compartido, las puertas de calidad y el buzón entre repos."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "You ask the AI for a screen in Flutter and it comes out fine. You ask for the next one and that's fine too, except it looks nothing like the first: state in a different place, navigation done another way, folders organized on a third principle. By the tenth you don't have an app, you have ten small apps stitched together. And on mobile that mess costs differently than on the web: you don't reload the page, you publish a version and wait."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The reason isn't the model, it's the terrain. Angular ships almost everything already decided: how the application's state is kept, how you move between screens, how the folders are laid out. For each of those there's one way the framework rewards, and the model knows it. Flutter decides far less, and not out of carelessness: it hands you the pieces to draw the interface and leaves the rest to you. For state you can use Riverpod, Bloc, Provider or none of them; for navigation, GoRouter or the navigator Flutter ships with; and you arrange the folders however you like. None of those options is the wrong one."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that's where the problem with an agent shows up. I pick one way and I still remember it tomorrow. The model doesn't: on the profile screen it uses Riverpod, on the settings screen Provider, and on the third it invents a class with loose variables. Separately, all three work. Together they're three different ways of solving the same thing inside one application, and whoever maintains it later — me, six months from now — has to learn all three."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So I supply the order myself, in writing, before asking for the first line. This is how I work today: why I pick Flutter — and why that's my judgement, not a verdict —, how I write the spec with a row for mobile, how I test and why the test comes before the code, how a single contract keeps backend, web and app in sync, how I handle a bug, and what you can build with AI inside an app so that it also pays for itself."
+      },
+      {
+        "kind": "quote",
+        "text": "In Angular the framework supplies half the order. In Flutter I supply all of it, in writing: a model can't follow a convention that only lives in my head."
+      },
+      {
+        "kind": "heading",
+        "text": "Why I like Flutter so much (my take, not a verdict)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Let me be clear about one thing up front, because it's easy to misread: what follows is my preference, formed working on my projects with my priorities. I'm not saying Flutter is better than React Native or than going native. I'm saying why, when the project is mine and the call is mine, I almost always end up picking it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is what wins me over, and all of it is stuff I notice day to day, not in a comparison table:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Flutter paints its own pixels.** It doesn't translate my widgets into the system's components: it draws them itself, with its own graphics engine. The practical consequence is that whatever Flutter draws comes out the same on both systems, and the differences left are the ones I chose to leave. That engine today is [Impeller](https://docs.flutter.dev/perf/impeller): on iOS it's the only one available — there's no going back to the previous engine — and on Android it ships enabled from API 29, Vulkan first with OpenGL as the fallback when the device can't manage. Its promise is written in the docs and it's a specific one: it compiles the shaders when the engine is built, so they don't compile while the app runs.",
+          "**Hot reload changes how you work.** I save the file and the change shows up in under a second with the app's state intact: same form, same data. With AI that counts double, because the \"the model changes something, I look at it\" cycle drops from minutes to seconds — and looking is exactly the part you can't stop doing.",
+          "**Everything is a widget, and widgets compose.** There's no template language on one side and classes on the other: the UI is code, and a screen is just small pieces slotted together. That fits perfectly with how I hand work to the AI: I give it a piece with edges, not a whole screen.",
+          "**Dart tells me off before I run anything.** Static types, null safety checked by the compiler and a strict analyzer. A good share of what a model invents — a method that doesn't exist, a field that can be null and isn't checked — dies in `flutter analyze` instead of dying on someone's phone.",
+          "**One language and one project for both stores.** I don't maintain two codebases or negotiate between two teams about which version ships what. For a small team — or a team of one — that isn't convenience, it's what makes the project viable at all."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's what I accept in exchange, because it's real too: the binary is heavier than an equivalent native app; because Flutter draws its own UI, some details don't feel exactly like the system's unless you look after them; and to talk to the operating system I depend on plugins, so when Apple or Google ship a new API you sometimes wait — or write the bridge yourself. If a project lives on shipping system APIs on day one, native wins. If the team is already strong in JavaScript, React Native is a perfectly reasonable choice. I pick Flutter for pixel control and iteration speed; someone with different priorities will be right picking something else."
+      },
+      {
+        "kind": "quote",
+        "text": "Flutter isn't the best tool out there. It's the one that fits how I work: small pieces, a very short cycle, and a compiler that contradicts me early."
+      },
+      {
+        "kind": "heading",
+        "text": "Why mobile is the hardest ground for AI"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Before the method, it's worth understanding what changes versus the web, because that's what justifies being this strict. On the web, you fix a bug and deploy: whoever reloads the page has the fix. On mobile you don't. Every change goes through a native compiler, through Gradle and through Xcode; you publish a version, a store reviews it, and the bug stays installed on people's phones until they update. That's the real cost of getting it wrong on mobile, and it's a different order of magnitude."
+      },
+      {
+        "kind": "paragraph",
+        "text": "On top of that there's something that fools you badly when you work with an agent: in Flutter, a green test doesn't prove the app boots. `flutter test` runs on a Dart virtual machine, with no device and no native code. You can have the whole suite green and have `flutter build ios` blow up over a plugin, a missing `Info.plist` permission or a minimum Android version. That's why my gate for closing a task isn't the test: it's the build for both platforms."
+      },
+      {
+        "kind": "heading",
+        "text": "The spec first, with a row for mobile"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I work from a spec: before the code I write a document saying **what** has to happen and **why**, without saying how it's implemented. The acceptance criteria go in a fixed, deliberately boring format — \"when X happens, the system shall do Y\" — and each one carries an identifier: `R1`, `R2`, `R3`. That identifier is what shows up later in the task, in the test and in the evidence. If something can't be written that way, usually it means I don't understand it yet."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What I added once mobile entered the picture is a row. Every requirement in the spec says which surface it belongs to: backend, web or Flutter. And when a surface doesn't take part, it isn't left out: it's written down as `N/A` with the reason. It looks like bureaucracy until the usual thing happens: if mobile doesn't have its row from the start, it finds out about changes when it stops compiling — and by then any contract discussion arrives late and costs a release."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc feature ./web --back ./api --movil ./app",
+          "→ shared contract   specs/017-live-class/contracts/api.md",
+          "→ backend spec  NestJS   R1 R2 R3 · R7 N/A",
+          "→ web spec      Angular  R1 R4 R5",
+          "→ mobile spec   Flutter  R1 R4 R6 R7",
+          "→ same number in all three repos · contract fingerprint stamped"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice the detail I care about most in that output: the contract is generated **first** and the three specs come out of it. The mobile app is one more consumer of the same contract, not a special case. The moment mobile gets its own endpoints \"because they suit it better\", you have two truths about the same feature, and one of them is wrong without anyone knowing yet."
+      },
+      {
+        "kind": "quote",
+        "text": "Mobile isn't the last link in the chain: it's one more consumer of the same contract. The moment it has its own endpoints, you have two truths and one of them is wrong."
+      },
+      {
+        "kind": "heading",
+        "text": "What's being worked on right now lives in a file, not in my memory"
+      },
+      {
+        "kind": "paragraph",
+        "text": "With one person you don't need this: you know what you're doing. With agents it breaks immediately. You open a story, leave it half-done because a decision is missing, start another, come back two days later… and the agent walking in has no way of knowing what it's allowed to touch, what got blocked, and what it must not reopen. If that lives in the conversation, it's gone when the conversation closes."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So it lives in a versioned file. Before running anything, the agent adds itself to the list of active stories; if it was already there, it updates its note. It isn't a pretty board: it's four fields per entry."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specs/active-story.json",
+          "",
+          "{ \"schemaVersion\": 2,",
+          "  \"activeStories\": [",
+          "    { \"story\":      \"015-child-world-home\",",
+          "      \"selectedBy\": \"owner\",",
+          "      \"selectedAt\": \"2026-08-28\",",
+          "      \"note\":       \"25/28 tasks. T26 and T27 closed with their evidence.",
+          "                      T13 blocked: R1 is waiting on the full avatar",
+          "                      representation from story 012.\" },",
+          "    …",
+          "  ] }"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The note is what actually matters, which is why it's long and ugly: it says where things stand, which task closed with which evidence, what's blocked and because of whom, and what must **not** be touched. Selection belongs to the owner — `selectedBy: \"owner\"` — not to the agent: asking an agent to help with, continue or fix an identifiable story is the instruction that activates it; an informational question or a passing mention of a number isn't."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Several can be active at once, and today they are. That isn't chaos: each agent takes **one** entry, works a single task from it, and writes into its note whatever the others need to know. What can't happen is an agent marking someone else's task done, or dragging one surface's status onto another."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And closing is the inverse operation, done in one go: tasks get marked with their evidence, the entry is withdrawn from the active list, and the story enters the closed registry — which records **which surfaces** it was completed on and **where the proof is**. If backend, Angular and Flutter aren't all three green or justified as `N/A`, the story doesn't go in; it stays active with the blocker written down."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "specs/completed-stories.json",
+          "",
+          "{ \"story\":       \"001-platform-foundation\",",
+          "  \"completedAt\": \"2026-08-25\",",
+          "  \"completedBy\": \"owner\",",
+          "  \"surfaces\":    [\"backend\", \"angular\", \"flutter\"],",
+          "  \"evidence\":    [\"specs/001-platform-foundation/tasks.md\",",
+          "                  \"specs/001-platform-foundation/implementation-evidence.md\"],",
+          "  \"note\":        \"23 of 23 tasks. …\" }"
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "An agent doesn't remember yesterday's conversation, and neither do I, entirely. What's in flight, what's blocked and what already closed have to be files, or they don't exist."
+      },
+      {
+        "kind": "heading",
+        "text": "The architecture, written before the first line"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The structure doesn't change from one project to the next: code is split by feature, not by file type. Each feature lives in its folder — `lib/features/profile/`, `lib/features/sales/` — and inside it's ordered in layers: `domain` is the business in pure Dart, with no Flutter in it; `application` holds the use cases; `infrastructure` talks to the world — HTTP, database, sensors —; and `presentation` is screens and widgets. `core` keeps the cross-cutting pieces and `shared` the genuinely reusable ones. There's a single dependency rule and it's written into the project's rules: a feature leans on `core` and `shared`, and doesn't pull another feature's logic inside it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "On top of that I write concrete rules, the kind a model can follow and I can check at a glance:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**A folder is born with its first real file.** No creating the four layers out of symmetry, no reserving a name with an empty placeholder. If the folder ends up empty, it gets deleted. Agents love putting up the whole scaffolding \"just in case\", and nobody takes that scaffolding down afterwards.",
+          "**No hand-written colors.** A widget never writes `Colors.white`: it reads from the theme (`Theme.of(context).colorScheme`). It's a rule you can check by reading and the model can't negotiate, and it's what keeps dark mode from breaking on screen number forty.",
+          "**Enums and interfaces get their own file.** Never inside a model, a provider or a widget. When an enum hides inside a screen, the next screen invents its own.",
+          "**Measured limits, not opinions.** 300 lines per file, 40 per function, 4 parameters, 3 levels of nesting. They're not my taste: a tool measures them and they fail on their own.",
+          "**One small widget per file.** When I hand a task to the AI I hand it that file, not the screen. A small piece with one clear responsibility is a bounded target: less context to hold and less to break."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one thing I learned by repeating myself: a rule that only lives in a document gets broken silently. So the ones I can, I turn into tests. I keep a test file whose only job is to fail `flutter test` if platform folders that are out of scope show up — `web/`, `macos/`, `windows/` — or if an empty placeholder file sneaks back into `lib/`. Nobody has to remember that rule: if it breaks, the suite goes red and you see it."
+      },
+      {
+        "kind": "quote",
+        "text": "A rule that only lives in a document gets broken quietly. The same rule written as a test gets broken in red."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/flutter-order.en.svg",
+        "caption": "Flutter leaves open the decisions Angular already closes for you. The order the AI needs is what I write on top: layers, rules and limits that fail on their own."
+      },
+      {
+        "kind": "heading",
+        "text": "How I test, and why the test comes before the code"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the part I get asked about most and the part most people skip, so let me start with the why rather than the how. There are several ways to get a definition of \"done\" that doesn't rest on my opinion — someone else's review, manual QA, tests written afterwards, production telemetry — and none of them is silly. Test-first is the one that has worked best for me, and I think for one concrete reason: if I write the code first and the test after, the test resembles the code I already wrote — it confirms it — and that's why it passes. If I write the test first, the test resembles the requirement, and then it actually measures something."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With an agent in front of you that goes from good practice to necessity. A model says \"done\" with the same confidence whether it is or not, and on mobile you can't reload the page to check. A test that already fails before the agent writes anything is what turns \"done\" into a checkable claim: either it turns that specific test green, or it hasn't finished. And that isn't my opinion of its work, it's an exit code."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The cycle is the classic one, and I respect it task by task: I write the test from the acceptance criterion, **I watch it fail** — I don't skip this step: a test that was never red hasn't proven it can detect anything —, I write the minimum code that turns it green, and only then do I clean up. Every test group carries the requirement's identifier in its name, so reading the output of `flutter test` is reading directly which requirement stands and which doesn't."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In Flutter that spreads across a ladder of tests, and each rung answers a different question:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Unit** (`test/features/<x>/domain`) — the business in pure Dart, no Flutter. The fastest ones and the ones I run most often. If a business rule needs a widget to be tested, the rule is in the wrong place.",
+          "**Widget** (`testWidgets`) — I mount the piece in a real tree, paint it and check what the user would see: the text shows up, the button can be tapped, the empty state renders. No device, no network, milliseconds.",
+          "**Golden** — I compare the rendered screen against an approved image. I keep them per width, language and accessibility variant, so a spacing change that wrecks the layout at 390 px shows up as a pixel diff, not as somebody's \"it looks off\" three weeks later.",
+          "**Accessibility and localization** — tap targets you can actually hit, semantic labels on the elements, and a screen that still fits when the language makes words longer. On mobile that isn't an extra: it's what a store reviews.",
+          "**Integration and performance** (`integration_test`) — the real app on an emulator or a device, walking a whole flow. This is where what no unit test can see falls over: permissions, startup, plugins, and how long each frame takes to paint — I measure the median and the 95th percentile — once the screen actually animates."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "flutter test                       # unit, widget, golden, accessibility",
+          "→ 06:48 +795: All tests passed!",
+          "",
+          "flutter test integration_test/     # the real app, on a device",
+          "→ full journey, with per-frame timing measured"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Two more rules that save me trouble. First: `flutter test` never touches the network or real data. Outside dependencies get replaced by test doubles — hand-written fixtures in a `support/` folder, or `mocktail` when the double earns a library — so the suite runs the same on my laptop, on somebody else's and in CI, without depending on a server being alive. Second: every test file starts with a comment saying which requirement it answers to. When somebody — or me — wants to change that test six months from now, the first thing they read is what it was supposed to be protecting."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's what convinced me of all this. Where I started test-first there are 138 test files and 795 tests today, running in under seven minutes. Where I didn't, with more features and more years on it, there are three files. It wasn't a lack of willingness: it started without that rule, and from then on there was always something more urgent than writing the first test. Adding tests to an app that already exists is a project of its own; writing them first costs almost nothing. That's the whole trick, and it's the real reason the order matters."
+      },
+      {
+        "kind": "quote",
+        "text": "A test written after the code resembles the code, and that's why it passes. A test written before resembles the requirement, and that's why it's worth something."
+      },
+      {
+        "kind": "heading",
+        "text": "Mutants: how I know those tests are worth anything"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Having lots of green tests doesn't prove they're good. For that I use mutation testing: the tool changes the code on purpose — a `>` into a `>=`, a `true` into a `false`, a deleted condition — and runs the suite again. If the tests stay green after the code was broken, that test wasn't checking anything. In Dart I do it with the `mutation_test` package, and the bar is killing at least 80% of those mutants."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "dart run mutation_test -f all -o reports/mutation mutation.hu015-t13.xml",
+          "→ mutants generated: 131",
+          "→ survivors: 5",
+          "→ detected: 96.18%   (threshold 80%)"
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "mutation.hu017-lifecycle.xml   ← one of the 29",
+          "",
+          "<mutations version=\"1.2\">",
+          "  <!-- CLASS-T12 · R20/R24: the Flame game I changed -->",
+          "  <files>",
+          "    <file>lib/features/game_runtime/…/flame_listen_find_graybox_game.dart</file>",
+          "  </files>",
+          "  <commands>",
+          "    <command group=\"test\" expected-return=\"0\" timeout=\"180\">",
+          "      flutter test test/…/class_scene_parity_test.dart",
+          "                   test/…/mobile_runtime_adapter_contract_test.dart",
+          "    </command>",
+          "  </commands>",
+          "  <threshold failure=\"80\"/>",
+          "</mutations>"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Three decisions, none of them decorative. **What may be broken**: the list of files the tool is allowed to mutate, which is exactly what I touched in that task. **Who has to notice**: the specific command — not the whole `flutter test`, but the test files that cover that code — because with the full suite every mutant takes minutes to die and the measurement stops fitting inside a task. And **the bar**: below 80% the gate won't let me close. The comment at the top isn't decoration: it says which task and which requirements this measurement belongs to, so six months from now you can tell what was being measured and why."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why there are 29 of these files in the project, one per measured task. Keeping a single global one would be useless for two reasons: running mutation over an entire Flutter app takes far too long to do per task, and it also mixes my evidence with somebody else's work. Scoping it fixes both at once: it takes minutes, and the number that comes out is only about what I did."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/test-ladder.en.svg",
+        "caption": "Each rung answers a different question and costs more than the one below. Mutants aren't another rung: they're the question asked about all the rungs underneath."
+      },
+      {
+        "kind": "heading",
+        "text": "The contract: how I keep backend, web and mobile in sync"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The classic failure of a three-way feature isn't technical, it's communication. The backend swaps a 422 for a 409 halfway through, edits its own copy of the contract and carries on. Web and mobile keep coding against something that no longer exists and find out at integration, which is exactly when it's most expensive. I have three nets against that, and none of them depends on somebody remembering to say something."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The contract carries a fingerprint.** It's copied identically into each surface's spec. If two copies drift apart, the flow tells me before it lets me run the quality gate, and it shows me the `diff` instead of overwriting my copy: the point isn't to make the files match, it's to see **what** changed so I can adapt the code.",
+          "**A mailbox between repos** for what isn't in any file: \"changed 422 to 409 on /payments\". Sending is optional, reading isn't: while unread notes remain, the flow reminds me before I move on.",
+          "**A guard inside the mobile code.** The Dart manifest — contract version, operations and schemas — is generated from the backend's `openapi.yaml` and never edited by hand. At startup it's compared against what the Dart client believes it consumes, and if they don't match it fails right there, with a clear message, instead of blowing up in production against a field that no longer exists."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/mail.mjs send --to movil --message \"422 → 409 on POST /payments\"",
+          "",
+          "NEXT_ACTION: sync_contract",
+          "REASON: your contract copy is 2 line(s) behind `back`'s.",
+          "COMMAND: diff specs/017-class/contracts/api.md ../back/specs/017-class/contracts/api.md"
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "pnpm --dir backend generate:contracts",
+          "→ mobile/lib/core/api/generated/openapi_contract_manifest.dart",
+          "",
+          "flutter test",
+          "→ StateError: the Dart contract does not match the canonical OpenAPI."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/mobile-contract-guard.en.svg",
+        "caption": "One contract, three consumers and three different nets: the fingerprint between specs, the mailbox between repos, and the guard inside the mobile code."
+      },
+      {
+        "kind": "heading",
+        "text": "Models: the other place where mobile drifts"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Even with the contract in sync, there's one more place where everything breaks: the data models. In Flutter I generate them with `freezed`, and they have to match the backend's entities. I left that check written down for the assistant as a list, because it's exactly the kind of detail a model glosses over: field names, types, what's optional and what's required, the exact values of each enum, the right HTTP verb and the shape of the response wrapper. Six things, and getting one wrong is enough for the screen to come out empty with no visible error at all."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And one rule that belongs to mobile and isn't needed on the web: parse JSON defensively. Safe casts, defaults for anything missing, and never assume a field arrived. The reason is the usual one, but it's worth saying in full: on the web, if the backend adds a field and something breaks, you deploy and it's over. On mobile there are users with a three-month-old version installed, and that version has to survive a backend that kept moving."
+      },
+      {
+        "kind": "quote",
+        "text": "On the web, a contract change is fixed by deploying. On mobile it's fixed by publishing a version and waiting for people to update. That's why mobile always parses defensively."
+      },
+      {
+        "kind": "heading",
+        "text": "How I close a task in Flutter: the build is the gate, not the test"
+      },
+      {
+        "kind": "paragraph",
+        "text": "All of the above converges into a single command. A task isn't done because the agent says so or because the suite is green: it's done when this exits zero."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "bash tool/verify-task.sh",
+          "→ dart format --set-exit-if-changed lib test   ✓",
+          "→ flutter analyze                              ✓",
+          "→ flutter test                                 ✓ 795 tests",
+          "→ flutter build apk --debug                    ✓",
+          "→ flutter build ios --simulator                ✓"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "With three conditions that don't get relaxed. The build runs **after** the last change: if I touch a file again, the evidence expires and the build is repeated. An Android build doesn't close iOS or the other way around, because the failures you're hunting there are precisely the ones that only show up on one of the two. And if a platform isn't available — no macOS in front of me — the task stays unchecked and the story stays open with the blocker written down. There's no such thing as \"half verified\"."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "Story and task:      015 · T13",
+          "Surface/platform:    Flutter · Android + iOS",
+          "Last change covered: child_home_screen.dart",
+          "Command:             bash tool/verify-task.sh",
+          "Exit code:           0",
+          "Result:              pass"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That block is what gets attached to the task in the same moment it's marked done. It looks excessive until you remember what working with agents is like: \"task complete\" comes out just as convincing whether it is or not. The sentence isn't evidence; the exit code is. Where this habit came from I told in full in [closing a task with evidence](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "Bugs: a defect doesn't open a new story, it reopens its own"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I handle bugs with four rules, and all four exist because of something that happened to me:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Reproduce first, in red.** A bug enters the project as a failing test, not as a description. If I can't write that test, I don't understand the bug yet — and fixing what you don't understand is how you end up with two bugs.",
+          "**The defect goes back to its own story, not to a bug folder.** If the failure belongs to the story that defined that behavior, that story reopens and keeps its whole history. That way the spec keeps describing what the app actually does, instead of becoming a document describing the ideal version of three months ago.",
+          "**The smallest fix, and the test stays.** The test that reproduced the bug becomes the one that stops it coming back. It's the only test in the suite that has already proven, by fact, that it can catch that failure.",
+          "**If the bug showed the spec was wrong, I change the spec first.** A fix that contradicts the spec leaves two truths in the project, and the next person — or the next agent — will pick the wrong one."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And two real defects that explain why I don't trust tests alone. The first one was uncovered by mutation — and not in Flutter but on the same project's web surface; I'm telling it anyway because the lesson belongs to all three —: measuring a module that was fully green, the share of detected mutants came out at 22.03%, and pushing the tests up to 86.78% surfaced two things nobody knew about: a chunk of code with not a single test, and a genuine defect in a save notice the interface was happily treating as fine."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second one no unit test could ever catch, and it lived in the backend. There was a use case, perfectly written and perfectly tested… that nobody ever called. The user paid and their invitation never went out. The whole suite green, and the feature effectively didn't exist. That only shows up by running the real flow end to end, and it's why the ladder of tests finishes at `integration_test` and not at the unit ones."
+      },
+      {
+        "kind": "quote",
+        "text": "The most dangerous test is the one that passes. A perfectly tested use case that nobody calls stays green all day while the user waits for an email that never arrives."
+      },
+      {
+        "kind": "heading",
+        "text": "AI inside the app: the key doesn't live on the phone"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Changing subject: no longer how I use AI to build the app, but how I put AI inside the app. And the first decision isn't up for discussion: the provider key does not travel in the binary. An installed app is a file in anyone's hands, and a key sitting in there is a published key, however obfuscated. The model gets called from the backend: the app talks to my API and my API talks to the provider."
+      },
+      {
+        "kind": "paragraph",
+        "text": "On top of that there's a small detail that changes a lot: the app asks first whether the feature exists. Before drawing the chat it makes a status call and builds the UI from the answer, instead of assuming it's available. That lets me switch an AI feature off without shipping a new version: change an environment variable on the server, the endpoint replies that it's disabled, and the app falls back to its deterministic alternative. And it defaults to off: if the configuration is missing, the feature doesn't turn itself on."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "You switch an AI feature off in seconds, with no store review and no waiting for anyone to update.",
+          "You filter the input before it leaves for a provider. When what gets sent could carry a child's data, a guard walks the input and rejects it **before** any network call.",
+          "You measure the spend in one place, not spread across a million phones.",
+          "You change model or provider without touching mobile or publishing anything."
+        ]
+      },
+      {
+        "kind": "quote",
+        "text": "A key inside an installed app is a published key. AI gets called from the server; mobile only asks whether it's switched on."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-in-the-app.en.svg",
+        "caption": "Where each thing runs. The kill switch and the guard live on the server; on the phone runs only what makes sense there, and always with a deterministic path behind it."
+      },
+      {
+        "kind": "heading",
+        "text": "What does make sense to run on the phone"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The opposite exists too, and in 2026 it's no longer an experiment: there are small models running on the device. I use them for what the server does badly: millisecond responses, working without coverage, and not taking data off the phone. Here's the landscape today, with names, so you can check it yourself:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[flutter_gemma](https://pub.dev/packages/flutter_gemma) is the best-trodden path for putting a small model inside a Flutter app: it runs on MediaPipe and LiteRT-LM, with GPU acceleration on Android and iOS.",
+          "[Google AI Edge's inference guide](https://developers.google.com/edge/mediapipe/solutions/genai/llm_inference) is the foundation under all of that, and it carries an important warning: the MediaPipe LLM Inference API is in maintenance mode and the recommended path today is LiteRT-LM.",
+          "[Firebase AI Logic](https://firebase.blog/posts/2026/05/google-io-2026-announcements/) is Google's bet on hybrid mode — device first, cloud when the device can't cope. In April 2026 Firebase already listed it as available on Android and announced for iOS in May, and at I/O in May it confirmed iOS has it; its own documentation still marks it as an experimental feature, with no SLA and no deprecation policy. And it covers Android, iOS and web: Flutter isn't on that list. The `firebase_ai` package gives you the cloud half; the on-device part still goes through native channels, so today real cross-platform hybrid comes from `flutter_gemma`, not from Firebase."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "My rule for splitting the work is simple. On the phone: classifying, summarizing something short, autocompleting, suggesting, and anything that has to keep working on the subway. On the server: whatever needs reasoning, fresh data or a large model. And always, in both cases, with a deterministic path behind it: if the model isn't available, the feature still exists, just with less flair. An app that half-works because there's no signal isn't an app with AI, it's a broken app."
+      },
+      {
+        "kind": "heading",
+        "text": "And making it pay: the numbers that change my technical decisions"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Time to be honest, because the opposite gets sold a lot: putting AI in an app doesn't make it profitable. RevenueCat's 2026 report, built on 115,000 subscription apps, leaves uncomfortable data pointing both ways."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "AI apps bill more per user: $30.16 of realized lifetime value in year one, versus $21.37 for the rest. That's 41% more.",
+          "And they retain worse: monthly subscriptions in AI apps retain 36% worse at twelve months than those of traditional apps.",
+          "A hard paywall converts five times better than freemium — 10.7% versus 2.1% at day 35 — and generates eight times more revenue per install at day 60: $3.09 versus $0.38, with practically identical one-year retention.",
+          "On Google Play, 31% of cancellations are involuntary — the payment simply fails — against 14% on the App Store."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Each of those numbers changes something concrete in the mobile code, and this is what I do with them:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The paywall is a feature, not a finishing touch.** It gets its spec, its `R#` and its tests, and it's built when it's due, not the week before shipping. If it converts five times better when you ask early, it's the most important screen in the app.",
+          "**If AI is the novelty, retention has to be earned with something else.** What retains is habit: content that changes, progress you can see, and notifications worth receiving. Those are features with their own work behind them, not a side effect of having a chat.",
+          "**Cost per request is designed.** I cache what repeats, summarize the history before sending it, and drop to a cheaper model when the task doesn't warrant more. In an app that scales, thinking about this at the start rather than the end is the difference between a margin and a bill.",
+          "**Failed payments are a use case, not an accident.** With a retry, an in-app notice and a clear way to fix the payment method. If nearly a third of Android churn is involuntary, that's revenue lost for the want of one screen."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This gets settled by the structure itself: the split between the free mode and the connected one is a folder, `free` and `connected`, not a flag. The free mode works completely without an account and without a server, with the database inside the phone: someone can use the app for months without costing me a cent of infrastructure. The connected mode adds what genuinely needs a server. Scaling that way isn't a business decision you take at the end: it's an architecture decision you take at the start, because afterwards it doesn't move."
+      },
+      {
+        "kind": "quote",
+        "text": "Putting AI in an app raises what each user pays and lowers how long they stay. If AI is the novelty and not the habit, you're renting growth."
+      },
+      {
+        "kind": "heading",
+        "text": "The tools I hand the model when it codes Flutter"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Last, the context layer, which exists in Flutter just as it does in Angular. An MCP server is a bridge that gives the assistant live tools and data instead of what it memorized, and Flutter publishes its own inside the SDK itself: there's nothing to install, you start it with `dart mcp-server`. These are the tools it answered with, on the version I have installed:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "dart mcp-server",
+          "→ assistant tools (Flutter 3.47, 11 in total):",
+          "   pub_dev_search     · looks the package up on pub.dev before inventing it",
+          "   get_runtime_errors · reads errors from the running app",
+          "   hot_reload         · reloads the app without losing its state",
+          "   widget_inspector   · inspects the widget tree currently on screen"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The Flutter team also publishes its own official skills — knowledge sheets the assistant opens only when the task needs them — and pub.dev packages are starting to ship theirs. It's the same idea I use in Angular: today's idiomatic \"how\" shouldn't depend on what the model remembers from two years ago, nor on me repeating it in every conversation."
+      },
+      {
+        "kind": "paragraph",
+        "text": "But the warning I gave in [how I code Angular with AI](/daily/how-i-code-angular-with-ai) bears repeating: this is only the layer that gives the model context. Underneath sits the method — spec, test, code —, the agents and the verification. Without those, an MCP and a few skills only get the model to write, faster, code you then can't close."
+      },
+      {
+        "kind": "heading",
+        "text": "What actually improves"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Mobile stops finding out late: it has its row in the spec from day one and its own fingerprinted copy of the contract.",
+          "Closing a task means it builds on Android and on iOS, with the date and the exit code written next to it.",
+          "A bug enters in red, stays as a test forever, and brings its story back to life instead of leaving it lying.",
+          "The tests measure something: the mutants say what can be broken in the code without a single test noticing.",
+          "The app's AI is switched off from the server in seconds, with no store review in the way.",
+          "The expensive decisions — what runs on the phone, what runs on the server and what gets charged for — are taken with written judgement, not with fashion."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's how I build with Flutter and AI today: the order the framework doesn't impose is the order I write down, the test comes before the code, the contract rules over all three surfaces, and nothing closes without a build for both stores. If you want to see where I apply it, take a look at [my projects](/projects) or write to me from [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Develop with AI — Flutter](https://docs.flutter.dev/ai/get-started): the official page for installing the agent plugins, with the Dart and Flutter MCP server and the `flutter/agent-plugins` skills.",
+          "[The Dart and Flutter MCP server](https://blog.flutter.dev/supercharge-your-dart-flutter-development-experience-with-the-dart-mcp-server-2edcc8107b49): what tools it exposes and how to wire it to your assistant.",
+          "[Impeller, Flutter's rendering engine](https://docs.flutter.dev/perf/impeller): its stated objectives, which platforms it's active on, and what it compiles ahead of time.",
+          "[flutter_gemma](https://pub.dev/packages/flutter_gemma): the package that runs a small model inside a Flutter app today.",
+          "[LLM Inference guide — Google AI Edge](https://developers.google.com/edge/mediapipe/solutions/genai/llm_inference): the official reference for on-device inference and the recommended migration to LiteRT-LM.",
+          "[What's new from Firebase at Google I/O 2026](https://firebase.blog/posts/2026/05/google-io-2026-announcements/): the real state of hybrid device/cloud mode.",
+          "[State of Subscription Apps 2026 — RevenueCat](https://www.revenuecat.com/state-of-subscription-apps): where the conversion, retention and lifetime-value numbers I quote above come from.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the CLI I use to orchestrate the shared contract, the quality gates and the mailbox between repos."
+        ]
+      }
+    ]
+  }
+}

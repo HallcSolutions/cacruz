@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="The ladder of tests in Flutter and mutation testing">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#a78bfa"/><stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .rung { animation: step 6s ease-in-out infinite; transform-box: fill-box; transform-origin: left center; }
+    .g2 { animation-delay: .45s; } .g3 { animation-delay: .9s; } .g4 { animation-delay: 1.35s; } .g5 { animation-delay: 1.8s; }
+    .scan { animation: sweep 6s ease-in-out infinite; }
+    .mut { animation: rg 3s ease-in-out infinite; }
+    @keyframes step { 0%, 100% { opacity: .72; transform: translateX(0); } 10% { opacity: 1; transform: translateX(6px); } 26% { opacity: .9; } }
+    @keyframes sweep { 0%, 100% { transform: translateY(0); opacity: .35; } 50% { transform: translateY(-208px); opacity: .9; } }
+    @keyframes rg { 0%, 45% { fill: #fb7185; } 55%, 100% { fill: #34d399; } }
+  </style>
+
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="50" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Five rungs and one question about all of them</text>
+  <text x="40" y="78" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">each level answers something different · mutants ask whether the level is worth anything</text>
+
+  <!-- eje -->
+  <line x1="72" y1="118" x2="72" y2="392" stroke="#453768" stroke-width="2"/>
+  <text x="88" y="108" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">↑ costlier · more real</text>
+  <text x="88" y="402" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">↓ faster · run more often</text>
+
+  <!-- peldaños, de abajo (rápido) a arriba (caro) -->
+  <g class="rung"><rect x="88" y="336" width="600" height="46" rx="10" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="110" y="358" font-family="ui-monospace, monospace" font-size="13.5" fill="#a78bfa">unit · domain in pure Dart</text>
+    <text x="110" y="374" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">is the business rule correct?</text></g>
+  <g class="rung g2"><rect x="88" y="282" width="600" height="46" rx="10" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="110" y="304" font-family="ui-monospace, monospace" font-size="13.5" fill="#a78bfa">widget · testWidgets</text>
+    <text x="110" y="320" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">does the user see and can they tap what they should?</text></g>
+  <g class="rung g3"><rect x="88" y="228" width="600" height="46" rx="10" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="110" y="250" font-family="ui-monospace, monospace" font-size="13.5" fill="#a78bfa">golden · approved image</text>
+    <text x="110" y="266" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">does the screen still look the same at 390 px?</text></g>
+  <g class="rung g4"><rect x="88" y="174" width="600" height="46" rx="10" fill="none" stroke="#453768" stroke-width="1.8"/>
+    <text x="110" y="196" font-family="ui-monospace, monospace" font-size="13.5" fill="#a78bfa">accessibility and localization</text>
+    <text x="110" y="212" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">is it usable, and does it still fit once translated?</text></g>
+  <g class="rung g5"><rect x="88" y="120" width="600" height="46" rx="10" fill="none" stroke="url(#ac)" stroke-width="2.2"/>
+    <text x="110" y="142" font-family="ui-monospace, monospace" font-size="13.5" fill="#ece7fb">integration · the real app on a device</text>
+    <text x="110" y="158" font-family="ui-monospace, monospace" font-size="11.5" fill="#8a7fb0">does it boot, ask permissions and complete the flow?</text></g>
+
+  <!-- los mutantes preguntan sobre los peldaños -->
+  <rect x="716" y="120" width="244" height="262" rx="14" fill="none" stroke="#34d399" stroke-width="2"/>
+  <text x="838" y="152" text-anchor="middle" font-family="ui-monospace, monospace" font-size="13" fill="#34d399">MUTATION TESTING</text>
+  <g class="scan"><rect x="88" y="336" width="600" height="46" rx="10" fill="#a78bfa" opacity=".14"/></g>
+  <text x="838" y="196" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">I break the code on purpose</text>
+  <text x="838" y="220" text-anchor="middle" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">and run the suite again</text>
+  <circle class="mut" cx="838" cy="258" r="13"/>
+  <text x="838" y="290" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">still green means</text>
+  <text x="838" y="306" text-anchor="middle" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">that test proved nothing</text>
+  <text x="838" y="338" text-anchor="middle" font-family="ui-monospace, monospace" font-size="14" fill="#34d399">threshold: kill 80%</text>
+
+  <text x="88" y="436" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">A green test doesn't prove the app boots; that's why the ladder doesn't end at the unit rung.</text>
+</svg>

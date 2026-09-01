@@ -1,0 +1,17 @@
+/* R95 — el destacado sube el contraste sin cambiar de familia ni de tamaño. */
+strong {
+  color: var(--text);
+  font-weight: 600;
+}
+
+/* R96 — el código en línea se lee como código, con el mono y el acento del sitio. */
+code {
+  padding: 0.1em 0.34em;
+  font-family: var(--font-mono);
+  font-size: 0.88em;
+  color: var(--accent-2);
+  background: var(--accent-soft);
+  border-radius: 4px;
+  /* Un comando largo parte al final de la línea en vez de ensanchar la nota. */
+  overflow-wrap: anywhere;
+}

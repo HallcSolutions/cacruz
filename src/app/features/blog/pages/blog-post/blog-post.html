@@ -63,18 +63,7 @@
                   <ol class="post__steps">
                     @for (item of block.items; track $index) {
                       <li class="post__step" [style.--i]="$index">
-                        @for (span of spans(item); track $index) {
-                          @if (span.kind === 'link') {
-                            <a
-                              [href]="span.url"
-                              [attr.target]="isExternal(span.url) ? '_blank' : null"
-                              [attr.rel]="isExternal(span.url) ? 'noopener' : null"
-                              >{{ span.text }}</a
-                            >
-                          } @else {
-                            <span>{{ span.text }}</span>
-                          }
-                        }
+                        <app-rich-text [text]="item" />
                       </li>
                     }
                   </ol>
@@ -114,18 +103,7 @@
                 }
                 @default {
                   <p class="post__paragraph">
-                    @for (span of spans(block.text); track $index) {
-                      @if (span.kind === 'link') {
-                        <a
-                          [href]="span.url"
-                          [attr.target]="isExternal(span.url) ? '_blank' : null"
-                          [attr.rel]="isExternal(span.url) ? 'noopener' : null"
-                          >{{ span.text }}</a
-                        >
-                      } @else {
-                        <span>{{ span.text }}</span>
-                      }
-                    }
+                    <app-rich-text [text]="block.text" />
                   </p>
                 }
               }

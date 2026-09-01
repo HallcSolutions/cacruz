@@ -205,6 +205,21 @@ R72–R87 siguen vigentes salvo lo que aquí se redefine. Los modelos 3D son CC0
 - **R93** — WHILE el personaje está quieto, camina, corre, salta o se sienta THE SYSTEM SHALL reproducir la animación esquelética correspondiente del modelo, con transición suave entre estados.
 - **R94** — WHERE el terreno termine THE SYSTEM SHALL impedir que el personaje caiga fuera del mundo. _(Mantiene R76.)_
 
+### Énfasis y código en el texto de las notas _(enmienda 2026-09-01 x: los `**` y las comillas invertidas se muestran en crudo en las notas publicadas)_
+
+**Problema:** el motor de bloques solo reconoce enlaces (R55). Las notas escriben `**texto**` para destacar
+y `` `texto` `` para nombrar comandos, archivos y símbolos, pero ambos llegan al lector como asteriscos y
+comillas literales. Afecta a las entradas ya publicadas, no solo a las nuevas.
+
+- **R95** — WHEN un texto de una nota contiene un fragmento entre dobles asteriscos (`**texto**`) THE SYSTEM SHALL renderizarlo como texto destacado, sin mostrar los asteriscos. _(Amplía R55.)_
+- **R96** — WHEN un texto de una nota contiene un fragmento entre comillas invertidas (`` `texto` ``) THE SYSTEM SHALL renderizarlo como código en línea, sin mostrar las comillas. _(Amplía R55.)_
+- **R97** — WHERE un fragmento no cierre su marca, o esté vacío, THE SYSTEM SHALL dejar el texto tal cual lo escribió el autor, sin perder caracteres.
+- **R98** — WHEN un fragmento destacado contiene a su vez código en línea (`` **`texto`** ``) THE SYSTEM SHALL renderizar las dos marcas, sin mostrar ninguna de las dos. Dentro de un fragmento de código no se interpreta ninguna otra marca. _(Amplía R95 y R96; el caso se da hoy en notas ya publicadas.)_
+
+Aplica en los textos que hoy admiten enlaces: párrafos y elementos de lista. Los pies de foto
+no los admiten y quedan fuera de esta enmienda.
+Los enlaces de R55 siguen funcionando igual y pueden convivir con las marcas nuevas en el mismo texto.
+
 ## Fuera de alcance
 
 - Backend, base de datos, autenticación o panel de administración (el contenido del blog vive versionado en el proyecto).

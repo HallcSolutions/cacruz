@@ -1,0 +1,967 @@
+{
+  "slug": "many-agents-one-repository",
+  "date": "2026-09-01",
+  "title": {
+    "es": "Varios agentes en un mismo repositorio: el tablero que evita que se pisen",
+    "en": "Many agents, one repository: the board that keeps them from colliding"
+  },
+  "summary": {
+    "es": "Dos archivos JSON que casi nadie mira hacen aquí lo que en un equipo hace el tablero: qué historias están abiertas, quién las abrió, en qué punto van y cuáles están cerradas con su evidencia. Sin worktrees y sin una rama por agente: un solo árbol de trabajo, cinco historias a la vez y un portón que se niega a medir si la historia no está en el tablero.",
+    "en": "Two JSON files almost nobody looks at do here what a board does in a team: which stories are open, who opened them, where they stand and which are closed with their evidence. No worktrees and no branch per agent: one working tree, five stories at once, and a gate that refuses to measure if the story isn't on the board."
+  },
+  "tags": [
+    "chalc",
+    "agentes",
+    "sdd",
+    "paralelismo",
+    "calidad"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Tengo cinco agentes trabajando en el mismo repositorio, a la vez, sobre la misma rama y el mismo árbol de archivos. Ninguno tiene su propia copia. Y aun así no se pisan."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La primera vez que lo intenté salió mal en media hora. Un agente empezó a implementar la historia de los descuentos mientras otro tocaba la de la pasarela de pago; el segundo ejecutó las pruebas y midió también los archivos a medio escribir del primero; dio verde donde no había verde. Peor todavía: el primero marcó su tarea como terminada apoyándose en esa medición ajena. Nadie mintió a propósito. Simplemente ninguno de los dos sabía que el otro existía."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La solución no fue darle a cada uno su propia carpeta. Fue escribir en archivos lo que en un equipo de personas ya existe y nadie llama arquitectura: un tablero."
+      },
+      {
+        "kind": "quote",
+        "text": "Dos agentes en el mismo repositorio no chocan por escribir en el mismo archivo. Chocan porque cada uno cree que todo lo que ve es suyo."
+      },
+      {
+        "kind": "heading",
+        "text": "Antes de nada: los dos archivos de los que casi nadie habla"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Voy a empezar por aquí porque todo lo demás cuelga de estos dos archivos, y son justo los que nadie conoce. No son de git, no son de ninguna herramienta famosa y no los genera un framework. Son dos JSON que viven al lado de las especificaciones y que se leen en treinta segundos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Antes de contarlos hace falta una palabra: **HU**, historia de usuario. Es la unidad de trabajo del proyecto —«el cliente recibe un descuento por volumen»— y en este repositorio cada una tiene su propia carpeta con tres documentos: `spec.md` dice qué hay que construir y por qué, `plan.md` cómo, y `tasks.md` la lista de tareas concretas con su casilla para marcar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El primero es `specs/active-story.json`, y responde a una sola pregunta: **qué historias están abiertas ahora mismo**. Nada más. No contiene requisitos, ni código, ni estado técnico."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/active-story.json",
+          "{",
+          "  \"schemaVersion\": 2,",
+          "  \"activeStories\": [",
+          "    { \"story\": \"012-carrito-persistente\",",
+          "      \"selectedBy\": \"owner\",",
+          "      \"selectedAt\": \"2026-08-28\",",
+          "      \"note\": \"Autorizada por el propietario para completar la HU…\" },",
+          "    { \"story\": \"016-historial-de-pedidos\", … },",
+          "    { \"story\": \"018-descuento-por-volumen\",    … },",
+          "    { \"story\": \"021-pasarela-de-pago\",          … },",
+          "    { \"story\": \"022-avisos-de-envio\",     … }",
+          "  ]",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuatro campos por entrada, y cada uno está ahí por un motivo:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`story`** — el nombre exacto de la carpeta bajo `specs/`. No un número suelto ni un apodo: el slug completo, `016-historial-de-pedidos`. Un agente que lo lee sabe sin ambigüedad qué carpeta abrir.",
+          "**`selectedBy`** — quién autorizó ese trabajo. Siempre soy yo, `owner`. Un agente no se autoselecciona una historia porque le parezca buena idea.",
+          "**`selectedAt`** — desde cuándo está abierta. Sirve para ver de un vistazo qué lleva demasiado tiempo sin cerrarse.",
+          "**`note`** — el campo largo, y el más importante de los cuatro. Es donde el agente escribe en qué punto va, qué probó, qué le bloquea y qué NO debe tocar otro. Vuelvo a él más abajo, porque es el que hace todo el trabajo de coordinación."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El segundo archivo es su gemelo al otro lado: `specs/completed-stories.json`, el registro de lo que está **totalmente terminado**. Vive justo al lado del primero, a propósito, para que quien lea uno vea el otro."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/completed-stories.json",
+          "{",
+          " \"schemaVersion\": 1,",
+          " \"completedStories\": [",
+          "  {",
+          "   \"story\": \"001-catalogo-y-fichas\",",
+          "   \"completedAt\": \"2026-08-25\",",
+          "   \"completedBy\": \"owner\",",
+          "   \"surfaces\": [\"backend\", \"angular\", \"flutter\"],",
+          "   \"evidence\": [",
+          "    \"specs/001-catalogo-y-fichas/tasks.md\",",
+          "    \"specs/001-catalogo-y-fichas/implementation-evidence.md\"",
+          "   ],",
+          "   \"note\": \"Todas las tareas cerradas con su evidencia. …\"",
+          "  },",
+          "  …",
+          " ]",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí los campos que cambian respecto al primero son los que importan: `surfaces` dice en qué partes del producto tocó la historia —backend, web, móvil—, y `evidence` enlaza los archivos donde está la prueba de que se hizo. Una historia no entra aquí por decisión de un agente: entra cuando todas sus tareas están marcadas, todas sus superficies tienen su compilación fresca y su evidencia está escrita. Si falta una sola cosa, se queda en el primer archivo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Los dos se leen juntos: lo que no está cerrado sigue abierto, y ninguna historia puede estar en los dos archivos a la vez. Y hay una regla que parece tonta y no lo es: ambos se ordenan **siempre por número ascendente**, nunca por fecha ni por el orden en que los agentes trabajaron. El motivo es puramente práctico. Si el orden dependiera de quién escribió último, cada agente reordenaría el archivo entero al añadir su entrada, y dos agentes escribiendo a la vez producirían un conflicto en cada línea. Con orden numérico, cada uno inserta su entrada en su sitio y no toca ni una coma de las demás."
+      },
+      {
+        "kind": "quote",
+        "text": "Si para añadir tu línea hay que reordenar el archivo entero, dos agentes escribiendo a la vez se pisan. Por eso el orden lo decide el número y no la fecha."
+      },
+      {
+        "kind": "heading",
+        "text": "Es el mismo tablero que ya usas, solo que escrito en archivos"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora la parte que hace que todo esto se entienda de golpe. Piensa en cómo trabajas con personas, y no en una metodología concreta: en lo que de verdad pasa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Llega una historia de usuario: «el cliente recibe un descuento por volumen». La abres en el tablero. La partes en tareas: el endpoint, la pantalla, la pantalla del móvil, las notificaciones. Alguien toma una y la mueve a «en curso» con su nombre encima. Debajo de la tarjeta hay comentarios: uno avisa de que el contrato cambió, otro de que está bloqueado esperando una decisión. Entra el responsable de producto, mira el tablero y ve **en qué punto está cada tarea** sin preguntarle a nadie. Cuando todo está hecho y revisado, la historia pasa a «terminado» y ya no vuelve."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso es exactamente lo que hacen estos archivos. Pieza por pieza:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**La columna «en curso» del tablero** es `specs/active-story.json`. Cinco tarjetas abiertas hoy.",
+          "**La tarjeta de la historia** es la carpeta `specs/NNN-nombre/` con su `spec.md`, `plan.md` y `tasks.md`.",
+          "**Las tareas de la historia** son las casillas de `tasks.md`. Se marcan una a una, en la misma operación que las cierra, nunca al final «de memoria».",
+          "**Quién la tomó** es `selectedBy`, y **desde cuándo** es `selectedAt`.",
+          "**Los comentarios de la tarjeta** son el campo `note` y el archivo `review.md` de cada historia.",
+          "**La revisión de código** son dos roles que firman antes de poder marcar nada: el `revisor` y el `endurecedor`.",
+          "**La firma del responsable de producto** es una entrada de aprobación con la huella digital del documento aprobado.",
+          "**La columna «terminado»** es `specs/completed-stories.json`."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí está el porqué de escribirlo en archivos y no en una herramienta con interfaz: **un agente no puede mirar un tablero**. Puede leer un archivo. Todo lo que en un equipo humano se transmite mirando —el estado, el bloqueo, el «eso lo estoy tocando yo»— con agentes hay que escribirlo, o no existe. No es burocracia añadida; es el mismo tablero, en el único formato que el que va a trabajar sabe leer."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La idea no es mía ni es nueva. En inteligencia artificial se llama **pizarra**: varios procesos independientes que no se comunican entre ellos, sino que leen y escriben en una base de datos común que todos ven. Viene de Hearsay-II, un sistema para entender el habla construido entre 1971 y 1976, y su descripción canónica se publicó en 1980. Sus autores no lo presentaron solo como una solución al habla, sino, en sus palabras, como «un marco general para coordinar procesos independientes de forma que cooperen». Ese es exactamente el problema de esta nota, y tiene cuarenta y cinco años."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-board.es.svg",
+        "caption": "El tablero: las historias abiertas a la izquierda, las cerradas a la derecha, y cada agente atado a una sola entrada."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué aquí no uso worktrees"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hace un mes conté [cómo doy un puesto a cada agente con worktrees](/daily/a-desk-per-story-with-worktrees): la función de git que te deja tener varias carpetas de trabajo, cada una en su rama, compartiendo un único repositorio. Sigo defendiéndola y la sigo usando en otros proyectos. Aquí no."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El motivo es el proyecto, no la técnica. Este repositorio tiene el backend, el portal web y la aplicación móvil dentro, y casi ninguna historia vive en uno solo de los tres: se cambia un contrato en el backend, y la web y el móvil tienen que adaptarse en el mismo día. Con un puesto por agente, cada uno tendría su propia copia de ese contrato, y las diferencias no aparecerían hasta juntarlo todo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El trabajo es vertical, no paralelo.** Una historia toca las tres superficies. Separar por carpetas separa justo lo que hay que mantener junto.",
+          "**Lo que se pisa no son los archivos, es la medición.** El problema real que tuve no fue que dos agentes editaran la misma línea: fue que uno midió el trabajo del otro. Eso no lo arregla darle una carpeta a cada uno; lo arregla decirle a la herramienta qué archivos son de esta tarea.",
+          "**Un puesto por agente cuesta disco y tiempo.** Cada copia quiere sus dependencias instaladas, sus compilaciones y su entorno. Con tres superficies y cinco historias abiertas, eso deja de ser gratis.",
+          "**Y la coordinación no desaparece, se muda.** En modo puesto, los agentes se mandan avisos entre carpetas. En este repositorio ese buzón está apagado: `\"sides\": { \"enabled\": false }` en las tres superficies. Aquí no se mandan mensajes; leen el mismo tablero."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que pierdo es real y lo digo claro: sin puestos separados, dos agentes no pueden ejecutar a la vez una compilación que bloquee el mismo directorio, y hay momentos de espera. A cambio, nunca tengo que integrar dos versiones de la misma verdad."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo un agente toma trabajo sin quitárselo a otro"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La regla de entrada es corta: **solo yo abro historias**. Cuando le pido a un agente que ayude, implemente, continúe, corrija o complete una historia identificable, esa frase es la orden de añadirla al tablero. Una pregunta informativa no lo es. Mencionar un número no lo es. Nombrar una carpeta no lo es. Si no hay petición de trabajo, no hay entrada nueva."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y cuando la añade, lo hace con tres restricciones que son las que evitan que se lleve por delante lo ajeno:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Inserta, no reescribe.** Añade su entrada en su posición numérica y conserva íntegras las notas y los estados de las demás. Si la historia ya estaba, actualiza su nota en lugar de crear una segunda entrada.",
+          "**Una tarea, una historia, un agente.** Cada agente trabaja una sola tarea vertical de una sola historia activa. No abre dos frentes «ya que estoy».",
+          "**Retirar la entrada es un acto con condiciones.** Solo sale del tablero cuando la historia entera está cerrada y verificada, y en esa misma operación entra en el registro de terminadas. Si queda una tarea, un bloqueo o una pregunta abierta, la entrada se queda y la nota explica qué falta."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese último punto es el que más veces me ha salvado. Un agente que termina el 80% de una historia y se queda sin poder cerrar no deja el tablero limpio y una sensación de avance: deja la entrada puesta y escrito exactamente qué le faltó."
+      },
+      {
+        "kind": "heading",
+        "text": "La nota: el hilo de comentarios de la historia"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Vuelvo al campo `note`, porque es donde de verdad ocurre la coordinación. No es un resumen bonito. Es largo, es denso y está escrito por un agente para otro agente que llegará mañana sin recordar nada. La nota más larga que tengo hoy ocupa 5.468 caracteres."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Dentro hay tres cosas mezcladas a propósito: en qué punto va la historia, qué se midió y con qué resultado, y —la parte que evita los choques— qué **no** debe tocar quien venga después. Este es un fragmento de una de esas notas:"
+      },
+      {
+        "kind": "quote",
+        "text": "NOTA DE COORDINACIÓN: no se tocó backend/, frontend/ ni mobile/ y no se usó la ventana Backend. Se preservan HU 012, HU 016, HU 018 y HU 022."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí hay un agente declarando su radio de acción y nombrando explícitamente las siete historias que dejó intactas. El siguiente que abra el archivo lee eso antes de escribir una línea. Es el equivalente exacto de un comentario en la tarjeta que dice «ojo, la parte de pagos no la he tocado, sigue como estaba»."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En la misma nota hay otra frase que es la que más me gusta de todo el proyecto, porque muestra a un agente resistiéndose a la presión que le puse yo:"
+      },
+      {
+        "kind": "quote",
+        "text": "El propietario pidió el 2026-08-31 «cerrar toda la HU»; NO se cerró y no se marcó ninguna tarea adicional: hacerlo exigiría escribir evidencia inexistente."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Le pedí que cerrara. No cerró, y dejó escrito por qué. Esa nota es la que impidió que el agente del día siguiente diera por buenas unas tareas que nadie había verificado. Si esa frase hubiera quedado solo en nuestra conversación, se habría perdido con la conversación."
+      },
+      {
+        "kind": "heading",
+        "text": "El portón: una copia por historia, no una por repositorio"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Llamo **portón** a lo que ejecuta las comprobaciones antes de dejar cerrar una tarea: pruebas, análisis del código, compilación y mutación. Y aquí está el detalle técnico que hace posible todo lo anterior."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La primera versión guardaba su estado en un solo sitio por superficie: `.chalc/gate.state.json`. Con un agente funciona. Con dos, el segundo sobrescribe la evidencia del primero y el primero cierra su tarea con una medición que no es suya. Ese fue exactamente mi problema del principio."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La solución es que el portón exige saber **de qué historia** es cada ejecución, y guarda todo por separado:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHALC_STORY=022-avisos-de-envio node .chalc/gate.mjs",
+          "",
+          "ls backend/.chalc/stories/",
+          "012-carrito-persistente   018-descuento-por-volumen  022-avisos-de-envio",
+          "016-historial-de-pedidos  021-pasarela-de-pago",
+          "",
+          "ls backend/.chalc/stories/018-descuento-por-volumen/",
+          "gate.md  gate.state.json  review.md  task.files  task.json"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cinco archivos por historia, y cada uno responde a una pregunta distinta:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`task.json`** — desde qué punto se mide. Guarda el commit base de la tarea, para que el portón sepa qué es «lo nuevo».",
+          "**`task.files`** — qué archivos escribió esta tarea. La lista, anotada por el agente mientras trabaja.",
+          "**`gate.md`** — la evidencia legible: qué se ejecutó, cuándo, con qué resultado.",
+          "**`gate.state.json`** — el veredicto en formato de máquina: `pass`, `fail` o `blocked`, con la fecha, la rama y el alcance medido.",
+          "**`review.md`** — el histórico de revisiones de esa historia, con su fecha, su commit y su rol."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y hay otro detalle que se ve poco: esa carpeta existe **por superficie y por historia**. La historia 018 tiene su carpeta en el backend y otra en la web, cada una con su propio veredicto. Que el backend esté verde no pone verde a la web, y eso es exactamente lo que quiero: una superficie terminada no arrastra a las demás."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que cierra el círculo es que el portón no acepta cualquier nombre. Antes de medir nada, abre `specs/active-story.json` y comprueba que la historia que le declaraste está en la lista de abiertas. Si no está, se niega:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHALC_STORY=014-devoluciones node .chalc/gate.mjs",
+          "→ CHALC_STORY_INACTIVE: CHALC_STORY no identifica una HU activa:",
+          "  014-devoluciones"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese error es la pieza que convierte el tablero en algo real. Los dos JSON dejan de ser documentación que alguien puede ignorar y pasan a ser la condición para que la herramienta te deje trabajar. Un agente que no se anunció en el tablero, sencillamente, no puede medir ni cerrar nada."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-lanes.es.svg",
+        "caption": "Un repositorio, una rama, un árbol de archivos: la separación está en la carpeta de estado, no en el disco."
+      },
+      {
+        "kind": "heading",
+        "text": "El alcance: lo que la tarea tocó, no lo que el repositorio tiene"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Queda un agujero por tapar, y es el que más silenciosamente rompe las mediciones. El repositorio tiene ahora mismo 977 archivos modificados en el árbol de trabajo, de cinco historias distintas. Si el portón mide «lo que ha cambiado», mide las cinco. Y entonces la nota de una historia se llena de fallos de otra."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso el alcance no sale de comparar el árbol con git. Sale de la lista que el agente anotó mientras trabajaba, y esa lista manda sobre todo lo demás:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "head -3 backend/.chalc/stories/018-descuento-por-volumen/task.files",
+          "src/modules/pricing/application/apply-volume-discount.spec.ts",
+          "src/modules/pricing/application/apply-volume-discount.ts",
+          "src/modules/pricing/domain/discount-tier.ts",
+          "",
+          "jq .scope backend/.chalc/stories/018-descuento-por-volumen/gate.state.json",
+          "  source:   \"registry\"        ← manda la lista, no el árbol",
+          "  from:     31f4a70bee…        ← el commit base de esta tarea",
+          "  files:    21                 ← lo que se midió",
+          "  excluded: 2320               ← lo que el árbol traía y NO es de esta tarea"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "La regla, escrita en el propio código de la herramienta, es «se revisa lo que la tarea modificó, nunca el proyecto». El árbol de git no sabe de tareas: ve un montón de archivos cambiados y no distingue los tuyos de los que ya estaban a medias. Por eso cuando el agente anotó lo que escribió, su lista gana y el árbol pasa a ser solo el respaldo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con una condición que me parece la mejor decisión de diseño de todo esto: **nada sale del alcance en silencio**. Lo que el árbol traía y la lista dejó fuera se escribe en `excluded`; lo que se escribió y luego se deshizo, en `reverted`. En la captura de arriba, el portón midió 21 archivos y dejó constancia de los 2.320 que apartó. Un alcance estrecho sin declarar se lee igual que «no había nada que revisar», y esa es precisamente la mentira que hay que evitar."
+      },
+      {
+        "kind": "quote",
+        "text": "Medir poco no es el problema. El problema es medir poco y que el informe parezca que se midió todo."
+      },
+      {
+        "kind": "heading",
+        "text": "Quién decide qué toca ahora: el consejero, no el agente"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con cinco historias abiertas y un agente que acaba de arrancar sin memoria de ayer, la pregunta «¿y ahora qué hago?» es peligrosa: si la responde el propio agente, la responde adivinando. Así que no la responde él. Hay un pequeño programa que lee el estado del disco y devuelve **una sola acción**, la siguiente."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Su vocabulario completo son once acciones, y están escritas en orden de prioridad: la primera que aplique gana."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "blocked_config    la configuración del portón está incompleta",
+          "sync_contract     el contrato del que dependes cambió y tu copia está vieja",
+          "read_mail         tienes avisos sin leer",
+          "run_gate          hay código tocado sin medir",
+          "fix_gate          la última medición salió en rojo",
+          "call_role         falta que pase el revisor",
+          "fix_review        el revisor dejó hallazgos",
+          "tick_task         todo verde: marca la tarea",
+          "work_task         toca implementar la siguiente",
+          "done              todas las tareas marcadas",
+          "ask_human         no puedo saber en qué punto va esto"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Leer ese orden de arriba abajo explica la disciplina entera sin más comentario. Nada de trabajar antes de leer los avisos. Nada de llamar al revisor con la medición en rojo. Nada de marcar una tarea antes de que el revisor pase. Y `work_task` —lo que un agente creería que es lo primero— está en el puesto nueve de once."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La última es la que más valor tiene con agentes. `ask_human` no es una fila más de la tabla: es una guarda que se dispara cuando los hechos del disco no se pueden leer sin ambigüedad. El mensaje que devuelve lo dice mejor que yo: «No puedo saber en qué punto va esto: […]. Dímelo tú en vez de que yo lo adivine». Un agente que no sabe dónde está tiene exactamente una salida permitida, y es preguntar."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/advisor-ladder.es.svg",
+        "caption": "Once acciones en orden de prioridad. La primera que aplica es la única que se ejecuta."
+      },
+      {
+        "kind": "heading",
+        "text": "La revisión: dos roles que firman antes de que se pueda marcar nada"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En un equipo, una tarea no se cierra porque quien la escribió diga que está bien. Aquí tampoco. Hay dos roles obligatorios, y los ejecutan agentes distintos del que escribió el código, con el encargo explícito de buscar lo que falla:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`revisor`** — pasa por cada tarea. Comprueba que lo implementado corresponde a los requisitos, que las fronteras de la arquitectura se respetan y que no entraron datos sensibles, atajos ni ampliaciones de alcance.",
+          "**`endurecedor`** — pasa una vez por historia completa, antes de darla por terminada. Busca la vía por la que el sistema falla abierto: la configuración que se acepta cuando no debería, el error que deja una sesión viva."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Sus dictámenes se van apilando en el `review.md` de la historia. No se sobrescribe: se añade. Y cuando encuentran algo, lo dejan escrito con archivo y línea:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "## 2026-08-24T14:54:32Z · 31f4a70bee · revisor · FINDINGS: 3",
+          "1. …/pricing/apply-volume-discount.ts:9 — `ApplyVolumeDiscountDependencies`",
+          "   comparte archivo con el caso de uso; infringe el artículo 4 de la",
+          "   constitución, que exige un archivo propio para cada interfaz.",
+          "",
+          "## 2026-08-24T14:59:19Z · 31f4a70bee · revisor · OK",
+          "## 2026-08-24T15:29:15Z · 31f4a70bee · endurecedor · FINDINGS: 2",
+          "1. …/checkout/payment-config.validator.ts:64 — con `APP_ENV=production` y",
+          "   `WEB_ORIGIN=http://localhost:4200`, una configuración completa es",
+          "   aceptada: producción arranca con un origen HTTP."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ese segundo hallazgo es de los que no encuentra ninguna prueba automática: no es un fallo que rompa nada, es una configuración de producción que se acepta cuando debería rechazarse. Lo encontró un agente cuyo único trabajo era buscar exactamente eso, y quedó escrito con fecha y línea, no dicho en un chat."
+      },
+      {
+        "kind": "heading",
+        "text": "La firma de producto: una aprobación es una huella, no una frase"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Falta la última pieza del tablero, la del responsable de producto. En un equipo, alguien aprueba el alcance antes de que se construya. Con agentes eso tiene un problema evidente: si la aprobación es una frase en un documento, el mismo agente que escribe el documento puede escribir la frase."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así que la aprobación no es una frase. Es un registro aparte donde cada decisión guarda el **SHA-256 del archivo aprobado**: la huella digital de sus bytes exactos. Una aprobación solo vale si, ahora mismo, el archivo sigue teniendo esa huella."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Tres fases, en orden.** Se aprueba `spec.md`, después `plan.md`, después `tasks.md`. La aprobación de una fase no vale si la anterior no está aprobada.",
+          "**Cambiar el documento invalida la aprobación.** Si alguien edita una línea del `spec.md`, la huella deja de coincidir y esa fase vuelve a necesitar mi decisión. Sin discusión y sin excepciones.",
+          "**No se edita ni se borra una entrada anterior.** Se añade otra que declara a cuál reemplaza. El histórico completo queda.",
+          "**La ausencia de entrada significa «sin aprobar», no «rechazado».** Y desde luego no significa «adelante»."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto es lo que impide el fallo más caro que he visto con agentes: ampliar el alcance por el camino. Un agente que encuentra a mitad de tarea que «esto quedaría mejor si además…» tiene que parar, cambiar primero el `spec.md`, y esperar a que yo apruebe la nueva huella. Hasta entonces no puede tocar ni el plan, ni las tareas, ni las pruebas, ni el código. Ese registro ocupa hoy casi trece mil líneas, y cada una es una decisión que puedo señalar."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Cinco historias avanzan a la vez en un repositorio con una sola rama, sin copias, sin ramas por agente y sin fusiones que reconciliar.",
+          "Una medición pertenece a una historia y a una superficie: ningún agente cierra su tarea con la evidencia de otro.",
+          "Lo que un agente aprendió, decidió o dejó a medias sobrevive a su conversación, porque está en un archivo y no en un chat.",
+          "El estado se lee sin preguntar: abro dos JSON y sé qué está abierto, quién lo abrió, qué falta y qué está cerrado con su evidencia.",
+          "Nadie amplía el alcance por el camino: cambiar el qué exige una aprobación nueva contra la huella del documento.",
+          "Y cuando un agente no sabe dónde está, tiene una única salida permitida, que es preguntarme."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Nada de esto necesita una herramienta grande. Son dos archivos JSON, una carpeta de estado por historia y una lista de once acciones en orden. Lo difícil no fue construirlo: fue aceptar que todo lo que en un equipo de personas se coordina mirando, con agentes hay que escribirlo. Si quieres ver el resto del método, está en [mis proyectos](/projects) y en [lo que aporto](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[The Hearsay-II Speech-Understanding System: Integrating Knowledge to Resolve Uncertainty](https://mas.cs.umass.edu/Documents/Erman_Hearsay80.pdf) — Erman, Hayes-Roth, Lesser y Reddy, ACM Computing Surveys, vol. 12, n.º 2, 1980: el trabajo que introdujo la pizarra. La frase que importa está en la primera página: es «un marco general para coordinar procesos independientes de forma que cooperen». Y la regla dura, en la sección de arquitectura: las fuentes de conocimiento «operan únicamente detectando y modificando hipótesis en la pizarra». Es de 1980 y describe el problema de esta nota mejor que casi todo lo que se publica hoy.",
+          "[How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) — Anthropic, 2025: el otro extremo del diseño, con un agente que coordina a los demás. Vale por lo que cuenta de sus fallos —agentes «distrayéndose unos a otros con actualizaciones excesivas»— y por el dato que conviene tener presente: un sistema multiagente gasta unas quince veces más tokens que una conversación normal.",
+          "[git-worktree — documentación oficial](https://git-scm.com/docs/git-worktree): la alternativa que aquí no uso, explicada por su fuente. Merece leerse aunque decidas lo mismo que yo, porque deja claro qué separa de verdad un worktree y qué sigue compartido.",
+          "[chalc — el repositorio](https://github.com/ChristianCruzArango/chalc-cli-adapter): la herramienta que emite el portón, el consejero y el buzón. Lo de esta nota vive en `.chalc/gate/lib/story-context.mjs` —el aislamiento por historia—, `.chalc/gate/lib/scope.mjs` —la política de alcance— y `.chalc/next/lib/` —las once acciones—.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): la herramienta de mutación cuyo informe lee el portón. Cada historia tiene su propio perfil de medición para no medir el trabajo ajeno.",
+          "[AGENTS.md](https://agents.md): el formato abierto para dar instrucciones a los agentes de código, hoy bajo la Agentic AI Foundation. Es donde viven las reglas globales que todos los agentes de este repositorio leen antes de tocar nada."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "I have five agents working in the same repository, at the same time, on the same branch and the same file tree. None of them has its own copy. And they still don't collide."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first time I tried, it went wrong within half an hour. One agent started implementing the discounts story while another was touching the payment gateway one; the second ran the tests and measured the first one's half-written files along the way, and reported green where there was no green. Worse: the first agent then ticked its task off the back of that borrowed measurement. Nobody lied on purpose. Neither of them simply knew the other existed."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The fix wasn't giving each one its own folder. It was writing down, in files, something a team of people already has and nobody calls architecture: a board."
+      },
+      {
+        "kind": "quote",
+        "text": "Two agents in the same repository don't collide because they write to the same file. They collide because each one believes everything it can see belongs to it."
+      },
+      {
+        "kind": "heading",
+        "text": "First things first: the two files almost nobody talks about"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I'm starting here because everything else hangs off these two files, and they're exactly the ones nobody knows. They're not a git thing, they're not part of any famous tool, and no framework generates them. They're two JSON files that live next to the specs and take thirty seconds to read."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Before describing them I need one word: **story**, as in user story. It's the project's unit of work — \"the customer gets a volume discount\" — and in this repository each one gets its own folder with three documents: `spec.md` says what has to be built and why, `plan.md` says how, and `tasks.md` is the list of concrete tasks with a checkbox each."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first file is `specs/active-story.json`, and it answers exactly one question: **which stories are open right now**. Nothing else. No requirements, no code, no technical state."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/active-story.json",
+          "{",
+          "  \"schemaVersion\": 2,",
+          "  \"activeStories\": [",
+          "    { \"story\": \"012-persistent-cart\",",
+          "      \"selectedBy\": \"owner\",",
+          "      \"selectedAt\": \"2026-08-28\",",
+          "      \"note\": \"Authorised by the owner to complete the story…\" },",
+          "    { \"story\": \"016-order-history\", … },",
+          "    { \"story\": \"018-volume-discount\",    … },",
+          "    { \"story\": \"021-payment-gateway\",          … },",
+          "    { \"story\": \"022-shipping-notices\",     … }",
+          "  ]",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Four fields per entry, and each one earns its place:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`story`** — the exact folder name under `specs/`. Not a bare number, not a nickname: the full slug, `016-order-history`. An agent reading it knows unambiguously which folder to open.",
+          "**`selectedBy`** — who authorised that work. Always me, `owner`. An agent doesn't select a story for itself because it seems like a good idea.",
+          "**`selectedAt`** — since when it's been open. Useful for spotting at a glance what has been open far too long.",
+          "**`note`** — the long field, and the most important of the four. It's where the agent writes where things stand, what it measured, what's blocking it and what the next one must NOT touch. I come back to it below, because it does all the coordination work."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second file is its twin on the other side: `specs/completed-stories.json`, the record of what is **fully finished**. It lives right next to the first one, deliberately, so that whoever reads one sees the other."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "cat specs/completed-stories.json",
+          "{",
+          " \"schemaVersion\": 1,",
+          " \"completedStories\": [",
+          "  {",
+          "   \"story\": \"001-catalog-and-listings\",",
+          "   \"completedAt\": \"2026-08-25\",",
+          "   \"completedBy\": \"owner\",",
+          "   \"surfaces\": [\"backend\", \"angular\", \"flutter\"],",
+          "   \"evidence\": [",
+          "    \"specs/001-catalog-and-listings/tasks.md\",",
+          "    \"specs/001-catalog-and-listings/implementation-evidence.md\"",
+          "   ],",
+          "   \"note\": \"Every task closed with its evidence. …\"",
+          "  },",
+          "  …",
+          " ]",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here the fields that differ from the first file are the ones that matter: `surfaces` says which parts of the product the story touched — backend, web, mobile — and `evidence` links the files holding the proof that it was done. A story doesn't get in here by an agent's decision: it gets in when every task is ticked, every surface has a fresh build, and its evidence is written down. If one single thing is missing, it stays in the first file."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The two are read together: whatever isn't closed is still open, and no story can be in both files at once. And there's a rule that sounds petty and isn't: both are **always ordered by ascending number**, never by date and never by the order the agents worked in. The reason is purely practical. If order depended on who wrote last, every agent would reshuffle the whole file just to add its entry, and two agents writing at once would conflict on every line. With numeric order, each one inserts its entry in its place and doesn't touch a comma of anyone else's."
+      },
+      {
+        "kind": "quote",
+        "text": "If adding your line means reshuffling the whole file, two agents writing at the same time wreck each other. That is why the number decides the order, not the date."
+      },
+      {
+        "kind": "heading",
+        "text": "It's the same board you already use, just written into files"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now the part that makes all of this click. Think about how you work with people — not about a particular methodology, but about what actually happens."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A user story comes in: \"the customer gets a volume discount.\" You open it on the board. You split it into tasks: the endpoint, the web screen, the mobile screen, the notifications. Someone picks one up and moves it to \"in progress\" with their name on it. Under the card there are comments: one flags that the contract changed, another that they're blocked waiting on a decision. The product owner walks in, looks at the board and sees **where each task stands** without asking anyone. When everything is done and reviewed, the story moves to \"done\" and doesn't come back."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is exactly what these files do. Piece by piece:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The board's \"in progress\" column** is `specs/active-story.json`. Five cards open today.",
+          "**The story's card** is the `specs/NNN-name/` folder with its `spec.md`, `plan.md` and `tasks.md`.",
+          "**The story's tasks** are the checkboxes in `tasks.md`. They're ticked one by one, in the same operation that closes them, never at the end \"from memory\".",
+          "**Who picked it up** is `selectedBy`, and **since when** is `selectedAt`.",
+          "**The card's comments** are the `note` field and each story's `review.md`.",
+          "**Code review** is two roles that must sign before anything can be ticked: the `revisor` and the `endurecedor`.",
+          "**The product owner's signature** is an approval entry carrying the digest of the approved document.",
+          "**The \"done\" column** is `specs/completed-stories.json`."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's why it lives in files rather than in a tool with a UI: **an agent cannot look at a board**. It can read a file. Everything a human team transmits by looking — the state, the blocker, the \"I'm on that one\" — has to be written down for agents, or it doesn't exist. This isn't extra bureaucracy; it's the same board, in the only format the one doing the work can read."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The idea isn't mine and isn't new. In AI it's called a **blackboard**: independent processes that never communicate with each other, but read from and write to a shared database they can all see. It comes from Hearsay-II, a speech-understanding system built between 1971 and 1976, whose canonical description was published in 1980. Its authors presented it not just as a solution to speech, but, in their words, as \"a general framework for coordinating independent processes to achieve cooperative problem-solving behavior\". That is exactly this note's problem, and it is forty-five years old."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-board.en.svg",
+        "caption": "The board: open stories on the left, closed ones on the right, and each agent bound to a single entry."
+      },
+      {
+        "kind": "heading",
+        "text": "Why I don't use worktrees here"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A month ago I wrote about [giving each agent its own desk with worktrees](/daily/a-desk-per-story-with-worktrees): the git feature that lets you keep several working folders, each on its own branch, sharing a single repository. I still stand by it and still use it on other projects. Not here."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The reason is the project, not the technique. This repository holds the backend, the web portal and the mobile app, and almost no story lives in only one of the three: change a contract in the backend and the web and mobile have to follow the same day. With a desk per agent, each one would hold its own copy of that contract, and the differences wouldn't show up until everything was merged."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The work is vertical, not parallel.** One story touches all three surfaces. Splitting by folders splits exactly what needs to stay together.",
+          "**What collides isn't the files, it's the measurement.** My real problem wasn't two agents editing the same line: it was one agent measuring the other's work. A folder each doesn't fix that; telling the tool which files belong to this task does.",
+          "**A desk per agent costs disk and time.** Every copy wants its own installed dependencies, its own builds and its own environment. With three surfaces and five open stories, that stops being free.",
+          "**And coordination doesn't disappear, it moves.** In desk mode, agents send each other notes across folders. In this repository that mailbox is off: `\"sides\": { \"enabled\": false }` on all three surfaces. Here they don't message each other; they read the same board."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "What I give up is real and I'll say it plainly: without separate desks, two agents can't run builds that lock the same directory at the same time, and there are moments of waiting. In exchange, I never have to merge two versions of the same truth."
+      },
+      {
+        "kind": "heading",
+        "text": "How an agent picks up work without taking it from another"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The entry rule is short: **only I open stories**. When I ask an agent to help with, implement, continue, fix or complete an identifiable story, that sentence is the order to add it to the board. An informational question isn't. Mentioning a number isn't. Naming a folder isn't. No request for work, no new entry."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And when it does add one, it does so under three constraints — the ones that stop it from running over anyone else:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Insert, don't rewrite.** It adds its entry at its numeric position and preserves the other stories' notes and states intact. If the story was already there, it updates that note instead of creating a second entry.",
+          "**One task, one story, one agent.** Each agent works a single vertical task of a single active story. It doesn't open a second front \"while I'm here\".",
+          "**Removing the entry has conditions.** It only leaves the board when the whole story is closed and verified, and in that same operation it enters the finished record. If one task, one blocker or one open question remains, the entry stays and the note explains what's missing."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That last point is the one that has saved me most often. An agent that finishes 80% of a story and can't close it doesn't leave a clean board and a feeling of progress: it leaves the entry in place and writes down exactly what it couldn't do."
+      },
+      {
+        "kind": "heading",
+        "text": "The note: the story's comment thread"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Back to the `note` field, because that's where coordination actually happens. It isn't a tidy summary. It's long, dense, and written by one agent for another that will arrive tomorrow remembering nothing. The longest note I have today runs to 5,468 characters."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Three things are deliberately mixed inside: where the story stands, what was measured and with what result, and — the part that prevents collisions — what whoever comes next must **not** touch. This is a fragment of one of those notes:"
+      },
+      {
+        "kind": "quote",
+        "text": "COORDINATION NOTE: backend/, frontend/ and mobile/ were not touched and the Backend window was not used. HU 012, HU 016, HU 018 and HU 022 are preserved."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's an agent declaring its blast radius and naming the seven stories it left untouched. The next one to open the file reads that before writing a line. It's the exact equivalent of a comment on the card saying \"heads up, I haven't touched the payments part, it's as it was\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The same note holds another line that is my favourite thing in the whole project, because it shows an agent resisting pressure I applied myself:"
+      },
+      {
+        "kind": "quote",
+        "text": "On 2026-08-31 the owner asked to \"close the whole story\"; it was NOT closed and no additional task was ticked: doing so would require writing evidence that does not exist."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I asked it to close. It didn't, and it wrote down why. That note is what stopped the next day's agent from accepting tasks nobody had verified. Had that sentence stayed only in our conversation, it would have died with the conversation."
+      },
+      {
+        "kind": "heading",
+        "text": "The gate: one copy per story, not one per repository"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I call **gate** the thing that runs the checks before letting a task close: tests, static analysis, build and mutation. And here's the technical detail that makes everything above possible."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The first version stored its state in one place per surface: `.chalc/gate.state.json`. With one agent that works. With two, the second overwrites the first one's evidence and the first closes its task on a measurement that isn't its own. That was precisely my original problem."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The fix is that the gate demands to know **which story** each run belongs to, and stores everything separately:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHALC_STORY=022-shipping-notices node .chalc/gate.mjs",
+          "",
+          "ls backend/.chalc/stories/",
+          "012-persistent-cart  018-volume-discount  022-shipping-notices",
+          "016-order-history    021-payment-gateway",
+          "",
+          "ls backend/.chalc/stories/018-volume-discount/",
+          "gate.md  gate.state.json  review.md  task.files  task.json"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Five files per story, each answering a different question:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`task.json`** — where measuring starts from. It holds the task's base commit, so the gate knows what counts as \"new\".",
+          "**`task.files`** — which files this task wrote. The list, recorded by the agent as it works.",
+          "**`gate.md`** — the human-readable evidence: what ran, when, with what result.",
+          "**`gate.state.json`** — the machine verdict: `pass`, `fail` or `blocked`, with the date, the branch and the measured scope.",
+          "**`review.md`** — that story's review history, each entry with its date, its commit and its role."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's another detail that's easy to miss: that folder exists **per surface and per story**. Story 018 has one folder in the backend and another in the web, each with its own verdict. The backend being green doesn't turn the web green, and that's exactly what I want: a finished surface doesn't drag the others along."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What closes the loop is that the gate won't take any name you give it. Before measuring anything it opens `specs/active-story.json` and checks that the story you declared is on the open list. If it isn't, it refuses:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHALC_STORY=014-returns node .chalc/gate.mjs",
+          "→ CHALC_STORY_INACTIVE: CHALC_STORY does not identify an active story:",
+          "  014-returns"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That error is the piece that turns the board into something real. The two JSON files stop being documentation anyone can ignore and become the condition for the tooling to let you work at all. An agent that didn't announce itself on the board simply cannot measure or close anything."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-lanes.en.svg",
+        "caption": "One repository, one branch, one file tree: the separation lives in the state folder, not on disk."
+      },
+      {
+        "kind": "heading",
+        "text": "Scope: what the task touched, not what the repository holds"
+      },
+      {
+        "kind": "paragraph",
+        "text": "One hole is left, and it's the one that breaks measurements most quietly. The repository right now has 977 modified files in the working tree, belonging to five different stories. If the gate measures \"what changed\", it measures all five. And then one story's note fills up with another story's failures."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So scope doesn't come from diffing the tree against git. It comes from the list the agent recorded as it worked, and that list outranks everything else:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "head -3 backend/.chalc/stories/018-volume-discount/task.files",
+          "src/modules/pricing/application/apply-volume-discount.spec.ts",
+          "src/modules/pricing/application/apply-volume-discount.ts",
+          "src/modules/pricing/domain/discount-tier.ts",
+          "",
+          "jq .scope backend/.chalc/stories/018-volume-discount/gate.state.json",
+          "  source:   \"registry\"        ← the list wins, not the tree",
+          "  from:     31f4a70bee…        ← this task's base commit",
+          "  files:    21                 ← what was measured",
+          "  excluded: 2320               ← what the tree carried and is NOT this task's"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The rule, written into the tool's own code, is \"review what the task modified, never the project\". The git tree knows nothing about tasks: it sees a pile of changed files and can't tell yours from the ones that were already half-done. So when the agent recorded what it wrote, its list wins and the tree becomes the backup."
+      },
+      {
+        "kind": "paragraph",
+        "text": "With one condition that I think is the best design decision in the whole thing: **nothing leaves the scope silently**. What the tree carried and the list left out is written into `excluded`; what was written and then undone, into `reverted`. In the capture above, the gate measured 21 files and put on record the 2,320 it set aside. An undeclared narrow scope reads exactly like \"there was nothing to review\", and that's precisely the lie worth preventing."
+      },
+      {
+        "kind": "quote",
+        "text": "Measuring little isn't the problem. The problem is measuring little and having the report look as though everything was measured."
+      },
+      {
+        "kind": "heading",
+        "text": "Who decides what's next: the advisor, not the agent"
+      },
+      {
+        "kind": "paragraph",
+        "text": "With five stories open and an agent that just started with no memory of yesterday, the question \"so what do I do now?\" is dangerous: if the agent answers it, it answers by guessing. So it doesn't. A small program reads the state on disk and returns **one single action**, the next one."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Its whole vocabulary is eleven actions, written in priority order: the first one that applies wins."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "blocked_config    the gate's configuration is incomplete",
+          "sync_contract     the contract you depend on changed and your copy is stale",
+          "read_mail         you have unread notes",
+          "run_gate          there's touched code with no measurement",
+          "fix_gate          the last measurement came back red",
+          "call_role         the reviewer still has to run",
+          "fix_review        the reviewer left findings",
+          "tick_task         all green: tick the task",
+          "work_task         time to implement the next one",
+          "done              every task ticked",
+          "ask_human         I cannot tell where this stands"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Reading that order top to bottom explains the whole discipline without further comment. No working before reading the notes. No calling the reviewer with a red measurement. No ticking a task before the reviewer has run. And `work_task` — what an agent would assume comes first — sits ninth out of eleven."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The last one is the most valuable with agents. `ask_human` isn't another row in the table: it's a guard that fires when the facts on disk can't be read unambiguously. The message it returns says it better than I can: \"I cannot tell where this stands: […]. Tell me instead of me guessing.\" An agent that doesn't know where it is has exactly one permitted move, and it's to ask."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/advisor-ladder.en.svg",
+        "caption": "Eleven actions in priority order. The first that applies is the only one that runs."
+      },
+      {
+        "kind": "heading",
+        "text": "Review: two roles that sign before anything can be ticked"
+      },
+      {
+        "kind": "paragraph",
+        "text": "In a team, a task isn't closed because whoever wrote it says it's fine. Not here either. There are two mandatory roles, run by agents other than the one that wrote the code, with an explicit brief to find what's wrong:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`revisor`** — runs on every task. It checks that what was implemented matches the requirements, that the architecture's boundaries hold, and that no sensitive data, shortcuts or scope creep got in.",
+          "**`endurecedor`** — runs once per whole story, before it can be called finished. It hunts for the path where the system fails open: the configuration accepted when it shouldn't be, the error that leaves a session alive."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Their verdicts stack up in the story's `review.md`. It isn't overwritten: it's appended to. And when they find something, they write it down with file and line:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "## 2026-08-24T14:54:32Z · 31f4a70bee · revisor · FINDINGS: 3",
+          "1. …/pricing/apply-volume-discount.ts:9 — `ApplyVolumeDiscountDependencies`",
+          "   shares a file with the use case; this breaks article 4 of the",
+          "   constitution, which requires a file of its own for each interface.",
+          "",
+          "## 2026-08-24T14:59:19Z · 31f4a70bee · revisor · OK",
+          "## 2026-08-24T15:29:15Z · 31f4a70bee · endurecedor · FINDINGS: 2",
+          "1. …/checkout/payment-config.validator.ts:64 — with `APP_ENV=production` and",
+          "   `WEB_ORIGIN=http://localhost:4200`, a complete configuration is",
+          "   accepted: production starts with an HTTP origin."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That second finding is the kind no automated test catches: it isn't a failure that breaks anything, it's a production configuration accepted where it should be rejected. It was found by an agent whose only job was to look for exactly that, and it's on the record with a date and a line, not said in a chat."
+      },
+      {
+        "kind": "heading",
+        "text": "The product signature: an approval is a digest, not a sentence"
+      },
+      {
+        "kind": "paragraph",
+        "text": "One piece of the board is left, the product owner's. In a team, someone approves the scope before it gets built. With agents that has an obvious problem: if the approval is a sentence in a document, the same agent that writes the document can write the sentence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "So the approval isn't a sentence. It's a separate record where each decision stores the **SHA-256 of the approved file** — the fingerprint of its exact bytes. An approval only counts if, right now, the file still has that fingerprint."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Three phases, in order.** `spec.md` is approved, then `plan.md`, then `tasks.md`. A phase's approval doesn't count if the previous one isn't approved.",
+          "**Changing the document invalidates the approval.** If anyone edits a line of `spec.md`, the fingerprint stops matching and that phase needs my decision again. No discussion, no exceptions.",
+          "**A previous entry is never edited or deleted.** Another one is added, declaring which it supersedes. The full history stays.",
+          "**A missing entry means \"not approved\", not \"rejected\".** And it certainly doesn't mean \"go ahead\"."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is what prevents the most expensive failure I've seen with agents: scope creeping mid-task. An agent that discovers halfway through that \"this would be better if it also…\" has to stop, change `spec.md` first, and wait for me to approve the new fingerprint. Until then it can't touch the plan, the tasks, the tests or the code. That record now runs to almost thirteen thousand lines, and every one of them is a decision I can point at."
+      },
+      {
+        "kind": "heading",
+        "text": "What actually gets better"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Five stories move forward at once in a repository with a single branch — no copies, no branch per agent, no merges to reconcile.",
+          "A measurement belongs to one story and one surface: no agent closes its task on someone else's evidence.",
+          "What an agent learned, decided or left half-done outlives its conversation, because it's in a file and not in a chat.",
+          "State is read without asking: I open two JSON files and know what's open, who opened it, what's missing and what's closed with its evidence.",
+          "Nobody creeps the scope along the way: changing the what requires a fresh approval against the document's fingerprint.",
+          "And when an agent doesn't know where it stands, it has exactly one permitted move, which is to ask me."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "None of this needs a big tool. It's two JSON files, one state folder per story, and a list of eleven actions in order. The hard part wasn't building it: it was accepting that everything a team of people coordinates by looking has to be written down when the team is agents. If you want to see the rest of the method, it's in [my projects](/projects) and in [what I bring](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[The Hearsay-II Speech-Understanding System: Integrating Knowledge to Resolve Uncertainty](https://mas.cs.umass.edu/Documents/Erman_Hearsay80.pdf) — Erman, Hayes-Roth, Lesser and Reddy, ACM Computing Surveys, vol. 12, no. 2, 1980: the work that introduced the blackboard. The sentence that matters is on the first page: it is \"a general framework for coordinating independent processes to achieve cooperative problem-solving behavior\". And the hard rule, in the architecture section: knowledge sources \"operate solely by detecting and modifying hypotheses on the blackboard\". It's from 1980 and it describes this note's problem better than almost anything published today.",
+          "[How we built our multi-agent research system](https://www.anthropic.com/engineering/multi-agent-research-system) — Anthropic, 2025: the opposite end of the design, with one agent coordinating the rest. It's worth it for what it says about its own failures — agents \"distracting each other with excessive updates\" — and for the number worth keeping in mind: a multi-agent system burns roughly fifteen times the tokens of a normal conversation.",
+          "[git-worktree — official documentation](https://git-scm.com/docs/git-worktree): the alternative I don't use here, explained by its own source. Worth reading even if you decide as I did, because it makes clear what a worktree really separates and what stays shared.",
+          "[chalc — the repository](https://github.com/ChristianCruzArango/chalc-cli-adapter): the tool that emits the gate, the advisor and the mailbox. What this note covers lives in `.chalc/gate/lib/story-context.mjs` — the per-story isolation —, `.chalc/gate/lib/scope.mjs` — the scope policy — and `.chalc/next/lib/` — the eleven actions.",
+          "[Stryker Mutator](https://stryker-mutator.io/docs/): the mutation tool whose report the gate reads. Each story has its own measurement profile so it never measures someone else's work.",
+          "[AGENTS.md](https://agents.md): the open format for instructing coding agents, now under the Agentic AI Foundation. It's where the global rules every agent in this repository reads before touching anything live."
+        ]
+      }
+    ]
+  }
+}

@@ -19,7 +19,7 @@ export const EN_TRANSLATIONS: Record<string, string> = {
   'software.soon': 'coming soon',
   'software.achievement': 'Achievement unlocked: everything in production',
   'hero.kicker': "Hi, I'm",
-  'hero.role': 'Senior Full-Stack Developer · AI Engineer',
+  'hero.role': 'AI Software Analyst · Senior Full-Stack Developer',
   'hero.degree': 'Systems Engineering — UNAD',
   'hero.stats.years': 'years of experience',
   'hero.stats.repos': 'open source repos',
@@ -105,14 +105,14 @@ export const EN_TRANSLATIONS: Record<string, string> = {
     'I brought LLMs, MCP and agents into the real development cycle with Spec-Driven Development: the specification governs the implementation, every requirement (R#) stays traceable and token spend is measured per command.',
   'value.ai.result':
     'AI stops improvising: it implements against an approved specification, and every change stays documented and auditable in the repository.',
-  'value.ai.proof': 'Think Us · Raddar Studios',
+  'value.ai.proof': 'Global MVM · Think Us · Raddar Studios',
 
   'value.quality.title': 'Defects caught before the user',
   'value.quality.body':
     'I established TDD, mutation testing and Playwright E2E within CI/CD: no code lands without a failing test first, and the tests themselves are verified by injecting mutants.',
   'value.quality.result':
     'Tests stop being decorative: if a mutant survives, the test was weak and gets strengthened. The bug shows up in the pipeline, not in the customer call.',
-  'value.quality.proof': 'Think Us · Raddar Studios · Datatools',
+  'value.quality.proof': 'Global MVM · Think Us · Raddar Studios · Datatools',
 
   'value.lead.title': 'Teams that deliver and grow',
   'value.lead.body':

@@ -51,7 +51,7 @@ describe('ValuePage', () => {
     );
     expect(companies.length).toBe(6);
     expect(results.length).toBe(6);
-    expect(companies[0]).toContain('Think Us');
+    expect(companies[0]).toContain('Global MVM');
     expect(results[0]).toContain('especificación aprobada');
   });
 

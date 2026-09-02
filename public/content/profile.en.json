@@ -1,9 +1,16 @@
 {
   "experience": [
     {
+      "company": "Global MVM",
+      "role": "AI Software Analyst",
+      "period": "Sep 2026 — present",
+      "location": "Remote · Medellín",
+      "summary": "AI-assisted software engineering: I design the process and tooling so agents write, test and refactor code against verifiable criteria. Specification-Driven Development (the spec as the source of truth), TDD with mutation testing, agent harness (tools, context, memory, guardrails and automated evals) and orchestration of specialized agents with MCP, skills and human checkpoints. From plan to implementation with Playwright E2E and CI/CD, on Angular, .NET, Clean Architecture and DDD."
+    },
+    {
       "company": "Think Us — IT Staff Augmentation",
       "role": "Senior Full-Stack Developer",
-      "period": "Nov 2025 — present",
+      "period": "Nov 2025 — Sep 2026",
       "location": "Remote · Colombia",
       "summary": "Web applications with Angular and .NET: scalable, maintainable, high-performance solutions. Refactoring with best practices and AI (LLMs, MCP, skills) to optimize development and planning."
     },

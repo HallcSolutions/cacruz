@@ -1,9 +1,16 @@
 {
   "experience": [
     {
+      "company": "Global MVM",
+      "role": "Analista de Software IA",
+      "period": "sept. 2026 — actualidad",
+      "location": "Remoto · Medellín",
+      "summary": "Ingeniería de software asistida por IA: diseño el proceso y las herramientas para que los agentes escriban, prueben y refactoricen código bajo criterios verificables. Specification-Driven Development (la spec como fuente de verdad), TDD con mutation testing, agent harness (herramientas, contexto, memoria, guardrails y evaluaciones) y orquestación de agentes especializados con MCP, skills y puntos de control humanos. Del plan a la implementación con E2E en Playwright y CI/CD, sobre Angular, .NET, Clean Architecture y DDD."
+    },
+    {
       "company": "Think Us — IT Staff Augmentation",
       "role": "Senior Full-Stack Developer",
-      "period": "nov. 2025 — actualidad",
+      "period": "nov. 2025 — sept. 2026",
       "location": "Remoto · Colombia",
       "summary": "Aplicaciones web con Angular y .NET: soluciones escalables, mantenibles y de alto rendimiento. Refactorización con buenas prácticas y uso de IA (LLMs, MCP, skills) para optimizar el desarrollo y la planificación."
     },

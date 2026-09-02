@@ -26,7 +26,7 @@ describe('Hero', () => {
     const host = render();
     expect(host.textContent).toContain('Christian');
     expect(host.textContent).toContain('Cruz Arango');
-    expect(host.textContent).toContain('Senior Full-Stack Developer');
+    expect(host.textContent).toContain('Analista de Software IA');
   });
 
   it('links to GitHub, LinkedIn, YouTube and Instagram (R1)', () => {

@@ -1,5 +1,24 @@
 [
   {
+    "slug": "the-harness-back-and-forth",
+    "date": "2026-09-15",
+    "title": {
+      "es": "Hoy sobra, mañana es clave: el vaivén del harness y de todo lo que cambia cada semana en la IA",
+      "en": "Useless today, key tomorrow: the harness back-and-forth and everything that changes every week in AI"
+    },
+    "summary": {
+      "es": "El creador de Claude Code cuenta que borraron el 80% del system prompt y que ya no hace falta andamiaje. Meses antes, Anthropic admitió que tres cambios en su harness empeoraron la herramienta. Qué se dijo de verdad, con fechas y fuentes, qué conviene hacer mientras todo cambia y lo que me pasó al quitarle todo mi harness a Opus 5: un 70% más de tokens.",
+      "en": "The creator of Claude Code says the team deleted 80% of the system prompt and scaffolding is no longer needed. Months earlier, Anthropic admitted three changes to its harness made the tool worse. What was really said, with dates and sources, what to do while everything keeps changing, and what happened when I took my whole harness away from Opus 5: 70% more tokens."
+    },
+    "tags": [
+      "ia",
+      "harness",
+      "agentes",
+      "calidad",
+      "criterio"
+    ]
+  },
+  {
     "slug": "many-agents-one-repository",
     "date": "2026-09-01",
     "title": {

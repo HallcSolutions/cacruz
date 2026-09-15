@@ -1,0 +1,627 @@
+{
+  "slug": "the-harness-back-and-forth",
+  "date": "2026-09-15",
+  "title": {
+    "es": "Hoy sobra, mañana es clave: el vaivén del harness y de todo lo que cambia cada semana en la IA",
+    "en": "Useless today, key tomorrow: the harness back-and-forth and everything that changes every week in AI"
+  },
+  "summary": {
+    "es": "El creador de Claude Code cuenta que borraron el 80% del system prompt y que ya no hace falta andamiaje. Meses antes, Anthropic admitió que tres cambios en su harness empeoraron la herramienta. Qué se dijo de verdad, con fechas y fuentes, qué conviene hacer mientras todo cambia y lo que me pasó al quitarle todo mi harness a Opus 5: un 70% más de tokens.",
+    "en": "The creator of Claude Code says the team deleted 80% of the system prompt and scaffolding is no longer needed. Months earlier, Anthropic admitted three changes to its harness made the tool worse. What was really said, with dates and sources, what to do while everything keeps changing, and what happened when I took my whole harness away from Opus 5: 70% more tokens."
+  },
+  "tags": [
+    "ia",
+    "harness",
+    "agentes",
+    "calidad",
+    "criterio"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Llevo meses leyendo dos ideas que, en apariencia, no pueden ser verdad a la vez. La primera: que ya no hace falta un harness porque el modelo es lo bastante listo. La segunda: que el diseño del harness es clave para el rendimiento. Lo incómodo no es que las digan personas distintas en internet. Lo incómodo es que las dos salen, con pocos meses de diferencia, de la misma empresa."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta nota es crítica, pero no con las herramientas: las uso todos los días y este blog se escribe con ellas. Es crítica con la forma en que se cuenta el cambio. Por eso cada afirmación lleva su fecha y su fuente original. No tienes que creerme a mí: puedes leer lo mismo que leí yo y sacar tu propia conclusión."
+      },
+      {
+        "kind": "quote",
+        "text": "Si la misma empresa te dice en abril que tocar el harness empeoró Claude Code y en julio que ya no hace falta andamiaje, el problema no es que tú no entiendas. Es que te están dando titulares, no un criterio."
+      },
+      {
+        "kind": "heading",
+        "text": "Primero, qué es un harness (en diez segundos)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un harness —en español, un arnés— es todo lo que envuelve al modelo para que termine un trabajo: las instrucciones de sistema, las herramientas que puede usar, los permisos, los tests que comprueban lo que el modelo dice haber hecho, las skills y el bucle que decide cuándo parar. El modelo piensa; el harness le da manos, límites y alguien que revise su trabajo. Lo expliqué con más detalle en [la nota sobre skills, MCP y harness](/daily/skills-mcp-harness)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Guarda este detalle, porque lo vas a necesitar más adelante: Claude Code, la herramienta de Anthropic para programar con agentes, **es** un harness. Lo dice su propio creador, con esa palabra."
+      },
+      {
+        "kind": "heading",
+        "text": "El «no hace falta»: qué se dijo y cuándo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Anthropic lanzó Claude Opus 5 el 24 de julio de 2026. Al día siguiente, en la Startup School de Y Combinator, Boris Cherny —creador de Claude Code— contó que habían borrado la mayor parte del system prompt: las instrucciones fijas con las que la herramienta guía al modelo en cada conversación. Esto es lo que dijo, traducido de la transcripción:"
+      },
+      {
+        "kind": "quote",
+        "text": "Claude Code, como producto y como harness, está siempre cambiando. Siempre estamos añadiendo cosas, siempre estamos borrando cosas. Cada vez que sale un modelo nuevo, borramos buena parte del system prompt (…) Opus 5 simplemente lo hace. Así que sí, borramos el 80% del system prompt.",
+        "source": "Boris Cherny · Y Combinator Startup School, julio de 2026",
+        "sourceUrl": "https://www.ycombinator.com/library/UN-boris-cherny-building-claude-code"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En la misma charla, hablando de lo mucho que Opus 5 aguanta trabajando solo, añadió: «ni siquiera necesitas usar andamiaje». Sacada de contexto, es fácil leer esa frase como «ya no necesitas harness». Y no se quedó en palabras: el 14 de agosto, la versión 2.1.233 de Claude Code dejó de ofrecer las herramientas con las que el agente lleva su lista de tareas a Opus 4.8, Sonnet 5, Fable 5, Mythos 5 y modelos posteriores. El changelog —el registro oficial de cambios— no explica el motivo, pero encaja con lo que contó Cherny: una pieza clásica del harness que deja de ofrecerse a los modelos nuevos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La idea tiene un fundamento serio y antiguo. En 2019, Rich Sutton —[Premio Turing 2024](https://awards.acm.org/about/2024-turing) junto a Andrew Barto por sentar las bases del aprendizaje por refuerzo— escribió un ensayo corto que hoy se cita en cada debate de este tipo:"
+      },
+      {
+        "kind": "quote",
+        "text": "La mayor lección que se puede leer en 70 años de investigación en IA es que los métodos generales que aprovechan la computación son, al final, los más efectivos, y por un amplio margen.",
+        "source": "Rich Sutton · The Bitter Lesson, 2019",
+        "sourceUrl": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Traducido a nuestro tema: todo lo que escribes a mano para suplir lo que el modelo no sabe hacer tiene fecha de caducidad. En mayo de 2026, Han Lee lo llevó al extremo en un artículo titulado «Hidden Technical Debt of AI Systems: Agent Harness»: casi todo el harness es deuda técnica temporal —trabajo que tarde o temprano habrá que deshacer— que la siguiente generación de modelos va a disolver."
+      },
+      {
+        "kind": "heading",
+        "text": "El «sí hace falta»: qué se dijo y cuándo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora retrocede cuatro meses. El 24 de marzo de 2026, Prithvi Rajasekaran publicó en el blog de ingeniería de Anthropic un artículo cuyo resumen empieza así: el diseño del harness es clave para el rendimiento en la frontera de la programación con agentes. Describe un sistema con tres papeles: un planificador que define el trabajo, un generador que lo construye y un evaluador separado que prueba la aplicación como lo haría un usuario. Y cuenta un detalle que conviene no saltarse: cuando intentó recortar el harness de golpe, no consiguió replicar el rendimiento original. Tuvo que quitar las piezas de una en una y medir cada vez."
+      },
+      {
+        "kind": "quote",
+        "text": "Cada componente de un harness codifica una suposición sobre lo que el modelo no puede hacer por sí solo, y vale la pena poner esas suposiciones a prueba.",
+        "source": "Prithvi Rajasekaran · Anthropic, Harness design for long-running application development, marzo de 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un mes después llegó la prueba más contundente de que el harness importa, y la dio Anthropic contra sí misma. Durante semanas llegaron reportes de que las respuestas de Claude habían empeorado para algunos usuarios. El 23 de abril, la empresa publicó un informe con la causa: no era el modelo, eran tres cambios en el harness. El primero, del 4 de marzo: bajaron el esfuerzo de razonamiento por defecto —cuánto piensa el modelo antes de responder— de alto a medio para reducir la espera, algo que el propio informe llama «la compensación equivocada». El segundo, del 26 de marzo: un cambio para limpiar el razonamiento antiguo de las sesiones inactivas durante más de una hora tenía un error que lo borraba en cada turno, así que el modelo parecía olvidadizo y repetitivo. El tercero, del 16 de abril: una instrucción en el system prompt para que respondiera con menos palabras que, al medirla con más evaluaciones, costaba un 3% de rendimiento en Opus 4.6 y 4.7."
+      },
+      {
+        "kind": "quote",
+        "text": "Nunca degradamos nuestros modelos de forma intencionada, y pudimos confirmar de inmediato que nuestra API y nuestra capa de inferencia no se vieron afectadas.",
+        "source": "Anthropic · An update on recent Claude Code quality reports, 23 de abril de 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/april-23-postmortem"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Léelo con cuidado, porque es la pieza que desmonta el titular de julio: si el modelo estaba intacto y aun así la calidad cayó, lo que falló fue lo que rodea al modelo. Tres ajustes al harness bastaron para que la diferencia se notara. En el mismo informe, Anthropic se compromete a ejecutar un conjunto amplio de evaluaciones por modelo para **cada** cambio del system prompt."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y no es solo Anthropic. El 11 de febrero de 2026, Ryan Lopopolo publicó en OpenAI «Harness engineering: leveraging Codex in an agent-first world», con un lema que resume el enfoque: «los humanos dirigen, los agentes ejecutan». Su equipo aprendió a darle al agente un mapa corto —un `AGENTS.md` de unas cien líneas con punteros, que es el archivo de instrucciones que el agente lee al empezar— en lugar de un manual gigante, y a imponer la arquitectura con linters, programas que revisan el código de forma automática, en vez de pedírsela por favor. En marzo, la empresa HumanLayer lo dijo sin rodeos: «no es un problema del modelo, es un problema de configuración»."
+      },
+      {
+        "kind": "heading",
+        "text": "La montaña rusa de las deprecaciones"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí, discursos. Pero la contradicción también está escrita en la propia herramienta. Deprecar una función significa anunciar que se va a retirar y que no deberías seguir usándola. Estos son fragmentos literales del registro oficial de cambios de Claude Code, en inglés como en el original y con la fecha en que cada versión se publicó en npm. Donde recorté texto, lo marco con puntos suspensivos:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHANGELOG.md · Claude Code (fragmentos literales · fecha de publicación en npm)",
+          "2025-10-30  v2.0.30   Deprecated output styles. …",
+          "2025-11-03  v2.0.32   Un-deprecate output styles based on community feedback",
+          "2026-03-04  v2.1.68   Re-introduced the \"ultrathink\" keyword to enable high effort for the next turn",
+          "2026-03-11  v2.1.73   Deprecated `/output-style` command — use `/config` instead. …",
+          "2026-07-01  v2.1.198  Removed the `/agents` wizard; …",
+          "2026-08-14  v2.1.233  Todo/task-tracking tools (…) are no longer available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and newer models; …",
+          "2026-09-11  v2.1.269  Added `/output-style [name]` to list and switch output styles, …"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Repásalo despacio. Los estilos de salida —que cambian la forma en que responde Claude Code— se deprecaron y volvieron **cuatro días después**, «por los comentarios de la comunidad». El comando `/output-style` se deprecó en marzo y regresó el 11 de septiembre. La palabra clave `ultrathink`, para pedir más razonamiento, volvió el 4 de marzo. Ese mismo día se bajó el esfuerzo por defecto a medio, el cambio que el informe de abril reconoció como un error. Si en marzo alguien armó una guía, un curso o la configuración de su equipo siguiendo lo más reciente, en septiembre buena parte ya no sirve."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-whiplash.es.svg",
+        "caption": "Un año del mismo vaivén: arriba, lo que se retiró o se declaró innecesario; abajo, lo que volvió o se declaró imprescindible."
+      },
+      {
+        "kind": "paragraph",
+        "text": "No lo leo como mala fe. Cada modelo se comporta distinto, y el propio Cherny lo explica en la misma charla: algo que hiciste para un modelo hace tres meses puede no servir en absoluto para el siguiente. Lo que corregía un defecto del anterior puede estorbar al nuevo. Pero el costo de ese ritmo no lo paga quien publica el changelog. Lo pagas tú, reconfigurando cada pocas semanas algo que te vendieron como la forma correcta."
+      },
+      {
+        "kind": "quote",
+        "text": "Que una herramienta cambie cada semana no es el problema. El problema es copiar su configuración de hoy como si fuera doctrina."
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué las dos cosas son verdad a la vez"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El enredo se deshace cuando notas que la palabra «harness» está nombrando dos cosas muy distintas. La primera es **lo que compensa al modelo**: instrucciones y herramientas que tapan un defecto concreto, como «no te detengas antes de terminar», una lista de tareas obligatoria, un límite de palabras o reiniciar la conversación desde cero porque el modelo cerraba el trabajo antes de tiempo al acercarse al límite de lo que puede leer. Cada generación de modelos vuelve inútil una parte de esto, y lo sensato es borrarla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La segunda es **lo que verifica y limita**: los tests, los permisos, el sandbox —el entorno aislado donde el agente no puede romper nada fuera—, un evaluador separado, la evidencia antes de marcar algo como hecho y las reglas de tu negocio. Esto no está ahí porque el modelo sea torpe. Está porque alguien tiene que firmar el trabajo, y un modelo más capaz no cambia eso."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y aquí vuelve el detalle que te pedí guardar. Nadie borró el harness. Lo que Boris Cherny borró fue texto **dentro** del harness. En esa misma charla, para explicar por qué Opus 5 resiste las inyecciones de instrucciones —textos escondidos que intentan darle órdenes al modelo—, describe tres capas: un modelo bien alineado, un clasificador que revisa todo el tráfico en busca de esos ataques y el clasificador del modo automático, que decide qué acciones puede tomar el agente por su cuenta. Eso es harness puro. El titular se comió el matiz."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-two-layers.es.svg",
+        "caption": "Lo que compensa al modelo caduca con cada generación; lo que verifica y limita se queda. Y el techo sube: aparecen tareas nuevas que piden piezas nuevas."
+      },
+      {
+        "kind": "quote",
+        "text": "El espacio de combinaciones interesantes de harness no se encoge a medida que los modelos mejoran. Se mueve.",
+        "source": "Prithvi Rajasekaran · Anthropic, marzo de 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Addy Osmani lo contó con un ejemplo propio el 19 de abril: el andamiaje que escribió seis meses antes para la «ansiedad de contexto» —el modelo que cierra el trabajo antes de tiempo— se había vuelto código muerto con Opus 4.6. Pero, en sus palabras, «el techo se movió con el modelo»: las tareas que antes eran inalcanzables ahora están en juego, y traen sus propios fallos, como la memoria de varios días o la coordinación entre agentes especializados."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que critico de cómo se está contando"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Confundir una pieza con el todo.** «Borramos el 80% del system prompt» y «ya no necesitas harness» no significan lo mismo. El prompt es una pieza; el harness es el vehículo entero.",
+          "**Presentar como universal un consejo que depende del modelo.** El propio changelog lo desmiente: la versión 2.1.268 sigue ofreciendo las listas de tareas a Claude 3.x, Opus 4.0–4.7, Sonnet 4.0–4.6 y Haiku 4.5. Lo que sobra en Opus 5 puede hacer falta en el modelo que tú pagas.",
+          "**Deprecar y dejar que midan los usuarios.** Si una función vuelve a los cuatro días «por los comentarios de la comunidad», el impacto real lo terminó de medir la comunidad.",
+          "**Tocar el harness sin evaluaciones suficientes.** El informe de abril lo reconoce y promete evaluaciones por modelo para cada cambio de prompt. Si la empresa que entrena el modelo tuvo que aprenderlo con usuarios reales, tú no puedes saltarte la medición.",
+          "**Recetas que duran un mes.** Configuraciones que circulan como la forma correcta y que el siguiente changelog deja viejas. No son un criterio: son fotos de un momento."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Qué conviene hacer mientras todo cambia"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto es una opinión, no una doctrina, pero cada punto se apoya en las fuentes de arriba. Curiosamente, el consejo que mejor ha envejecido es el más viejo de todos, de diciembre de 2024:"
+      },
+      {
+        "kind": "quote",
+        "text": "Empieza con prompts simples, optimízalos con una evaluación exhaustiva y añade sistemas agénticos de varios pasos solo cuando las soluciones más simples se queden cortas.",
+        "source": "Erik S. y Barry Zhang · Anthropic, Building effective agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Separa tu harness en dos columnas**: lo que compensa al modelo y lo que verifica o limita. Solo la primera es desechable.",
+          "**Cuando llegue un modelo nuevo, quita piezas de compensación de una en una** y prueba con tareas reales de tu proyecto. Anthropic lo intentó cortando todo de golpe y no pudo replicar el rendimiento.",
+          "**No borres la verificación porque el modelo «ya es muy bueno».** Un modelo más capaz te lleva a tareas más difíciles, y ahí vuelve a fallar. Los tests, los permisos y la evidencia no se negocian.",
+          "**Conserva el conocimiento de tu proyecto, pero corto**: un mapa con punteros, no una enciclopedia, como el `AGENTS.md` de unas cien líneas del equipo de OpenAI. Las convenciones de tu equipo no las trae ningún modelo de fábrica.",
+          "**Hazlo fácil de quitar.** Si retirar una pieza cuesta una hora, tienes una opción; si cuesta una semana, tienes una deuda. La idea es de Han Lee.",
+          "**No migres el día del anuncio.** Lee el changelog, pruébalo primero en una rama aparte y espera a que se asiente. Los estilos de salida tardaron cuatro días en volver."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-pruning-loop.es.svg",
+        "caption": "Se quita una sola pieza de las que compensan, se mide con tareas reales y solo vuelve si el resultado empeora. La verificación nunca entra en el bucle."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo clasificar cada pieza"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Una forma sencilla de no perderse con cada anuncio es poner cada pieza en su columna. Las que compensan se revisan con cada modelo nuevo; las que verifican o limitan no dependen de lo listo que sea el modelo, sino de que alguien firme lo que se publica:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "harness/                            ¿compensa o verifica?",
+          "  «no te detengas antes de terminar»   compensa · revisar con cada modelo",
+          "  lista de tareas obligatoria          compensa · Claude Code ya la retiró en modelos nuevos",
+          "  límite de palabras en respuestas     compensa · costó un 3% en evaluaciones",
+          "  convenciones del equipo              conocimiento · corto y revisado",
+          "  test en rojo antes del código        verifica · se queda",
+          "  mutation score ≥ 80%                 verifica · se queda",
+          "  permisos y sandbox                   limita · se queda"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso, cuando leas el próximo «ya no hace falta», la pregunta útil es a cuál de las dos columnas se refiere. Si habla de instrucciones que tapaban un defecto del modelo, probablemente tenga razón. Si habla de tests, permisos o evidencia, desconfía: «listo» es una afirmación y la evidencia es un hecho, y eso no lo cambia ninguna generación."
+      },
+      {
+        "kind": "heading",
+        "text": "En resumen"
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Se necesita un harness? La pregunta está mal hecha, y quien te responda con un sí o un no a secas te está vendiendo un titular. La pregunta útil es **qué parte**: la que compensa al modelo caduca y hay que podarla midiendo; la que verifica y limita es tu responsabilidad profesional y se queda. Y una advertencia honesta: dentro de seis meses, parte de esta nota también habrá envejecido. Por eso cada fuente lleva su fecha. Si te interesa por qué la verificación no se negocia, lo cuento en [la nota sobre cerrar una tarea con evidencia](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que opino yo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hasta aquí, lo documentado. Lo que sigue es mi opinión, y la pongo aparte para que no se confunda con lo anterior. Sale de los años que llevo trabajando con modelos de IA todos los días: un mundo fascinante, pero también agotador. Cada mes sale algo distinto —un modelo, una herramienta, una forma «correcta» de trabajar que al mes siguiente ya no lo es— y seguirle el paso a todo desgasta."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso no quise quedarme con los titulares e hice la prueba: le quité a Opus 5 todo mi harness y le pedí un feature. La verdad, dio más vueltas de lo que esperaba. Y se notó en el consumo. Comparé ese feature con los anteriores, que había hecho con el mismo Opus 5 pero con el harness puesto: sin harness gastó un 70% más de tokens. Un token es la unidad con la que se mide lo que el modelo lee y escribe, y también la unidad por la que se cobra."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Quiero ser honesto con lo que vale esa cifra: es una sola prueba, en mi proyecto y con mi forma de trabajar. No es un estudio. Además, quité todo de golpe, justo lo que el artículo de Anthropic desaconseja. Pero eso es exactamente lo que invita a hacer una frase como «ni siquiera necesitas usar andamiaje»."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y ahí me hago la pregunta incómoda. Por la API, estos modelos se cobran por token: según la [tabla de precios de Anthropic](https://platform.claude.com/docs/en/about-claude/pricing), Opus 5 cuesta 5 dólares por cada millón de tokens que lee y 25 por cada millón que escribe. En los planes de suscripción se paga una cuota fija, pero lo que gastas cuenta para el límite de uso, así que gastar más es llegar antes a ese límite."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si el mensaje es que el andamiaje sobra, y en mi prueba quitarlo hizo que el modelo diera más vueltas y gastara más, ¿a quién le conviene ese mensaje? No tengo pruebas de que se diga por negocio, y no lo afirmo. De hecho, hay datos en sentido contrario: esa misma documentación explica cómo gastar menos, y en el [informe de abril](https://www.anthropic.com/engineering/april-23-postmortem) Anthropic cuenta que bajó el esfuerzo por defecto, entre otras razones, para que los usuarios aprovecharan mejor sus límites de uso. Pero el incentivo existe, y tener criterio también es no olvidarlo."
+      },
+      {
+        "kind": "quote",
+        "text": "Para tener criterio no basta con leer lo que dicen. Hay que probarlo en tu proyecto, con tus propios números."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Tampoco es la primera vez que se anuncia el final de algo. En febrero de 2024, en la Cumbre Mundial de Gobiernos de Dubái, Jensen Huang, CEO de Nvidia, dijo que durante años se había repetido que era vital que los niños aprendieran a programar, y que la realidad era casi exactamente lo contrario:"
+      },
+      {
+        "kind": "quote",
+        "text": "Nuestro trabajo es crear tecnología de computación tal que nadie tenga que programar, y que el lenguaje de programación sea el humano.",
+        "source": "Jensen Huang, CEO de Nvidia · Cumbre Mundial de Gobiernos, Dubái, febrero de 2024",
+        "sourceUrl": "https://80.lv/articles/nvidia-s-ceo-thinks-that-our-kids-shouldn-t-learn-how-to-code-as-ai-can-do-it-for-them"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Han pasado más de dos años y, desde mi mesa, no veo un oficio que se acaba. Veo uno con más cosas que entender, probar y decidir que nunca: cada modelo, cada herramienta y cada deprecación nueva es una decisión que alguien tiene que tomar con criterio. Los desarrolladores no nos acabamos. Con todo lo que sacan cada mes, para mí estamos más vivos que nunca."
+      },
+      {
+        "kind": "quote",
+        "text": "Cuestiónate también a ti, aprende, investiga y no te quedes con todo lo que te digan."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Boris Cherny: Building Claude Code](https://www.ycombinator.com/library/UN-boris-cherny-building-claude-code) — Y Combinator, julio de 2026: la charla en la que cuenta que borraron el 80% del system prompt. Escúchala entera: el matiz sobre las capas de seguridad está en los primeros cinco minutos.",
+          "[Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Prithvi Rajasekaran, Anthropic, marzo de 2026: el mejor texto sobre cómo quitar piezas de un harness midiendo, no a ojo.",
+          "[An update on recent Claude Code quality reports](https://www.anthropic.com/engineering/april-23-postmortem) — Anthropic, abril de 2026: la prueba de que tres cambios en el harness bastan para empeorar un producto sin tocar el modelo.",
+          "[CHANGELOG de Claude Code](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md): la fuente de todas las deprecaciones de esta nota. Busca «deprecat» y verás el vaivén con tus propios ojos.",
+          "[Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — Ryan Lopopolo, OpenAI, febrero de 2026: la versión de OpenAI, con el `AGENTS.md` como mapa y la arquitectura impuesta por linters.",
+          "[Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/) — Addy Osmani, abril de 2026: por qué el harness no se encoge, se mueve, contado desde la experiencia de alguien que borró su propio andamiaje.",
+          "[Hidden Technical Debt of AI Systems: Agent Harness](https://leehanchung.github.io/blogs/2026/05/08/hidden-technical-debt-agent-harness/) — Han Lee, mayo de 2026: la postura contraria, bien argumentada. Léela para no quedarte solo con mi lado.",
+          "[Skill Issue: Harness Engineering for Coding Agents](https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents) — HumanLayer, marzo de 2026: guía práctica para empezar pequeño y añadir piezas solo cuando un fallo real lo pide.",
+          "[The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) — Rich Sutton, 2019: el ensayo de una página detrás de la idea de borrar andamiaje y dejar que el modelo lo resuelva.",
+          "[NVIDIA CEO Thinks We Shouldn't Learn How to Code, AI Can Do It for Us](https://80.lv/articles/nvidia-s-ceo-thinks-that-our-kids-shouldn-t-learn-how-to-code-as-ai-can-do-it-for-them) — 80.lv, febrero de 2024: la cita completa de Jensen Huang en la Cumbre Mundial de Gobiernos, para leerla en su contexto.",
+          "[Precios de Claude](https://platform.claude.com/docs/en/about-claude/pricing) — documentación de Anthropic: cuánto cuesta cada millón de tokens por modelo. Útil para poner en dinero lo que gasta un agente que da vueltas.",
+          "[Building effective agents](https://www.anthropic.com/research/building-effective-agents) — Erik S. y Barry Zhang, Anthropic, 2024: el consejo que no ha caducado, que es empezar simple y añadir complejidad solo si mejora el resultado."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "For months I've been reading two ideas that, on the surface, can't both be true. The first: that you don't need a harness anymore because the model is smart enough. The second: that harness design is key to performance. The uncomfortable part isn't that different people on the internet say them. The uncomfortable part is that both come, a few months apart, from the same company."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This note is critical, but not of the tools: I use them every day and this blog is written with them. It's critical of the way the change is being told. That's why every claim carries its date and its original source. You don't have to believe me: you can read what I read and draw your own conclusion."
+      },
+      {
+        "kind": "quote",
+        "text": "If the same company tells you in April that touching the harness made Claude Code worse and in July that you don't need scaffolding anymore, the problem isn't that you don't get it. It's that you're being handed headlines, not judgment."
+      },
+      {
+        "kind": "heading",
+        "text": "First, what a harness is (in ten seconds)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A harness is everything wrapped around the model so it can finish a job: the system instructions, the tools it can use, the permissions, the tests that check what the model claims to have done, the skills and the loop that decides when to stop. The model thinks; the harness gives it hands, limits and someone to review its work. I explained it in more detail in [the note on skills, MCP and harness](/daily/skills-mcp-harness)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Keep this detail in mind, because you'll need it later: Claude Code, Anthropic's tool for coding with agents, **is** a harness. Its own creator says so, using that word."
+      },
+      {
+        "kind": "heading",
+        "text": "The \"you don't need it\": what was said and when"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Anthropic launched Claude Opus 5 on July 24, 2026. The next day, at Y Combinator's Startup School, Boris Cherny — creator of Claude Code — said the team had deleted most of the system prompt: the fixed instructions the tool uses to guide the model in every conversation. This is what was said, word for word from the transcript:"
+      },
+      {
+        "kind": "quote",
+        "text": "Claude Code as a product and as a harness is just always changing. We're always adding stuff, we're always deleting stuff. Every time that a new model comes out, we delete a bunch of the system prompt (…) Now Opus 5 just does it. So yeah, we deleted 80% of the system prompt.",
+        "source": "Boris Cherny · Y Combinator Startup School, July 2026",
+        "sourceUrl": "https://www.ycombinator.com/library/UN-boris-cherny-building-claude-code"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The same talk, on how long Opus 5 can keep working on its own, also includes this line: \"you don't even need to use scaffolding.\" Out of context, it's easy to read that sentence as \"you don't need a harness anymore.\" And it didn't stay talk: on August 14, Claude Code version 2.1.233 stopped offering the tools the agent uses to keep its task list to Opus 4.8, Sonnet 5, Fable 5, Mythos 5 and newer models. The changelog — the official record of changes — doesn't give the reason, but it fits what Cherny said: a classic harness piece that's no longer offered to newer models."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The idea has a serious, old foundation. In 2019, Rich Sutton — [2024 Turing Award](https://awards.acm.org/about/2024-turing) winner with Andrew Barto for laying the foundations of reinforcement learning — wrote a short essay that now gets quoted in every debate like this one:"
+      },
+      {
+        "kind": "quote",
+        "text": "The biggest lesson that can be read from 70 years of AI research is that general methods that leverage computation are ultimately the most effective, and by a large margin.",
+        "source": "Rich Sutton · The Bitter Lesson, 2019",
+        "sourceUrl": "http://www.incompleteideas.net/IncIdeas/BitterLesson.html"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Translated to our topic: everything you hand-write to make up for what the model can't do has an expiration date. In May 2026, Han Lee took it to the extreme in an article titled \"Hidden Technical Debt of AI Systems: Agent Harness\": almost all of the harness is temporary technical debt — work that sooner or later will have to be undone — that the next generation of models will dissolve."
+      },
+      {
+        "kind": "heading",
+        "text": "The \"you do need it\": what was said and when"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now rewind four months. On March 24, 2026, Prithvi Rajasekaran published an article on Anthropic's engineering blog whose summary opens like this: harness design is key to performance at the frontier of agentic coding. It describes a system with three roles: a planner that defines the work, a generator that builds it and a separate evaluator that tests the app the way a user would. And it includes a detail worth not skipping: cutting the harness back all at once couldn't replicate the original performance. Pieces had to be removed one at a time, measuring each time."
+      },
+      {
+        "kind": "quote",
+        "text": "Every component in a harness encodes an assumption about what the model can't do on its own, and those assumptions are worth stress testing.",
+        "source": "Prithvi Rajasekaran · Anthropic, Harness design for long-running application development, March 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A month later came the strongest proof that the harness matters, and Anthropic delivered it against itself. For weeks, reports came in that Claude's responses had gotten worse for some users. On April 23, the company published a report with the cause: it wasn't the model, it was three changes to the harness. The first, on March 4: they lowered the default reasoning effort — how much the model thinks before answering — from high to medium to reduce waiting time, which the report itself calls \"the wrong tradeoff.\" The second, on March 26: a change to clear older reasoning from sessions idle for over an hour had a bug that cleared it on every turn, so the model seemed forgetful and repetitive. The third, on April 16: a system prompt instruction to answer with fewer words that, once measured with more evaluations, cost 3% of performance on Opus 4.6 and 4.7."
+      },
+      {
+        "kind": "quote",
+        "text": "We never intentionally degrade our models, and we were able to immediately confirm that our API and inference layer were unaffected.",
+        "source": "Anthropic · An update on recent Claude Code quality reports, April 23, 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/april-23-postmortem"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Read it carefully, because this is the piece that takes apart July's headline: if the model was intact and quality still dropped, what failed was what surrounds the model. Three harness tweaks were enough for the difference to show. In the same report, Anthropic commits to running a broad suite of per-model evaluations for **every** system prompt change."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And it isn't just Anthropic. On February 11, 2026, Ryan Lopopolo published \"Harness engineering: leveraging Codex in an agent-first world\" at OpenAI, with a motto that sums up the approach: \"Humans steer. Agents execute.\" The team learned to give the agent a short map — an `AGENTS.md` of about a hundred lines with pointers, which is the instructions file the agent reads when it starts — instead of a giant manual, and to enforce the architecture with linters, programs that check the code automatically, instead of asking nicely. In March, the company HumanLayer put it bluntly: \"it's not a model problem. It's a configuration problem.\""
+      },
+      {
+        "kind": "heading",
+        "text": "The deprecation roller coaster"
+      },
+      {
+        "kind": "paragraph",
+        "text": "So far, talk. But the contradiction is also written into the tool itself. Deprecating a feature means announcing it will be removed and that you shouldn't keep using it. These are verbatim excerpts from Claude Code's official changelog, with the date each version was published to npm. Where I cut text, it's marked with an ellipsis:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "CHANGELOG.md · Claude Code (verbatim excerpts · npm publish date)",
+          "2025-10-30  v2.0.30   Deprecated output styles. …",
+          "2025-11-03  v2.0.32   Un-deprecate output styles based on community feedback",
+          "2026-03-04  v2.1.68   Re-introduced the \"ultrathink\" keyword to enable high effort for the next turn",
+          "2026-03-11  v2.1.73   Deprecated `/output-style` command — use `/config` instead. …",
+          "2026-07-01  v2.1.198  Removed the `/agents` wizard; …",
+          "2026-08-14  v2.1.233  Todo/task-tracking tools (…) are no longer available on Opus 4.8, Sonnet 5, Fable 5, Mythos 5, and newer models; …",
+          "2026-09-11  v2.1.269  Added `/output-style [name]` to list and switch output styles, …"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Go over it slowly. Output styles — which change the way Claude Code responds — were deprecated and came back **four days later**, \"based on community feedback.\" The `/output-style` command was deprecated in March and returned on September 11. The `ultrathink` keyword, for asking for more reasoning, came back on March 4. That same day the default effort was lowered to medium, the change April's report acknowledged as a mistake. If someone built a guide, a course or their team's setup in March following the latest advice, by September a good part of it no longer works."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-whiplash.en.svg",
+        "caption": "A year of the same back-and-forth: above, what was removed or declared unnecessary; below, what came back or was declared essential."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I don't read it as bad faith. Every model behaves differently, and Cherny explains it in the same talk: something you did for one model three months ago might not translate at all to the next one. What fixed a flaw in the previous model can get in the way of the new one. But the cost of that pace isn't paid by whoever publishes the changelog. You pay it, reconfiguring every few weeks something you were sold as the right way."
+      },
+      {
+        "kind": "quote",
+        "text": "A tool changing every week isn't the problem. The problem is copying today's configuration as if it were doctrine."
+      },
+      {
+        "kind": "heading",
+        "text": "Why both things are true at once"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The knot comes undone once you notice the word \"harness\" is naming two very different things. The first is **what compensates for the model**: instructions and tools that patch a specific flaw, like \"don't stop before you're done,\" a mandatory task list, a word limit, or restarting the conversation from scratch because the model wrapped up early as it neared the limit of what it can read. Every model generation makes part of this useless, and the sensible thing is to delete it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The second is **what verifies and limits**: tests, permissions, the sandbox — the isolated environment where the agent can't break anything outside — a separate evaluator, evidence before marking something done, and your business rules. This isn't there because the model is clumsy. It's there because someone has to sign off on the work, and a more capable model doesn't change that."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And here's the detail I asked you to keep. Nobody deleted the harness. What Boris Cherny deleted was text **inside** the harness. To explain why Opus 5 resists prompt injection — hidden text that tries to give the model orders — that same talk describes three layers: a well-aligned model, a classifier that screens all traffic for those attacks, and the auto mode classifier, which decides what actions the agent can take on its own. That is pure harness. The headline ate the nuance."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-two-layers.en.svg",
+        "caption": "What compensates for the model expires with every generation; what verifies and limits stays. And the ceiling rises: new tasks show up that call for new pieces."
+      },
+      {
+        "kind": "quote",
+        "text": "The space of interesting harness combinations doesn't shrink as models improve. Instead, it moves.",
+        "source": "Prithvi Rajasekaran · Anthropic, March 2026",
+        "sourceUrl": "https://www.anthropic.com/engineering/harness-design-long-running-apps"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Addy Osmani told it with a first-hand example on April 19: the scaffolding written six months earlier for \"context anxiety\" — the model wrapping up work too early — had become dead code with Opus 4.6. But, in the article's words, \"the ceiling moved with the model\": tasks that used to be out of reach are now in play, and they bring their own failures, like multi-day memory or coordination between specialized agents."
+      },
+      {
+        "kind": "heading",
+        "text": "What I criticize about how it's being told"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Confusing a piece with the whole.** \"We deleted 80% of the system prompt\" and \"you don't need a harness anymore\" don't mean the same thing. The prompt is a piece; the harness is the whole vehicle.",
+          "**Presenting model-dependent advice as universal.** The changelog itself contradicts it: version 2.1.268 still offers task lists to Claude 3.x, Opus 4.0–4.7, Sonnet 4.0–4.6 and Haiku 4.5. What's redundant on Opus 5 may be needed on the model you pay for.",
+          "**Deprecating and letting users measure.** If a feature comes back four days later \"based on community feedback,\" the community is the one that finished measuring the real impact.",
+          "**Touching the harness without enough evaluations.** April's report admits it and promises per-model evaluations for every prompt change. If the company that trains the model had to learn this with real users, you can't skip measuring.",
+          "**Recipes that last a month.** Setups that circulate as the right way and that the next changelog makes obsolete. They aren't judgment: they're snapshots of a moment."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "What to do while everything keeps changing"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is an opinion, not doctrine, but every point rests on the sources above. Oddly, the advice that has aged best is the oldest of all, from December 2024:"
+      },
+      {
+        "kind": "quote",
+        "text": "Start with simple prompts, optimize them with comprehensive evaluation, and add multi-step agentic systems only when simpler solutions fall short.",
+        "source": "Erik S. and Barry Zhang · Anthropic, Building effective agents, 2024",
+        "sourceUrl": "https://www.anthropic.com/research/building-effective-agents"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Split your harness into two columns**: what compensates for the model and what verifies or limits. Only the first is disposable.",
+          "**When a new model lands, remove compensation pieces one at a time** and test with real tasks from your project. Anthropic tried cutting everything at once and couldn't replicate the performance.",
+          "**Don't delete verification because the model \"is really good now.\"** A more capable model takes you to harder tasks, and that's where it fails again. Tests, permissions and evidence aren't negotiable.",
+          "**Keep your project's knowledge, but short**: a map with pointers, not an encyclopedia, like the OpenAI team's AGENTS.md of about a hundred lines. No model ships with your team's conventions.",
+          "**Make it easy to remove.** If pulling a piece costs an hour, you have an option; if it costs a week, you have a debt. The idea is Han Lee's.",
+          "**Don't migrate on announcement day.** Read the changelog, try it first on a separate branch and wait for it to settle. Output styles took four days to come back."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/harness-pruning-loop.en.svg",
+        "caption": "Remove a single compensating piece, measure with real tasks, and put it back only if the result gets worse. Verification never enters the loop."
+      },
+      {
+        "kind": "heading",
+        "text": "How to classify each piece"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A simple way not to get lost with every announcement is to put each piece in its column. The ones that compensate get reviewed with every new model; the ones that verify or limit don't depend on how smart the model is, but on someone signing off on what gets shipped:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "harness/                            compensates or verifies?",
+          "  \"don't stop before you're done\"      compensates · review with every model",
+          "  mandatory task list                  compensates · Claude Code already removed it on new models",
+          "  word limit on responses              compensates · cost 3% in evaluations",
+          "  team conventions                     knowledge · short and reviewed",
+          "  red test before the code             verifies · stays",
+          "  mutation score ≥ 80%                 verifies · stays",
+          "  permissions and sandbox              limits · stays"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "So when you read the next \"you don't need it anymore,\" the useful question is which of the two columns it refers to. If it's about instructions that patched a flaw in the model, it's probably right. If it's about tests, permissions or evidence, be wary: \"done\" is a claim and evidence is a fact, and no generation changes that."
+      },
+      {
+        "kind": "heading",
+        "text": "In short"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Do you need a harness? The question is badly framed, and anyone who answers with a flat yes or no is selling you a headline. The useful question is **which part**: the part that compensates for the model expires and has to be pruned by measuring; the part that verifies and limits is your professional responsibility and stays. And an honest warning: six months from now, part of this note will have aged too. That's why every source carries its date. If you want to know why verification isn't negotiable, I cover it in [the note on closing a task with evidence](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "What I think"
+      },
+      {
+        "kind": "paragraph",
+        "text": "So far, what's documented. What follows is my opinion, and I'm keeping it separate so it doesn't get mixed up with the above. It comes from the years I've spent working with AI models every day: a fascinating world, but also an exhausting one. Every month something different comes out — a model, a tool, a \"right\" way of working that isn't right anymore the next month — and keeping up with all of it wears you down."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why I didn't want to settle for headlines, so I ran the test: I took my whole harness away from Opus 5 and asked it for a feature. Honestly, it went around in circles more than I expected. And it showed in the usage. I compared that feature with the previous ones, which I had built with the same Opus 5 but with the harness in place: without the harness it used 70% more tokens. A token is the unit that measures what the model reads and writes, and also the unit you're billed for."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I want to be honest about what that number is worth: it's a single test, in my project and with my way of working. It's not a study. Also, I removed everything at once, exactly what Anthropic's article advises against. But that's exactly what a line like \"you don't even need to use scaffolding\" invites you to do."
+      },
+      {
+        "kind": "paragraph",
+        "text": "And that's where I ask the uncomfortable question. Through the API, these models are billed per token: according to [Anthropic's pricing table](https://platform.claude.com/docs/en/about-claude/pricing), Opus 5 costs 5 dollars per million tokens it reads and 25 per million it writes. On subscription plans you pay a flat fee, but what you use counts toward the usage limit, so spending more means hitting that limit sooner."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If the message is that scaffolding is unnecessary, and in my test removing it made the model go around in circles and spend more, who benefits from that message? I have no proof that it's said for business reasons, and I'm not claiming it. In fact, there's evidence pointing the other way: that same documentation explains how to spend less, and in [April's report](https://www.anthropic.com/engineering/april-23-postmortem) Anthropic says it lowered the default effort, among other reasons, so users could make the most of their usage limits. But the incentive exists, and having judgment also means not forgetting that."
+      },
+      {
+        "kind": "quote",
+        "text": "To have judgment, reading what they say isn't enough. You have to test it in your project, with your own numbers."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It's not the first time the end of something has been announced, either. In February 2024, at the World Governments Summit in Dubai, Jensen Huang, CEO of Nvidia, said that for years people had repeated that it was vital for children to learn to program, and that the reality was almost exactly the opposite:"
+      },
+      {
+        "kind": "quote",
+        "text": "It is our job to create computing technology such that nobody has to program, and that the programming language is human.",
+        "source": "Jensen Huang, CEO of Nvidia · World Governments Summit, Dubai, February 2024",
+        "sourceUrl": "https://80.lv/articles/nvidia-s-ceo-thinks-that-our-kids-shouldn-t-learn-how-to-code-as-ai-can-do-it-for-them"
+      },
+      {
+        "kind": "paragraph",
+        "text": "More than two years have passed and, from my desk, I don't see a profession coming to an end. I see one with more things to understand, test and decide than ever: every model, every tool and every new deprecation is a decision someone has to make with judgment. Developers aren't finished. With everything that comes out every month, to me we're more alive than ever."
+      },
+      {
+        "kind": "quote",
+        "text": "Question yourself too, keep learning, do your own research, and don't take everything they tell you at face value."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Boris Cherny: Building Claude Code](https://www.ycombinator.com/library/UN-boris-cherny-building-claude-code) — Y Combinator, July 2026: the talk about deleting 80% of the system prompt. Listen to all of it: the nuance about the security layers is in the first five minutes.",
+          "[Harness design for long-running application development](https://www.anthropic.com/engineering/harness-design-long-running-apps) — Prithvi Rajasekaran, Anthropic, March 2026: the best piece on removing harness components by measuring, not by eye.",
+          "[An update on recent Claude Code quality reports](https://www.anthropic.com/engineering/april-23-postmortem) — Anthropic, April 2026: proof that three harness changes are enough to make a product worse without touching the model.",
+          "[Claude Code CHANGELOG](https://github.com/anthropics/claude-code/blob/main/CHANGELOG.md): the source for every deprecation in this note. Search for \"deprecat\" and see the back-and-forth for yourself.",
+          "[Harness engineering: leveraging Codex in an agent-first world](https://openai.com/index/harness-engineering/) — Ryan Lopopolo, OpenAI, February 2026: OpenAI's take, with `AGENTS.md` as a map and architecture enforced by linters.",
+          "[Agent Harness Engineering](https://addyosmani.com/blog/agent-harness-engineering/) — Addy Osmani, April 2026: why the harness doesn't shrink, it moves, told by someone who deleted their own scaffolding.",
+          "[Hidden Technical Debt of AI Systems: Agent Harness](https://leehanchung.github.io/blogs/2026/05/08/hidden-technical-debt-agent-harness/) — Han Lee, May 2026: the opposing view, well argued. Read it so you don't only get my side.",
+          "[Skill Issue: Harness Engineering for Coding Agents](https://www.humanlayer.dev/blog/skill-issue-harness-engineering-for-coding-agents) — HumanLayer, March 2026: a practical guide to starting small and adding pieces only when a real failure calls for it.",
+          "[The Bitter Lesson](http://www.incompleteideas.net/IncIdeas/BitterLesson.html) — Rich Sutton, 2019: the one-page essay behind the idea of deleting scaffolding and letting the model handle it.",
+          "[NVIDIA CEO Thinks We Shouldn't Learn How to Code, AI Can Do It for Us](https://80.lv/articles/nvidia-s-ceo-thinks-that-our-kids-shouldn-t-learn-how-to-code-as-ai-can-do-it-for-them) — 80.lv, February 2024: Jensen Huang's full quote at the World Governments Summit, to read it in context.",
+          "[Claude pricing](https://platform.claude.com/docs/en/about-claude/pricing) — Anthropic documentation: what each million tokens costs per model. Useful for putting a price on an agent that goes around in circles.",
+          "[Building effective agents](https://www.anthropic.com/research/building-effective-agents) — Erik S. and Barry Zhang, Anthropic, 2024: the advice that hasn't expired, which is to start simple and add complexity only if it improves the result."
+        ]
+      }
+    ]
+  }
+}

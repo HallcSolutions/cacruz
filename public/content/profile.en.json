@@ -122,6 +122,13 @@
   ],
   "projects": [
     {
+      "name": "rag-contratos",
+      "description": "RAG over PDF contracts: chunking, embeddings stored in PostgreSQL with pgvector and hybrid search (vector + Spanish full text). OCR for scanned files included, and every answer cites document, clause and page.",
+      "language": "TypeScript · Angular · NestJS · pgvector",
+      "imageUrl": "images/projects/rag-contratos.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/rag-contratos"
+    },
+    {
       "name": "chalc-cli-adapter",
       "description": "chalc: a local CLI that creates and equips projects from minute zero. It detects your stack without spending tokens, applies a rules catalog and hands your assistant (Claude Code, Copilot, Cursor or Gemini) skills, MCP servers, rules and the Spec-Driven Development method in its native format — configuration that travels with the project, explicit and repeatable.",
       "language": "JavaScript · Node.js · AI",

@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 500" role="img" aria-label="rag-contratos">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#08161c"/><stop offset="1" stop-color="#0e2730"/>
+    </linearGradient>
+    <linearGradient id="ac" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#2dd4bf"/><stop offset="1" stop-color="#22d3ee"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .flow { animation: flowdata 1.8s linear infinite; }
+    .dot { animation: pulse 3s ease-in-out infinite; }
+    .d2 { animation-delay: 0.3s; } .d3 { animation-delay: 0.6s; }
+    .d4 { animation-delay: 0.9s; } .d5 { animation-delay: 1.2s; }
+    .cite { animation: pulse 3s ease-in-out infinite; animation-delay: 1.5s; }
+    @keyframes flowdata { to { stroke-dashoffset: -28; } }
+    @keyframes pulse { 0%, 100% { opacity: 0.45; } 50% { opacity: 1; } }
+  </style>
+  <rect width="800" height="500" fill="url(#bg)"/>
+  <circle cx="700" cy="110" r="190" fill="#22d3ee" opacity="0.08"/>
+  <g transform="translate(90 90)">
+    <path d="M0 0h110l34 34v166H0z" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <path d="M110 0v34h34" fill="none" stroke="#2f6472" stroke-width="2.5"/>
+    <g stroke="#2f6472" stroke-width="7" stroke-linecap="round">
+      <path d="M22 72h100"/><path d="M22 98h100"/><path d="M22 124h74"/>
+    </g>
+    <path class="dot" d="M22 150h100" stroke="url(#ac)" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <path class="flow" d="M270 190h70" fill="none" stroke="#2dd4bf" stroke-width="2.5" stroke-dasharray="4 10" stroke-linecap="round"/>
+  <g transform="translate(370 118)" fill="url(#ac)">
+    <circle class="dot" cx="14" cy="14" r="12"/><circle class="dot d2" cx="62" cy="14" r="12"/>
+    <circle class="dot d3" cx="110" cy="14" r="12"/><circle class="dot d4" cx="14" cy="62" r="12"/>
+    <circle class="dot d5" cx="62" cy="62" r="12"/><circle class="dot d2" cx="110" cy="62" r="12"/>
+    <circle class="dot d3" cx="14" cy="110" r="12"/><circle class="dot d4" cx="62" cy="110" r="12"/>
+    <circle class="dot d5" cx="110" cy="110" r="12"/>
+  </g>
+  <path class="flow" d="M520 190h70" fill="none" stroke="#22d3ee" stroke-width="2.5" stroke-dasharray="4 10" stroke-linecap="round"/>
+  <g transform="translate(610 118)">
+    <rect width="120" height="120" rx="26" fill="none" stroke="url(#ac)" stroke-width="2.5"/>
+    <path class="cite" d="M30 46h60M30 70h60M30 94h34" stroke="#22d3ee" stroke-width="7" stroke-linecap="round"/>
+  </g>
+  <text x="90" y="392" font-family="ui-monospace, monospace" font-size="24" fill="#4e8b98">cláusula 7.2 · pág. 143</text>
+  <text x="90" y="448" font-family="Georgia, serif" font-size="34" fill="#dff5f6" font-style="italic">respuestas que citan el contrato</text>
+</svg>

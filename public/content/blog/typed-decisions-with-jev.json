@@ -1,0 +1,879 @@
+{
+  "slug": "typed-decisions-with-jev",
+  "date": "2026-09-22",
+  "title": {
+    "es": "Jev: cuando tu código no necesita que la IA hable, sino que decida",
+    "en": "Jev: when your code doesn't need AI to talk, but to decide"
+  },
+  "summary": {
+    "es": "Jev, de TypeSafe, no escribe texto: recibe un estado y preguntas tipadas y devuelve respuestas con probabilidades que el código usa directamente. Qué es, en qué se diferencia de un LLM tradicional, dónde lo usaría y dónde no, y cómo lo apliqué en un triaje de ambulancias en Cali que manda cada paciente al hospital que sí puede atenderlo.",
+    "en": "Jev, from TypeSafe, doesn't write text: it takes a state and typed questions and returns answers with probabilities that code uses directly. What it is, how it differs from a traditional LLM, where I would use it and where I wouldn't, and how I applied it to an ambulance triage system in Cali that sends each patient to the hospital that can actually treat them."
+  },
+  "tags": [
+    "ia",
+    "jev",
+    "llm",
+    "arquitectura",
+    "calidad"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Muchas veces le pido a un LLM una decisión pequeña para mi código: ¿este mensaje pide un reembolso?, ¿a qué equipo va este ticket?, ¿es urgente? Le escribo «devuelve JSON», parseo la respuesta, valido que el valor esté en la lista y reintento cuando llega roto. Funciona, pero siempre estoy forzando a un sistema que escribe texto a comportarse como una función."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta semana probé **Jev**, el modelo de [TypeSafe](https://docs.typesafe.ai/introduction), que parte justo de ese problema. Para entenderlo de verdad no me quedé en la documentación: construí con él un sistema de triaje y despacho de ambulancias en Cali. En esta nota explico qué es Jev, en qué se diferencia de un LLM tradicional, dónde lo usaría y dónde no, y lo que aprendí midiendo."
+      },
+      {
+        "kind": "quote",
+        "text": "Si un sistema inteligente, humano o máquina, no puede expresar una incertidumbre honesta, no se puede confiar en él.",
+        "source": "TypeSafe · documentación de Jev, «Confidence»",
+        "sourceUrl": "https://docs.typesafe.ai/confidence"
+      },
+      {
+        "kind": "heading",
+        "text": "Primero, qué es Jev (en pocas palabras)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Jev es el modelo principal de TypeSafe y el primero de una familia que ellos llaman **System One**. Entiende lenguaje natural, igual que un LLM, pero no escribe. Recibe dos cosas: un **estado**, que es el texto o el JSON sobre el que quiero preguntar, y unas **preguntas tipadas**, en las que yo defino de antemano las respuestas posibles. Devuelve respuestas tipadas con sus probabilidades. No hay texto que leer ni nada que parsear."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Hay una palabra clave para entenderlo: Jev es **probabilístico**. No responde con una certeza, sino con un reparto de probabilidad entre las respuestas que yo definí. Cuando dice `unidad_acv`, en realidad está diciendo «esta es la opción más probable, y así se reparte el resto». La respuesta final es solo la opción con más probabilidad; lo valioso es el reparto completo, porque me dice cuándo el modelo lo tiene claro y cuándo duda. Y probabilístico no significa aleatorio: según la [documentación](https://docs.typesafe.ai/concepts/how-to-build-with-system-one), Jev está diseñado para devolver respuestas estables cuando se le repite la misma pregunta."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El nombre, según la [documentación de System One](https://docs.typesafe.ai/concepts/system-one), viene de un concepto que Daniel Kahneman popularizó en su libro *Pensar rápido, pensar despacio* (2011): el pensamiento de sistema 1 es rápido e intuitivo; el de sistema 2, más lento y deliberado. Jev apunta al primero. La [documentación](https://docs.typesafe.ai/introduction) lo resume así: cada pregunta debe ser un juicio que una persona experta resolvería en pocos segundos con el contexto correcto."
+      },
+      {
+        "kind": "heading",
+        "text": "Las tres preguntas que sabe responder"
+      },
+      {
+        "kind": "paragraph",
+        "text": "TypeSafe llama **primitivas** a los tipos de pregunta. Son solo tres, y cada una devuelve un tipo de respuesta distinto:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice**: elige una opción de una lista que yo defino. Ejemplo: «¿qué servicio hospitalario necesita este paciente?». Devuelve la opción elegida, la probabilidad de cada opción y una confianza de 0 a 1.",
+          "**Score**: puntúa el estado en una escala de niveles que yo describo. Ejemplo: «¿qué tan frustrado está el cliente?», con 0 = tranquilo, 1 = frustrado y 2 = muy frustrado. Devuelve el puntaje, la probabilidad de cada nivel y la confianza.",
+          "**Noul**: responde si una afirmación es verdadera. Ejemplo: «¿el paciente está inconsciente?». Devuelve un número entre 0 y 1: la probabilidad de que la respuesta sea «sí». No trae confianza propia."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Las tres se pueden mezclar en una sola petición. Jev evalúa cada pregunta en paralelo y de forma aislada contra el mismo estado: una respuesta nunca contamina a otra, y según la documentación añadir preguntas apenas cambia el tiempo de respuesta."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo se escribe la petición, pieza por pieza"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La petición es un JSON con dos piezas principales:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`state`**: el contenido sobre el que pregunto. Puede ser un texto plano, un objeto o un arreglo. Yo prefiero un objeto con nombres claros, porque así cada pregunta puede señalar un campo concreto.",
+          "**`questions`**: un mapa de preguntas. La clave la invento yo (`stroke_signs`, `required_capability`…), el modelo nunca la ve y la respuesta vuelve bajo esa misma clave. Por eso cada pregunta tiene que entenderse completa sin su nombre."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada pregunta tiene siempre dos campos en común: `type`, que dice cuál de las tres primitivas es, e `instructions`, que es la pregunta en sí. Lo que cambia entre una y otra es `criteria`, el campo donde defino las respuestas posibles. Fue lo que más me costó entender al principio, así que lo dejo en un gráfico:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-request-anatomy.es.svg",
+        "caption": "Una sola petición lleva las tres preguntas. Lo que cambia entre ellas es la forma de criteria y, con ella, la forma de la respuesta."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice: `criteria` es un objeto.** Cada clave es una opción y cada valor, su descripción. El modelo lee las dos cosas, así que la descripción debe separar bien una opción de las demás. Admite hasta 255 opciones, y la documentación recomienda añadir una del tipo «ninguna de las anteriores» cuando la lista podría no cubrir todos los casos.",
+          "**Score: `criteria` es un arreglo ordenado.** Cada elemento describe un nivel, de menor a mayor. El número de cada nivel es su posición: el primero es 0, el segundo 1, y así sucesivamente. Necesita al menos dos niveles y admite hasta diez. Cada nivel se juzga por sí solo, así que debe describir una situación concreta.",
+          "**Noul: `criteria` es opcional.** Si lo uso, es un objeto con dos claves, `true` y `false`, que dicen qué cuenta como «sí» y qué como «no». En el triaje siempre las escribo, porque acotan lo que se juzga."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así queda una petición con las tres. La Choice y la Noul son preguntas del proyecto (en la Choice dejé tres de las siete opciones para que se lea mejor); la Score es un ejemplo mío, porque el triaje no la necesita. Las preguntas van en inglés; más adelante explico por qué."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "{",
+          "  \"model\": \"jev-1.13.0\",",
+          "  \"state\": {",
+          "    \"reportText\": \"Mi abuelo tiene la boca torcida y no puede hablar bien desde hace un rato\",",
+          "    \"source\": \"voz\"",
+          "  },",
+          "  \"questions\": {",
+          "    \"required_capability\": {",
+          "      \"type\": \"choice\",",
+          "      \"instructions\": \"Which specialised hospital service does this patient most likely need on arrival?\",",
+          "      \"criteria\": {",
+          "        \"urgencias_generales\": \"General emergency care is enough\",",
+          "        \"unidad_acv\": \"Signs of a stroke: sudden weakness on one side, slurred speech, facial droop, sudden confusion\",",
+          "        \"trauma_mayor\": \"Severe physical injury: traffic collision, fall from height, gunshot or stab wound, crush injury\"",
+          "      }",
+          "    },",
+          "    \"stroke_signs\": {",
+          "      \"type\": \"noul\",",
+          "      \"instructions\": \"Does the report describe signs of a stroke?\",",
+          "      \"criteria\": {",
+          "        \"true\": \"Sudden weakness or numbness on one side, facial droop, slurred or strange speech, or sudden confusion\",",
+          "        \"false\": \"None of those signs are described\"",
+          "      }",
+          "    },",
+          "    \"caller_distress\": {",
+          "      \"type\": \"score\",",
+          "      \"instructions\": \"How distressed does the caller sound in `reportText`?\",",
+          "      \"criteria\": [",
+          "        \"Calm and clear\",",
+          "        \"Worried but able to explain what is happening\",",
+          "        \"Panicked, hard to follow\"",
+          "      ]",
+          "    }",
+          "  }",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y esta es la respuesta exacta que devolvió `jev-1.13.0` a esa petición:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "{",
+          "  \"model\": \"jev-1.13.0\",",
+          "  \"answers\": {",
+          "    \"required_capability\": {",
+          "      \"type\": \"choice\",",
+          "      \"choice\": \"unidad_acv\",",
+          "      \"confidence\": 1.0,",
+          "      \"probabilities\": { \"unidad_acv\": 1.0, \"urgencias_generales\": 0.0, \"trauma_mayor\": 0.0 }",
+          "    },",
+          "    \"stroke_signs\": { \"type\": \"noul\", \"noul\": 0.96 },",
+          "    \"caller_distress\": {",
+          "      \"type\": \"score\",",
+          "      \"score\": 0.89,",
+          "      \"confidence\": 0.84,",
+          "      \"legend\": { \"0\": \"Calm and clear\", \"1\": \"Worried but able to explain what is happening\", \"2\": \"Panicked, hard to follow\" },",
+          "      \"probabilities\": { \"0\": 0.11, \"1\": 0.89, \"2\": 0.0 }",
+          "    }",
+          "  },",
+          "  \"usage\": { \"input_tokens\": 536, \"output_tokens\": 87 }",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Así leo cada respuesta:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice.** `choice` es la opción con más probabilidad; `probabilities` reparte el 100% entre todas las opciones, y `confidence` resume qué tan concentrado está ese reparto. Aquí todo cayó en `unidad_acv`, así que la confianza es 1,0.",
+          "**Score.** `score` no es un nivel, sino una posición en la escala. Se calcula multiplicando cada nivel por su probabilidad y sumando: 0 × 0,11 + 1 × 0,89 + 2 × 0 = 0,89. Por eso puede caer entre dos niveles. `legend` me devuelve la descripción de cada número, y la confianza de 0,84 dice que el modelo se inclina con claridad por el nivel 1.",
+          "**Noul.** Un solo número, 0,96: la probabilidad de que la respuesta sea «sí». No trae `confidence` porque solo hay dos resultados posibles y ese número ya los describe. Cerca de 1 es un «sí» claro; cerca de 0, un «no» claro, y cerca de 0,5, el modelo no se decide.",
+          "**`usage`.** Los tokens de entrada, que son los que se cobran. Esta petición usó 536: unos 0,000023 dólares."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "En el proyecto no armo la petición HTTP a mano: uso el SDK oficial de JavaScript, `@typesafe-ai/sdk`. Las preguntas sí las escribo yo, como un objeto de TypeScript con la misma forma del JSON de arriba, y TypeScript comprueba que esa forma sea válida con `satisfies Questions`. El SDK se encarga del resto: envía la petición, reintenta si falla y devuelve las respuestas tipadas. La llamada cabe en pocas líneas:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "import { TypeSafeClient } from '@typesafe-ai/sdk';",
+          "const client = new TypeSafeClient();   // lee TYPESAFE_API_KEY del entorno",
+          "const result = await client.systemOne({ state, questions: TRIAGE_QUESTIONS });",
+          "result.answers.required_capability.choice;   // \"unidad_acv\"",
+          "result.answers.stroke_signs.noul;            // 0.96 · ya es un número",
+          "result.usage?.input_tokens;                  // para calcular el coste"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Tres consejos de la documentación que aplico al escribir preguntas:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`instructions` y `criteria` no tienen por qué ser texto plano.** También aceptan objetos o arreglos. Empiezo siempre con un texto y paso a un objeto cuando una opción necesita decir qué cubre, qué no cubre y algunos ejemplos.",
+          "**Puedo señalar un campo concreto del estado.** Si escribo su ruta entre comillas invertidas dentro de la pregunta, como en «How distressed does the caller sound in `reportText`?», el modelo sabe exactamente dónde mirar.",
+          "**Pido todo en una sola llamada.** Las preguntas corren en paralelo y apenas suman tiempo, aunque cada una suma tokens. Después, mi código usa solo las respuestas que necesita."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "En qué se diferencia de un LLM tradicional"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un LLM, como el que hay detrás de ChatGPT o de Claude, está entrenado para producir texto que una persona lee. Cuando le pido una decisión para mi código, tengo que convertir ese texto en un dato: parsear, validar y reintentar si inventa un valor que no estaba en la lista. Jev le da la vuelta al problema. Las respuestas posibles las defino yo, y el modelo solo reparte probabilidad entre ellas. **No puede inventar una opción que no existe.**"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-vs-llm.es.svg",
+        "caption": "Arriba, el camino de siempre con un LLM: texto, parseo, validación y reintento. Abajo, Jev: preguntas tipadas que vuelven como datos listos para un if."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La diferencia de fondo no está en la salida, sino en cómo se entrena. Estas son las que más me importan al diseñar:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Qué devuelve.** Un LLM devuelve texto. Jev devuelve `choice`, `score` o `noul`, con probabilidades, en el formato exacto que mi código espera.",
+          "**Las probabilidades se ven.** Un LLM también es probabilístico por dentro: elige cada palabra según su probabilidad. Pero esa información normalmente queda escondida detrás del texto, y una frase dicha con seguridad no dice cuánto duda el modelo. Jev me entrega las probabilidades como parte de la respuesta, y mi código puede ordenarlas, compararlas o usarlas como umbral.",
+          "**Cómo se entrena.** Los chatbots se ajustan con RLHF (aprendizaje por refuerzo con retroalimentación humana): aprenden a dar las respuestas que la gente prefiere. TypeSafe entrena a Jev con lo que llama RLCD (aprendizaje por refuerzo para decisiones calibradas): que sus probabilidades reflejen la probabilidad real de acertar.",
+          "**Qué significa «calibrado».** De todas las veces que el modelo dice 0,8, debería acertar cerca del 80%. Es una propiedad de muchas respuestas juntas, no una garantía sobre una sola. La documentación lo aclara, y yo lo tengo presente: calibrado no significa infalible.",
+          "**Cómo expresa la duda.** Según la propia documentación, optimizar para lo que la gente prefiere puede premiar respuestas complacientes y alucinaciones dichas con seguridad. Jev, en cambio, devuelve una confianza que mi código puede usar para decidir si actúa o si le pasa el caso a una persona.",
+          "**Velocidad y coste.** La documentación indica que la mayoría de consultas tarda unos 100 ms. El modelo actual, `jev-1.13.0`, cobra 0,042 dólares por millón de tokens y solo los de entrada: la salida es gratis. En mi proyecto, cada evaluación usa unos 1.075 tokens y tarda entre 200 y 750 ms.",
+          "**Lo que no hace.** No redacta, no resume, no conversa, no genera código ni explica su razonamiento. Solo acepta texto: nada de imágenes, audio o video. Tampoco reemplaza al modelo de Claude Code o de Cursor; [la documentación lo dice explícitamente](https://docs.typesafe.ai/introduction/coding-agents)."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso no digo que Jev sea mejor o peor que un LLM: resuelven problemas distintos. Si necesito redactar un correo o razonar en varios pasos, uso un LLM. Si necesito que mi código tome una decisión pequeña sobre texto libre, miles de veces, rápido, barato y con una medida de duda, uso Jev."
+      },
+      {
+        "kind": "heading",
+        "text": "La idea que más me cambió la forma de diseñar: el código manda"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La [guía de TypeSafe](https://docs.typesafe.ai/concepts/how-to-build-with-system-one) distingue tres arquitecturas. En el software tradicional, el código lo decide todo con piezas simples y fiables. En un agente con LLM, el modelo elige su siguiente paso; funciona bien cuando una persona lo vigila, pero cada vuelta del bucle es otra oportunidad de salirse del camino. En lo que ellos llaman software con IA, el código es dueño del flujo, de las reglas y de los efectos, y el modelo aparece solo donde hace falta sentido común sobre texto libre."
+      },
+      {
+        "kind": "quote",
+        "text": "Construye un flujo de software normal e inserta System One solo donde se necesita IA.",
+        "source": "TypeSafe · How to build with TypeSafe",
+        "sourceUrl": "https://docs.typesafe.ai/concepts/how-to-build-with-system-one"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta idea me importa porque cambia qué puedo probar y auditar. Si una regla vive en un prompt, solo puedo esperar que el modelo la respete. Si vive en código, la leo, la pruebo con un test y la cambio sin tocar el modelo."
+      },
+      {
+        "kind": "heading",
+        "text": "El proyecto: triaje y despacho de ambulancias en Cali"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Para ponerlo a prueba construí [triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). Entra una llamada de emergencia y sale una ambulancia hacia un hospital concreto, en vivo sobre un mapa de Cali."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Jev entra en un solo punto de todo ese recorrido: cuando llega el texto de la llamada. Le envío un estado con dos campos, el texto tal cual y de dónde salió, y **nueve preguntas en la misma petición**: una Choice para el servicio que necesita el paciente y ocho Noul, una por cada bandera roja. Vuelven nueve números. A partir de ahí Jev no interviene más: todo lo que sigue es código."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esto es lo que ganó el sistema al meterlo ahí:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**El paciente llega al hospital que puede atenderlo.** Sin esa pregunta, el sistema solo sabía cuál hospital quedaba más cerca. Ahora sabe también qué necesita el paciente, y filtra antes de ordenar por distancia.",
+          "**Las nueve preguntas cuestan casi lo mismo que una.** Se evalúan en paralelo contra el mismo estado: 200 a 750 ms y unas diezmilésimas de dólar por llamada. Por eso puedo preguntar de más sin pensarlo.",
+          "**Cuando el modelo duda, el caso llega a una persona.** La confianza de la Choice es el freno: por debajo del umbral, la emergencia no se despacha sola.",
+          "**Si Jev no responde, el sistema no se cae.** La llamada ya está guardada y el caso pasa a revisión humana en lugar de perderse.",
+          "**Cada decisión queda explicada.** La emergencia guarda qué regla se disparó y qué respondió Jev, con su confianza, así que después se puede revisar por qué se tomó."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Una aclaración importante: **es una demostración**. Las llamadas son ficticias y las ambulancias están simuladas. Los nombres y las coordenadas de los doce hospitales son reales; sus capacidades clínicas están asignadas de forma plausible, sin verificarlas con ninguna fuente oficial. Un sistema que prioriza pacientes de verdad es un dispositivo médico regulado y necesita validación clínica."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres revisarlo por dentro, el repositorio está abierto en [github.com/ChristianCruzArango/triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). Cada módulo tiene su propio README que explica qué hace y por qué, incluidas las nueve preguntas y el protocolo completo."
+      },
+      {
+        "kind": "heading",
+        "text": "Quién decide qué"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La decisión de diseño más importante fue repartir el trabajo. Jev solo responde lo que exige criterio sobre texto libre; todo lo demás es código:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Qué servicio necesita el paciente → Jev.** Un Choice entre siete opciones: urgencias generales, unidad de ACV, trauma mayor, hemodinamia, quemados, pediatría y obstetricia.",
+          "**Ocho banderas rojas → Jev.** Un Noul por cada señal: no responde, vía aérea comprometida, sangrado severo, signos de ACV, dolor torácico cardíaco, trauma de alta energía, paciente pediátrico y necesidad de unidad medicalizada.",
+          "**Prioridad → código.** Un protocolo con ocho reglas en orden (`R1` a `R8`); gana la primera que se cumple. Si el paciente es un niño, la prioridad sube un nivel.",
+          "**Ambulancia más cercana → código.** Es aritmética.",
+          "**Hospital más cercano que sí sirve → código.** Primero filtra por el servicio que dijo Jev y después ordena por distancia."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-triage-flow.es.svg",
+        "caption": "Jev solo interviene en el paso 2. La prioridad, la ambulancia y el hospital los decide código que se puede leer y auditar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un ejemplo real de la demo. Llega esta llamada: «Mi abuelo tiene la boca torcida y no puede hablar bien desde hace un rato». En 216 ms, Jev responde `unidad_acv` con confianza 1,00 y `stroke_signs` con 0,96. El protocolo dispara la regla `R4_ACV` y marca la prioridad como Crítica. El despacho decide en menos de un milisegundo:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "⚠ El hospital más cercano era Hospital San Juan de Dios, a 2,74 km.",
+          "  Se descartó: no cuenta con Unidad de ACV.",
+          "  Se despachó al Hospital Universitario del Valle, a 3,52 km.",
+          "  9 de 12 hospitales descartados por no tener el servicio."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está el beneficio concreto. Un algoritmo que solo mira la distancia habría mandado a ese paciente al hospital más cercano, que en la demo no tiene unidad de ACV. Con una sola pregunta a Jev, el sistema sabe qué necesita el paciente y lo manda al hospital que sí puede atenderlo, aunque esté más lejos."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que aprendí midiendo: nunca le pregunto la prioridad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mi primera versión le preguntaba directamente a Jev: «¿qué tan urgente es?». Las confianzas salían entre 0,48 y 0,54, incluso en casos de libro como un ACV clásico o un trauma mayor. La razón es que la urgencia no es un juicio, sino varios a la vez: si respira, si sangra, si está consciente, cómo se lastimó. Cuando descompuse esa pregunta en banderas rojas atómicas, cada respuesta quedó clara: 0,96 a 0,98 en los casos graves y por debajo de 0,04 en la lesión leve."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-decompose.es.svg",
+        "caption": "La misma llamada, dos formas de preguntar. La pregunta grande se queda en la duda; las pequeñas se responden con claridad."
+      },
+      {
+        "kind": "paragraph",
+        "text": "No fue una casualidad: es lo que recomienda la [documentación](https://docs.typesafe.ai/introduction). Si una pregunta necesita razonar mucho o pesar varios factores independientes, hay que descomponerla y combinar las respuestas en código. Y eso trae un regalo: las reglas quedan fuera del modelo. Se leen, se versionan, se discuten con un médico y se cambian sin tocar a Jev. Cada emergencia guarda qué regla se disparó, así que cualquier decisión se puede auditar después. Con un prompt que dijera «decide la prioridad», no tendría nada que auditar."
+      },
+      {
+        "kind": "heading",
+        "text": "La confianza decide si actúo o si llamo a una persona"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La documentación propone dividir la confianza en tres rangos: alta, para actuar solo; media, para pedir confirmación o más información; y baja, para no actuar y pasarle el caso a una persona. También insiste en algo que me parece clave: el umbral depende de lo que cuesta equivocarse. Mostrar la pantalla equivocada se corrige; mandar una ambulancia al hospital equivocado, no."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Si la confianza sobre el servicio requerido queda por debajo de 0,55, el caso **no se despacha solo**: pasa a revisión humana.",
+          "Una bandera roja cuenta como presente a partir de 0,6, y la unidad medicalizada se exige a partir de 0,5. Son umbrales distintos porque un Noul no trae confianza: es otra pregunta con su propia escala.",
+          "Si Jev no responde, el servicio no lanza un error: devuelve un resultado sin banderas y sin confianza, y el protocolo manda el caso a revisión humana. La emergencia ya está guardada, así que no se pierde nada.",
+          "Estos umbrales son un punto de partida, no valores clínicos. En un sistema real los define personal médico y se calibran con casos reales etiquetados."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Detalles de la documentación que me ahorraron errores"
+      },
+      {
+        "kind": "paragraph",
+        "text": "TypeSafe publica una página de [limitaciones conocidas de jev-1.13](https://docs.typesafe.ai/model-jaggedness/jev-1.13). Me gusta que una empresa documente dónde falla su modelo. Varias decisiones del proyecto salen de ahí y de la [página de modelos](https://docs.typesafe.ai/models):"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Las preguntas van en inglés.** Es el idioma principal de entrenamiento y donde la precisión es mejor. En mi proyecto, un caso ambiguo pasó de 0,73 a 0,96 de confianza al traducir solo las preguntas. La llamada y la interfaz siguen en español.",
+          "**No le pido cuentas ni fechas.** Jev no es una calculadora y no compara fechas de forma fiable. Por eso el estado no lleva horas ni minutos transcurridos: todo lo temporal se calcula en código.",
+          "**Solo envío lo que la pregunta necesita.** Un estado lleno de detalles irrelevantes le cuesta precisión. A Jev le llegan dos campos: el texto de la llamada y su origen.",
+          "**El estado es un dato, y Jev no lo trata como hostil.** La documentación avisa: un texto que traiga instrucciones metidas a propósito, o un encuadre engañoso, puede mover la respuesta. Por eso el texto de la llamada viaja como un campo del objeto, nunca pegado dentro de las instrucciones, los criterios de cada pregunta son explícitos y conviene probar con casos límite antes de abrirlo a mucha gente.",
+          "**Lee de forma literal.** Responde la pregunta que escribí, no la que quise decir. Cuando una respuesta sale mal y me descubro explicando «lo que quería decir era…», esa explicación es justo lo que le faltaba a la instrucción.",
+          "**Conviene fijar la versión al calibrar umbrales.** El alias `jev-latest` cambia de modelo con cada lanzamiento. Si ajusté mis umbrales contra `jev-1.13.0`, conviene fijar esa versión y migrar cuando yo lo decida."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Dónde usaría Jev (y dónde no)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Después de este proyecto, así lo veo. Jev encaja cuando mi código necesita una decisión pequeña sobre lenguaje natural, muchas veces, rápido y con una medida de duda:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Enrutar solicitudes**: tickets de soporte, correos o llamadas hacia el equipo, la cola o el flujo correcto, y a una persona cuando la confianza es baja.",
+          "**Poner guardarraíles a otro LLM**: revisar entradas, salidas y llamadas a herramientas para detectar inyección de prompts, datos sensibles o respuestas que violan una política, por una fracción del coste de la llamada original.",
+          "**Elegir qué modelo responde**: clasificar la dificultad o el riesgo de un prompt y mandar al modelo caro solo lo que lo necesita.",
+          "**Búsqueda y RAG**: puntuar qué tan relevante es cada fragmento para una consulta y quedarse solo con el contexto útil.",
+          "**Verificar**: comprobar si una cita respalda la afirmación que acompaña o si un campo extraído coincide con su documento.",
+          "**Filtrar con criterios explícitos**: currículos, leads o reclamaciones, siempre con revisión humana en los casos dudosos.",
+          "**Linters semánticos en CI**: reglas del equipo que un linter clásico no puede leer, como «este mensaje de error explica qué hacer»."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "No lo usaría para redactar, resumir, traducir, conversar o generar código; para eso está un LLM. Tampoco para sumar, contar o comparar fechas; para eso está el código. Y no lo usaría solo para una decisión que exige razonar muchos pasos seguidos: ahí primero descompongo el problema, y si no se puede, lo dejo en manos de un modelo de razonamiento o de una persona."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo que gané no es velocidad en abstracto. Cada decisión deja un número y una regla con nombre, no un párrafo que alguien tenga que interpretar. Las reglas de prioridad se las puedo enseñar a un médico sin abrir un prompt. El coste por llamada es tan bajo que puedo hacer nueve preguntas por emergencia sin pensarlo dos veces. Y cuando el modelo no está seguro, lo dice, y el caso llega a una persona en lugar de despacharse a ciegas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El código está abierto en [github.com/ChristianCruzArango/triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). Si quieres ver en qué más estoy trabajando, pasa por [mis proyectos](/projects)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Introducción a Jev](https://docs.typesafe.ai/introduction) — TypeSafe: el punto de partida, con las tres primitivas y la idea de preguntas atómicas compuestas en código.",
+          "[System One](https://docs.typesafe.ai/concepts/system-one) — TypeSafe: qué es un modelo System One y en qué se diferencia de un LLM, con el origen del nombre.",
+          "[AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer) — TypeSafe: RLHF, RLVR y RLCD explicados, y por qué entrenan para decisiones calibradas en lugar de texto.",
+          "[Confidence](https://docs.typesafe.ai/confidence) — TypeSafe: cómo se calcula la confianza y por qué los umbrales deben escalar con el riesgo.",
+          "[How to build with TypeSafe](https://docs.typesafe.ai/concepts/how-to-build-with-system-one) — TypeSafe: la guía para diseñar software donde el código manda y el modelo solo decide lo necesario.",
+          "[Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13) — TypeSafe: las limitaciones conocidas del modelo. Léela antes de diseñar tus preguntas.",
+          "[Jev with coding agents](https://docs.typesafe.ai/introduction/coding-agents) — TypeSafe: por qué Jev no sustituye al LLM de tu agente de programación y cómo combinarlos.",
+          "[Example use cases](https://docs.typesafe.ai/concepts/use-case-map) — TypeSafe: un mapa de casos de uso por industria para encontrar dónde encaja en tu producto.",
+          "[triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias) — el repositorio de esta nota, con las nueve preguntas, el protocolo y el despacho."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "I often ask an LLM for a small decision in my code: does this message ask for a refund? Which team should get this ticket? Is it urgent? I write \"return JSON\", parse the response, check that the value is in the list and retry when it comes back broken. It works, but I'm always forcing a system that writes text to behave like a function."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This week I tried **Jev**, the model from [TypeSafe](https://docs.typesafe.ai/introduction), which starts from exactly that problem. To really understand it I didn't stop at the documentation: I built an ambulance triage and dispatch system in Cali with it. In this note I explain what Jev is, how it differs from a traditional LLM, where I would use it and where I wouldn't, and what I learned by measuring."
+      },
+      {
+        "kind": "quote",
+        "text": "If an intelligent system, whether human or machine, cannot express honest uncertainty, the system cannot be trusted.",
+        "source": "TypeSafe · Jev documentation, \"Confidence\"",
+        "sourceUrl": "https://docs.typesafe.ai/confidence"
+      },
+      {
+        "kind": "heading",
+        "text": "First, what Jev is (in a few words)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Jev is TypeSafe's flagship model and the first of a family they call **System One**. It understands natural language, just like an LLM, but it doesn't write. It takes two things: a **state**, which is the text or JSON I want to ask about, and **typed questions**, in which I define the possible answers in advance. It returns typed answers with their probabilities. There's no text to read and nothing to parse."
+      },
+      {
+        "kind": "paragraph",
+        "text": "There's one key word to understand it: Jev is **probabilistic**. It doesn't answer with certainty but with a probability spread across the answers I defined. When it says `unidad_acv`, it's really saying \"this is the most likely option, and this is how the rest is spread\". The final answer is just the option with the highest probability; what's valuable is the full spread, because it tells me when the model is sure and when it doubts. And probabilistic doesn't mean random: according to the [documentation](https://docs.typesafe.ai/concepts/how-to-build-with-system-one), Jev is designed to return stable answers when asked the same question again."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The name, according to the [System One documentation](https://docs.typesafe.ai/concepts/system-one), comes from a concept Daniel Kahneman popularized in his book *Thinking, Fast and Slow* (2011): System 1 thinking is fast and intuitive; System 2 is slower and more deliberate. Jev aims at the first one. The [documentation](https://docs.typesafe.ai/introduction) sums it up this way: each question should be a judgment a knowledgeable person could make in a few seconds given the right context."
+      },
+      {
+        "kind": "heading",
+        "text": "The three questions it can answer"
+      },
+      {
+        "kind": "paragraph",
+        "text": "TypeSafe calls the question types **primitives**. There are only three, and each returns a different kind of answer:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice**: picks one option from a list I define. Example: \"which hospital service does this patient need?\". It returns the chosen option, the probability of each option and a confidence from 0 to 1.",
+          "**Score**: rates the state on a scale of levels I describe. Example: \"how frustrated is the customer?\", with 0 = calm, 1 = frustrated and 2 = very frustrated. It returns the score, the probability of each level and the confidence.",
+          "**Noul**: answers whether a statement is true. Example: \"is the patient unconscious?\". It returns a number between 0 and 1: the probability that the answer is \"yes\". It carries no confidence of its own."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "All three can be mixed in a single request. Jev evaluates each question in parallel and in isolation against the same state: one answer never contaminates another, and according to the documentation adding questions barely changes the response time."
+      },
+      {
+        "kind": "heading",
+        "text": "How to write the request, piece by piece"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The request is a JSON with two main pieces:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`state`**: the content I ask about. It can be plain text, an object or an array. I prefer an object with clear names, because then each question can point at a specific field.",
+          "**`questions`**: a map of questions. I make up the key (`stroke_signs`, `required_capability`…), the model never sees it and the answer comes back under that same key. That's why each question has to make complete sense without its name."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Every question always has two fields in common: `type`, which says which of the three primitives it is, and `instructions`, which is the question itself. What changes from one to another is `criteria`, the field where I define the possible answers. It was the hardest part for me to understand at first, so here it is as a chart:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-request-anatomy.en.svg",
+        "caption": "A single request carries all three questions. What changes between them is the shape of criteria and, with it, the shape of the answer."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice: `criteria` is an object.** Each key is an option and each value, its description. The model reads both, so the description should clearly separate one option from the others. It accepts up to 255 options, and the documentation recommends adding a \"none of the above\" kind of option when the list might not cover every case.",
+          "**Score: `criteria` is an ordered array.** Each element describes a level, from low to high. Each level's number is its position: the first is 0, the second 1, and so on. It needs at least two levels and accepts up to ten. Each level is judged on its own, so it should describe a concrete situation.",
+          "**Noul: `criteria` is optional.** If I use it, it's an object with two keys, `true` and `false`, that say what counts as \"yes\" and what counts as \"no\". In the triage I always write them, because they bound what is being judged."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is what a request with all three looks like. The Choice and the Noul are questions from the project (in the Choice I kept three of the seven options so it reads better); the Score is my own example, because the triage doesn't need one. The questions are in English; I explain why further down."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "{",
+          "  \"model\": \"jev-1.13.0\",",
+          "  \"state\": {",
+          "    \"reportText\": \"Mi abuelo tiene la boca torcida y no puede hablar bien desde hace un rato\",",
+          "    \"source\": \"voz\"",
+          "  },",
+          "  \"questions\": {",
+          "    \"required_capability\": {",
+          "      \"type\": \"choice\",",
+          "      \"instructions\": \"Which specialised hospital service does this patient most likely need on arrival?\",",
+          "      \"criteria\": {",
+          "        \"urgencias_generales\": \"General emergency care is enough\",",
+          "        \"unidad_acv\": \"Signs of a stroke: sudden weakness on one side, slurred speech, facial droop, sudden confusion\",",
+          "        \"trauma_mayor\": \"Severe physical injury: traffic collision, fall from height, gunshot or stab wound, crush injury\"",
+          "      }",
+          "    },",
+          "    \"stroke_signs\": {",
+          "      \"type\": \"noul\",",
+          "      \"instructions\": \"Does the report describe signs of a stroke?\",",
+          "      \"criteria\": {",
+          "        \"true\": \"Sudden weakness or numbness on one side, facial droop, slurred or strange speech, or sudden confusion\",",
+          "        \"false\": \"None of those signs are described\"",
+          "      }",
+          "    },",
+          "    \"caller_distress\": {",
+          "      \"type\": \"score\",",
+          "      \"instructions\": \"How distressed does the caller sound in `reportText`?\",",
+          "      \"criteria\": [",
+          "        \"Calm and clear\",",
+          "        \"Worried but able to explain what is happening\",",
+          "        \"Panicked, hard to follow\"",
+          "      ]",
+          "    }",
+          "  }",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And this is the exact response `jev-1.13.0` returned for that request:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "{",
+          "  \"model\": \"jev-1.13.0\",",
+          "  \"answers\": {",
+          "    \"required_capability\": {",
+          "      \"type\": \"choice\",",
+          "      \"choice\": \"unidad_acv\",",
+          "      \"confidence\": 1.0,",
+          "      \"probabilities\": { \"unidad_acv\": 1.0, \"urgencias_generales\": 0.0, \"trauma_mayor\": 0.0 }",
+          "    },",
+          "    \"stroke_signs\": { \"type\": \"noul\", \"noul\": 0.96 },",
+          "    \"caller_distress\": {",
+          "      \"type\": \"score\",",
+          "      \"score\": 0.89,",
+          "      \"confidence\": 0.84,",
+          "      \"legend\": { \"0\": \"Calm and clear\", \"1\": \"Worried but able to explain what is happening\", \"2\": \"Panicked, hard to follow\" },",
+          "      \"probabilities\": { \"0\": 0.11, \"1\": 0.89, \"2\": 0.0 }",
+          "    }",
+          "  },",
+          "  \"usage\": { \"input_tokens\": 536, \"output_tokens\": 87 }",
+          "}"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is how I read each answer:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Choice.** `choice` is the option with the highest probability; `probabilities` spreads 100% across all options, and `confidence` sums up how concentrated that spread is. Here everything landed on `unidad_acv`, so the confidence is 1.0.",
+          "**Score.** `score` isn't a level but a position on the scale. It's computed by multiplying each level by its probability and adding them up: 0 × 0.11 + 1 × 0.89 + 2 × 0 = 0.89. That's why it can fall between two levels. `legend` gives me back the description of each number, and the 0.84 confidence says the model clearly leans toward level 1.",
+          "**Noul.** A single number, 0.96: the probability that the answer is \"yes\". It carries no `confidence` because there are only two possible outcomes and that number already describes them. Near 1 is a clear \"yes\"; near 0, a clear \"no\"; and near 0.5, the model can't make up its mind.",
+          "**`usage`.** The input tokens, which are the ones you pay for. This request used 536: about 0.000023 dollars."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "In the project I don't build the HTTP request by hand: I use the official JavaScript SDK, `@typesafe-ai/sdk`. I do write the questions myself, as a TypeScript object with the same shape as the JSON above, and TypeScript checks that shape is valid with `satisfies Questions`. The SDK handles the rest: it sends the request, retries if it fails and returns typed answers. The call fits in a few lines:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "import { TypeSafeClient } from '@typesafe-ai/sdk';",
+          "const client = new TypeSafeClient();   // reads TYPESAFE_API_KEY from the environment",
+          "const result = await client.systemOne({ state, questions: TRIAGE_QUESTIONS });",
+          "result.answers.required_capability.choice;   // \"unidad_acv\"",
+          "result.answers.stroke_signs.noul;            // 0.96 · already a number",
+          "result.usage?.input_tokens;                  // to compute the cost"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Three tips from the documentation I apply when writing questions:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`instructions` and `criteria` don't have to be plain text.** They also accept objects or arrays. I always start with text and move to an object when an option needs to say what it covers, what it doesn't and a few examples.",
+          "**I can point at a specific field of the state.** If I write its path in backticks inside the question, as in \"How distressed does the caller sound in `reportText`?\", the model knows exactly where to look.",
+          "**I ask for everything in a single call.** Questions run in parallel and barely add time, although each one adds tokens. Then my code uses only the answers it needs."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "How it differs from a traditional LLM"
+      },
+      {
+        "kind": "paragraph",
+        "text": "An LLM, like the one behind ChatGPT or Claude, is trained to produce text a person reads. When I ask it for a decision for my code, I have to turn that text into data: parse, validate and retry if it invents a value that wasn't in the list. Jev flips the problem. I define the possible answers, and the model only spreads probability across them. **It cannot invent an option that doesn't exist.**"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-vs-llm.en.svg",
+        "caption": "Top, the usual path with an LLM: text, parsing, validation and retry. Bottom, Jev: typed questions that come back as data ready for an if."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The deeper difference isn't in the output but in how it's trained. These are the ones that matter most to me when designing:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**What it returns.** An LLM returns text. Jev returns `choice`, `score` or `noul`, with probabilities, in the exact shape my code expects.",
+          "**The probabilities are visible.** An LLM is also probabilistic on the inside: it picks each word according to its probability. But that information usually stays hidden behind the text, and a sentence said with confidence doesn't tell you how much the model doubts. Jev hands me the probabilities as part of the answer, and my code can sort them, compare them or use them as a threshold.",
+          "**How it's trained.** Chatbots are tuned with RLHF (reinforcement learning from human feedback): they learn to give the answers people prefer. TypeSafe trains Jev with what it calls RLCD (reinforcement learning for calibrated decisions): its probabilities should reflect the real chance of being right.",
+          "**What \"calibrated\" means.** Of all the times the model says 0.8, it should be right about 80% of the time. It's a property of many answers together, not a guarantee about any single one. The documentation makes this clear, and I keep it in mind: calibrated doesn't mean infallible.",
+          "**How it expresses doubt.** According to the documentation itself, optimizing for what people prefer can reward sycophantic answers and confident-sounding hallucinations. Jev, instead, returns a confidence my code can use to decide whether to act or to hand the case to a person.",
+          "**Speed and cost.** The documentation states that most queries complete in about 100 ms. The current model, `jev-1.13.0`, charges 0.042 dollars per million tokens, and only input tokens: output is free. In my project, each evaluation uses about 1,075 tokens and takes between 200 and 750 ms.",
+          "**What it doesn't do.** It doesn't write, summarize, chat, generate code or explain its reasoning. It only accepts text: no images, audio or video. Nor does it replace the model behind Claude Code or Cursor; [the documentation says so explicitly](https://docs.typesafe.ai/introduction/coding-agents)."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's why I don't say Jev is better or worse than an LLM: they solve different problems. If I need to write an email or reason through several steps, I use an LLM. If I need my code to make a small decision about free text, thousands of times, fast, cheap and with a measure of doubt, I use Jev."
+      },
+      {
+        "kind": "heading",
+        "text": "The idea that most changed how I design: code is in charge"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The [TypeSafe guide](https://docs.typesafe.ai/concepts/how-to-build-with-system-one) distinguishes three architectures. In traditional software, code decides everything with simple, reliable pieces. In an LLM agent, the model chooses its next step; that works well when a person is watching, but every turn of the loop is another chance to go off the rails. In what they call AI-powered software, code owns the flow, the rules and the side effects, and the model shows up only where common sense about free text is needed."
+      },
+      {
+        "kind": "quote",
+        "text": "Build a normal software workflow and insert System One only where AI is needed.",
+        "source": "TypeSafe · How to build with TypeSafe",
+        "sourceUrl": "https://docs.typesafe.ai/concepts/how-to-build-with-system-one"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This idea matters to me because it changes what I can test and audit. If a rule lives in a prompt, I can only hope the model respects it. If it lives in code, I read it, test it and change it without touching the model."
+      },
+      {
+        "kind": "heading",
+        "text": "The project: ambulance triage and dispatch in Cali"
+      },
+      {
+        "kind": "paragraph",
+        "text": "To put it to the test I built [triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). An emergency call comes in and an ambulance goes out to a specific hospital, live on a map of Cali."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Jev steps into that journey at a single point: when the text of the call arrives. I send it a state with two fields, the text as it came and where it came from, and **nine questions in the same request**: one Choice for the service the patient needs and eight Nouls, one per red flag. Nine numbers come back. From there on Jev is out of the picture: everything that follows is code."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is what the system gained by putting it there:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The patient reaches a hospital that can treat them.** Without that question, the system only knew which hospital was closest. Now it also knows what the patient needs, and filters before sorting by distance.",
+          "**The nine questions cost almost the same as one.** They are evaluated in parallel against the same state: 200 to 750 ms and a fraction of a thousandth of a dollar per call. That's why I can afford to ask more than I strictly need.",
+          "**When the model doubts, the case reaches a person.** The Choice confidence is the brake: below the threshold, the emergency is not dispatched on its own.",
+          "**If Jev doesn't answer, the system doesn't fall over.** The call is already saved and the case goes to human review instead of being lost.",
+          "**Every decision comes with an explanation.** The emergency stores which rule fired and what Jev answered, with its confidence, so it can be reviewed afterwards."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "An important clarification: **it's a demo**. The calls are fictional and the ambulances are simulated. The names and coordinates of the twelve hospitals are real; their clinical capabilities were assigned plausibly, without checking them against any official source. A system that prioritizes real patients is a regulated medical device and needs clinical validation."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want to look inside, the repository is open at [github.com/ChristianCruzArango/triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). Each module has its own README explaining what it does and why, including the nine questions and the full protocol."
+      },
+      {
+        "kind": "heading",
+        "text": "Who decides what"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The most important design decision was splitting the work. Jev only answers what requires judgment about free text; everything else is code:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Which service the patient needs → Jev.** A Choice among seven options: general emergency, stroke unit, major trauma, cardiac catheterization, burns, pediatrics and obstetrics.",
+          "**Eight red flags → Jev.** One Noul per sign: unresponsive, compromised airway, severe bleeding, stroke signs, cardiac chest pain, high-energy trauma, pediatric patient and need for an advanced life support unit.",
+          "**Priority → code.** A protocol with eight ordered rules (`R1` to `R8`); the first one that matches wins. If the patient is a child, the priority goes up one level.",
+          "**Nearest ambulance → code.** It's arithmetic.",
+          "**Nearest hospital that can actually help → code.** It first filters by the service Jev said and then sorts by distance."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-triage-flow.en.svg",
+        "caption": "Jev only steps in at stage 2. Priority, ambulance and hospital are decided by code that can be read and audited."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A real example from the demo. This call comes in: \"My grandfather's mouth is drooping and he hasn't been able to speak properly for a while\". In 216 ms, Jev answers `unidad_acv` (stroke unit) with confidence 1.00 and `stroke_signs` with 0.96. The protocol fires rule `R4_ACV` and marks the priority as Critical. Dispatch decides in under a millisecond:"
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "⚠ The nearest hospital was Hospital San Juan de Dios, 2.74 km away.",
+          "  Discarded: it has no stroke unit.",
+          "  Dispatched to Hospital Universitario del Valle, 3.52 km away.",
+          "  9 of 12 hospitals discarded for lacking the service."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here's the concrete benefit. An algorithm that only looks at distance would have sent that patient to the nearest hospital, which in the demo has no stroke unit. With a single question to Jev, the system knows what the patient needs and sends them to the hospital that can actually treat them, even if it's farther away."
+      },
+      {
+        "kind": "heading",
+        "text": "What I learned by measuring: I never ask it for the priority"
+      },
+      {
+        "kind": "paragraph",
+        "text": "My first version asked Jev directly: \"how urgent is it?\". Confidences came out between 0.48 and 0.54, even for textbook cases like a classic stroke or major trauma. The reason is that urgency isn't one judgment but several at once: is the person breathing, bleeding, conscious, how did they get hurt. When I broke that question into atomic red flags, every answer became clear: 0.96 to 0.98 for the serious cases and below 0.04 for the minor injury."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/jev-decompose.en.svg",
+        "caption": "The same call, two ways of asking. The big question stays in doubt; the small ones are answered clearly."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It wasn't luck: it's what the [documentation](https://docs.typesafe.ai/introduction) recommends. If a question needs extended reasoning or weighs several independent factors, break it down and combine the answers in code. And that comes with a bonus: the rules stay outside the model. They can be read, versioned, discussed with a doctor and changed without touching Jev. Each emergency stores which rule fired, so any decision can be audited later. With a prompt that said \"decide the priority\", I'd have nothing to audit."
+      },
+      {
+        "kind": "heading",
+        "text": "Confidence decides whether I act or call a person"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The documentation suggests splitting confidence into three ranges: high, to act on its own; medium, to ask for confirmation or more information; and low, to not act and hand the case to a person. It also stresses something I find key: the threshold depends on what a mistake costs. Showing the wrong screen can be fixed; sending an ambulance to the wrong hospital can't."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "If the confidence about the required service falls below 0.55, the case **is not dispatched on its own**: it goes to human review.",
+          "A red flag counts as present from 0.6, and the advanced life support unit is required from 0.5. They're different thresholds because a Noul carries no confidence: it's another question with its own scale.",
+          "If Jev doesn't respond, the service doesn't throw an error: it returns a result with no flags and no confidence, and the protocol sends the case to human review. The emergency is already saved, so nothing is lost.",
+          "These thresholds are a starting point, not clinical values. In a real system, medical staff define them and they're calibrated against real labeled cases."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Documentation details that saved me from mistakes"
+      },
+      {
+        "kind": "paragraph",
+        "text": "TypeSafe publishes a page of [known limitations of jev-1.13](https://docs.typesafe.ai/model-jaggedness/jev-1.13). I like that a company documents where its model fails. Several of the project decisions come from there and from the [models page](https://docs.typesafe.ai/models):"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The questions are in English.** It's the main training language and where accuracy is best. In my project, an ambiguous case went from 0.73 to 0.96 confidence just by translating the questions. The call and the interface stay in Spanish.",
+          "**I don't ask it for math or dates.** Jev isn't a calculator and doesn't compare dates reliably. That's why the state carries no times or elapsed minutes: everything time-related is computed in code.",
+          "**I only send what the question needs.** A state full of irrelevant detail costs accuracy. Jev receives two fields: the call text and where it came from.",
+          "**The state is data, and Jev doesn't treat it as hostile.** The documentation warns about it: text carrying injected instructions, or a deliberately misleading framing, can move the answer. That's why the call text travels as a field of the object, never pasted into the instructions, each question's criteria are explicit, and it's worth testing edge cases before opening it to many users.",
+          "**It reads literally.** It answers the question I wrote, not the one I meant. When an answer comes out wrong and I catch myself explaining \"what I meant was…\", that explanation is exactly what the instruction was missing.",
+          "**It's worth pinning the version when calibrating thresholds.** The `jev-latest` alias moves to a new model with each release. If I tuned my thresholds against `jev-1.13.0`, it's worth pinning that version and migrating when I decide to."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Where I would use Jev (and where I wouldn't)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "After this project, this is how I see it. Jev fits when my code needs a small decision about natural language, many times, fast and with a measure of doubt:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Routing requests**: support tickets, emails or calls to the right team, queue or workflow, and to a person when confidence is low.",
+          "**Putting guardrails on another LLM**: checking inputs, outputs and tool calls for prompt injection, sensitive data or policy-breaking answers, for a fraction of the cost of the original call.",
+          "**Choosing which model answers**: classifying a prompt's difficulty or risk and sending only what needs it to the expensive model.",
+          "**Search and RAG**: scoring how relevant each passage is to a query and keeping only the useful context.",
+          "**Verifying**: checking whether a citation supports the claim next to it or whether an extracted field matches its document.",
+          "**Screening with explicit criteria**: resumes, leads or claims, always with human review for doubtful cases.",
+          "**Semantic linters in CI**: team rules a classic linter can't read, such as \"this error message explains what to do\"."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "I wouldn't use it to write, summarize, translate, chat or generate code; that's what an LLM is for. Nor to add, count or compare dates; that's what code is for. And I wouldn't use it alone for a decision that requires reasoning through many steps: there I first break the problem down, and if that isn't possible, I leave it to a reasoning model or a person."
+      },
+      {
+        "kind": "heading",
+        "text": "What really improves"
+      },
+      {
+        "kind": "paragraph",
+        "text": "What I gained isn't speed in the abstract. Every decision leaves a number and a named rule, not a paragraph someone has to interpret. I can show the priority rules to a doctor without opening a prompt. The cost per call is so low that I can ask nine questions per emergency without thinking twice. And when the model isn't sure, it says so, and the case reaches a person instead of being dispatched blindly."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The code is open at [github.com/ChristianCruzArango/triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias). If you want to see what else I am working on, stop by [my projects](/projects)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Introduction to Jev](https://docs.typesafe.ai/introduction) — TypeSafe: the starting point, with the three primitives and the idea of atomic questions composed in code.",
+          "[System One](https://docs.typesafe.ai/concepts/system-one) — TypeSafe: what a System One model is and how it differs from an LLM, including where the name comes from.",
+          "[AI primer](https://docs.typesafe.ai/introduction/machine-learning-primer) — TypeSafe: RLHF, RLVR and RLCD explained, and why they train for calibrated decisions instead of text.",
+          "[Confidence](https://docs.typesafe.ai/confidence) — TypeSafe: how confidence is computed and why thresholds should scale with risk.",
+          "[How to build with TypeSafe](https://docs.typesafe.ai/concepts/how-to-build-with-system-one) — TypeSafe: the guide to designing software where code is in charge and the model decides only what's needed.",
+          "[Jev 1.13 jaggedness](https://docs.typesafe.ai/model-jaggedness/jev-1.13) — TypeSafe: the model's known limitations. Read it before designing your questions.",
+          "[Jev with coding agents](https://docs.typesafe.ai/introduction/coding-agents) — TypeSafe: why Jev doesn't replace your coding agent's LLM and how to combine them.",
+          "[Example use cases](https://docs.typesafe.ai/concepts/use-case-map) — TypeSafe: a map of use cases by industry to find where it fits in your product.",
+          "[triaje-ambulancias](https://github.com/ChristianCruzArango/triaje-ambulancias) — the repository behind this note, with the nine questions, the protocol and the dispatch."
+        ]
+      }
+    ]
+  }
+}

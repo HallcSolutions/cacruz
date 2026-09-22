@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 480" role="img" aria-label="Comparison: a traditional LLM generates text that code must parse and validate; Jev takes a state and typed questions and returns typed answers with probabilities that code uses directly">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="ar" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#8a7fb0"/></marker>
+    <marker id="ag" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 8 8; animation: flow 1.4s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -16; } }
+    .type { animation: type 6s steps(1) infinite; }
+    .t2 { animation-delay: .6s; } .t3 { animation-delay: 1.2s; } .t4 { animation-delay: 1.8s; }
+    @keyframes type { 0% { opacity: 0; } 12%, 85% { opacity: 1; } 100% { opacity: 0; } }
+    .fail { animation: fail 6s ease-in-out infinite; }
+    @keyframes fail { 0%, 45% { opacity: 0; } 55%, 85% { opacity: 1; } 100% { opacity: 0; } }
+    .loop { stroke-dasharray: 6 6; animation: flow 1s linear infinite reverse; }
+    .pulse { animation: pulse 2.4s ease-in-out infinite; }
+    .p2 { animation-delay: .3s; } .p3 { animation-delay: .6s; }
+    @keyframes pulse { 0%, 100% { stroke-opacity: .45; } 50% { stroke-opacity: 1; } }
+    .ok { animation: ok 3s ease-in-out infinite; }
+    @keyframes ok { 0%, 100% { opacity: .55; } 50% { opacity: 1; } }
+  </style>
+
+  <rect width="1000" height="480" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="29" fill="#ece7fb">An LLM writes. Jev decides.</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">The same question for your code, two ways to answer it.</text>
+
+  <!-- Carril LLM -->
+  <text x="40" y="118" font-family="ui-monospace, monospace" font-size="15" fill="#fb7185">TRADITIONAL LLM</text>
+  <rect x="40" y="132" width="190" height="84" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="56" y="160" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">prompt</text>
+  <text x="56" y="182" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">"classify and</text>
+  <text x="56" y="200" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">return JSON"</text>
+  <path d="M232 174 H270" stroke="#8a7fb0" stroke-width="2" class="flow" marker-end="url(#ar)"/>
+
+  <rect x="276" y="132" width="220" height="84" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="292" y="160" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">generates text</text>
+  <text x="292" y="184" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0" class="type">Sure, here</text>
+  <text x="380" y="184" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0" class="type t2">you go:</text>
+  <text x="292" y="202" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0" class="type t3">{"type": "stroke,</text>
+  <text x="420" y="202" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0" class="type t4">maybe"</text>
+  <path d="M498 174 H536" stroke="#8a7fb0" stroke-width="2" class="flow" marker-end="url(#ar)"/>
+
+  <rect x="542" y="132" width="190" height="84" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="558" y="160" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">parse</text>
+  <text x="558" y="182" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">+ validate</text>
+  <text x="558" y="202" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" class="fail">✗ value not in list</text>
+  <path d="M734 174 H772" stroke="#8a7fb0" stroke-width="2" class="flow" marker-end="url(#ar)"/>
+
+  <rect x="778" y="132" width="182" height="84" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="794" y="160" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">your code</text>
+  <text x="794" y="182" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">no measure</text>
+  <text x="794" y="200" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">of doubt</text>
+
+  <path d="M637 218 V246 H385 V220" fill="none" stroke="#fb7185" stroke-width="1.6" class="loop" marker-end="url(#ar)"/>
+  <text x="430" y="264" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185">if it fails, retry</text>
+
+  <!-- Carril Jev -->
+  <line x1="40" y1="292" x2="960" y2="292" stroke="#2a2342"/>
+  <text x="40" y="326" font-family="ui-monospace, monospace" font-size="15" fill="#34d399">JEV (SYSTEM ONE)</text>
+  <rect x="40" y="340" width="190" height="84" rx="10" fill="#1f1933" stroke="#a78bfa"/>
+  <text x="56" y="368" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">state +</text>
+  <text x="56" y="388" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">typed questions</text>
+  <text x="56" y="410" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">choice · score · noul</text>
+  <path d="M232 382 H270" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#ag)"/>
+
+  <rect x="276" y="340" width="220" height="84" rx="10" fill="#1f1933" stroke="#a78bfa"/>
+  <text x="292" y="368" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">evaluates in parallel</text>
+  <rect x="292" y="382" width="54" height="26" rx="5" fill="none" stroke="#a78bfa" class="pulse"/>
+  <rect x="356" y="382" width="54" height="26" rx="5" fill="none" stroke="#a78bfa" class="pulse p2"/>
+  <rect x="420" y="382" width="54" height="26" rx="5" fill="none" stroke="#a78bfa" class="pulse p3"/>
+  <text x="310" y="400" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">P1</text>
+  <text x="374" y="400" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">P2</text>
+  <text x="438" y="400" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">P3</text>
+  <path d="M498 382 H536" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#ag)"/>
+
+  <rect x="542" y="340" width="190" height="84" rx="10" fill="#1f1933" stroke="#a78bfa"/>
+  <text x="558" y="366" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">choice: "unidad_acv"</text>
+  <text x="558" y="386" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">confidence: 1.00</text>
+  <text x="558" y="406" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">noul: 0.96</text>
+  <path d="M734 382 H772" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#ag)"/>
+
+  <rect x="778" y="340" width="182" height="84" rx="10" fill="#1f1933" stroke="#34d399" class="ok"/>
+  <text x="794" y="368" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">your code</text>
+  <text x="794" y="390" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">if · sort · threshold</text>
+  <text x="794" y="408" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">✓ no parsing</text>
+
+  <text x="40" y="458" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">Jev cannot invent an option: it only spreads probability across the ones you define.</text>
+</svg>

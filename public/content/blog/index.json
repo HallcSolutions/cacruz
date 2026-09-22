@@ -1,5 +1,24 @@
 [
   {
+    "slug": "typed-decisions-with-jev",
+    "date": "2026-09-22",
+    "title": {
+      "es": "Jev: cuando tu código no necesita que la IA hable, sino que decida",
+      "en": "Jev: when your code doesn't need AI to talk, but to decide"
+    },
+    "summary": {
+      "es": "Jev, de TypeSafe, no escribe texto: recibe un estado y preguntas tipadas y devuelve respuestas con probabilidades que el código usa directamente. Qué es, en qué se diferencia de un LLM tradicional, dónde lo usaría y dónde no, y cómo lo apliqué en un triaje de ambulancias en Cali que manda cada paciente al hospital que sí puede atenderlo.",
+      "en": "Jev, from TypeSafe, doesn't write text: it takes a state and typed questions and returns answers with probabilities that code uses directly. What it is, how it differs from a traditional LLM, where I would use it and where I wouldn't, and how I applied it to an ambulance triage system in Cali that sends each patient to the hospital that can actually treat them."
+    },
+    "tags": [
+      "ia",
+      "jev",
+      "llm",
+      "arquitectura",
+      "calidad"
+    ]
+  },
+  {
     "slug": "the-harness-back-and-forth",
     "date": "2026-09-15",
     "title": {

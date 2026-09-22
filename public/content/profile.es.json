@@ -122,6 +122,13 @@
   ],
   "projects": [
     {
+      "name": "triaje-ambulancias",
+      "description": "Triaje de emergencias y despacho de ambulancias en Cali con Jev (TypeSafe System One): la llamada se convierte en nueve juicios tipados con su probabilidad y, a partir de ahí, un protocolo en código calcula la prioridad y elige el hospital más cercano que sí tiene el servicio. Si la confianza baja del umbral, el caso va a revisión humana.",
+      "language": "TypeScript · Angular · NestJS · Jev (TypeSafe)",
+      "imageUrl": "images/projects/triaje-ambulancias.es.svg",
+      "repoUrl": "https://github.com/ChristianCruzArango/triaje-ambulancias"
+    },
+    {
       "name": "rag-contratos",
       "description": "RAG sobre contratos en PDF: troceo, embeddings en PostgreSQL con pgvector y búsqueda híbrida (vectorial + texto completo en español). Incluye OCR para escaneados y cada respuesta cita documento, cláusula y página.",
       "language": "TypeScript · Angular · NestJS · pgvector",

@@ -1,0 +1,98 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 560" role="img" aria-label="Anatomy of a Jev request: state, model and questions; each question has type, instructions and criteria. In Choice, criteria is an object of options; in Score, an ordered array of levels; in Noul, an optional object with true and false. Below, the shape of each answer">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="av" markerWidth="10" markerHeight="10" refX="7" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 z" fill="#a78bfa"/></marker>
+  </defs>
+  <style>
+    .flow { stroke-dasharray: 7 7; animation: flow 1.4s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -14; } }
+    .pulse { animation: pulse 2.6s ease-in-out infinite; }
+    .p2 { animation-delay: .4s; } .p3 { animation-delay: .8s; }
+    @keyframes pulse { 0%, 100% { opacity: .5; } 50% { opacity: 1; } }
+    .glow { animation: glow 3s ease-in-out infinite; }
+    @keyframes glow { 0%, 100% { stroke-opacity: .4; } 50% { stroke-opacity: 1; } }
+    .marker { animation: slide 5s ease-in-out infinite; }
+    @keyframes slide { 0% { transform: translateX(-53px); } 35%, 85% { transform: translateX(0); } 100% { transform: translateX(-53px); } }
+  </style>
+
+  <rect width="1000" height="560" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="29" fill="#ece7fb">Anatomy of a Jev request</text>
+  <text x="40" y="74" font-family="ui-monospace, monospace" font-size="14" fill="#8a7fb0">State and questions on top; in each question only the shape of criteria changes.</text>
+
+  <!-- Cabecera de la petición -->
+  <rect x="40" y="94" width="920" height="64" rx="10" fill="#14101f" stroke="#a78bfa" class="glow"/>
+  <text x="58" y="120" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">{ "state": { "reportText": "Mi abuelo tiene la boca torcida…" },  "model": "jev-1.13.0",</text>
+  <text x="58" y="144" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">  "questions": { "<tspan fill="#a78bfa">your_id</tspan>": { "type": …, "instructions": "…", "criteria": … } } }</text>
+
+  <path d="M180 160 V184" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#av)"/>
+  <path d="M500 160 V184" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#av)"/>
+  <path d="M820 160 V184" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#av)"/>
+
+  <!-- CHOICE -->
+  <rect x="40" y="190" width="280" height="186" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="56" y="216" font-family="ui-monospace, monospace" font-size="15" fill="#a78bfa">"type": "choice"</text>
+  <text x="56" y="240" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">criteria = object of options</text>
+  <text x="56" y="268" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">{</text>
+  <text x="66" y="288" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"unidad_acv": "Signs of stroke…",</text>
+  <text x="66" y="308" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"trauma_mayor": "Severe injury…",</text>
+  <text x="66" y="328" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"urgencias_generales": "…"</text>
+  <text x="56" y="348" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">}</text>
+  <text x="56" y="368" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">key = option · value = description</text>
+
+  <!-- SCORE -->
+  <rect x="360" y="190" width="280" height="186" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="376" y="216" font-family="ui-monospace, monospace" font-size="15" fill="#a78bfa">"type": "score"</text>
+  <text x="376" y="240" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">criteria = ordered array</text>
+  <text x="376" y="268" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">[</text>
+  <text x="386" y="288" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"Calm and clear",</text>
+  <text x="386" y="308" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"Worried but able to…",</text>
+  <text x="386" y="328" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"Panicked, hard to follow"</text>
+  <text x="376" y="348" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">]</text>
+  <text x="596" y="288" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">← 0</text>
+  <text x="596" y="308" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">← 1</text>
+  <text x="596" y="328" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">← 2</text>
+  <text x="376" y="368" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">low to high · 2 to 10 levels</text>
+
+  <!-- NOUL -->
+  <rect x="680" y="190" width="280" height="186" rx="10" fill="#1f1933" stroke="#8a7fb0"/>
+  <text x="696" y="216" font-family="ui-monospace, monospace" font-size="15" fill="#a78bfa">"type": "noul"</text>
+  <text x="696" y="240" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">criteria = optional</text>
+  <text x="696" y="268" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">{</text>
+  <text x="706" y="288" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"true": "facial droop, slurred</text>
+  <text x="706" y="308" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">         speech…",</text>
+  <text x="706" y="328" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"false": "None described"</text>
+  <text x="696" y="348" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">}</text>
+  <text x="696" y="368" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">what counts as "yes" and as "no"</text>
+
+  <path d="M180 378 V402" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#av)"/>
+  <path d="M500 378 V402" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#av)"/>
+  <path d="M820 378 V402" stroke="#34d399" stroke-width="2" class="flow" marker-end="url(#av)"/>
+
+  <!-- Respuestas -->
+  <rect x="40" y="408" width="280" height="112" rx="10" fill="#14101f" stroke="#34d399"/>
+  <text x="56" y="434" font-family="ui-monospace, monospace" font-size="13" fill="#34d399" class="pulse">"choice": "unidad_acv"</text>
+  <text x="56" y="456" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"confidence": 1.0</text>
+  <text x="56" y="478" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"probabilities": { … }</text>
+  <text x="56" y="504" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">one option + spread across all</text>
+
+  <rect x="360" y="408" width="280" height="112" rx="10" fill="#14101f" stroke="#34d399"/>
+  <text x="376" y="434" font-family="ui-monospace, monospace" font-size="13" fill="#34d399" class="pulse p2">"score": 0.89</text>
+  <text x="376" y="456" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"confidence": 0.84</text>
+  <text x="376" y="478" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">"probabilities" + "legend"</text>
+  <line x1="500" y1="434" x2="620" y2="434" stroke="#2a2342" stroke-width="4" stroke-linecap="round"/>
+  <text x="497" y="423" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">0</text>
+  <text x="557" y="423" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">1</text>
+  <text x="617" y="423" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">2</text>
+  <circle cx="553" cy="434" r="6" fill="#34d399" class="marker"/>
+  <text x="376" y="504" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">position on the 0 to 2 scale</text>
+
+  <rect x="680" y="408" width="280" height="112" rx="10" fill="#14101f" stroke="#34d399"/>
+  <text x="696" y="434" font-family="ui-monospace, monospace" font-size="13" fill="#34d399" class="pulse p3">"noul": 0.96</text>
+  <text x="696" y="456" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">no confidence:</text>
+  <text x="696" y="478" font-family="ui-monospace, monospace" font-size="12" fill="#ece7fb">the number is the doubt</text>
+  <text x="696" y="504" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0">probability of "yes", 0 to 1</text>
+
+  <text x="40" y="546" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">Real jev-1.13.0 answers to a single request with all three questions.</text>
+</svg>

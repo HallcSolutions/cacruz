@@ -16,6 +16,9 @@ yarn-error.log
 /reports
 /.stryker-tmp
 
+# Local avatar reconstruction dependencies
+/.venv-avatar/
+
 # IDEs and editors
 .idea/
 .project

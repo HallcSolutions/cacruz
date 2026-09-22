@@ -1,0 +1,46 @@
+{
+  "status": "needs-correction",
+  "input": "christian-avatar-reference.png",
+  "provider": "trellis-community/TRELLIS",
+  "authorization": "Christian explicitly authorized sending this generated avatar reference; original photo not sent",
+  "seed": 0,
+  "meshSimplify": 0.95,
+  "textureSize": 2048,
+  "artifact": ".img2/artifacts/img2glb/christian-avatar-reference.glb",
+  "sha256": "c3f83b63b5e2b6055d14994e6cdc6acfec53dc08ea68418e79868c63e22bc17e",
+  "bytes": 4560088,
+  "triangles": 15403,
+  "skins": 0,
+  "animations": 0,
+  "artifactGate": "pass",
+  "visualReview": {
+    "views": [
+      "front",
+      "back",
+      "face close-up"
+    ],
+    "issues": [
+      "Generated floor attached to character asset",
+      "Face likeness degraded, eyes and mouth indistinct",
+      "Hair silhouette contains spikes"
+    ],
+    "viewerAdjustments": [
+      "Nonmetallic material",
+      "Smoothed normals by shared position; original GLB unmodified"
+    ],
+    "acceptedForIntegration": false
+  },
+  "secondAttempt": {
+    "seed": 21,
+    "meshSimplify": 0.9,
+    "status": "provider-quota-exceeded",
+    "retryAfterReported": "23:57:38",
+    "artifactCreated": false
+  },
+  "tests": {
+    "runner": "Karma/Jasmine ChromeHeadless",
+    "red": "7 failed: christian.glb missing (HTTP 404)",
+    "green": false,
+    "mutation": "not run; implementation not reached"
+  }
+}

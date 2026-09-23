@@ -1,5 +1,8 @@
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { GTAOPass } from 'three/addons/postprocessing/GTAOPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
 import {
   ACESFilmicToneMapping,
@@ -9,11 +12,9 @@ import {
   Fog,
   HemisphereLight,
   Mesh,
-  MeshStandardMaterial,
-  Object3D,
+  Sprite,
   PCFShadowMap,
-  PerspectiveCamera,
-  PointLight,
+  PMREMGenerator,
   Scene,
   Vector2 as ThreeVector2,
   Vector3,
@@ -26,8 +27,9 @@ import { HealthState, INITIAL_HEALTH, MAX_HP } from '../model/health-state';
 import { Vector2 } from '../model/vector2';
 import { WorldZone } from '../model/world-zone';
 import { bugsOf, runCommand, stepArena } from '../logic/arena';
-import { gitStepFor } from '../logic/git-steps';
 import { blockedBySolids } from '../logic/blocked-by-solids';
+import { stepMachines } from '../logic/machine-motion';
+import { machineObstacles } from '../logic/machine-obstacles';
 import { buildDecorLayout, decorObstacles } from '../logic/decor-layout';
 import { followCamera } from '../logic/follow-camera';
 import { stepCompanion } from '../logic/follow-companion';
@@ -35,39 +37,32 @@ import { heal, takeHit, tickHealth } from '../logic/health';
 import { nearestZone } from '../logic/nearest-zone';
 import { resolveCircles } from '../logic/resolve-circles';
 import { resolveCollisions } from '../logic/resolve-collisions';
-import { INITIAL_CHARACTER, MAX_SPEED, speedOf, stepCharacter } from '../logic/step-character';
+import { INITIAL_CHARACTER, speedOf, stepCharacter } from '../logic/step-character';
 import { isInsideWorld, terrainHeightAt } from '../logic/terrain-height';
 import { HEALTH_PICKUPS, TURRETS, WORLD_ZONES } from '../logic/world-zones';
 import { buildAgentPool, buildBulletPool, buildCity, buildPickups, buildTurrets, MergeBurst, paintMachine } from './build-city';
-import { BarkAudio } from './bark-audio';
+import { WorldAudio } from './world-audio';
+import { WorldSceneOptions } from '../model/world-scene-options';
+import { activateDebtEncounter } from '../logic/activate-debt-encounter';
+import { launchCompanionPower } from '../logic/companion-power';
+import { createDebtEncounter, startDebtEncounter, advanceDebtEncounter, analyzeDebtEncounter, refactorDebtEncounter, supportDebtEncounter } from '../logic/debt-encounter';
+import { DebtMonsterView } from './debt-monster-view';
 import { TerminalBubble } from './terminal-bubble';
 import { buildFloor } from './build-floor';
 import { buildStations, buildWorkstation } from './build-stations';
-import { CharacterAnimator, DEVELOPER_CLIPS, DOG_CLIPS } from './character-animator';
-import { fit } from './fit';
-import { cloneCharacter, loadAssets } from './load-assets';
+import { buildDeveloper, buildCompanion } from './build-world-cast';
+import { poseDeveloper, poseCompanion } from './pose-world-cast';
+import { poseThoughtBolt } from './build-thought-bolt';
+import { disposeModel } from './dispose-model';
+import { loadAssets } from './load-assets';
 import { PALETTE } from './palette';
 import { SceneHandle } from './scene-handle';
-import { disposeSharedGeometry, disposeVoxels } from './voxel';
+import { CAMERA_FOCUS_HEIGHT, DEFAULT_CAMERA_ZOOM, createWorldCamera, panWorldCamera, positionWorldCamera, positionEncounterCamera } from './world-camera';
 
-export interface WorldSceneOptions {
-  readonly host: HTMLElement;
-  readonly reducedMotion: boolean;
-  readonly lowPower: boolean;
-  readonly onZoneChange: (zone: WorldZone | null) => void;
-  readonly onProgress?: (ratio: number) => void;
-  readonly onHealth?: (hp: number) => void;
-  readonly onHit?: () => void;
-}
 
 const MAX_DELTA = 1 / 20;
-const CAMERA_OFFSET = new Vector3(0, 15, 13);
-/** Ángulo horizontal que se conserva: en pantallas estrechas la cámara abre el vertical para compensar. */
-const HORIZONTAL_FOV = 58;
-/** Campo vertical de escritorio; nunca se baja de aquí. */
-const DEFAULT_FOV = 48;
 const ZOOM_MIN = 0.6;
-const ZOOM_MAX = 1.9;
+const ZOOM_MAX = 3.2;
 const SEAT = { x: 0, z: 0.9 };
 const SEAT_FACING = Math.PI;
 const BULLET_HEIGHT = 0.6;
@@ -76,34 +71,35 @@ const SURFACE = { heightAt: terrainHeightAt, isInside: isInsideWorld };
 const LAYOUT = buildDecorLayout(WORLD_ZONES, TURRETS);
 const SOLIDS = decorObstacles(LAYOUT);
 
-/** Sudadera oscura, jeans y sin corbata: el hombre de traje del kit, vestido de desarrollador. */
-const OUTFIT: Record<string, number | null> = {
-  Shirt: 0x4fb0d6,
-  Pants: 0x2a2f45,
-  Details: 0x1c1c24,
-  TieTexture: null,
-};
 
 export async function createWorldScene(options: WorldSceneOptions): Promise<SceneHandle> {
-  const { host, reducedMotion, lowPower, onZoneChange, onProgress, onHealth, onHit } = options;
+  const { host, reducedMotion, lowPower, onZoneChange, onProgress, onHealth, onHit, onCombat } = options;
 
   const renderer = new WebGLRenderer({ antialias: !lowPower, alpha: false });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio, lowPower ? 1.5 : 2));
   renderer.shadowMap.enabled = !lowPower;
   renderer.shadowMap.type = PCFShadowMap;
   renderer.toneMapping = ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 0.95;
+  renderer.toneMappingExposure = 1.1;
   host.appendChild(renderer.domElement);
 
   const scene = new Scene();
   scene.background = new Color(PALETTE.background);
-  scene.fog = new Fog(0x0e0e16, 40, 95);
+  const fog = new Fog(0x0e0e16, 40, 95);
+  scene.fog = fog;
 
-  const camera = new PerspectiveCamera(48, 1, 0.5, 160);
+  const environment = new RoomEnvironment();
+  const pmrem = new PMREMGenerator(renderer);
+  const environmentMap = pmrem.fromScene(environment, 0.04);
+  scene.environment = environmentMap.texture;
+  scene.environmentIntensity = 0.4;
+  environment.dispose();
+  pmrem.dispose();
+  const camera = createWorldCamera(1);
 
-  scene.add(new AmbientLight(PALETTE.light, 0.75));
-  scene.add(new HemisphereLight(PALETTE.accentDeep, 0x05050a, 0.8));
-  const key = new DirectionalLight(0xdfe3ff, 1.3);
+  scene.add(new AmbientLight(0xb6bed0, 0.28));
+  scene.add(new HemisphereLight(0x9baed3, 0x252127, 0.65));
+  const key = new DirectionalLight(0xe9edff, 3.2);
   key.position.set(-18, 30, 12);
   key.castShadow = !lowPower;
   key.shadow.mapSize.set(2048, 2048);
@@ -115,22 +111,23 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
 
   const composer = new EffectComposer(renderer);
   composer.addPass(new RenderPass(scene, camera));
-  const bloom = new UnrealBloomPass(new ThreeVector2(1, 1), 0.5, 0.45, 0.85);
+  const occlusion = new GTAOPass(scene, camera, 1, 1);
+  occlusion.enabled = !lowPower;
+  occlusion.blendIntensity = 0.8;
+  occlusion.updateGtaoMaterial({ radius: 0.5, thickness: 1, distanceFallOff: 0.8, samples: 8 });
+  composer.addPass(occlusion);
+  const bloom = new UnrealBloomPass(new ThreeVector2(1, 1), 0.1, 0.2, 2);
   bloom.enabled = !lowPower;
   composer.addPass(bloom);
+  composer.addPass(new OutputPass());
+  const rimLight = new DirectionalLight(0x8eb4dc, 0.7);
+  rimLight.position.set(12, 8, -18);
+  scene.add(rimLight);
 
   const resize = new ResizeObserver(() => {
     const width = host.clientWidth;
     const height = Math.max(host.clientHeight, 1);
     camera.aspect = width / height;
-    /*
-     * En pantallas verticales se garantiza un ancho visible mínimo (abriendo el vertical); en
-     * horizontales manda el vertical de siempre. Sin el mínimo, una pantalla ultra-ancha
-     * encogía el vertical y la cámara quedaba pegada al personaje.
-     */
-    const horizontal = (HORIZONTAL_FOV * Math.PI) / 180;
-    const fromWidth = (2 * Math.atan(Math.tan(horizontal / 2) / camera.aspect) * 180) / Math.PI;
-    camera.fov = Math.min(110, Math.max(DEFAULT_FOV, fromWidth));
     camera.updateProjectionMatrix();
     renderer.setSize(width, height, false);
     composer.setSize(width, height);
@@ -168,52 +165,77 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
 
   const terminal = new TerminalBubble();
   scene.add(terminal.sprite);
-  const barks = new BarkAudio();
-  let nextBark = 3;
+  const audio = new WorldAudio();
+  const monster = new DebtMonsterView();
+  scene.add(monster.root);
+  const debtPulsePool = buildAgentPool(3);
+  debtPulsePool.forEach(pulse => scene.add(pulse));
 
-  const hero = dressDeveloper(fit(cloneCharacter(library.developer), { height: 1.8 }));
+  const hero = buildDeveloper();
   scene.add(hero);
-  const heroAnimator = new CharacterAnimator(hero, library.developer.clips, DEVELOPER_CLIPS, MAX_SPEED);
-
-  const dogs = [0.62, 0.42].map((height, i) => {
-    const model = fit(cloneCharacter(library.dog), { height });
+  let seated = false;
+  const dogs = [0, 1].map((index) => {
+    const model = buildCompanion(index);
     scene.add(model);
     return {
       model,
-      animator: new CharacterAnimator(model, library.dog.clips, DOG_CLIPS, 6),
-      slot: { distance: 1.6 + i * 0.7, angle: i === 0 ? 0.7 : -0.7 },
-      state: { position: { x: -1 - i, z: 3 + i }, facing: 0, speed: 0 } as CompanionState,
+      slot: { distance: 1.15 + index * 0.3, angle: index === 0 ? 0.85 : -0.85 },
+      state: { position: { x: -1 - index, z: 3 + index }, facing: 0, speed: 0 } as CompanionState,
     };
   });
 
-  const lantern = new PointLight(PALETTE.light, 6, 8, 2);
-  scene.add(lantern);
-
   let character: CharacterState = INITIAL_CHARACTER;
   let arena: ArenaState = INITIAL_ARENA;
-  let health: HealthState = INITIAL_HEALTH;
+  let machines = [...TURRETS];
+  let health: HealthState = { ...INITIAL_HEALTH, invulnerable: 3 };
+  let encounter = createDebtEncounter();
+  let supportReadyAt = [0, 0];
+  let commandReadyAt = 0;
+  let readingUntil = 0;
+  let paused = false;
+  let combatKey = '';
+  const recoil = new Map<string, number>();
+  let debtPulses: { from: Vector2; age: number; support: boolean }[] = [];
   let direction: Vector2 = { x: 0, z: 0 };
   let jumpRequested = false;
   let eye: Vector2 = { ...character.position };
-  let zoom = 1;
+  let zoom = DEFAULT_CAMERA_ZOOM;
+  let cameraYaw = 0;
+  let cameraElevation = 0;
   /* Desplazamiento manual de la cámara (dos dedos). Se deshace al caminar o con C. */
   let pan: Vector2 = { x: 0, z: 0 };
   let activeZone: WorldZone | null = null;
   let elapsed = 0;
   let last = 0;
   const target = new Vector3();
+  // El pase de normales no interpreta el alfa de sprites y hologramas.
+  const transparentObjects: (Mesh | Sprite)[] = [];
+  scene.traverse(object => {
+    if (object instanceof Sprite || object instanceof Mesh && (Array.isArray(object.material) ? object.material : [object.material]).some(material => material.transparent)) transparentObjects.push(object);
+  });
+  const renderOcclusion = occlusion.render.bind(occlusion);
+  occlusion.render = (...args) => {
+    const visibility = transparentObjects.map(object => object.visible);
+    transparentObjects.forEach(object => { object.visible = false; });
+    try { renderOcclusion(...args); }
+    finally { transparentObjects.forEach((object, index) => { object.visible = visibility[index]; }); }
+  };
   const collected = new Set<number>();
 
   onHealth?.(health.hp);
 
+  const visibilityChanged = () => audio.setPaused(paused || document.hidden);
+  document.addEventListener('visibilitychange', visibilityChanged);
   renderer.setAnimationLoop((time) => {
     const delta = last === 0 ? 1 / 60 : Math.min((time - last) / 1000, MAX_DELTA);
     last = time;
+    if (paused || document.hidden) return;
     elapsed += delta;
 
-    if (!heroAnimator.isSeated) {
-      const stepped = stepCharacter(character, { direction, jump: jumpRequested }, delta, SURFACE);
-      const clear = resolveCircles(resolveCollisions(stepped.position, WORLD_ZONES), SOLIDS);
+    if (!seated && encounter.phase !== 'player-defeated') {
+      const cameraDirection = { x: direction.x * Math.cos(cameraYaw) + direction.z * Math.sin(cameraYaw), z: direction.z * Math.cos(cameraYaw) - direction.x * Math.sin(cameraYaw) };
+      const stepped = stepCharacter(character, { direction: cameraDirection, jump: jumpRequested }, delta, SURFACE);
+      const clear = resolveCircles(resolveCollisions(stepped.position, WORLD_ZONES), [...SOLIDS, ...machineObstacles(machines, encounter)]);
       character = { ...stepped, position: clear };
     }
     jumpRequested = false;
@@ -224,6 +246,7 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     runDogs(delta);
     placeCamera(delta);
     reportZone();
+    reportCombat();
     pulseStations();
     hoverDrones();
 
@@ -231,78 +254,136 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   });
 
   function runArena(delta: number): void {
-      const step = stepArena(
-      arena,
-      TURRETS,
-      { position: character.position, altitude: character.altitude },
-      elapsed,
-      delta,
-      (position) => blockedBySolids(position, WORLD_ZONES, SOLIDS),
-    );
-    arena = step.state;
-    for (const id of step.patched) {
-      const rig = turrets.find((one) => one.turret.id === id);
-      if (rig) {
+    health = tickHealth(health, delta);
+    bursts.forEach(burst => burst.update(delta));
+    terminal.sprite.position.set(character.position.x, character.altitude + 2.6, character.position.z);
+    terminal.update(delta);
+    if (encounter.phase === 'inactive') {
+      machines = stepMachines(machines, arena, character.position, elapsed, delta, position => !isInsideWorld(position.x, position.z) || blockedBySolids(position, WORLD_ZONES, SOLIDS));
+      const step = stepArena(arena, machines, character, elapsed, delta,
+        position => blockedBySolids(position, WORLD_ZONES, SOLIDS));
+      arena = step.state;
+      step.shots.forEach(turret => recoil.set(turret.id, elapsed));
+      for (const id of step.patched) {
+        const rig = turrets.find(one => one.turret.id === id)!;
         const left = bugsOf(arena, rig.turret);
         paintMachine(rig, left);
-        if (left <= 0) {
-          bursts[nextBurst++ % bursts.length].fire(rig.turret.position.x, 1.2, rig.turret.position.z);
-        }
+        audio.play(left <= 0 ? 'merge' : 'impact');
+        const machine = machines.find(one => one.id === id)!;
+        bursts[nextBurst++ % bursts.length].fire(machine.position.x, 1, machine.position.z);
+      }
+      if (activateDebtEncounter(encounter.phase, arena, machines) === 'appearing') {
+        arena = { ...arena, bullets: [], agents: [] };
+        encounter = startDebtEncounter(encounter);
+        audio.play('slam');
+      } else if (step.hit && !seated) applyHit();
+    } else {
+      const before = encounter.phase;
+      const step = advanceDebtEncounter(encounter, character, delta,
+        position => !isInsideWorld(position.x, position.z) || blockedBySolids(position, WORLD_ZONES, SOLIDS));
+      encounter = step.state;
+      if (step.hit) applyHit();
+      if (before !== 'attacking' && encounter.phase === 'attacking') audio.play('slam');
+      if (step.corrected) {
+        audio.play(encounter.hp === 0 ? 'merge' : 'impact');
+        bursts[nextBurst++ % bursts.length].fire(encounter.position.x, 2.6, encounter.position.z);
       }
     }
-    bursts.forEach((burst) => burst.update(delta));
-    health = tickHealth(health, delta);
-
-    if (step.hit && !heroAnimator.isSeated) {
-      const outcome = takeHit(health);
-      const changed = outcome.state !== health;
-      health = outcome.state;
-      if (changed) {
-        onHit?.();
-        onHealth?.(health.hp);
-        if (outcome.respawn) {
-          character = { ...INITIAL_CHARACTER };
-          eye = { ...character.position };
-        } else {
-          /* Empujón: el golpe te saca de la línea de tiro. */
-          const kick = { x: character.velocity.x * -1.4 || 2, z: character.velocity.z * -1.4 || 2 };
-          character = { ...character, velocity: kick };
+    if (!seated) character = { ...character, position: resolveCircles(character.position, [...SOLIDS, ...machineObstacles(machines, encounter)]) };
+    turrets.forEach(rig => {
+      const machine = machines.find(one => one.id === rig.turret.id)!;
+      const speed = Math.hypot(machine.position.x - rig.root.position.x, machine.position.z - rig.root.position.z) / delta;
+      rig.root.position.set(machine.position.x, 0, machine.position.z);
+      rig.badge.position.set(machine.position.x, 2.1, machine.position.z);
+      rig.glow.position.set(machine.position.x, 1.6, machine.position.z);
+      const dx = character.position.x - machine.position.x;
+      const dz = character.position.z - machine.position.z;
+      if (bugsOf(arena, rig.turret) > 0) {
+        if (Math.hypot(dx, dz) <= rig.turret.range) rig.root.rotation.y = Math.atan2(dx, dz);
+        for (let i = 0; i < 4; i++) {
+          const leg = rig.root.getObjectByName(`machine-leg-${i}`) ?? rig.root.getObjectByName(`spider-leg-${i}`);
+          if (leg) leg.rotation.x = Math.sin(elapsed * 7 + (i % 2) * Math.PI) * Math.min(speed, 1.5) * 0.3;
         }
-      }
-    }
-
-    /* Las torretas giran hacia ti; las balas del estado se pintan con la reserva. */
-    turrets.forEach((rig) => {
-      const dx = character.position.x - rig.turret.position.x;
-      const dz = character.position.z - rig.turret.position.z;
-      if (bugsOf(arena, rig.turret) > 0 && Math.hypot(dx, dz) <= rig.turret.range) {
-        rig.root.rotation.y = Math.atan2(dx, dz);
+        rig.root.getObjectByName('machine-head')!.position.z = -Math.max(0, 0.14 - (elapsed - (recoil.get(rig.turret.id) ?? -1)) * 0.65);
       }
       rig.badge.lookAt(camera.position);
     });
-    agentPool.forEach((orb, i) => {
-      const agent = arena.agents[i];
+    agentPool.forEach((orb, index) => {
+      const agent = arena.agents[index];
       orb.visible = Boolean(agent);
       if (agent) {
-        orb.position.set(agent.position.x, 1.2 + Math.sin(elapsed * 9 + i) * 0.15, agent.position.z);
-        orb.rotation.y = elapsed * 3;
+        const support = agent.source === 'companion';
+        orb.position.set(agent.position.x, support ? 0.45 : 1.2, agent.position.z);
+        poseThoughtBolt(orb, elapsed, support);
+        const to = machines.find(t => t.id === agent.targetId)!.position;
+        orb.rotation.y = Math.atan2(to.x - agent.position.x, to.z - agent.position.z);
       }
     });
-    terminal.sprite.position.set(character.position.x, character.altitude + 2.6, character.position.z);
-    terminal.update(delta);
-    bulletPool.forEach((bug, i) => {
-      const bullet = arena.bullets[i];
-      bug.visible = Boolean(bullet);
+    bulletPool.forEach((bolt, index) => {
+      const bullet = (encounter.phase === 'inactive' ? arena.bullets : encounter.projectiles)[index];
+      bolt.visible = Boolean(bullet);
       if (bullet) {
-        bug.position.set(bullet.position.x, BULLET_HEIGHT, bullet.position.z);
-        bug.rotation.y = Math.atan2(bullet.velocity.x, bullet.velocity.z);
-        bug.rotation.x = elapsed * 9 + i;
+        bolt.position.set(bullet.position.x, BULLET_HEIGHT, bullet.position.z);
+        bolt.rotation.y = Math.atan2(bullet.velocity.x, bullet.velocity.z);
       }
     });
-    hero.visible = health.invulnerable <= 0 || Math.floor(elapsed * 14) % 2 === 0;
+    debtPulses = debtPulses.filter(pulse => pulse.age < 0.45);
+    debtPulsePool.forEach((mesh, index) => {
+      const pulse = debtPulses[index];
+      mesh.visible = Boolean(pulse);
+      if (!pulse) return;
+      pulse.age += delta;
+      const t = Math.min(1, pulse.age / 0.45);
+      const startHeight = pulse.support ? 0.45 : 1.2;
+      mesh.position.set(pulse.from.x + (encounter.position.x - pulse.from.x) * t, startHeight + t * (2.7 - startHeight), pulse.from.z + (encounter.position.z - pulse.from.z) * t);
+      mesh.lookAt(encounter.position.x, 2.7, encounter.position.z);
+      poseThoughtBolt(mesh, elapsed, pulse.support);
+      if (t === 1 && pulse.support) encounter = supportDebtEncounter(encounter);
+    });
+    monster.update(encounter, character.position, elapsed, delta);
+    // Un impacto sigue siendo legible sin hacer desaparecer al protagonista.
+    hero.visible = true;
+  }
+
+  function applyHit(): void {
+    const outcome = takeHit(health);
+    if (outcome.state === health) return;
+    health = outcome.state;
+    audio.play('impact');
+    onHit?.();
+    if (outcome.respawn && encounter.phase !== 'inactive') {
+      health = { hp: 0, invulnerable: 0 };
+      encounter = { ...encounter, phase: 'player-defeated', correctionIn: null, projectiles: [] };
+      debtPulses = [];
+      direction = { x: 0, z: 0 };
+    } else if (outcome.respawn) {
+      character = { ...INITIAL_CHARACTER };
+      eye = { ...character.position };
+    }
+    onHealth?.(health.hp);
+  }
+
+  function reportCombat(): void {
+    const patched = machines.filter(turret => bugsOf(arena, turret) === 0).length;
+    const supportReady = supportReadyAt.map(time => elapsed >= time);
+    const message = encounter.phase === 'inactive' ? 'world.objective'
+      : encounter.phase === 'defeated' ? 'world.victory'
+      : encounter.phase === 'player-defeated' ? 'world.defeat'
+      : encounter.phase === 'telegraphing' ? 'world.dodge'
+      : encounter.phase === 'appearing' ? 'world.appearing'
+      : !encounter.analyzed ? 'world.scanHint'
+      : Math.hypot(character.position.x - encounter.position.x, character.position.z - encounter.position.z) > 9 ? 'world.approach'
+      : encounter.phase === 'recovering' ? 'world.refactorHint' : 'world.waitOpening';
+    const view = { patched, total: machines.length, phase: encounter.phase, hp: encounter.hp, analyzed: encounter.analyzed, supportReady, message,
+      player: { x: Math.round(character.position.x), z: Math.round(character.position.z) },
+      remaining: machines.filter(turret => bugsOf(arena, turret) > 0).map(turret => ({ x: Math.round(turret.position.x), z: Math.round(turret.position.z) })),
+    };
+    const key = JSON.stringify(view);
+    if (key !== combatKey) { combatKey = key; onCombat?.(view); }
   }
 
   function runPickups(delta: number): void {
+    if (encounter.phase === 'player-defeated') return;
     pickups.forEach((pickup, i) => {
       if (collected.has(i)) {
         return;
@@ -322,21 +403,15 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   function placeCharacter(delta: number): void {
     hero.position.set(character.position.x, character.altitude, character.position.z);
     hero.rotation.y = shortestTurn(hero.rotation.y, character.facing, delta);
-    heroAnimator.update(delta, heroAnimator.isSeated ? 0 : speedOf(character), character.grounded);
-    lantern.position.set(character.position.x + 1, character.altitude + 3, character.position.z + 1);
+    poseDeveloper(hero, elapsed, seated ? 0 : speedOf(character), character.grounded, seated, Math.max(0, Math.min(1, (readingUntil - elapsed) / 0.8)));
   }
 
   function runDogs(delta: number): void {
-    /* Ladran de vez en cuando cuando están cerca; el pequeño más agudo. */
-    if (elapsed >= nextBark) {
-      nextBark = elapsed + 4 + (Math.sin(elapsed * 3.1) + 1) * 3;
-      dogs.forEach((dog, i) => barks.bark(i === 0 ? 0.95 : 1.35, 0.45));
-    }
     for (const dog of dogs) {
-      dog.state = stepCompanion(dog.state, character.position, character.facing, dog.slot, delta);
+      dog.state = stepCompanion(dog.state, character.position, character.facing, dog.slot, delta, [...SOLIDS, ...machineObstacles(machines, encounter)]);
       dog.model.position.set(dog.state.position.x, 0, dog.state.position.z);
       dog.model.rotation.y = shortestTurn(dog.model.rotation.y, dog.state.facing, delta);
-      dog.animator.update(delta, dog.state.speed, true);
+      poseCompanion(dog.model, elapsed, dog.state.speed);
     }
   }
 
@@ -347,9 +422,11 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     }
     const focusX = eye.x + pan.x;
     const focusZ = eye.z + pan.z;
-    camera.position.set(focusX + CAMERA_OFFSET.x * zoom, CAMERA_OFFSET.y * zoom, focusZ + CAMERA_OFFSET.z * zoom);
-    target.set(focusX, 1.2, focusZ);
-    camera.lookAt(target);
+    target.set(focusX, CAMERA_FOCUS_HEIGHT, focusZ);
+    if (encounter.phase !== 'inactive') positionEncounterCamera(camera, { x: character.position.x + pan.x, z: character.position.z + pan.z }, { x: encounter.position.x + pan.x, z: encounter.position.z + pan.z }, zoom, cameraYaw, cameraElevation);
+    else positionWorldCamera(camera, target, zoom, cameraYaw, cameraElevation);
+    fog.near = Math.max(40, camera.position.y * 1.7);
+    fog.far = fog.near + 55;
   }
 
   function reportZone(): void {
@@ -363,7 +440,7 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
   function pulseStations(): void {
     stations.forEach((station) => {
       const active = station.zoneId === activeZone?.id;
-      station.light.intensity += ((active ? 6 : 2.5) - station.light.intensity) * 0.1;
+      station.light.intensity += ((active ? 0.7 : 0.2) - station.light.intensity) * 0.1;
       station.hologram.position.y = 3.4 + (reducedMotion ? 0 : Math.sin(elapsed * 1.6) * 0.08);
       station.hologram.lookAt(camera.position);
     });
@@ -385,65 +462,89 @@ export async function createWorldScene(options: WorldSceneOptions): Promise<Scen
     recenter: () => {
       eye = { ...character.position };
       pan = { x: 0, z: 0 };
+      cameraYaw = 0;
+      cameraElevation = 0;
+    },
+    orbitByPixels: (dx, dy) => {
+      cameraYaw -= dx * 0.006;
+      cameraElevation = Math.max(-0.28, Math.min(0.65, cameraElevation + dy * 0.004));
     },
     panByPixels: (dx, dy, viewportHeight) => {
-      /* Píxeles → unidades de mundo a la distancia de la cámara: lo que mide el alto visible entre el alto en píxeles. */
-      const distance = CAMERA_OFFSET.length() * zoom;
-      const visibleHeight = 2 * Math.tan((camera.fov * Math.PI) / 360) * distance;
-      const unitsPerPixel = visibleHeight / Math.max(viewportHeight, 1);
-      /* La cámara mira hacia -z: arrastrar hacia abajo en pantalla trae terreno de +z. */
-      pan = { x: pan.x - dx * unitsPerPixel, z: pan.z - dy * unitsPerPixel };
+      pan = panWorldCamera(camera, pan, dx, dy, viewportHeight);
     },
     setZoom: (factor) => { zoom = Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, factor)); },
     getZoom: () => zoom,
     runCommand: () => {
-      if (heroAnimator.isSeated) {
+      if (seated || paused || encounter.phase === 'player-defeated') return;
+      if (encounter.phase !== 'inactive') {
+        const next = refactorDebtEncounter(encounter, character.position);
+        if (next === encounter) return;
+        encounter = next;
+        readingUntil = elapsed + 0.8;
+        character = { ...character, facing: Math.atan2(encounter.position.x - character.position.x, encounter.position.z - character.position.z) };
+        debtPulses = [{ from: { ...character.position }, age: 0, support: false }];
+        dogs.forEach((dog, index) => {
+          if (elapsed < supportReadyAt[index] || Math.hypot(dog.state.position.x - encounter.position.x, dog.state.position.z - encounter.position.z) > 10) return;
+          debtPulses.push({ from: { ...dog.state.position }, age: 0, support: true });
+          supportReadyAt[index] = elapsed + 2.4;
+        });
+        audio.play('pulse');
         return;
       }
-      const result = runCommand(arena, TURRETS, character.position);
-      /* El comando corresponde al paso de git en el que va la máquina (antes de que llegue el agente). */
-      const command = result.target ? gitStepFor(result.target.id, bugsOf(arena, result.target)).command : 'git status  # sin bugs en rango';
-      arena = result.state;
-      terminal.type(command);
+      if (elapsed < commandReadyAt) return;
+      const result = runCommand(arena, machines, character.position);
+      if (!result.target) return;
+      readingUntil = elapsed + 0.8;
+      commandReadyAt = elapsed + 0.6;
+      character = { ...character, facing: Math.atan2(result.target.position.x - character.position.x, result.target.position.z - character.position.z) };
+      const supported = launchCompanionPower(result.state, result.target, dogs.map(dog => dog.state.position), supportReadyAt, elapsed);
+      arena = supported.arena;
+      supportReadyAt = supported.readyAt;
+      terminal.type('read() → understand() → refactor()');
+      audio.play('pulse');
     },
-    armAudio: () => barks.arm(),
+    analyze: () => {
+      if (paused) return;
+      readingUntil = elapsed + 1.2;
+      const next = analyzeDebtEncounter(encounter);
+      if (next !== encounter) { encounter = next; audio.play('scan'); }
+    },
+    retry: () => {
+      if (encounter.phase !== 'player-defeated' && encounter.phase !== 'defeated') return;
+      encounter = startDebtEncounter(createDebtEncounter());
+      character = { ...INITIAL_CHARACTER, position: { x: -2, z: -1 }, facing: Math.PI };
+      eye = { ...character.position };
+      health = { ...INITIAL_HEALTH, invulnerable: 2 };
+      supportReadyAt = [0, 0];
+      debtPulses = [];
+      onHealth?.(health.hp);
+    },
+    setPaused: (value) => { paused = value; direction = { x: 0, z: 0 }; jumpRequested = false; visibilityChanged(); },
+    setMuted: (value) => audio.setMuted(value),
+    armAudio: () => audio.arm(),
     sit: () => {
       direction = { x: 0, z: 0 };
       character = { ...INITIAL_CHARACTER, position: { ...SEAT }, facing: SEAT_FACING };
-      heroAnimator.sit();
+      seated = true;
     },
-    stand: () => heroAnimator.stand(),
+    stand: () => { seated = false; },
     dispose: () => {
       renderer.setAnimationLoop(null);
       resize.disconnect();
-      heroAnimator.dispose();
-      dogs.forEach((dog) => dog.animator.dispose());
-      disposeVoxels(scene);
-      disposeSharedGeometry();
+      document.removeEventListener('visibilitychange', visibilityChanged);
+      audio.dispose();
+      monster.dispose();
+      environmentMap.dispose();
+      composer.passes.forEach(pass => pass.dispose());
+      disposeModel(hero);
+      dogs.forEach((dog) => disposeModel(dog.model));
+      disposeModel(scene);
       composer.dispose();
       renderer.dispose();
       renderer.forceContextLoss();
       renderer.domElement.remove();
     },
   };
-}
-
-function dressDeveloper(model: Object3D): Object3D {
-  model.traverse((node) => {
-    const mesh = node as Mesh;
-    if (!mesh.isMesh) {
-      return;
-    }
-    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      const color = OUTFIT[material.name];
-      if (color === null) {
-        material.visible = false;
-      } else if (color !== undefined) {
-        (material as MeshStandardMaterial).color?.set(color);
-      }
-    }
-  });
-  return model;
 }
 
 function shortestTurn(current: number, wanted: number, delta: number): number {

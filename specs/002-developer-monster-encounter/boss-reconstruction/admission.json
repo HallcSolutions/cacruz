@@ -1,0 +1,16 @@
+{
+  "admitted": false,
+  "reasons": [
+    "foreground coverage 0.991 > 0.97 (no background to segment against — silhouette not isolable)"
+  ],
+  "provenance": {
+    "viewpoint": "reference",
+    "sourcePath": "/Users/christiancruz/Desktop/Repositorios/cacruz/specs/002-developer-monster-encounter/technical-debt-boss-concept.png",
+    "width": 1672,
+    "height": 941,
+    "foregroundCoverage": 0.9908,
+    "largestComponentFraction": 1.0,
+    "pHash": 13451368052011344385,
+    "duplicateOfHash": null
+  }
+}

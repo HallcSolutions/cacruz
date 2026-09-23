@@ -4,4 +4,5 @@ import { Vector2 } from './vector2';
 export interface Agent {
   readonly position: Vector2;
   readonly targetId: string;
+  readonly source?: 'companion';
 }

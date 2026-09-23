@@ -12,12 +12,15 @@ export interface SceneHandle {
   getZoom(): number;
   /** Desplaza la cámara en píxeles de pantalla (arrastre con dos dedos); vuelve sola al caminar. */
   panByPixels(dx: number, dy: number, viewportHeight: number): void;
-  /** Desplaza la cámara en píxeles de pantalla (arrastre con dos dedos); vuelve sola al caminar. */
-  panByPixels(dx: number, dy: number, viewportHeight: number): void;
+  orbitByPixels(dx: number, dy: number): void;
   /** Ejecuta un comando de IA: lanza un agente a la máquina con bugs más cercana. */
   runCommand(): void;
   /** Arma el audio tras el primer gesto del usuario. */
   armAudio(): void;
+  analyze(): void;
+  retry(): void;
+  setPaused(value: boolean): void;
+  setMuted(value: boolean): void;
   sit(): void;
   stand(): void;
   dispose(): void;

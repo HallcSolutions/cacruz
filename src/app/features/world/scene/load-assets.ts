@@ -1,4 +1,6 @@
-import { AnimationClip, Group, LoadingManager, Mesh, MeshStandardMaterial, Object3D } from 'three';
+import { AnimationClip, Group, LoadingManager, Object3D, TextureLoader, SRGBColorSpace } from 'three';
+import { DeckTextures } from '../model/deck-textures';
+import { prepareAsset } from './prepare-asset';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import { clone as cloneSkinned } from 'three/addons/utils/SkeletonUtils.js';
 
@@ -13,6 +15,7 @@ export interface LoadedCharacter {
 }
 
 export interface AssetLibrary {
+  readonly deck: DeckTextures;
   readonly developer: LoadedCharacter;
   readonly dog: LoadedCharacter;
   readonly props: ReadonlyMap<string, Object3D>;
@@ -31,19 +34,27 @@ export function loadAssets(onProgress?: (ratio: number) => void): Promise<AssetL
   const manager = new LoadingManager();
   manager.onProgress = (_url, loaded, total) => onProgress?.(loaded / total);
   const loader = new GLTFLoader(manager);
+  const textureLoader = new TextureLoader(manager);
+  const deck = Promise.all(['library-slate-v1.png', 'deck-nor_gl.jpg', 'deck-rough.jpg'].map(name => textureLoader.loadAsync(`textures/world/${name}`)))
+    .then(([color, normal, roughness]): DeckTextures => {
+      color.colorSpace = SRGBColorSpace;
+      [color, normal, roughness].forEach(texture => { texture.anisotropy = 4; });
+      return { color, normal, roughness };
+    });
 
   const character = (url: string) =>
-    loader.loadAsync(url).then((gltf): LoadedCharacter => ({ model: prepare(gltf.scene), clips: gltf.animations }));
+    loader.loadAsync(url).then((gltf): LoadedCharacter => ({ model: prepareAsset(gltf.scene), clips: gltf.animations }));
 
   const developer = character('models/character/developer.glb');
   const dog = character('models/animals/dog.glb');
   const props = Promise.all(
     CYBER_PROPS.map((name) =>
-      loader.loadAsync(`models/cyber/${name}.glb`).then((gltf) => [name, prepare(gltf.scene)] as const),
+      loader.loadAsync(`models/cyber/${name}.glb`).then((gltf) => [name, prepareAsset(gltf.scene)] as const),
     ),
   ).then((entries) => new Map(entries));
 
-  return Promise.all([developer, dog, props]).then(([dev, pet, library]) => ({
+  return Promise.all([developer, dog, props, deck]).then(([dev, pet, library, deck]) => ({
+    deck,
     developer: dev,
     dog: pet,
     props: library,
@@ -71,26 +82,4 @@ export function placeSkinnedProp(library: AssetLibrary, name: string): Object3D 
 /** Copia de un personaje con esqueleto: `Object3D.clone` no duplica los huesos, `SkeletonUtils` sí. */
 export function cloneCharacter(character: LoadedCharacter): Group {
   return cloneSkinned(character.model) as Group;
-}
-
-/**
- * Sombras en todo, y los emisivos del kit a media intensidad: vienen pensados para un motor
- * sin bloom y aquí, con él, reventaban en blanco.
- */
-function prepare(root: Group): Group {
-  root.traverse((node) => {
-    const mesh = node as Mesh;
-    if (!mesh.isMesh) {
-      return;
-    }
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      const standard = material as MeshStandardMaterial;
-      if (standard.emissive && standard.emissiveIntensity > 0.5) {
-        standard.emissiveIntensity = 0.5;
-      }
-    }
-  });
-  return root;
 }

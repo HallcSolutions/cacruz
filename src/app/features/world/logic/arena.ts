@@ -133,7 +133,7 @@ export function stepArena(
       continue;
     }
     agents.push({
-      targetId: agent.targetId,
+      ...agent,
       position: { x: agent.position.x + (dx / distance) * step, z: agent.position.z + (dz / distance) * step },
     });
   }

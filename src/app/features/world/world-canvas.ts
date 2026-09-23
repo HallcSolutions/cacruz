@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { Vector2 } from './model/vector2';
+import { WorldCombatView } from './model/world-combat-view';
 import { WorldZone } from './model/world-zone';
 import { COMMAND_KEYS, directionFromDrag, directionFromKeys, ENTER_KEYS, JUMP_KEYS, MOVEMENT_KEYS, RECENTER_KEYS } from './logic/read-move-input';
 import { SceneHandle } from './scene/scene-handle';
@@ -19,7 +20,7 @@ const DRAG_RADIUS = 90;
 @Component({
   selector: 'app-world-canvas',
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<div #host class="canvas" (pointerdown)="startDrag($event)"></div>`,
+  template: `<div #host class="canvas" (pointerdown)="startDrag($event)" (wheel)="onWheel($event)" (contextmenu)="$event.preventDefault()"></div>`,
   styles: `
     :host { position: absolute; inset: 0; }
     .canvas { width: 100%; height: 100%; touch-action: none; }
@@ -34,6 +35,7 @@ export class WorldCanvas implements OnDestroy {
   /** Vidas que quedan; `0` justo al reaparecer. */
   readonly health = output<number>();
   readonly hit = output<void>();
+  readonly combat = output<WorldCombatView>();
   /** Enter / E: el jugador quiere entrar a la zona activa. */
   readonly enter = output<void>();
 
@@ -43,6 +45,7 @@ export class WorldCanvas implements OnDestroy {
   private scene?: SceneHandle;
   private destroyed = false;
   private readonly keys = new Set<string>();
+  private cameraDrag: { x: number; y: number; orbit: boolean } | null = null;
   private dragOrigin: { x: number; y: number } | null = null;
   /** Punteros táctiles activos, para el pellizco. */
   private readonly touches = new Map<number, { x: number; y: number }>();
@@ -75,6 +78,7 @@ export class WorldCanvas implements OnDestroy {
           onProgress: (ratio) => this.zone.run(() => this.progress.emit(ratio)),
           onHealth: (hp) => this.zone.run(() => this.health.emit(hp)),
           onHit: () => this.zone.run(() => this.hit.emit()),
+          onCombat: view => this.zone.run(() => this.combat.emit(view)),
         }),
       );
       /* Entre el await y aquí el usuario pudo navegar: si ya no estamos, se libera al momento. */
@@ -106,6 +110,17 @@ export class WorldCanvas implements OnDestroy {
     this.scene?.stand();
   }
 
+  zoom(factor: number): void { this.scene?.setZoom((this.scene.getZoom()) * factor); }
+  recenter(): void { this.scene?.recenter(); }
+  protected onWheel(event: WheelEvent): void {
+    event.preventDefault();
+    this.zoom(Math.exp(event.deltaY * 0.0015));
+  }
+  analyze(): void { this.scene?.armAudio(); this.scene?.analyze(); }
+  retry(): void { this.scene?.retry(); }
+  setPaused(value: boolean): void { this.onBlur(); this.scene?.setPaused(value); }
+  setMuted(value: boolean): void { this.scene?.setMuted(value); }
+
   private attachInput(): void {
     window.addEventListener('keydown', this.onKeyDown);
     window.addEventListener('keyup', this.onKeyUp);
@@ -126,6 +141,11 @@ export class WorldCanvas implements OnDestroy {
 
   protected startDrag(event: PointerEvent): void {
     this.scene?.armAudio();
+    if (event.pointerType !== 'touch') {
+      this.cameraDrag = { x: event.clientX, y: event.clientY, orbit: event.button === 0 };
+      this.push({ x: 0, z: 0 });
+      return;
+    }
     this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
     if (this.touches.size === 2) {
       /* Segundo dedo: empieza el pellizco y se cancela el arrastre. */
@@ -156,7 +176,10 @@ export class WorldCanvas implements OnDestroy {
   }
 
   private readonly onKeyDown = (event: KeyboardEvent): void => {
+    if ((event.target as HTMLElement).closest('input, textarea, [contenteditable=true], [role=dialog]')) return;
+    if ((event.target as HTMLElement).closest('button') && ['Enter', ' '].includes(event.key)) return;
     const key = event.key.toLowerCase();
+    if (key === 'q') { event.preventDefault(); this.analyze(); return; }
     if (!MOVEMENT_KEYS.has(key)) {
       return;
     }
@@ -190,10 +213,23 @@ export class WorldCanvas implements OnDestroy {
   /** Al perder el foco se sueltan las teclas: si no, el muñeco se queda caminando solo. */
   private readonly onBlur = (): void => {
     this.keys.clear();
+    this.cameraDrag = null;
+    this.dragOrigin = null;
+    this.touches.clear();
+    this.pinchStart = null;
+    this.lastCentroid = null;
     this.push({ x: 0, z: 0 });
   };
 
   private readonly onPointerMove = (event: PointerEvent): void => {
+    if (this.cameraDrag) {
+      const dx = event.clientX - this.cameraDrag.x;
+      const dy = event.clientY - this.cameraDrag.y;
+      if (this.cameraDrag.orbit) this.scene?.orbitByPixels(dx, dy);
+      else this.scene?.panByPixels(dx, dy, this.host().nativeElement.clientHeight);
+      this.cameraDrag = { ...this.cameraDrag, x: event.clientX, y: event.clientY };
+      return;
+    }
     if (this.touches.has(event.pointerId)) {
       this.touches.set(event.pointerId, { x: event.clientX, y: event.clientY });
     }
@@ -221,6 +257,7 @@ export class WorldCanvas implements OnDestroy {
   };
 
   private readonly onPointerUp = (event: PointerEvent): void => {
+    this.cameraDrag = null;
     this.touches.delete(event.pointerId);
     if (this.touches.size < 2) {
       this.pinchStart = null;
@@ -234,4 +271,3 @@ export class WorldCanvas implements OnDestroy {
     this.scene?.setDirection(direction);
   }
 }
-

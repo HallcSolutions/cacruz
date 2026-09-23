@@ -6,6 +6,7 @@
       (progress)="progress.set($event)"
       (health)="hp.set($event)"
       (hit)="onHit()"
+      (combat)="combat.set($event)"
       (enter)="enter()"
     />
     <div class="world__lives" [attr.aria-label]="'world.lives' | t">
@@ -43,6 +44,53 @@
   </div>
 
   @if (!worldFailed()) {
+    <div class="world__score">
+      <span>{{ 'world.machines' | t }} {{ combat().patched }}/{{ combat().total }}</span>
+      <button type="button" (click)="toggleSound()" [attr.aria-pressed]="muted()">{{ (muted() ? 'world.soundOff' : 'world.soundOn') | t }}</button>
+      <div class="world__camera-controls">
+        <button type="button" (click)="zoom(1.2)" [attr.aria-label]="'world.zoomOut' | t">−</button>
+        <button type="button" (click)="recenter()" [attr.aria-label]="'world.centerCamera' | t">◎</button>
+        <button type="button" (click)="zoom(0.84)" [attr.aria-label]="'world.zoomIn' | t">+</button>
+      </div>
+      @if (combat().remaining.length) {
+        <svg class="world__radar" viewBox="-42 -42 84 84" role="img" [attr.aria-label]="'world.radar' | t">
+          <circle cx="0" cy="0" r="40" fill="#101520c9" stroke="#6c7b9255" stroke-width="1" />
+          <path d="M-35 0H35M0-35V35" stroke="#6c7b9222" />
+          @for (machine of combat().remaining; track $index) {
+            <circle [attr.cx]="machine.x" [attr.cy]="machine.z" r="2.2" fill="#ffad63" />
+          }
+          <circle [attr.cx]="combat().player.x" [attr.cy]="combat().player.z" r="2.4" fill="#9be3ff" />
+        </svg>
+      }
+    </div>
+    @if (combat().phase !== 'inactive') {
+      <div class="world__boss">
+        <h2>{{ 'world.debt' | t }}</h2>
+        <div class="world__boss-bar" role="progressbar" [attr.aria-label]="'world.debt' | t" [attr.aria-valuenow]="combat().hp" aria-valuemin="0" aria-valuemax="3">
+          <span [style.width.%]="combat().hp / 3 * 100"></span>
+        </div>
+        @if (combat().analyzed) {
+          <p>{{ 'world.findings' | t }} {{ 3 - combat().hp }}/3 <small>· {{ 'world.simulated' | t }}</small></p>
+          <div class="world__findings">
+            @for (finding of ['world.findingCopy', 'world.findingTests', 'world.findingComplexity']; track finding; let i = $index) {
+              <span [class.world__finding--resolved]="i < 3 - combat().hp">{{ i < 3 - combat().hp ? '✓' : '◇' }} {{ finding | t }}</span>
+            }
+          </div>
+        }
+      </div>
+    }
+    <div class="world__mission" role="status">
+      <p>{{ combat().message | t }}</p>
+      @if (combat().phase === 'defeated' || combat().phase === 'player-defeated') {
+        <button type="button" (click)="retry()">{{ 'world.retry' | t }}</button>
+      }
+    </div>
+    <div class="world__companions" [attr.aria-label]="'world.companions' | t">
+      @for (ready of combat().supportReady; track $index) {
+        <span [class.world__companion--ready]="ready">{{ $index === 0 ? '◆' : '◇' }} {{ (ready ? 'world.supportReady' : 'world.recharging') | t }}</span>
+      }
+    </div>
+    <p class="world__camera-hint"><span>{{ 'world.cameraMouseHint' | t }}</span><span>{{ 'world.cameraTouchHint' | t }}</span></p>
     <div class="world__hud">
       @if (activeZone(); as zone) {
         <button type="button" class="world__enter" (click)="enter()">
@@ -50,16 +98,19 @@
           <span class="world__enter-action">{{ 'world.enter' | t }} <kbd class="world__enter-key">↵</kbd></span>
         </button>
       } @else {
-        <p class="world__hint">{{ 'world.hint' | t }}</p>
+        <p class="world__hint"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> {{ 'world.move' | t }}</p>
       }
       <button type="button" class="world__action" (click)="canvasJump()">
         <span class="world__action-icon" aria-hidden="true">⤒</span>
         <span class="world__action-label">{{ 'world.jump' | t }}</span>
         <kbd class="world__action-key">␣</kbd>
       </button>
+      <button type="button" class="world__action" (click)="scan()" [disabled]="combat().phase === 'appearing'">
+        <kbd class="world__action-key">Q</kbd><span>{{ 'world.scan' | t }}</span>
+      </button>
       <button type="button" class="world__action world__action--command" (click)="canvasCommand()">
-        <span class="world__action-icon" aria-hidden="true">$_</span>
-        <span class="world__action-label">{{ 'world.command' | t }}</span>
+        <span class="world__action-icon" aria-hidden="true">✧</span>
+        <span class="world__action-label">{{ 'world.refactor' | t }}</span>
         <kbd class="world__action-key">F</kbd>
       </button>
     </div>
@@ -100,5 +151,5 @@
 }
 
 @if (contactOpen()) {
-  <app-contact-modal (closed)="contactOpen.set(false)" />
+  <app-contact-modal (closed)="closeContact()" />
 }

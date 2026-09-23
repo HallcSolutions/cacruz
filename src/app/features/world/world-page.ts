@@ -3,6 +3,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '../../core/i18n/translate.pipe';
 import { ProfileContentService } from '../../core/content/profile-content.service';
 import { ContactModal } from '../../shared/components/contact-modal/contact-modal';
+import { WorldCombatView } from './model/world-combat-view';
 import { WorldZone } from './model/world-zone';
 import { WORLD_ZONES } from './logic/world-zones';
 import { WorldCanvas } from './world-canvas';
@@ -30,6 +31,8 @@ export class WorldPage {
   protected readonly hp = signal(3);
   protected readonly flashing = signal(false);
   protected readonly hearts = [0, 1, 2];
+  protected readonly muted = signal(false);
+  protected readonly combat = signal<WorldCombatView>({ player: { x: 0, z: 0 }, remaining: [], patched: 0, total: 7, phase: 'inactive', hp: 3, analyzed: false, supportReady: [true, true], message: 'world.objective' });
 
   private readonly canvas = viewChild(WorldCanvas);
 
@@ -50,11 +53,13 @@ export class WorldPage {
     }
     if (zone.id === 'contact') {
       this.contactOpen.set(true);
+      this.canvas()?.setPaused(true);
       return;
     }
     /* Quién soy: el personaje se sienta a trabajar y se abre la presentación (R81). */
     this.canvas()?.sit();
     this.aboutOpen.set(true);
+    this.canvas()?.setPaused(true);
   }
 
   protected onHit(): void {
@@ -70,8 +75,22 @@ export class WorldPage {
     this.canvas()?.jump();
   }
 
+  protected zoom(factor: number): void { this.canvas()?.zoom(factor); }
+  protected recenter(): void { this.canvas()?.recenter(); }
+  protected scan(): void { this.canvas()?.analyze(); }
+  protected retry(): void { this.canvas()?.retry(); }
+  protected toggleSound(): void {
+    this.muted.update(value => !value);
+    this.canvas()?.setMuted(this.muted());
+  }
+  protected closeContact(): void {
+    this.contactOpen.set(false);
+    this.canvas()?.setPaused(false);
+  }
+
   protected closeAbout(): void {
     this.aboutOpen.set(false);
     this.canvas()?.stand();
+    this.canvas()?.setPaused(false);
   }
 }

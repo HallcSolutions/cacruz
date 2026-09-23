@@ -18,7 +18,8 @@ export class TerminalBubble {
     this.texture = new CanvasTexture(this.canvas);
     this.texture.minFilter = LinearFilter;
     this.sprite = new Sprite(new SpriteMaterial({ map: this.texture, transparent: true, depthWrite: false }));
-    this.sprite.scale.set(3.6, 0.68, 1);
+    this.sprite.scale.set(2.5, 0.47, 1);
+    this.sprite.material.alphaTest = 0.05;
     this.sprite.visible = false;
   }
 

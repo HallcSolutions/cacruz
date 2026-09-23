@@ -1,4 +1,6 @@
-import { AdditiveBlending, BufferGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneGeometry, PointLight, Points, PointsMaterial, SphereGeometry } from 'three';
+import { AdditiveBlending, BufferGeometry, ConeGeometry, DoubleSide, Float32BufferAttribute, Group, IcosahedronGeometry, Mesh, MeshBasicMaterial, MeshStandardMaterial, Object3D, PlaneGeometry, PointLight, Points, PointsMaterial, SphereGeometry } from 'three';
+import { buildThoughtBolt } from './build-thought-bolt';
+import { buildMachine } from './build-machine';
 import { gitStepFor } from '../logic/git-steps';
 import { labelTexture } from './make-texture';
 import { DecorPlacement } from '../logic/decor-layout';
@@ -46,17 +48,17 @@ export interface TurretRig {
 
 export function buildTurrets(library: AssetLibrary, turrets: readonly Turret[]): TurretRig[] {
   return turrets.map((turret, i) => {
-    const root = fit(placeProp(library, i % 2 ? 'Turret_Gun_Base' : 'Turret_GunDouble_Base'), { height: 1.5 });
+    const root = buildMachine(i);
     root.position.x = turret.position.x;
     root.position.z = turret.position.z;
 
     const badge = new Mesh(
-      new PlaneGeometry(3.4, 0.95),
+      new PlaneGeometry(1.4, 0.38),
       new MeshBasicMaterial({ transparent: true, blending: AdditiveBlending, depthWrite: false, side: DoubleSide }),
     );
-    badge.position.set(turret.position.x, 2.7, turret.position.z);
+    badge.position.set(turret.position.x, 2.1, turret.position.z);
 
-    const glow = new PointLight(PALETTE.danger, 3, 5, 2);
+    const glow = new PointLight(PALETTE.danger, 0.35, 3, 2);
     glow.position.set(turret.position.x, 1.6, turret.position.z);
 
     return { turret, root, badge, glow };
@@ -71,19 +73,14 @@ export function paintMachine(rig: TurretRig, bugs: number): void {
   rig.badge.material.map = labelTexture(step.badge, { background: '#000000', color: step.color, fontSize: 80 });
   rig.badge.material.needsUpdate = true;
   rig.glow.color.set(step.color);
-  rig.root.traverse((node) => {
-    const mesh = node as Mesh;
-    if (!mesh.isMesh) {
-      return;
-    }
-    for (const material of Array.isArray(mesh.material) ? mesh.material : [mesh.material]) {
-      const standard = material as MeshStandardMaterial;
-      if (standard.emissive) {
-        standard.emissive.set(merged ? 0x1f8f62 : 0x000000);
-        standard.emissiveIntensity = merged ? 0.3 : 0;
-      }
-    }
-  });
+  const lamp = rig.root.getObjectByName('status-light') as Mesh;
+  const material = lamp.material as MeshStandardMaterial;
+  material.color.set(merged ? 0x99e5ad : 0xff6759);
+  material.emissive.set(merged ? 0x49c97b : 0xff392c);
+  material.emissiveIntensity = merged ? 0.8 : 1.6;
+  const head = rig.root.getObjectByName('machine-head')!;
+  head.rotation.x = merged ? 0.6 : 0;
+  head.position.y = merged ? 0.62 : 0.95;
 }
 
 export function buildPickups(library: AssetLibrary, spots: readonly { x: number; z: number }[]): Object3D[] {
@@ -94,93 +91,27 @@ export function buildPickups(library: AssetLibrary, spots: readonly { x: number;
   });
 }
 
-/**
- * Reserva de balas: robots-bug del kit, rojos, que giran mientras vuelan hacia ti.
- * El modelo trae esqueleto y en GPUs móviles el skinning puede fallar en silencio (malla
- * invisible). Se "hornea" una vez a malla estática en pose de reposo y se clona esa.
- */
+/** Proyectiles compactos: núcleo caliente y estela fina, legibles sobre el suelo. */
 export function buildBulletPool(library: AssetLibrary, size: number): Object3D[] {
-  const baked = bakeStatic(placeSkinnedProp(library, 'Robot_Cube'));
-  fit(baked, { size: 0.7 });
-  baked.traverse((node) => {
-    const mesh = node as Mesh;
-    if (!mesh.isMesh) {
-      return;
-    }
-    const standard = (mesh.material as MeshStandardMaterial).clone();
-    standard.emissive?.set(PALETTE.danger);
-    standard.emissiveIntensity = 0.9;
-    mesh.material = standard;
-  });
+  const geometry = new IcosahedronGeometry(0.085, 0);
+  const material = new MeshStandardMaterial({ color: 0xffd6a0, emissive: 0xff682c, emissiveIntensity: 1.7 });
+  const trailGeometry = new ConeGeometry(0.08, 0.65, 5);
+  const trailMaterial = new MeshBasicMaterial({ color: 0xff6535, transparent: true, opacity: 0.48, depthWrite: false });
   return Array.from({ length: size }, () => {
-    const bug = baked.clone(true);
-    bug.visible = false;
-    return bug;
+    const bolt = new Group();
+    bolt.add(new Mesh(geometry, material));
+    const trail = new Mesh(trailGeometry, trailMaterial);
+    trail.rotation.x = -Math.PI / 2;
+    trail.position.z = -0.3;
+    bolt.add(trail);
+    bolt.visible = false;
+    return bolt;
   });
 }
 
-/** Copia un objeto sustituyendo cada malla con esqueleto por una malla normal con la misma geometría. */
-function bakeStatic(source: Object3D): Group {
-  const baked = new Group();
-  source.updateMatrixWorld(true);
-  source.traverse((node) => {
-    const mesh = node as Mesh;
-    if (!mesh.isMesh) {
-      return;
-    }
-    const plain = new Mesh(mesh.geometry, mesh.material);
-    plain.applyMatrix4(mesh.matrixWorld);
-    plain.castShadow = true;
-    baked.add(plain);
-  });
-  return baked;
-}
-
-/** Reserva de agentes: cerebros de IA, rosa con halo cian. */
+/** Reserva visual del conocimiento del lector y el apoyo de sus compañeros. */
 export function buildAgentPool(size: number): Object3D[] {
-  return Array.from({ length: size }, () => {
-    const brain = buildBrain();
-    brain.visible = false;
-    return brain;
-  });
-}
-
-/**
- * Un cerebro low-poly hecho en código: dos hemisferios deformados con ruido para los surcos,
- * un tallo y un halo aditivo. Ningún kit trae uno, y a este tamaño se lee perfectamente.
- */
-function buildBrain(): Group {
-  const brain = new Group();
-  const pink = new MeshStandardMaterial({ color: 0xff7fb6, emissive: 0xff3d8f, emissiveIntensity: 0.45, roughness: 0.55, flatShading: true });
-
-  for (const side of [-1, 1]) {
-    const geometry = new IcosahedronGeometry(0.22, 2);
-    const position = geometry.attributes['position'];
-    for (let i = 0; i < position.count; i++) {
-      const x = position.getX(i);
-      const y = position.getY(i);
-      const z = position.getZ(i);
-      const ridge = 1 + Math.sin(x * 22 + y * 9) * Math.cos(z * 19) * 0.09;
-      position.setXYZ(i, x * ridge, y * ridge, z * ridge);
-    }
-    geometry.computeVertexNormals();
-    const hemisphere = new Mesh(geometry, pink);
-    hemisphere.position.x = side * 0.19;
-    hemisphere.scale.set(0.9, 0.85, 1.1);
-    brain.add(hemisphere);
-  }
-
-  const stem = new Mesh(new SphereGeometry(0.09, 8, 6), new MeshStandardMaterial({ color: 0xd94f8a, roughness: 0.7 }));
-  stem.position.set(0, -0.2, -0.05);
-  stem.scale.set(1, 1.8, 1);
-  brain.add(stem);
-
-  const halo = new Mesh(
-    new SphereGeometry(0.42, 12, 10),
-    new MeshBasicMaterial({ color: PALETTE.cyan, transparent: true, opacity: 0.16, blending: AdditiveBlending, depthWrite: false }),
-  );
-  brain.add(halo);
-  return brain;
+  return Array.from({ length: size }, () => buildThoughtBolt());
 }
 
 /** Estallido de "merge": partículas verdes que suben y se apagan. */

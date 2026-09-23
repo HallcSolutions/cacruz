@@ -1,3 +1,4 @@
+import { DEBT_SPAWN } from './debt-encounter';
 import { CircleObstacle } from '../model/circle-obstacle';
 import { Turret } from '../model/turret';
 import { WorldZone } from '../model/world-zone';
@@ -34,7 +35,7 @@ export function buildDecorLayout(zones: readonly WorldZone[], turrets: readonly 
     const distance = Math.sqrt((i + 0.5) / COUNT) * (WORLD_RADIUS - 2);
     const x = Math.cos(angle) * distance;
     const z = Math.sin(angle) * distance;
-    if (distance < PLAZA_CLEAR || near(x, z, zones.map((zone) => zone.position), ZONE_CLEAR) || near(x, z, turrets.map((t) => t.position), TURRET_CLEAR)) {
+    if (distance < PLAZA_CLEAR || near(x, z, [DEBT_SPAWN], 5) || near(x, z, zones.map((zone) => zone.position), ZONE_CLEAR) || near(x, z, turrets.map((t) => t.position), TURRET_CLEAR)) {
       continue;
     }
     const group = POOL[i % POOL.length];

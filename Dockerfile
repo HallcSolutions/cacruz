@@ -1,5 +1,5 @@
 # --- Etapa 1: compilar el sitio Angular ---
-FROM node:22-alpine AS build
+FROM public.ecr.aws/docker/library/node:22-alpine AS build
 WORKDIR /app
 
 COPY package.json package-lock.json ./
@@ -11,7 +11,7 @@ COPY public ./public
 RUN npm run build
 
 # --- Etapa 2: el servicio que sirve el sitio y expone /contact ---
-FROM node:22-alpine AS runtime
+FROM public.ecr.aws/docker/library/node:22-alpine AS runtime
 WORKDIR /app
 ENV NODE_ENV=production
 

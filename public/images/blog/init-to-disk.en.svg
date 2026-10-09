@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 490" role="img" aria-label="chalc init in three steps and what it leaves on disk with any of the five assistants: what the AI reads and what the scripts check">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+    <marker id="mv" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#a78bfa"/>
+    </marker>
+    <marker id="mg" markerWidth="9" markerHeight="9" refX="7" refY="4.5" orient="auto">
+      <path d="M0 0 L9 4.5 L0 9 z" fill="#34d399"/>
+    </marker>
+  </defs>
+  <style>
+    .box { animation: breathe 4s ease-in-out infinite; }
+    .b2 { animation-delay: .6s } .b3 { animation-delay: 1.2s } .b4 { animation-delay: 1.8s }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    .item { animation: pulse 3s ease-in-out infinite; }
+    .i2 { animation-delay: .4s } .i3 { animation-delay: .8s } .i4 { animation-delay: 1.2s } .i5 { animation-delay: 1.6s } .i6 { animation-delay: 2s }
+    @keyframes breathe { 0%,100% { opacity:.82 } 50% { opacity:1 } }
+    @keyframes flow { to { stroke-dashoffset: -56 } }
+    @keyframes pulse { 0%,100% { opacity:.6 } 50% { opacity:1 } }
+  </style>
+
+  <rect width="1000" height="490" fill="url(#bg)"/>
+  <text x="40" y="46" font-family="Georgia, serif" font-size="27" fill="#ece7fb">chalc init: from the command to an equipped project</text>
+  <text x="40" y="72" font-family="ui-monospace, monospace" font-size="13" fill="#8a7fb0">three steps, every file is read by someone at a specific moment · same in all five assistants</text>
+
+  <!-- Left column: the steps -->
+  <g class="box">
+    <rect x="40" y="100" width="260" height="58" rx="14" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+    <text x="60" y="125" font-family="ui-monospace, monospace" font-size="13" fill="#ece7fb">chalc init angular pagos</text>
+    <text x="60" y="145" font-family="ui-monospace, monospace" font-size="10" fill="#8a7fb0">the AI suggests · you pick</text>
+  </g>
+  <line x1="170" y1="162" x2="170" y2="182" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="box b2">
+    <rect x="40" y="188" width="260" height="66" rx="14" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="60" y="212" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">1 · OFFICIAL SCAFFOLDER</text>
+    <text x="60" y="234" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">ng new · nest new · dotnet new</text>
+    <text x="60" y="247" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">version compatible with your machine</text>
+  </g>
+  <line x1="170" y1="258" x2="170" y2="276" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="box b3">
+    <rect x="40" y="282" width="260" height="66" rx="14" fill="none" stroke="#a78bfa" stroke-width="2"/>
+    <text x="60" y="306" font-family="ui-monospace, monospace" font-size="11" fill="#a78bfa">2 · RESHAPE</text>
+    <text x="60" y="328" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">folders + a README per folder</text>
+    <text x="60" y="341" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">docs/architecture.md</text>
+  </g>
+  <line x1="170" y1="352" x2="170" y2="370" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+
+  <g class="box b4">
+    <rect x="40" y="376" width="260" height="66" rx="14" fill="none" stroke="#34d399" stroke-width="2"/>
+    <text x="60" y="400" font-family="ui-monospace, monospace" font-size="11" fill="#34d399">3 · EQUIP + VERIFY</text>
+    <text x="60" y="422" font-family="ui-monospace, monospace" font-size="10" fill="#ece7fb">skills · MCP · SDD · roles · .chalc</text>
+    <text x="60" y="435" font-family="ui-monospace, monospace" font-size="9" fill="#8a7fb0">✓ no tokens: everything in place</text>
+  </g>
+
+  <!-- Arrows to both groups -->
+  <path d="M304 400 C 330 400, 330 180, 352 180" fill="none" class="flow" stroke="#a78bfa" stroke-width="2" marker-end="url(#mv)"/>
+  <path d="M304 412 C 335 412, 335 360, 352 360" fill="none" class="flow" stroke="#34d399" stroke-width="2" marker-end="url(#mg)"/>
+
+  <!-- Group: what the AI reads -->
+  <rect x="360" y="100" width="600" height="166" rx="16" fill="#a78bfa" fill-opacity=".05" stroke="#a78bfa" stroke-width="2"/>
+  <text x="382" y="126" font-family="ui-monospace, monospace" font-size="12" fill="#a78bfa">WHAT THE AI READS · Markdown</text>
+  <g font-family="ui-monospace, monospace" font-size="11">
+    <g class="item"><text x="382" y="156" fill="#ece7fb">CLAUDE.md · AGENTS.md · GEMINI.md…</text><text x="382" y="171" font-size="9" fill="#8a7fb0">instructions · phases · ask the advisor</text></g>
+    <g class="item i2"><text x="672" y="156" fill="#ece7fb">docs/architecture.md</text><text x="672" y="171" font-size="9" fill="#8a7fb0">layers and dependencies</text></g>
+    <g class="item i3"><text x="382" y="198" fill="#ece7fb">.claude/skills/ · .chalc/skills/</text><text x="382" y="213" font-size="9" fill="#8a7fb0">manuals opened on demand</text></g>
+    <g class="item i4"><text x="672" y="198" fill="#ece7fb">specs/constitution.md</text><text x="672" y="213" font-size="9" fill="#8a7fb0">non-negotiable principles</text></g>
+    <g class="item i5"><text x="382" y="240" fill="#ece7fb">review roles</text><text x="382" y="254" font-size="9" fill="#8a7fb0">subagents, rules or sections</text></g>
+    <g class="item i6"><text x="672" y="240" fill="#ece7fb">MCP configuration</text><text x="672" y="254" font-size="9" fill="#8a7fb0">in each assistant's own file</text></g>
+  </g>
+
+  <!-- Group: what the scripts check -->
+  <rect x="360" y="282" width="600" height="160" rx="16" fill="#34d399" fill-opacity=".05" stroke="#34d399" stroke-width="2"/>
+  <text x="382" y="308" font-family="ui-monospace, monospace" font-size="12" fill="#34d399">WHAT THE SCRIPTS CHECK · no AI</text>
+  <g font-family="ui-monospace, monospace" font-size="11">
+    <g class="item"><text x="382" y="338" fill="#ece7fb">.chalc/gate.mjs</text><text x="382" y="353" font-size="9" fill="#8a7fb0">measures: tests, mutation, layers, R#</text></g>
+    <g class="item i2"><text x="672" y="338" fill="#ece7fb">.chalc/next.mjs</text><text x="672" y="353" font-size="9" fill="#8a7fb0">decides the single next action</text></g>
+    <g class="item i3"><text x="382" y="382" fill="#ece7fb">.chalc/memory.mjs</text><text x="382" y="397" font-size="9" fill="#8a7fb0">remembers lessons by concept</text></g>
+    <g class="item i4"><text x="672" y="382" fill="#ece7fb">.chalc/mail.mjs</text><text x="672" y="397" font-size="9" fill="#8a7fb0">notices between sibling repos</text></g>
+    <g class="item i5"><text x="382" y="424" fill="#ece7fb">.chalc/gate-hook.md</text><text x="550" y="424" font-size="9" fill="#8a7fb0">Claude Code only · hooks documented, never installed</text></g>
+  </g>
+
+  <text x="40" y="472" font-family="ui-monospace, monospace" font-size="12" fill="#8a7fb0">knowing goes in Markdown · checking goes in scripts · all of it in the repository, next to the code</text>
+</svg>

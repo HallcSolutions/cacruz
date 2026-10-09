@@ -1,5 +1,24 @@
 [
   {
+    "slug": "from-one-sentence-to-a-closed-feature",
+    "date": "2026-10-09",
+    "title": {
+      "es": "Por qué la IA no decide cuándo ha terminado: el recorrido completo de una funcionalidad, paso a paso",
+      "en": "Why the AI doesn't decide when it's done: the full journey of a feature, step by step"
+    },
+    "summary": {
+      "es": "Qué pasa, paso a paso, desde que creo un proyecto con chalc init hasta que la IA cierra una feature: qué archivos quedan en disco y para qué sirve cada uno, cómo el advisor decide el siguiente paso leyendo el repositorio, quién revisa, qué se guarda en la memoria y por qué todo vive en archivos y no en la conversación.",
+      "en": "What happens, step by step, from creating a project with chalc init to the AI closing a feature: which files land on disk and what each one is for, how the advisor decides the next step by reading the repository, who reviews, what goes into memory and why everything lives in files instead of the conversation."
+    },
+    "tags": [
+      "chalc",
+      "sdd",
+      "agentes",
+      "calidad",
+      "memoria"
+    ]
+  },
+  {
     "slug": "typed-decisions-with-jev",
     "date": "2026-09-22",
     "title": {

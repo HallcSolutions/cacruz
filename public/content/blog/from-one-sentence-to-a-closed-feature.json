@@ -1,0 +1,645 @@
+{
+  "slug": "from-one-sentence-to-a-closed-feature",
+  "date": "2026-10-09",
+  "title": {
+    "es": "Por qué la IA no decide cuándo ha terminado: el recorrido completo de una funcionalidad, paso a paso",
+    "en": "Why the AI doesn't decide when it's done: the full journey of a feature, step by step"
+  },
+  "summary": {
+    "es": "Qué pasa, paso a paso, desde que creo un proyecto con chalc init hasta que la IA cierra una feature: qué archivos quedan en disco y para qué sirve cada uno, cómo el advisor decide el siguiente paso leyendo el repositorio, quién revisa, qué se guarda en la memoria y por qué todo vive en archivos y no en la conversación.",
+    "en": "What happens, step by step, from creating a project with chalc init to the AI closing a feature: which files land on disk and what each one is for, how the advisor decides the next step by reading the repository, who reviews, what goes into memory and why everything lives in files instead of the conversation."
+  },
+  "tags": [
+    "chalc",
+    "sdd",
+    "agentes",
+    "calidad",
+    "memoria"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Hay una frase que le digo a la IA casi todos los días: «realízame este spec». La escribo en un proyecto que preparé con [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), la herramienta de terminal que construí para no repetir la misma configuración en cada repositorio. Lo que pasa entre esa frase y el momento en que la IA me dice «terminado» no es magia ni confianza ciega: es un recorrido con paradas fijas, archivos que se escriben en cada parada y un script que decide el siguiente paso."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En notas anteriores conté piezas sueltas: [el portón que mide cada tarea](/daily/close-a-task-with-evidence), [por qué el test va primero](/daily/why-the-test-comes-first) y [qué es el desarrollo guiado por especificación](/daily/what-is-spec-driven-development). Esta nota es el mapa completo, de principio a fin: desde que creo el proyecto con `chalc init` hasta que la feature queda cerrada. Y, sobre todo, responde a dos preguntas que me hacen mucho: por qué se guarda tanta información en disco y qué hace cada archivo."
+      },
+      {
+        "kind": "quote",
+        "text": "Los agentes tienen que trabajar en sesiones separadas, y cada sesión nueva empieza sin memoria de lo que pasó antes.",
+        "source": "Justin Young · Anthropic, Effective harnesses for long-running agents, noviembre de 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa frase describe el problema que me llevó a construir todo lo demás. Una persona que pasó una tarde persiguiendo un bug no lo olvida al día siguiente: la próxima vez que ve un monto mal redondeado, ya sabe dónde mirar. Ese contexto se acumula con los años y es buena parte de lo que llamamos experiencia. Un agente de IA no lo tiene. Trabaja dentro de una ventana de contexto —todo lo que «ve» en ese momento— y, cuando la sesión termina, lo que aprendió desaparece con ella. Mañana puede repetir el mismo error con la misma seguridad. Y si le preguntas si las pruebas pasaron, te responderá lo que recuerde o lo que suene razonable, no lo que de verdad se ejecutó."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Por eso chalc le da al agente dos cosas que una persona construye sola con la experiencia. La primera son **evidencias**: cada vez que el portón mide una tarea, deja un informe con la fecha, los comandos y los resultados, así que «las pruebas pasaron» deja de ser una frase y se convierte en un archivo que cualquiera puede abrir. La segunda es **lo aprendido**: cuando una revisión encuentra un error, la regla que sale de ahí se guarda en la memoria del proyecto, y la próxima tarea que toque ese tema la recibe antes de empezar. Ninguna de las dos vive en la conversación, sino en el repositorio. El agente puede olvidar; el proyecto, no."
+      },
+      {
+        "kind": "heading",
+        "text": "Primero, qué es chalc (y qué no es)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "chalc es un programa de línea de comandos escrito en Node. Su núcleo no usa IA: lee señales del repositorio —el `package.json`, el `angular.json`, los archivos de la raíz— y aplica reglas explícitas de un catálogo: este stack recibe estas skills, estos servidores MCP y este método de trabajo. Una **skill** es un manual corto que la IA abre cuando la tarea lo necesita; un **servidor MCP** es un conector estándar que le da a la IA acceso a una herramienta externa. Lo expliqué con calma en [por qué tu IA falla](/daily/skills-mcp-harness)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Lo importante para esta nota: chalc no es el agente. El agente es el asistente que ya usas —Claude Code, Cursor, Copilot, Gemini CLI o Codex—. chalc prepara el terreno para que ese agente trabaje con reglas, contexto y controles, y le deja scripts que puede ejecutar para saber en qué punto va."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso 1 · `chalc init`: un proyecto que nace con arquitectura"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Empezar un proyecto es donde más decisiones se toman con menos información, y donde una IA sin rumbo hace más daño: inventa una estructura de carpetas, mezcla capas, y cada archivo nuevo copia el desorden del anterior. `chalc init` existe para que el proyecto nazca con una arquitectura elegida por mí y documentada desde el primer minuto. Estos son sus pasos, en orden:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Stack.** Elijo Angular, NestJS, .NET o Flutter. Cada stack es una entrada declarativa en un registro; añadir otro no toca el motor.",
+          "**Nombre y carpeta.** Dónde se crea el proyecto.",
+          "**Propuesta.** Describo la idea en texto o adjunto un documento (Word, PDF, Excel o Markdown). Es lo que la IA va a leer.",
+          "**La IA sugiere, yo decido.** Si configuré una clave de API, un modelo económico analiza la propuesta y recomienda la arquitectura más liviana que encaje. Si tiene dudas que cambian la decisión, me las pregunta y vuelve a analizar con mis respuestas. Si propone algo que no está en el catálogo, chalc lo descarta y usa su recomendación determinista. Con `--no-ai` ni siquiera se consulta.",
+          "**Asistente.** Elijo para cuál se equipa el proyecto: Claude Code, Cursor, Copilot, Gemini CLI o Codex.",
+          "**Resumen y confirmación.** Antes de tocar el disco, chalc me enseña en una sola pantalla todo lo que va a hacer: la carpeta, el stack, la arquitectura elegida, los comandos exactos del scaffolder y la versión de la herramienta con la que se va a crear. Ese último dato evita el fallo más tonto de empezar un proyecto: el CLI de Angular se niega a arrancar si tu versión de Node no es la que pide, y el proyecto ni siquiera llega a existir. Por eso, en Angular y NestJS, chalc no usa la última versión del CLI, sino la más nueva que funciona con mi Node, y me avisa cuando la ha ajustado. En Flutter me muestra la versión del SDK que tengo instalado o me advierte si no lo encuentra; en .NET, `dotnet new` usa el SDK que ya está en la máquina. Si algo no me cuadra, respondo que no y no se ha creado nada. Con `--dry-run` veo el plan completo sin ejecutarlo.",
+          "**Scaffolder oficial.** Corre `ng new`, `nest new`, `dotnet new` o `flutter create`. chalc no reinventa el proyecto base: usa el del framework.",
+          "**Remodelado.** Crea las carpetas de la arquitectura, cada una con un `README.md` que explica qué va ahí, y escribe `docs/architecture.md` con el mapa de capas y las reglas de dependencia.",
+          "**Equipamiento.** Copia skills, MCP, el método SDD y las herramientas del repositorio (el detalle está en el paso 2).",
+          "**Verificación sin tokens.** Comprueba que todo esté en su sitio y que ninguna importación cruce capas. Con `--verify`, además, compila el proyecto (en Flutter, lo analiza)."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc init angular pagos --description \"panel de pagos con roles y reembolsos\"",
+          "→ propuesta leída: tipo, complejidad y señales",
+          "→ la IA sugiere: modular-feature-first · pregunta: ¿habrá más de un equipo?",
+          "→ eliges: modular-feature-first",
+          "→ ng new con el @angular/cli compatible con tu Node",
+          "→ carpetas + README por carpeta + docs/architecture.md",
+          "→ equipado: skills, MCP, SDD, roles, portón, advisor y memoria",
+          "✓ Proyecto creado correctamente"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Es una salida resumida e ilustrativa, no copiada de una ejecución real. Lo que importa del paso: **la IA es aliada, no oráculo**. Cada vez que chalc consulta un modelo me dice cuántos tokens gastó, y la decisión final siempre es mía. Si el modelo se equivoca, el proyecto no hereda su error, porque la arquitectura sale de un catálogo cerrado."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso 2 · Qué queda en disco al equipar, y para qué sirve cada archivo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está la respuesta a «¿por qué guardamos tanta información?». Cada archivo existe porque alguien —la IA, un script o una persona— lo lee en un momento concreto del recorrido. Ninguno es documentación de adorno. El reparto es el mismo con los cinco asistentes que soporta chalc: Claude Code, Cursor, GitHub Copilot, Gemini CLI y Codex. Lo único que cambia es dónde espera encontrar cada uno sus instrucciones, sus skills y sus servidores MCP, y chalc escribe cada pieza en el formato que ese asistente ya sabe leer. La carpeta `.chalc/`, las specs y la documentación de arquitectura son idénticas en los cinco:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Las instrucciones del proyecto**: lo primero que el asistente lee al abrir el repositorio. Cada uno tiene su archivo: `CLAUDE.md` en Claude Code, `AGENTS.md` en Codex, `GEMINI.md` en Gemini CLI y `.github/copilot-instructions.md` en Copilot. chalc escribe ahí un bloque gestionado entre dos marcas (`<!-- chalc:start -->` y `<!-- chalc:end -->`) con los principios obligatorios, las skills activas, las cinco fases del método y la orden de consultar al advisor; lo que escribas fuera de las marcas no se toca. Cursor no usa un archivo único, sino reglas sueltas en `.cursor/rules/`: chalc escribe unas que se aplican siempre (principios, arquitectura y método) y una por skill, que Cursor carga cuando su descripción encaja con la tarea.",
+          "**`docs/architecture.md` y un `README.md` por carpeta**: para que la IA sepa dónde va cada archivo antes de crearlo, en vez de adivinarlo.",
+          "**Las skills**: una copia real de cada una. Incluye las globales (entre ellas, código limpio, SOLID, implementación mínima, arquitectura modular, mutation testing, código seguro y las de OWASP) y las del stack. En Claude Code van en `.claude/skills/`, donde el asistente las descubre solo; en los otros cuatro, en `.chalc/skills/`, y las instrucciones del proyecto apuntan a ellas. Es una copia, no un enlace: el repositorio la lleva consigo.",
+          "**La configuración MCP**: los servidores MCP del stack, añadidos sin pisar los que ya tuvieras, en el archivo que lee cada asistente: `.mcp.json` en Claude Code, `.cursor/mcp.json` en Cursor, `.vscode/mcp.json` en Copilot, `.gemini/settings.json` en Gemini CLI y `.codex/config.toml` en Codex.",
+          "**`specs/constitution.md` y `specs/_template/`**: los principios no negociables del proyecto y las plantillas de `spec.md`, `plan.md` y `tasks.md`.",
+          "**Los tres roles de revisión**: `seguridad`, `revisor` y `endurecedor`. En Claude Code son subagentes, en `.claude/agents/`. Un subagente es otra instancia del modelo con su propio prompt y sus propias herramientas; no hereda la conversación de quien escribió el código, así que lo mira con ojos limpios. En Cursor son reglas propias (`.cursor/rules/chalc-seguridad.mdc` y las otras dos), y en Copilot, Gemini CLI y Codex van como secciones del bloque de instrucciones. Los roles existen en los cinco porque el advisor los va a pedir.",
+          "**`.chalc/gate.mjs` y `.chalc/gate.json`**: el portón de calidad. Código real, sin dependencias, que corre tests, mutación y comprobaciones estáticas. `gate.json` guarda umbrales y comandos; al volver a equipar se conserva lo que editaste ahí.",
+          "**`.chalc/next.mjs`**: el advisor. Lee el estado del repositorio y responde con la única acción siguiente. No escribe nada.",
+          "**`.chalc/memory.mjs` y `.chalc/memory/`**: la memoria del proyecto, con lo que se aprendió al cerrar tareas, ordenado por concepto.",
+          "**`.chalc/mail.mjs`**: un buzón entre repositorios hermanos (back, front y móvil). Se emite siempre, pero queda inerte hasta que `chalc feature` reparte una historia en varios repositorios en modo worktree.",
+          "**`.chalc/gate-hook.md`** (solo en Claude Code): los hooks recomendados, documentados pero **no instalados**. Un hook se ejecuta solo, y activarlo en un archivo commiteado se lo impondría a todo el que clone el repositorio.",
+          "**`.chalc.json`**: el manifiesto, con qué se instaló y cuándo."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/init-to-disk.es.svg",
+        "caption": "chalc init en tres pasos y lo que deja en disco: lo que la IA lee va en Markdown; lo que hay que comprobar va en scripts que no dependen de la IA."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Fíjate en el reparto: lo que la IA debe **saber** va en Markdown (reglas, arquitectura, skills); lo que hay que **comprobar** va en scripts que no dependen de la IA. Esa separación es la idea central. Un modelo puede leer mal una regla; un script que compara fechas no se cansa ni se salta pasos."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso 3 · «Realízame este spec»: las primeras cuatro paradas"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con el proyecto equipado abro el asistente y le pido una funcionalidad. Por ejemplo: «realízame este spec: reembolsos parciales con aprobación del supervisor». Antes de escribir una línea de código, el asistente ya cargó sus instrucciones (`CLAUDE.md`, en Claude Code), y estas dicen que el orden es innegociable: **especificación → pruebas → código**."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Constitución.** Lee `specs/constitution.md`. Son los principios que ninguna feature puede saltarse, empezando por Test-First: ningún código antes de un test que falle.",
+          "**Specify → `spec.md`.** El QUÉ y el PORQUÉ, sin detalles técnicos. Historias de usuario y criterios de aceptación en notación EARS («CUANDO pasa esto, EL SISTEMA DEBE hacer aquello»), cada uno con su identificador: `R1`, `R2`, `R3`. Además, llena la línea `Conceptos:` con los que devuelve `node .chalc/memory.mjs concepts`. Así la memoria sabe de qué habla esta spec.",
+          "**Plan → `plan.md`.** El CÓMO: capas, modelo de datos, contratos y decisiones. **Aquí se para y me pide aprobación.** Es el punto más barato para corregir el rumbo: cambiar un párrafo cuesta segundos; cambiar código ya escrito, horas.",
+          "**Tasks → `tasks.md`.** Tareas pequeñas y ordenadas, cada una con su casilla `- [ ]` y trazada a un `R#`. Las que se pueden hacer en paralelo llevan `[P]`."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si no quiero que la IA redacte la spec en la misma sesión, existe `chalc spec-ia`: toma la historia de usuario desde un documento, un ticket de Azure DevOps o Jira, o texto pegado, y genera los tres archivos con un harness que le prohíbe inventar. El resultado es el mismo: una carpeta `specs/NNN-nombre/` que es la fuente de verdad."
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Por qué tres archivos en vez de una buena conversación? Porque una conversación no se puede comprobar. `tasks.md`, con sus casillas, es lo que el advisor lee para saber cuánto falta; `spec.md`, con sus `R#`, es lo que el portón usa para exigir que cada test diga qué requisito prueba. Sin esos archivos, «terminado» es una opinión."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso 4 · Implementar una tarea, con el test por delante"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Anuncia el `R#`.** Antes de tocar nada, el asistente dice qué requisito implementa. Una tarea a la vez.",
+          "**Rojo.** Escribe el test desde el criterio de aceptación y lo corre para verlo fallar. Un test que nunca falló no demuestra que detecte nada.",
+          "**Verde.** Escribe el mínimo código que lo hace pasar. Nada de opciones que nadie pidió.",
+          "**Refactor.** Ordena el código sin romper los tests.",
+          "**Skills bajo demanda.** Abre solo la skill que la tarea necesita, para no llenar el contexto. La excepción es `secure-coding`: si la tarea toca entrada externa, autenticación, sesiones, permisos, secretos, almacenamiento, red, criptografía o logs, la abre siempre antes de escribir."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El portón no revisa el proyecto entero, sino **esta tarea**: los cambios desde el commit que se selló al cerrar la anterior. Si además pegué el hook de anotación de `.chalc/gate-hook.md`, cada archivo que el asistente escribe queda apuntado en `.chalc/task.files`; ese registro sirve cuando no hay un diff con el que contrastar y, cuando lo hay, solo avisa de los cambios que no se anotaron. Sin git y sin registro, la corrida se bloquea en vez de revisarlo todo. ¿Para qué tanto cuidado? Porque un informe con tres años de deuda vieja entierra el trabajo de hoy y se lee en diagonal."
+      },
+      {
+        "kind": "heading",
+        "text": "Paso 5 · El bucle del advisor: quién decide el siguiente paso"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Aquí está el corazón del flujo. Al terminar el código de una tarea, el asistente no decide qué hacer después. Ejecuta `node .chalc/next.mjs` y el advisor le responde tres líneas: la acción, el motivo y, si aplica, el comando exacto. El asistente obedece, vuelve a preguntar y repite hasta que la respuesta sea `done`."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "NEXT_ACTION: run_gate",
+          "REASON: Tocaste código a las 15:04 y la evidencia es de las 14:32: mide lo de antes.",
+          "COMMAND: node .chalc/gate.mjs"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Por qué un script y no una lista de pasos en las instrucciones? Porque una lista la recuerda quien se beneficia de olvidarla. Antes, el asistente podía correr el portón, seguir tocando código y marcar la tarea con una evidencia ya vieja. El advisor no recuerda nada: cada vez mira el disco —la fecha de la evidencia, el veredicto del portón, la bitácora de los revisores, las casillas de `tasks.md`— y aplica una tabla de prioridad fija. La primera fila que se cumple es la que manda:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`blocked_config`**: al portón le falta configuración. Al equipar, chalc no supo con qué comando se corren los tests o la mutación en este repositorio, y dejó el campo vacío en `gate.json` en vez de inventarlo. Lo que no se puede comprobar se bloquea; nunca se aprueba.",
+          "**`run_gate`**: hay código cambiado y no hay evidencia vigente. Toca correr `node .chalc/gate.mjs`, que mide tests, mutation score (≥ 80% por defecto) con los mutantes que sobrevivieron, una cosa por archivo, duplicación, señales de seguridad, fronteras entre capas, trazabilidad a `R#` y rutas del contrato. Deja el informe en `.chalc/gate.md`.",
+          "**`fix_gate`**: el portón falló. Si es la mutación, lo que falta son tests que maten mutantes, no reintentos.",
+          "**`call_role`**: la evidencia está en verde y toca revisión. Primero `seguridad`, que deja una línea por cada categoría OWASP (A01 a A10, y MASVS en apps móviles): revisado con archivo y línea, o no aplica con su motivo. Después `revisor`, que juzga lo que un script no ve: si el test comprueba el requisito o solo lo acompaña, si una abstracción sobra, si un nombre miente.",
+          "**`fix_review`**: un rol dejó hallazgos. Se corrigen y el ciclo vuelve a medir. Un hallazgo de seguridad se corrige empezando por un test que demuestre la vulnerabilidad.",
+          "**`tick_task`**: todo está en orden. Primero se ejecuta `node .chalc/memory.mjs capture`, que guarda lo que enseñó la tarea, y después se marca la casilla en `tasks.md`. Si las aprobaciones están activas, el asistente se para y espera mi OK.",
+          "**`work_task`**: la siguiente tarea pendiente, acompañada de hasta cinco reglas de la memoria que le tocan.",
+          "**`call_role` de la feature**: sin tareas pendientes, entra el `endurecedor`, que audita entradas inválidas, rutas de error, casos borde y dependencias que fallan. Va al final de la feature y no en cada tarea porque cada pasada es una llamada al modelo, y repetirla en veinte tareas casi siempre da con lo mismo.",
+          "**`done`**: la feature está cerrada. Su comando es una última captura de memoria, porque lo que deja el endurecedor solo existe al final."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y hay una salida de emergencia: **`ask_human`**. Si el advisor no puede leer el estado —no hay `tasks.md`, una revisión no trae su checklist completa, una regla de la memoria quedó sin confirmar—, no adivina: devuelve el control, y el asistente se para a contarme qué pasó. Prefiero una pregunta a un «terminado» inventado."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cuando `chalc feature` reparte una historia entre back, front y móvil en modo worktree, aparecen dos acciones más, antes de medir: `sync_contract`, cuando el contrato de la API cambió en el lado que lo define y tu copia quedó vieja, y `read_mail`, cuando hay avisos sin leer en el buzón. Lo conté en [un contrato, tres carriles](/daily/one-contract-three-lanes)."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-to-done.es.svg",
+        "caption": "De la frase al commit: tres archivos con una aprobación en medio, un bucle por tarea que dirige el advisor leyendo el disco, el endurecedor al final y el commit, que lo firmo yo."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué información se guarda durante el recorrido, y por qué en disco"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Durante el bucle se escriben unos pocos archivos dentro de `.chalc/`. Cada uno responde una pregunta que, sin él, solo podría contestar la memoria de la conversación."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`.chalc/gate.md`**: ¿qué midió el portón? Fecha, rama, cada comando con su código de salida y su duración, el score, los supervivientes y los hallazgos. Es la versión para personas: la leo antes de hacer el commit.",
+          "**`.chalc/gate.state.json`**: el mismo resultado, pero para máquinas. Veredicto, rama, commit y una huella del contenido revisado. Si alguien toca el código después, la huella deja de coincidir y el advisor pide medir otra vez.",
+          "**`.chalc/task.json`**: la línea base, es decir, el commit sellado al cerrar la última tarea. Así la siguiente revisión mide desde ahí y no desde el inicio de la rama.",
+          "**`.chalc/task.files`**: las rutas escritas en la tarea actual, si usas el hook. Se vacía al cerrarla.",
+          "**`.chalc/review.md`**: la bitácora de los roles, en la que solo se añade al final. Sin ese rastro nadie podría comprobar que la revisión ocurrió; con él, el advisor verifica que cada entrada sea posterior a la evidencia y corresponda al commit correcto.",
+          "**`.chalc/memory/memory.jsonl`**: lo aprendido, una línea por entrada y solo añadiendo. Se commitea: la lee cualquier asistente y todo el equipo.",
+          "**`specs/NNN-nombre/tasks.md`**: las casillas. Es el contador de progreso más simple que existe, y por eso funciona."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "¿Por qué todo esto en disco y no en una base de datos o en la conversación? Por tres razones concretas. La primera: **no depende del asistente**. `claude --continue` retoma una conversación, pero solo dentro de Claude Code. Si empiezo una feature con Claude y la sigo con Gemini CLI o Codex —porque se acabó mi cuota, porque otro modelo resuelve mejor esa parte o porque la retoma un compañero con otra herramienta—, la conversación no viaja con ella. El disco sí: vuelvo a equipar el proyecto para el nuevo asistente (`chalc --target gemini`), y su advisor lee las mismas casillas, la misma evidencia y la misma memoria, y le dice exactamente dónde quedó el trabajo. La segunda: **el modelo no se certifica solo**. Una frase como «mutation score 92%» se puede escribir sin ejecutar nada; el reporte de la herramienta, con su fecha, no. La tercera: **es texto plano junto al código**. Se puede versionar con git y revisar en un pull request, y lo puede leer cualquiera, tenga o no chalc instalado."
+      },
+      {
+        "kind": "heading",
+        "text": "La memoria: que lo aprendido no se repita"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada sesión del asistente empieza de cero. Sin memoria, un error que el proyecto ya corrigió en la spec 004 puede volver en la spec 009, escrito por el mismo modelo y con la misma seguridad."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La memoria de chalc no le pide al modelo que decida qué guardar. Al cerrar cada tarea, `memory.mjs capture` lee lo que ya quedó escrito: las líneas `Regla aprendida (<concepto>): …` que dejaron los roles en `review.md`, las tareas marcadas `[bug]` y cada supresión de seguridad con su motivo. Lo guarda por **concepto**, no por palabra: «monto», «tarifa» o «money» caen en `dinero`, así que una regla aprendida hablando de montos le llega a una spec que habla de tarifas."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Además, se carga de forma perezosa: nada entra al iniciar la sesión. Cuando el advisor responde `work_task` o `call_role`, mira de qué conceptos habla la tarea y adjunta como mucho cinco reglas de una línea. Cada rol tiene que confirmar cada regla recibida (`cumple`, `no cumple` o `no aplica` con su motivo); si falta una, el advisor responde `ask_human`. Una memoria que nadie está obligado a leer no es memoria: es un archivo."
+      },
+      {
+        "kind": "quote",
+        "text": "Encontrar el conjunto más pequeño posible de tokens de alta señal que maximice la probabilidad del resultado que buscas.",
+        "source": "Applied AI Team de Anthropic · Effective context engineering for AI agents, 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esa es la misma lógica de las skills bajo demanda y de las cinco reglas por tarea: el disco puede guardar miles de entradas, pero a la ventana de contexto solo llega lo que la tarea de ahora necesita."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuándo está terminado de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El asistente puede decir «terminado» cuando quiera; lo que cuenta es que el advisor responda `done`. Eso solo ocurre cuando se cumple todo esto a la vez:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Todas las casillas de `tasks.md` están marcadas.",
+          "Cada tarea cerró con una evidencia del portón en verde, completa (no una corrida rápida sin mutación), de esta rama y del contenido actual.",
+          "`seguridad` y `revisor` dejaron su `OK` en cada tarea, después de esa evidencia.",
+          "El `endurecedor` dejó su `OK` sobre la feature completa.",
+          "Cada tarea guardó en la memoria lo que enseñó."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Y entonces el último paso es mío: leo `gate.md`, reviso el diff y hago el commit. El commit lo firmo yo, porque el advisor dice que el proceso se cumplió, no que el producto sea el correcto."
+      },
+      {
+        "kind": "heading",
+        "text": "Lo que no promete"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El portón y el advisor protegen contra los descuidos de un agente que colabora, no contra uno que quiera hacer trampa. Cualquiera que pueda escribir en el repositorio —una persona o un agente con acceso a la terminal— puede bajar los umbrales en `gate.json` o escribir a mano un resultado en verde. No hay forma de esconder un secreto en tu máquina a quien tiene tu mismo acceso. Lo que sí hace chalc es no disimularlo: si alguien relaja la configuración, el informe lo dice al principio. Y si necesitas una garantía de verdad, el portón tiene que correr también en CI, en un servidor donde el agente no puede tocar nada."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Con los roles de revisión pasa algo parecido. Lo ideal es que un revisor lea el código sin poder cambiarlo. Claude Code es el único de los cinco asistentes que permite darle a cada subagente sus propias herramientas; en los demás, «solo revisas, no tocas» es una instrucción escrita, y chalc te lo advierte al equipar. Incluso en Claude Code, que un rol escriba únicamente en su bitácora depende de lo que dice su prompt, no de un candado. Lo que sí está garantizado es la consecuencia: si un rol toca el código, la huella de la evidencia deja de coincidir y el advisor obliga a medir de nuevo. Puede saltarse la regla, pero no sin que se note."
+      },
+      {
+        "kind": "heading",
+        "text": "Qué mejora de verdad"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Vuelvo a un proyecto después de una semana y no tengo que reconstruir en qué iba: le pregunto al advisor. El portón, el advisor y la memoria son los mismos con cualquiera de los cinco asistentes, porque viven en el repositorio y no en la herramienta. Cuando la IA dice que una tarea está cerrada, hay un archivo que lo demuestra o un script que se niega. Y lo que una revisión enseñó en marzo sigue presente en octubre, sin que nadie tenga que acordarse."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si quieres ver proyectos hechos así, están en [mis proyectos](/projects); y si tu equipo quiere trabajar de esta forma, mira [para empresas](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc-cli-adapter](https://github.com/ChristianCruzArango/chalc-cli-adapter) — el código de todo lo que cuenta esta nota: `lib/init.mjs`, `catalog/next/`, `catalog/gate/` y `catalog/memory/`.",
+          "[Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — Justin Young, Anthropic, 2025: por qué un agente necesita archivos de progreso y git para retomar el trabajo entre sesiones.",
+          "[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic, 2025: por qué cargar poco y bien vale más que cargarlo todo.",
+          "[GitHub Spec Kit](https://github.com/github/spec-kit) — la base del flujo constitución, specify, plan y tasks que sigue el método.",
+          "[Stryker Mutator](https://stryker-mutator.io/) — la herramienta de mutation testing cuyo reporte lee el portón en proyectos JavaScript, TypeScript y .NET.",
+          "[Cuando la IA dice «tarea terminada», ¿cómo sabes que es verdad?](/daily/close-a-task-with-evidence) — la nota donde cuento por dentro el portón y el advisor."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "There is a sentence I tell the AI almost every day: \"build this spec\". I write it in a project I set up with [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), the terminal tool I built so I stop repeating the same setup in every repository. What happens between that sentence and the moment the AI tells me \"done\" is neither magic nor blind trust: it is a journey with fixed stops, files written at each stop and a script that decides the next step."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In earlier notes I covered separate pieces: [the gate that measures every task](/daily/close-a-task-with-evidence), [why the test comes first](/daily/why-the-test-comes-first) and [what spec-driven development is](/daily/what-is-spec-driven-development). This is the full map, end to end: from creating the project with `chalc init` to the feature being closed. And, above all, it answers two questions I get asked a lot: why so much information is stored on disk and what each file does."
+      },
+      {
+        "kind": "quote",
+        "text": "Agents must work in discrete sessions, and each new session begins with no memory of what came before.",
+        "source": "Justin Young · Anthropic, Effective harnesses for long-running agents, November 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That sentence describes the problem that led me to build everything else. A person who spent an afternoon chasing a bug doesn't forget it the next day: the next time they see an amount rounded wrong, they already know where to look. That context builds up over the years and is a big part of what we call experience. An AI agent doesn't have it. It works inside a context window — everything it \"sees\" at that moment — and when the session ends, what it learned disappears with it. Tomorrow it can repeat the same mistake with the same confidence. And if you ask whether the tests passed, it will answer with what it remembers or what sounds reasonable, not with what actually ran."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is why chalc gives the agent two things a person builds on their own through experience. The first is **evidence**: every time the gate measures a task, it leaves a report with the date, the commands and the results, so \"the tests passed\" stops being a sentence and becomes a file anyone can open. The second is **what was learned**: when a review finds a mistake, the rule that comes out of it is stored in the project memory, and the next task that touches that topic receives it before starting. Neither lives in the conversation; both live in the repository. The agent can forget; the project can't."
+      },
+      {
+        "kind": "heading",
+        "text": "First, what chalc is (and what it isn't)"
+      },
+      {
+        "kind": "paragraph",
+        "text": "chalc is a command-line program written in Node. Its core uses no AI: it reads signals from the repository — the `package.json`, the `angular.json`, the root files — and applies explicit rules from a catalog: this stack gets these skills, these MCP servers and this working method. A **skill** is a short manual the AI opens when the task needs it; an **MCP server** is a standard connector that gives the AI access to an external tool. I explained it in detail in [why your AI fails](/daily/skills-mcp-harness)."
+      },
+      {
+        "kind": "paragraph",
+        "text": "What matters for this note: chalc is not the agent. The agent is the assistant you already use — Claude Code, Cursor, Copilot, Gemini CLI or Codex. chalc prepares the ground so that agent works with rules, context and controls, and leaves it scripts it can run to know where it stands."
+      },
+      {
+        "kind": "heading",
+        "text": "Step 1 · `chalc init`: a project born with an architecture"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Starting a project is where the most decisions are made with the least information, and where an aimless AI does the most damage: it invents a folder structure, mixes layers, and every new file copies the mess of the previous one. `chalc init` exists so the project is born with an architecture I chose and documented from minute one. These are its steps, in order:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Stack.** I pick Angular, NestJS, .NET or Flutter. Each stack is a declarative entry in a registry; adding another doesn't touch the engine.",
+          "**Name and folder.** Where the project is created.",
+          "**Proposal.** I describe the idea in text or attach a document (Word, PDF, Excel or Markdown). It is what the AI will read.",
+          "**The AI suggests, I decide.** If I configured an API key, an inexpensive model analyzes the proposal and recommends the lightest architecture that fits. If it has doubts that change the decision, it asks me and analyzes again with my answers. If it proposes something outside the catalog, chalc discards it and uses its deterministic recommendation. With `--no-ai` it isn't even consulted.",
+          "**Assistant.** I pick which one to equip for: Claude Code, Cursor, Copilot, Gemini CLI or Codex.",
+          "**Summary and confirmation.** Before touching the disk, chalc shows me on a single screen everything it is about to do: the folder, the stack, the chosen architecture, the exact scaffolder commands and the tool version it will use. That last item prevents the silliest failure when starting a project: the Angular CLI refuses to run if your Node version isn't the one it asks for, and the project never even gets created. So, in Angular and NestJS, chalc doesn't use the latest CLI, but the newest one that works with my Node, and it tells me when it has adjusted it. In Flutter it shows the version of the SDK I have installed, or warns me if it can't find it; in .NET, `dotnet new` uses the SDK already on the machine. If something doesn't add up, I answer no and nothing has been created. With `--dry-run` I see the whole plan without running it.",
+          "**Official scaffolder.** It runs `ng new`, `nest new`, `dotnet new` or `flutter create`. chalc doesn't reinvent the base project: it uses the framework's.",
+          "**Reshape.** It creates the architecture's folders, each with a `README.md` explaining what goes there, and writes `docs/architecture.md` with the layer map and the dependency rules.",
+          "**Equipment.** It copies skills, MCP, the SDD method and the repository tools (the detail is in step 2).",
+          "**Token-free verification.** It checks that everything is in place and that no import crosses layers. With `--verify`, it also builds the project (in Flutter, it analyzes it)."
+        ]
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "chalc init angular pagos --description \"payments dashboard with roles and refunds\"",
+          "→ proposal read: type, complexity and signals",
+          "→ the AI suggests: modular-feature-first · asks: will there be more than one team?",
+          "→ you choose: modular-feature-first",
+          "→ ng new with the @angular/cli compatible with your Node",
+          "→ folders + README per folder + docs/architecture.md",
+          "→ equipped: skills, MCP, SDD, roles, gate, advisor and memory",
+          "✓ Project created successfully"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That's a summarized, illustrative output, not copied from a real run. What matters in this step: **the AI is an ally, not an oracle**. Every time chalc consults a model it tells me how many tokens it spent, and the final decision is always mine. If the model gets it wrong, the project doesn't inherit the mistake, because the architecture comes from a closed catalog."
+      },
+      {
+        "kind": "heading",
+        "text": "Step 2 · What lands on disk when equipping, and what each file is for"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Here is the answer to \"why do we store so much information?\". Each file exists because someone — the AI, a script or a person — reads it at a specific moment of the journey. None of it is decorative documentation. The layout is the same with the five assistants chalc supports: Claude Code, Cursor, GitHub Copilot, Gemini CLI and Codex. The only thing that changes is where each one expects to find its instructions, its skills and its MCP servers, and chalc writes each piece in the format that assistant already knows how to read. The `.chalc/` folder, the specs and the architecture docs are identical in all five:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**The project instructions**: the first thing the assistant reads when it opens the repository. Each one has its own file: `CLAUDE.md` in Claude Code, `AGENTS.md` in Codex, `GEMINI.md` in Gemini CLI and `.github/copilot-instructions.md` in Copilot. chalc writes a managed block there between two markers (`<!-- chalc:start -->` and `<!-- chalc:end -->`) with the mandatory principles, the active skills, the five phases of the method and the order to consult the advisor; whatever you write outside the markers is left alone. Cursor doesn't use a single file but separate rules in `.cursor/rules/`: chalc writes some that always apply (principles, architecture and method) and one per skill, which Cursor loads when its description matches the task.",
+          "**`docs/architecture.md` and a `README.md` per folder**: so the AI knows where each file goes before creating it, instead of guessing.",
+          "**The skills**: a real copy of each one. It includes the global ones (among them clean code, SOLID, minimal implementation, modular architecture, mutation testing, secure coding and the OWASP ones) and the stack's. In Claude Code they go in `.claude/skills/`, where the assistant discovers them on its own; in the other four, in `.chalc/skills/`, and the project instructions point to them. It's a copy, not a link: the repository carries it along.",
+          "**The MCP configuration**: the stack's MCP servers, added without overwriting the ones you already had, in the file each assistant reads: `.mcp.json` in Claude Code, `.cursor/mcp.json` in Cursor, `.vscode/mcp.json` in Copilot, `.gemini/settings.json` in Gemini CLI and `.codex/config.toml` in Codex.",
+          "**`specs/constitution.md` and `specs/_template/`**: the project's non-negotiable principles and the templates for `spec.md`, `plan.md` and `tasks.md`.",
+          "**The three review roles**: `seguridad` (security), `revisor` (reviewer) and `endurecedor` (hardener). In Claude Code they are subagents, in `.claude/agents/`. A subagent is another instance of the model with its own prompt and its own tools; it doesn't inherit the conversation of whoever wrote the code, so it looks at it with fresh eyes. In Cursor they are rules of their own (`.cursor/rules/chalc-seguridad.mdc` and the other two), and in Copilot, Gemini CLI and Codex they go as sections of the instructions block. The roles exist in all five because the advisor is going to ask for them.",
+          "**`.chalc/gate.mjs` and `.chalc/gate.json`**: the quality gate. Real code, dependency-free, that runs tests, mutation and static checks. `gate.json` holds thresholds and commands; re-equipping keeps whatever you edited there.",
+          "**`.chalc/next.mjs`**: the advisor. It reads the repository's state and answers with the single next action. It writes nothing.",
+          "**`.chalc/memory.mjs` and `.chalc/memory/`**: the project memory, with what was learned when closing tasks, organized by concept.",
+          "**`.chalc/mail.mjs`**: a mailbox between sibling repositories (back, front and mobile). It is always emitted, but stays inert until `chalc feature` splits a story across several repositories in worktree mode.",
+          "**`.chalc/gate-hook.md`** (Claude Code only): the recommended hooks, documented but **not installed**. A hook runs on its own, and enabling it in a committed file would impose it on everyone who clones the repository.",
+          "**`.chalc.json`**: the manifest, with what was installed and when."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/init-to-disk.en.svg",
+        "caption": "chalc init in three steps and what it leaves on disk: what the AI reads goes in Markdown; what must be checked goes in scripts that don't depend on the AI."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Notice the split: what the AI must **know** goes in Markdown (rules, architecture, skills); what must be **checked** goes in scripts that don't depend on the AI. That separation is the core idea. A model can misread a rule; a script comparing dates doesn't get tired or skip steps."
+      },
+      {
+        "kind": "heading",
+        "text": "Step 3 · \"Build this spec\": the first four stops"
+      },
+      {
+        "kind": "paragraph",
+        "text": "With the project equipped I open the assistant and ask for a feature. For example: \"build this spec: partial refunds with supervisor approval\". Before writing a line of code, the assistant has already loaded its instructions (`CLAUDE.md`, in Claude Code), and they say the order is non-negotiable: **specification → tests → code**."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Constitution.** It reads `specs/constitution.md`. These are the principles no feature can skip, starting with Test-First: no code before a failing test.",
+          "**Specify → `spec.md`.** The WHAT and the WHY, with no technical details. User stories and acceptance criteria in EARS notation (\"WHEN this happens, THE SYSTEM SHALL do that\"), each with its identifier: `R1`, `R2`, `R3`. It also fills the `Concepts:` line with the ones `node .chalc/memory.mjs concepts` returns. That way the memory knows what this spec is about.",
+          "**Plan → `plan.md`.** The HOW: layers, data model, contracts and decisions. **Here it stops and asks for my approval.** It is the cheapest point to correct course: changing a paragraph takes seconds; changing code already written, hours.",
+          "**Tasks → `tasks.md`.** Small, ordered tasks, each with its `- [ ]` checkbox and traced to an `R#`. The ones that can run in parallel carry `[P]`."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "If I don't want the AI to write the spec in the same session, there's `chalc spec-ia`: it takes the user story from a document, an Azure DevOps or Jira ticket, or pasted text, and generates the three files with a harness that forbids it from inventing. The result is the same: a `specs/NNN-name/` folder that is the source of truth."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why three files instead of a good conversation? Because a conversation can't be checked. `tasks.md`, with its checkboxes, is what the advisor reads to know how much is left; `spec.md`, with its `R#`, is what the gate uses to require every test to state which requirement it proves. Without those files, \"done\" is an opinion."
+      },
+      {
+        "kind": "heading",
+        "text": "Step 4 · Implementing a task, test first"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**Announce the `R#`.** Before touching anything, the assistant says which requirement it implements. One task at a time.",
+          "**Red.** It writes the test from the acceptance criterion and runs it to watch it fail. A test that never failed doesn't prove it catches anything.",
+          "**Green.** It writes the minimum code that makes it pass. No options nobody asked for.",
+          "**Refactor.** It tidies the code without breaking the tests.",
+          "**Skills on demand.** It opens only the skill the task needs, so the context doesn't fill up. The exception is `secure-coding`: if the task touches external input, authentication, sessions, permissions, secrets, storage, network, cryptography or logs, it always opens it before writing."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The gate doesn't review the whole project, but **this task**: the changes since the commit sealed when the previous one closed. If I also pasted the recording hook from `.chalc/gate-hook.md`, every file the assistant writes gets logged in `.chalc/task.files`; that log is used when there's no diff to compare against and, when there is one, it only flags changes that weren't logged. Without git and without the log, the run is blocked instead of reviewing everything. Why so much care? Because a report with three years of old debt buries today's work and gets skimmed."
+      },
+      {
+        "kind": "heading",
+        "text": "Step 5 · The advisor loop: who decides the next step"
+      },
+      {
+        "kind": "paragraph",
+        "text": "This is the heart of the flow. When it finishes the code for a task, the assistant doesn't decide what to do next. It runs `node .chalc/next.mjs` and the advisor answers with three lines: the action, the reason and, when it applies, the exact command. The assistant obeys, asks again and repeats until the answer is `done`."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "node .chalc/next.mjs",
+          "NEXT_ACTION: run_gate",
+          "REASON: You touched code at 15:04 and the evidence is from 14:32: it measures the old code.",
+          "COMMAND: node .chalc/gate.mjs"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why a script and not a list of steps in the instructions? Because a list is remembered by whoever benefits from forgetting it. Before, the assistant could run the gate, keep touching code and tick the task with stale evidence. The advisor remembers nothing: every time it looks at the disk — the evidence date, the gate's verdict, the reviewers' log, the checkboxes in `tasks.md` — and applies a fixed priority table. The first row that matches is the one in charge:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`blocked_config`**: the gate is missing configuration. When equipping, chalc couldn't tell which command runs the tests or the mutation in this repository, and left the field empty in `gate.json` instead of inventing it. What can't be checked is blocked; it is never approved.",
+          "**`run_gate`**: there is changed code and no current evidence. Time to run `node .chalc/gate.mjs`, which measures tests, mutation score (≥ 80% by default) with the surviving mutants, one thing per file, duplication, security signals, layer boundaries, traceability to an `R#` and contract routes. It leaves the report in `.chalc/gate.md`.",
+          "**`fix_gate`**: the gate failed. If it's mutation, what's missing are tests that kill mutants, not retries.",
+          "**`call_role`**: the evidence is green and review is due. First `seguridad`, which leaves one line per OWASP category (A01 to A10, plus MASVS in mobile apps): reviewed with file and line, or not applicable with its reason. Then `revisor`, which judges what a script can't see: whether the test checks the requirement or just tags along, whether an abstraction is unnecessary, whether a name lies.",
+          "**`fix_review`**: a role left findings. They get fixed and the cycle measures again. A security finding is fixed starting with a test that proves the vulnerability.",
+          "**`tick_task`**: everything is in order. First `node .chalc/memory.mjs capture` runs, storing what the task taught, and then the checkbox in `tasks.md` gets ticked. If approvals are on, the assistant stops and waits for my OK.",
+          "**`work_task`**: the next pending task, along with up to five memory rules that apply to it.",
+          "**Feature-level `call_role`**: with no tasks pending, the `endurecedor` steps in and audits invalid input, error paths, edge cases and failing dependencies. It runs at the end of the feature and not on every task because each pass is a model call, and repeating it across twenty tasks almost always turns up the same thing.",
+          "**`done`**: the feature is closed. Its command is one last memory capture, because what the hardener leaves only exists at the end."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And there's an emergency exit: **`ask_human`**. If the advisor can't read the state — there's no `tasks.md`, a review is missing its full checklist, a memory rule was left unconfirmed — it doesn't guess: it hands control back, and the assistant stops to tell me what happened. I prefer a question to an invented \"done\"."
+      },
+      {
+        "kind": "paragraph",
+        "text": "When `chalc feature` splits a story across back, front and mobile in worktree mode, two more actions appear before measuring: `sync_contract`, when the API contract changed on the side that defines it and your copy went stale, and `read_mail`, when there are unread notices in the mailbox. I told that story in [one contract, three lanes](/daily/one-contract-three-lanes)."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/spec-to-done.en.svg",
+        "caption": "From the sentence to the commit: three files with an approval in between, a per-task loop the advisor drives by reading the disk, the hardener at the end and the commit, which I sign."
+      },
+      {
+        "kind": "heading",
+        "text": "What information is stored along the way, and why on disk"
+      },
+      {
+        "kind": "paragraph",
+        "text": "During the loop a handful of files get written inside `.chalc/`. Each one answers a question that, without it, only the conversation's memory could answer."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "**`.chalc/gate.md`**: what did the gate measure? Date, branch, every command with its exit code and duration, the score, the survivors and the findings. It is the human-readable version: I read it before making the commit.",
+          "**`.chalc/gate.state.json`**: the same result, but for machines. Verdict, branch, commit and a fingerprint of the reviewed content. If someone touches the code afterwards, the fingerprint stops matching and the advisor asks to measure again.",
+          "**`.chalc/task.json`**: the baseline, that is, the commit sealed when the last task closed. That way the next review measures from there and not from the start of the branch.",
+          "**`.chalc/task.files`**: the paths written in the current task, if you use the hook. It is emptied when the task closes.",
+          "**`.chalc/review.md`**: the roles' log, where entries are only appended at the end. Without that trail nobody could check the review happened; with it, the advisor verifies each entry is newer than the evidence and belongs to the right commit.",
+          "**`.chalc/memory/memory.jsonl`**: what was learned, one line per entry and append-only. It gets committed: any assistant and the whole team read it.",
+          "**`specs/NNN-name/tasks.md`**: the checkboxes. It is the simplest progress counter there is, and that's why it works."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Why all of this on disk and not in a database or in the conversation? For three concrete reasons. First: **it doesn't depend on the assistant**. `claude --continue` resumes a conversation, but only inside Claude Code. If I start a feature with Claude and continue it with Gemini CLI or Codex — because I ran out of quota, because another model handles that part better, or because a teammate picks it up with a different tool — the conversation doesn't travel with it. The disk does: I equip the project again for the new assistant (`chalc --target gemini`), and its advisor reads the same checkboxes, the same evidence and the same memory, and tells it exactly where the work stands. Second: **the model doesn't certify itself**. A sentence like \"mutation score 92%\" can be written without running anything; the tool's report, with its date, can't. Third: **it's plain text next to the code**. It can be versioned with git, reviewed in a pull request and read by anyone, whether or not chalc is installed."
+      },
+      {
+        "kind": "heading",
+        "text": "Memory: so what was learned isn't repeated"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Every assistant session starts from zero. Without memory, a mistake the project already fixed in spec 004 can come back in spec 009, written by the same model with the same confidence."
+      },
+      {
+        "kind": "paragraph",
+        "text": "chalc's memory doesn't ask the model to decide what to keep. When each task closes, `memory.mjs capture` reads what was already written: the `Learned rule (<concept>): …` lines the roles left in `review.md`, the tasks marked `[bug]` and every security suppression with its reason. It stores them by **concept**, not by word: \"amount\", \"fee\" or \"money\" all land in the same concept, so a rule learned while talking about amounts reaches a spec that talks about fees."
+      },
+      {
+        "kind": "paragraph",
+        "text": "It also loads lazily: nothing comes in when the session starts. When the advisor answers `work_task` or `call_role`, it looks at which concepts the task is about and attaches at most five one-line rules. Each role has to confirm every rule it received (complies, doesn't comply, or not applicable with its reason); if one is missing, the advisor answers `ask_human`. A memory nobody is required to read isn't memory: it's a file."
+      },
+      {
+        "kind": "quote",
+        "text": "Finding the smallest possible set of high-signal tokens that maximize the likelihood of some desired outcome.",
+        "source": "Anthropic's Applied AI Team · Effective context engineering for AI agents, 2025",
+        "sourceUrl": "https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents"
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is the same logic behind skills on demand and the five rules per task: the disk can hold thousands of entries, but only what the current task needs reaches the context window."
+      },
+      {
+        "kind": "heading",
+        "text": "When it's really done"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The assistant can say \"done\" whenever it likes; what counts is the advisor answering `done`. That only happens when all of this holds at once:"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Every checkbox in `tasks.md` is ticked.",
+          "Every task closed with green gate evidence, complete (not a quick run without mutation), from this branch and for the current content.",
+          "`seguridad` and `revisor` left their `OK` on every task, after that evidence.",
+          "The `endurecedor` left its `OK` on the whole feature.",
+          "Every task stored in the memory what it taught."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "And then the last step is mine: I read `gate.md`, review the diff and make the commit. I sign the commit, because the advisor says the process was followed, not that the product is the right one."
+      },
+      {
+        "kind": "heading",
+        "text": "What it doesn't promise"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The gate and the advisor protect against the slips of an agent that cooperates, not against one that wants to cheat. Anyone who can write to the repository — a person or an agent with terminal access — can lower the thresholds in `gate.json` or hand-write a green result. There is no way to hide a secret on your machine from someone with the same access you have. What chalc does is not cover it up: if someone loosens the configuration, the report says so at the top. And if you need a real guarantee, the gate has to run in CI as well, on a server where the agent can't touch anything."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Something similar happens with the review roles. Ideally, a reviewer reads the code without being able to change it. Claude Code is the only one of the five assistants that lets you give each subagent its own tools; in the others, \"you review, you don't touch\" is a written instruction, and chalc warns you about it when equipping. Even in Claude Code, a role writing only to its log depends on what its prompt says, not on a lock. What is guaranteed is the consequence: if a role touches the code, the evidence fingerprint stops matching and the advisor forces a new measurement. It can break the rule, but not without it showing."
+      },
+      {
+        "kind": "heading",
+        "text": "What actually gets better"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I come back to a project after a week and don't have to reconstruct where I was: I ask the advisor. The gate, the advisor and the memory are the same with any of the five assistants, because they live in the repository and not in the tool. When the AI says a task is closed, there's a file that proves it or a script that refuses. And what a review taught in March is still there in October, without anyone having to remember it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If you want to see projects built this way, they're in [my projects](/projects); and if your team wants to work like this, take a look at [for companies](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc-cli-adapter](https://github.com/ChristianCruzArango/chalc-cli-adapter) — the code behind everything in this note: `lib/init.mjs`, `catalog/next/`, `catalog/gate/` and `catalog/memory/`.",
+          "[Effective harnesses for long-running agents](https://www.anthropic.com/engineering/effective-harnesses-for-long-running-agents) — Justin Young, Anthropic, 2025: why an agent needs progress files and git to pick work back up across sessions.",
+          "[Effective context engineering for AI agents](https://www.anthropic.com/engineering/effective-context-engineering-for-ai-agents) — Anthropic, 2025: why loading little and well beats loading everything.",
+          "[GitHub Spec Kit](https://github.com/github/spec-kit) — the basis of the constitution, specify, plan and tasks flow the method follows.",
+          "[Stryker Mutator](https://stryker-mutator.io/) — the mutation testing tool whose report the gate reads in JavaScript, TypeScript and .NET projects.",
+          "[When the AI says \"task done\", how do you know it's true?](/daily/close-a-task-with-evidence) — the note where I explain the gate and the advisor from the inside."
+        ]
+      }
+    ]
+  }
+}

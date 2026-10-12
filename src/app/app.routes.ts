@@ -37,5 +37,9 @@ export const routes: Routes = [
     path: 'daily',
     loadChildren: () => import('./features/blog/blog.routes').then((m) => m.BLOG_ROUTES),
   },
+  {
+    path: 'chranta',
+    loadChildren: () => import('./features/chranta/chranta.routes').then((m) => m.CHRANTA_ROUTES),
+  },
   { path: '**', redirectTo: '' },
 ];

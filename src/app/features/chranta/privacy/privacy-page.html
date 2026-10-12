@@ -1,0 +1,37 @@
+<article class="section policy" [attr.lang]="current()">
+  <nav class="policy__languages" aria-label="Language">
+    @for (lang of languages; track lang) {
+      <a
+        [routerLink]="['/chranta/privacy', lang]"
+        [attr.hreflang]="lang"
+        [attr.aria-current]="lang === current() ? 'page' : null"
+      >
+        {{ policies[lang].languageName }}
+      </a>
+    }
+  </nav>
+
+  <header class="section__head">
+    <p class="section__kicker">Chranta</p>
+    <h1 class="section__title">{{ policy().title }}</h1>
+    <p class="policy__updated">{{ policy().updated }}</p>
+  </header>
+
+  <p class="policy__intro">{{ policy().intro }}</p>
+
+  @for (section of policy().sections; track section.heading) {
+    <section class="policy__section">
+      <h2>{{ section.heading }}</h2>
+      @for (paragraph of section.paragraphs; track paragraph) {
+        <p>{{ paragraph }}</p>
+      }
+      @if (section.bullets; as bullets) {
+        <ul>
+          @for (bullet of bullets; track bullet) {
+            <li>{{ bullet }}</li>
+          }
+        </ul>
+      }
+    </section>
+  }
+</article>

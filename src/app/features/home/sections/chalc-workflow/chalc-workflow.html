@@ -1,0 +1,77 @@
+<section id="chalc-workflow" class="workflow" [class.workflow--playing]="playing()" aria-labelledby="chalc-title">
+  <header class="workflow__head">
+    <p class="section__kicker">{{ 'chalc.kicker' | t }}</p>
+    <h2 class="section__title workflow__title" id="chalc-title">{{ 'chalc.title' | t }}</h2>
+    <p class="workflow__intro">{{ 'chalc.intro' | t }}</p>
+    <span class="workflow__demo">{{ 'chalc.demo' | t }}</span>
+  </header>
+
+  <div class="workflow__progress" aria-hidden="true">
+    <span class="workflow__progress-fill" [style.transform]="'scaleX(' + ((activeIndex() + 1) / steps.length) + ')'"></span>
+  </div>
+
+  <div class="workflow__workspace">
+    <nav class="workflow__stages" [attr.aria-label]="'chalc.stages' | t">
+      <span class="workflow__rail" aria-hidden="true">
+        <span class="workflow__rail-fill" [style.transform]="'scaleY(' + (activeIndex() / (steps.length - 1)) + ')'"></span>
+      </span>
+      <ol>
+        @for (step of steps; track step.id) {
+          <li>
+            <button type="button" class="workflow__step" [attr.data-step]="step.id"
+              [attr.aria-current]="$index === activeIndex() ? 'step' : null"
+              aria-controls="chalc-stage" (click)="selectStep($index)">
+              <span class="workflow__number" aria-hidden="true">0{{ $index + 1 }}</span>
+              <span>{{ ('chalc.step.' + step.id + '.title') | t }}</span>
+            </button>
+          </li>
+        }
+      </ol>
+    </nav>
+
+    <div class="workflow__panel" id="chalc-stage">
+      <div class="workflow__position" aria-live="polite" aria-atomic="true">
+        {{ 'chalc.step' | t }} 0{{ activeIndex() + 1 }} / 07
+        <span aria-hidden="true">—</span> {{ ('chalc.step.' + activeStep().id + '.title') | t }}
+      </div>
+      <h3>{{ ('chalc.step.' + activeStep().id + '.title') | t }}</h3>
+      <div class="workflow__controls" [attr.aria-label]="'chalc.controls' | t">
+        <button type="button" class="workflow__previous" [disabled]="activeIndex() === 0" (click)="selectStep(activeIndex() - 1)">
+          <span aria-hidden="true">←</span> {{ 'chalc.previous' | t }}
+        </button>
+        <button type="button" class="workflow__play" [disabled]="reducedMotion()" [attr.aria-pressed]="playing()"
+          aria-describedby="chalc-playback-note" (click)="togglePlayback()">
+          <span aria-hidden="true">{{ playing() ? 'Ⅱ' : '▷' }}</span>
+          {{ (playing() ? 'chalc.pause' : 'chalc.play') | t }}
+        </button>
+        <button type="button" class="workflow__next" [disabled]="activeIndex() === steps.length - 1" (click)="selectStep(activeIndex() + 1)">
+          {{ 'chalc.next' | t }} <span aria-hidden="true">→</span>
+        </button>
+      </div>
+      <p class="workflow__motion-note" id="chalc-playback-note">{{ (reducedMotion() ? 'chalc.manual' : 'chalc.playback') | t }}</p>
+
+      <app-chalc-agent-scene [stepIndex]="activeIndex()" [playing]="playing()" [reducedMotion]="reducedMotion()" (stageRequested)="selectStep($event)" />
+      <p class="workflow__reference"><code>{{ activeStep().reference }}</code></p>
+
+      <div class="workflow__results">
+      <div class="workflow__artifact">
+        <span class="workflow__sheet" aria-hidden="true"><span></span><span></span><span></span></span>
+        <div>
+          <h4>{{ 'chalc.artifact' | t }}</h4>
+          <p>{{ ('chalc.step.' + activeStep().id + '.artifact') | t }}</p>
+        </div>
+      </div>
+      <div class="workflow__gate">
+        <h4>{{ 'chalc.continue' | t }}</h4>
+        <p>{{ ('chalc.step.' + activeStep().id + '.gate') | t }}</p>
+      </div>
+      </div>
+
+
+    </div>
+  </div>
+
+  <a class="workflow__source" href="https://github.com/ChristianCruzArango/chalc-cli-adapter" target="_blank" rel="noopener noreferrer">
+    {{ 'chalc.source' | t }} <span aria-hidden="true">↗</span>
+  </a>
+</section>

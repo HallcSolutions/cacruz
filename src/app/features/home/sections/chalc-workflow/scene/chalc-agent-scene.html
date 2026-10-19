@@ -1,0 +1,116 @@
+<ng-template #avatar let-role>
+  <svg class="agent" viewBox="0 0 100 112" aria-hidden="true">
+    <ellipse cx="50" cy="105" rx="28" ry="4" class="agent__shadow" />
+    <path d="M33 87v15M67 87v15" class="agent__limb" />
+    <rect x="28" y="51" width="44" height="40" rx="12" class="agent__body" />
+    <path d="M28 60L15 73l9 7" class="agent__limb agent__arm" />
+    <path d="M72 60l13 13-9 7" class="agent__limb" />
+    <path d="M50 9v8" class="agent__antenna" />
+    <circle cx="50" cy="8" r="3" class="agent__signal" />
+    <rect x="22" y="18" width="56" height="35" rx="12" class="agent__head" />
+    <rect x="29" y="27" width="42" height="16" rx="6" class="agent__visor" />
+    <circle cx="39" cy="35" r="3" class="agent__eye" /><circle cx="61" cy="35" r="3" class="agent__eye" />
+    @if (role === 'leader') {
+      <rect x="40" y="62" width="20" height="19" rx="2" class="agent__badge" />
+      <path d="M44 67h12M44 72h12M44 77h7" class="agent__mark" />
+    } @else if (role === 'developer') {
+      <path d="m42 64-7 7 7 7m16-14 7 7-7 7m-5-15-6 17" class="agent__mark" />
+    } @else {
+      <circle cx="48" cy="69" r="8" class="agent__badge" />
+      <path d="m54 75 8 8m-19-14 4 4 7-8" class="agent__mark" />
+    }
+  </svg>
+</ng-template>
+
+<div class="scene" [class.scene--static]="!animationStarted() || reducedMotion()"
+  [class.scene--reduced]="reducedMotion()" [attr.data-active-agent]="scene().agent"
+  [attr.data-reduced-motion]="reducedMotion()"
+  [style.animation-play-state]="playing() && !reducedMotion() ? 'running' : 'paused'">
+  <div class="scene__stage" [class.scene__stage--review]="scene().id === 'review'">
+    <div class="scene__endpoint scene__input">
+      @if (scene().id === 'review') {
+        <span class="scene__review-developer"><ng-container [ngTemplateOutlet]="avatar" [ngTemplateOutletContext]="{ $implicit: 'developer' }" /></span>
+        <span>{{ 'chalc.actor.developer' | t }}</span>
+      } @else {
+        <span class="scene__paper" aria-hidden="true"></span>
+        <span>{{ ('chalc.object.' + scene().input) | t }}</span>
+      }
+    </div>
+
+    <div class="scene__working-agent">
+      @for (frame of [scene()]; track frame.id) {
+        <div class="scene__performer">
+          @if (frame.agent === 'tool') {
+            <svg class="scene__machine" viewBox="0 0 100 112" aria-hidden="true">
+              <rect x="15" y="28" width="70" height="57" rx="9" />
+              <path d="M27 39h46v18H27zM33 69h34M33 76h22M27 90h46" />
+              <circle cx="35" cy="48" r="3" /><circle cx="50" cy="48" r="3" /><circle cx="65" cy="48" r="3" />
+            </svg>
+          } @else if (frame.agent === 'human') {
+            <svg class="scene__human" viewBox="0 0 100 112" aria-hidden="true">
+              <circle cx="50" cy="31" r="17" /><path d="M20 98V81c0-23 60-23 60 0v17M28 100h44M35 66l15 15 15-15" />
+            </svg>
+          } @else {
+            <ng-container [ngTemplateOutlet]="avatar" [ngTemplateOutletContext]="{ $implicit: frame.agent }" />
+          }
+        </div>
+      }
+      <strong class="scene__actor">{{ ('chalc.actor.' + scene().agent) | t }}</strong>
+    </div>
+
+    <div class="scene__endpoint scene__output">
+      @if (scene().id === 'review') {
+        <span class="scene__review-gate" aria-hidden="true">▤</span>
+        <span>Gate</span>
+      } @else {
+        <span class="scene__paper scene__paper--output" aria-hidden="true"></span>
+        <span>{{ ('chalc.object.' + scene().output) | t }}</span>
+      }
+    </div>
+
+    @for (frame of [scene()]; track frame.id) {
+      <div class="scene__motion" aria-hidden="true">
+        <span class="scene__document scene__document--incoming">{{ ('chalc.object.' + frame.input) | t }}</span>
+        @if (frame.id !== 'review') {
+          <span class="scene__document scene__document--outgoing">{{ ('chalc.object.' + frame.output) | t }}</span>
+        }
+        @if (frame.id === 'review') {
+          <span class="scene__return" data-destination="developer">{{ 'chalc.object.finding' | t }} <small>→ {{ 'chalc.actor.developer' | t }}</small></span>
+          <span class="scene__correction">{{ 'chalc.object.change' | t }}</span>
+          <span class="scene__recheck">{{ 'chalc.object.evidence' | t }}</span>
+        }
+      </div>
+    }
+  </div>
+
+  <p class="scene__purpose workflow__explanation">{{ ('chalc.scene.' + scene().id + '.purpose') | t }}</p>
+  <p class="scene__handoff">{{ ('chalc.scene.' + scene().id + '.handoff') | t }}</p>
+
+  @if (scene().id === 'review') {
+    <div class="scene__feedback" [attr.aria-label]="'chalc.recheck' | t">
+      <span>{{ 'chalc.object.finding' | t }}</span><span aria-hidden="true">→</span>
+      <span>{{ 'chalc.actor.developer' | t }}</span><span aria-hidden="true">→</span>
+      <span>{{ 'chalc.recheck' | t }}</span><span aria-hidden="true">→</span>
+      <span>{{ 'chalc.actor.reviewer' | t }}</span>
+    </div>
+  }
+
+  @if (scene().id === 'gate') {
+    <ul class="scene__checks">
+      <li>{{ 'chalc.check.tests' | t }}</li><li>{{ 'chalc.check.mutation' | t }}</li>
+      <li>{{ 'chalc.check.clarity' | t }}</li><li>{{ 'chalc.check.architecture' | t }}</li>
+      <li>{{ 'chalc.check.security' | t }}</li>
+    </ul>
+  }
+
+  <nav class="scene__roles" [attr.aria-label]="'chalc.roles' | t">
+    @for (role of roles; track role.id) {
+      <button type="button" class="scene__role" [attr.data-role]="role.id"
+        [attr.aria-pressed]="scene().agent === role.id" (click)="stageRequested.emit(role.stepIndex)">
+        <ng-container [ngTemplateOutlet]="avatar" [ngTemplateOutletContext]="{ $implicit: role.id }" />
+        <span>{{ ('chalc.actor.' + role.id) | t }}</span>
+      </button>
+    }
+  </nav>
+  <p class="scene__tools">{{ 'chalc.tools' | t }}</p>
+</div>

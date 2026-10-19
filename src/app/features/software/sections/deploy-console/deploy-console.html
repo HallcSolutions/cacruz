@@ -63,14 +63,6 @@
                         <li>{{ highlight }}</li>
                       }
                     </ul>
-                    <p class="console__built">
-                      <span class="console__built-label"
-                        >$ {{ 'software.builtWith' | t }}:</span
-                      >
-                      @for (tech of product.stack; track tech) {
-                        <span class="console__badge">{{ tech }}</span>
-                      }
-                    </p>
                     <div class="console__actions">
                       @if (product.url) {
                         <a

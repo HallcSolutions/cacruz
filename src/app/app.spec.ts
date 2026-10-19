@@ -76,4 +76,10 @@ describe('App', () => {
     fixture.detectChanges();
     expect(host.querySelector('.shell__nav--open')).toBeNull();
   });
+  it('offers the game as a secondary footer destination and keeps Home in navigation (professional-home R5)', () => {
+    const host = render();
+    expect(host.querySelector<HTMLAnchorElement>('.shell__footer a[href="/world"]')?.textContent).toContain('3D');
+    expect(host.querySelector('.shell__nav a[href="/"]')).toBeTruthy();
+    expect(host.querySelectorAll('.shell__nav a[href="/world"]').length).toBe(0);
+  });
 });

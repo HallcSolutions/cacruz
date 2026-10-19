@@ -56,3 +56,38 @@ describe('SoftwareContentService', () => {
     expect(service.products.value()).toEqual(FAKE_PRODUCTS);
   });
 });
+
+describe('Published Chranta content (professional-home R19)', () => {
+  for (const [language, tagline, localAi, confirmedDraft, encrypted] of [
+    ['es', 'Finanzas personales con IA local', /dispositivo/, /confirm/, /cifrad/],
+    ['en', 'Personal finance with on-device AI', /device/, /confirm/, /encrypt/],
+  ] as const) {
+    it(`publishes the verified Chranta catalogue in ${language} (R19)`, async () => {
+      const response = await fetch(`/content/software.${language}.json`);
+      expect(response.ok).toBeTrue();
+      const products = await response.json() as Product[];
+      const matches = products.filter((product) => product.id === 'chranta');
+      expect(matches.length).toBe(1);
+      const chranta = matches[0];
+      if (!chranta) return;
+
+      expect(chranta.name).toBe('Chranta');
+      expect(chranta.tagline).toBe(tagline);
+      expect(chranta.description).toMatch(localAi);
+      expect(chranta.description).toMatch(confirmedDraft);
+      expect(chranta.description).toMatch(encrypted);
+      expect(chranta.highlights.length).toBe(4);
+      expect(chranta.stack).toEqual(['Flutter', 'Dart', 'Qwen3-0.6B', 'SQLCipher']);
+      expect(chranta.logo).toBe('images/software/chranta.png');
+      expect(chranta.appStoreUrl).toBe('https://apps.apple.com/co/app/chranta/id6819862051');
+      expect(chranta.url).toBeUndefined();
+      expect(chranta.playStoreUrl).toBeUndefined();
+    });
+  }
+
+  it('serves the original Chranta icon as a PNG (R19)', async () => {
+    const response = await fetch('/images/software/chranta.png');
+    expect(response.ok).toBeTrue();
+    expect(response.headers.get('content-type')).toContain('image/png');
+  });
+});

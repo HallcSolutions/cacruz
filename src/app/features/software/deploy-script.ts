@@ -8,6 +8,7 @@ export const DEPLOY_LINE_TICK_MS = 300;
  * Los logs van en inglés, como en una terminal real; la UI alrededor es la que se traduce.
  */
 export function buildDeployScript(product: Product): string[] {
+  const publicUrl = product.url ?? product.appStoreUrl ?? product.playStoreUrl;
   return [
     `$ git clone hallc/${product.id}.git`,
     `  Cloning into '${product.id}'... done.`,
@@ -18,7 +19,7 @@ export function buildDeployScript(product: Product): string[] {
     '$ npm test',
     '  all tests passed ✓',
     '$ deploy --production',
-    product.url ? `● LIVE → ${hostOf(product.url)}` : '● READY — coming soon',
+    publicUrl ? `● LIVE → ${hostOf(publicUrl)}` : '● READY — coming soon',
   ];
 }
 

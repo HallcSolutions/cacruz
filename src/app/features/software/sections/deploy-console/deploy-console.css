@@ -207,11 +207,6 @@
     flex-direction: column;
   }
 
-  /* la etiqueta del prompt toma su propia línea y las insignias fluyen debajo */
-  .console__built-label {
-    flex-basis: 100%;
-  }
-
   /* botones apilados a ancho completo, centrados: legibles y fáciles de tocar */
   .console__actions {
     flex-direction: column;
@@ -256,37 +251,6 @@
   position: absolute;
   left: 0;
   color: var(--accent);
-}
-
-/* tecnologías reales como insignias amigables */
-.console__built {
-  margin: 0 0 1rem;
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-}
-
-.console__built-label {
-  color: var(--accent);
-  margin-right: 0.2rem;
-}
-
-.console__badge {
-  border: 1px solid color-mix(in srgb, var(--accent) 35%, transparent);
-  border-radius: 999px;
-  padding: 0.22rem 0.7rem;
-  font-size: 0.74rem;
-  color: var(--text);
-  background: color-mix(in srgb, var(--accent) 9%, transparent);
-  transition: background-color 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease;
-}
-
-.console__badge:hover {
-  background: color-mix(in srgb, var(--accent) 20%, transparent);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 22px -12px color-mix(in srgb, var(--accent) 70%, transparent);
 }
 
 .console__actions {

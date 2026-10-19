@@ -89,6 +89,27 @@
       "PWA",
       "OpenRouter"
     ],
+    "url": "https://crafdish.com/",
     "logo": "images/software/craftdish.png"
+  },
+  {
+    "id": "chranta",
+    "name": "Chranta",
+    "tagline": "Finanzas personales con IA local",
+    "description": "Organiza ingresos, gastos y deudas y consulta cómo va tu mes. Su asistente de IA funciona en el dispositivo y propone borradores que revisas y confirmas antes de guardar, con datos locales cifrados y sin necesidad de una cuenta.",
+    "highlights": [
+      "Ingresos, gastos y deudas en una sola vista para entender tu mes",
+      "Presupuestos y metas de ahorro para organizar tu dinero",
+      "Consultas y registro asistido con IA local: revisas y confirmas cada borrador",
+      "Datos locales cifrados con SQLCipher, sin crear una cuenta"
+    ],
+    "stack": [
+      "Flutter",
+      "Dart",
+      "Qwen3-0.6B",
+      "SQLCipher"
+    ],
+    "logo": "images/software/chranta.png",
+    "appStoreUrl": "https://apps.apple.com/co/app/chranta/id6819862051"
   }
 ]

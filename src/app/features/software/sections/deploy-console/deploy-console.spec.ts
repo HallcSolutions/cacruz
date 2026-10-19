@@ -87,8 +87,8 @@ describe('DeployConsole', () => {
     expect(host(fixture).querySelector('.console__counter')?.textContent).toContain('1/2');
   }));
 
-  // R68 — la ficha muestra el logo en grande y la línea "hecho con"
-  it('shows the big logo and the built-with line in the card (R68)', fakeAsync(() => {
+  // R68, professional-home R22 — logo y contenido sin etiquetas de tecnologías
+  it('shows the big logo without technology labels in the card (R68, R22)', fakeAsync(() => {
     const fixture = render();
     host(fixture).querySelectorAll<HTMLButtonElement>('.console__deploy')[0].click();
     tick(FULL_DEPLOY_MS);
@@ -98,10 +98,11 @@ describe('DeployConsole', () => {
     expect(card?.querySelector('.console__card-logo')?.getAttribute('src')).toBe(
       'images/software/craftiva.png',
     );
-    const badges = Array.from(card?.querySelectorAll('.console__badge') ?? []).map((badge) =>
-      badge.textContent?.trim(),
-    );
-    expect(badges).toEqual(['Angular 20', 'NestJS 11']);
+    expect(card?.querySelector('.console__built')).toBeNull();
+    expect(card?.querySelectorAll('.console__badge').length).toBe(0);
+    expect(card?.textContent).not.toContain('hecho con');
+    expect(card?.textContent).not.toContain('Angular 20');
+    expect(card?.textContent).not.toContain('NestJS 11');
   }));
 
   // R70 — apps publicadas: enlaces reales a las tiendas

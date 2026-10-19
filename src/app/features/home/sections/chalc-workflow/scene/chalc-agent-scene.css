@@ -1,0 +1,103 @@
+:host { display: block; }
+.scene { margin-block: 1.5rem; padding: 1rem; border: 1px solid var(--border); border-radius: .4rem; background: var(--bg); }
+.scene * { animation-play-state: inherit !important; }
+.scene__stage { position: relative; container-type: inline-size; min-height: 12rem; display: grid; grid-template-columns: 1fr 1fr 1fr; align-items: start; gap: .7rem; padding: .5rem 0 2.8rem; }
+.scene__stage::before { content: ''; position: absolute; inset-inline: 12%; top: 44%; height: 1px; background: var(--border); }
+.scene__endpoint { display: grid; justify-items: center; gap: .6rem; z-index: 1; padding-block-start: 1.8rem; text-align: center; color: var(--text-muted); font: .62rem/1.5 var(--font-mono); }
+.scene__paper { display: block; width: 1.8rem; height: 2.3rem; border: 1px solid var(--text-muted); border-radius: .2rem; background: var(--bg); }
+.scene__paper::before { content: ''; display: block; width: 60%; height: 1px; margin: .6rem auto; background: var(--text-muted); box-shadow: 0 .3rem var(--text-muted), 0 .6rem var(--text-muted); }
+.scene__paper--output { border-color: var(--accent); }
+.scene__working-agent { display: grid; justify-items: center; gap: .4rem; z-index: 1; background: var(--bg); }
+.scene__performer > .agent, .scene__machine, .scene__human { width: clamp(4.5rem, 10vw, 6rem); height: auto; }
+.scene__actor { color: var(--accent); font: .7rem var(--font-mono); text-align: center; }
+.agent__shadow { fill: #0008; }
+.agent__head, .agent__body { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+.agent__limb, .agent__antenna { fill: none; stroke: var(--accent); stroke-width: 5; stroke-linecap: round; stroke-linejoin: round; }
+.agent__antenna { stroke-width: 2; }
+.agent__visor { fill: #292331; }
+.agent__eye, .agent__signal { fill: var(--accent); }
+.agent__badge { fill: var(--bg); stroke: var(--accent); stroke-width: 1.5; }
+.agent__mark { fill: none; stroke: var(--accent); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.scene__working-agent .agent__arm { transform-origin: 28px 60px; animation: agent-receive 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__machine, .scene__human { fill: var(--surface); stroke: var(--accent); stroke-width: 1.5; }
+.scene__machine path, .scene__human path { fill: none; }
+.scene__machine circle { fill: var(--accent); }
+.scene__motion { position: absolute; inset: 0; z-index: 2; pointer-events: none; }
+.scene__motion > span { position: absolute; top: 76%; left: 50%; min-width: 4.5rem; padding: .35rem .45rem; border: 1px solid var(--accent); border-radius: .2rem; background: var(--surface); color: var(--accent-2); font: .58rem/1.4 var(--font-mono); text-align: center; }
+.scene__document--incoming { animation: document-receive 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__document--outgoing { animation: document-send 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__performer { display: grid; place-items: center; animation: agent-enter-exit 6s cubic-bezier(.23, 1, .32, 1) both; }
+.scene__review-developer .agent { width: 3.6rem; }
+.scene__review-gate { display: grid; place-items: center; width: 3.6rem; height: 4rem; border: 1px solid var(--border); border-radius: .3rem; color: var(--accent); background: var(--surface); font-size: 1.6rem; }
+.scene__motion small { display: block; font-size: .5rem; }
+.scene__return { animation: finding-return 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__correction { animation: correction-check 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__recheck { animation: evidence-review 6s cubic-bezier(.77, 0, .175, 1) both; }
+.scene__stage--review .scene__document { animation-name: review-receive; }
+.scene__purpose { margin: .6rem 0 .4rem; color: var(--text); font-size: .85rem; line-height: 1.6; }
+.scene__handoff { margin: 0 0 1rem; color: var(--text-muted); font-size: .75rem; line-height: 1.7; }
+.scene__roles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .5rem; padding-block-start: 1rem; border-top: 1px solid var(--border); }
+.scene__role { display: flex; align-items: center; justify-content: center; gap: .3rem; min-width: 0; min-height: 3.1rem; padding: .4rem; border: 1px solid var(--border); border-radius: .3rem; background: var(--bg); color: var(--text-muted); font: .7rem var(--font-body); cursor: pointer; }
+.scene__role .agent { width: 1.8rem; flex-shrink: 0; }
+.scene__role[aria-pressed='true'] { color: var(--text); border-color: var(--accent); background: var(--accent-soft); }
+.scene__role:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.scene__tools { margin: 1rem 0 0; color: var(--text-muted); font: .6rem/1.8 var(--font-mono); }
+.scene__feedback { display: flex; flex-wrap: wrap; gap: .4rem; color: var(--accent); font: .65rem/1.7 var(--font-mono); margin-block-end: 1.2rem; }
+.scene__checks { display: flex; flex-wrap: wrap; gap: .4rem; list-style: none; padding: 0; margin: 0 0 1.2rem; }
+.scene__checks li { border: 1px solid var(--border); border-radius: .2rem; padding: .3rem .5rem; color: var(--text-muted); font: .65rem/1.5 var(--font-mono); }
+.scene--static .scene__motion { inset: auto .1rem .1rem; display: flex; justify-content: center; flex-wrap: wrap; gap: .25rem; }
+.scene--static .scene__motion > span { position: static; min-width: 0; transform: none; opacity: 1; animation: none; }
+.scene--static .agent__arm, .scene--static .scene__performer { animation: none; opacity: 1; transform: none; }
+
+@keyframes document-receive {
+  0%, 10% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 1; }
+  35%, 44% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 1; }
+  45%, 100% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 0; }
+}
+@keyframes document-send {
+  0%, 49% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 0; }
+  50% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 1; }
+  85%, 100% { transform: translate(-50%, -50%) translateX(32cqw); opacity: 1; }
+}
+@keyframes agent-enter-exit {
+  0% { transform: translateY(.7rem); opacity: 0; }
+  16%, 86% { transform: translateY(0); opacity: 1; }
+  100% { transform: translateY(-.5rem); opacity: 0; }
+}
+@keyframes agent-receive {
+  0%, 15%, 85%, 100% { transform: rotate(0deg); }
+  35%, 65% { transform: rotate(-24deg); }
+}
+@keyframes review-receive {
+  0% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 1; }
+  25% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 1; }
+  30%, 100% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 0; }
+}
+@keyframes finding-return {
+  0%, 29% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 0; }
+  30% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 1; }
+  48% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 1; }
+  50%, 100% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 0; }
+}
+@keyframes correction-check {
+  0%, 49% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 0; }
+  50% { transform: translate(-50%, -50%) translateX(-32cqw); opacity: 1; }
+  72% { transform: translate(-50%, -50%) translateX(32cqw); opacity: 1; }
+  74%, 100% { transform: translate(-50%, -50%) translateX(32cqw); opacity: 0; }
+}
+@keyframes evidence-review {
+  0%, 73% { transform: translate(-50%, -50%) translateX(32cqw); opacity: 0; }
+  74% { transform: translate(-50%, -50%) translateX(32cqw); opacity: 1; }
+  95%, 100% { transform: translate(-50%, -50%) translateY(-2rem); opacity: 1; }
+}
+@media (max-width: 480px) {
+  .scene { padding: .7rem; }
+  .scene__role { flex-direction: column; font-size: .65rem; }
+  .scene__motion > span { font-size: .52rem; min-width: 3.8rem; }
+}
+@media (hover: hover) and (pointer: fine) {
+  .scene__role:hover { border-color: var(--accent); color: var(--text); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .scene .scene__motion > span, .scene .agent__arm, .scene .scene__performer { animation: none; opacity: 1; transform: none; }
+}

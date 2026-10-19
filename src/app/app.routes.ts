@@ -3,6 +3,11 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
+    pathMatch: 'full',
+    loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),
+  },
+  {
+    path: 'world',
     loadChildren: () => import('./features/world/world.routes').then((m) => m.WORLD_ROUTES),
   },
   {

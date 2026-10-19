@@ -352,3 +352,6 @@
     color: var(--accent);
   }
 }
+
+.shell__world-link { display: inline-flex; align-items: center; gap: .8rem; min-height: 2.75rem; color: var(--accent); font-size: .8rem; }
+.shell__world-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }

@@ -1,4 +1,29 @@
-<app-hero />
+<app-hero (contactRequested)="contactOpen.set(true)" />
+
+<app-chalc-workflow />
+
+<section class="work" id="selected-work" aria-labelledby="work-title">
+  <header class="work__head">
+    <p class="section__kicker">{{ 'home.work.kicker' | t }}</p>
+    <h2 class="section__title" id="work-title">{{ 'home.work.title' | t }}</h2>
+    <p class="work__intro">{{ 'home.work.intro' | t }}</p>
+  </header>
+  <div class="work__cases">
+    @for (item of cases; track item.id) {
+      <article class="work-case">
+        <span class="work-case__number" aria-hidden="true">0{{ $index + 1 }}</span>
+        <h3>{{ ('home.case.' + item.id + '.name') | t }}</h3>
+        <p class="work-case__problem">{{ ('home.case.' + item.id + '.problem') | t }}</p>
+        <p class="work-case__approach">{{ ('home.case.' + item.id + '.approach') | t }}</p>
+        <p class="work-case__evidence">{{ ('home.case.' + item.id + '.evidence') | t }}</p>
+        <a [href]="item.repoUrl" target="_blank" rel="noopener noreferrer"
+          [attr.aria-label]="('home.work.repository' | t) + ' — ' + (('home.case.' + item.id + '.name') | t)">
+          {{ 'home.work.repository' | t }} <span aria-hidden="true">↗</span>
+        </a>
+      </article>
+    }
+  </div>
+</section>
 
 @if (highlights().length) {
   <app-tech-constellation [items]="highlights()" />
@@ -30,6 +55,15 @@
     <span class="explore__arrow" aria-hidden="true">→</span>
   </a>
 </nav>
+
+<aside class="world-invite" aria-labelledby="world-invite-title">
+  <div>
+    <p class="world-invite__label">{{ 'home.world.label' | t }}</p>
+    <h2 id="world-invite-title">{{ 'home.world.title' | t }}</h2>
+    <p>{{ 'home.world.body' | t }}</p>
+  </div>
+  <a class="world-invite__link" routerLink="/world">{{ 'home.world.link' | t }} <span aria-hidden="true">↗</span></a>
+</aside>
 
 <section class="contact" id="contact" appRevealOnScroll>
   <h2 class="contact__title">{{ 'contact.section.title' | t }}</h2>

@@ -89,6 +89,27 @@
       "PWA",
       "OpenRouter"
     ],
+    "url": "https://crafdish.com/",
     "logo": "images/software/craftdish.png"
+  },
+  {
+    "id": "chranta",
+    "name": "Chranta",
+    "tagline": "Personal finance with on-device AI",
+    "description": "Organize income, expenses and debts and see how your month is going. Its AI assistant runs on your device and proposes drafts you review and confirm before saving, with encrypted local data and no account required.",
+    "highlights": [
+      "Income, expenses and debts in one view to understand your month",
+      "Budgets and savings goals to organize your money",
+      "Questions and assisted entry with on-device AI: review and confirm every draft",
+      "Local data encrypted with SQLCipher, without creating an account"
+    ],
+    "stack": [
+      "Flutter",
+      "Dart",
+      "Qwen3-0.6B",
+      "SQLCipher"
+    ],
+    "logo": "images/software/chranta.png",
+    "appStoreUrl": "https://apps.apple.com/co/app/chranta/id6819862051"
   }
 ]

@@ -108,3 +108,39 @@
     opacity: 0;
   }
 }
+
+/* Casos propios: problema, implementación y una evidencia que se puede abrir. */
+.work { padding-block: 2rem 4rem; scroll-margin-top: 7rem; }
+.work__head { max-width: 48rem; margin-block-end: 2.5rem; }
+.work__intro { color: var(--text-muted); margin-block: 1.3rem 0; }
+.work__cases { display: grid; gap: 0; border-top: 1px solid var(--border); }
+.work-case { min-width: 0; display: flex; flex-direction: column; padding: 2rem 0; border-bottom: 1px solid var(--border); }
+.work-case__number { font: .75rem var(--font-mono); color: var(--accent); }
+.work-case h3 { font: 400 2rem var(--font-display); margin: 1rem 0; }
+.work-case__problem { margin: 0 0 .9rem; font-weight: 600; font-size: 1rem; line-height: 1.6; }
+.work-case__approach { margin: 0 0 1.4rem; color: var(--text-muted); font-size: .9rem; line-height: 1.8; }
+.work-case__evidence { margin: auto 0 1rem; padding-inline-start: 1rem; border-inline-start: 2px solid var(--accent); color: var(--text-muted); font: .75rem/1.8 var(--font-mono); }
+.work-case a { display: inline-flex; align-items: center; gap: 1rem; align-self: start; min-height: 2.75rem; color: var(--accent); font-size: .85rem; }
+.work-case a:hover { color: var(--text); }
+.work-case a:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+@media (min-width: 800px) {
+  .work__cases { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .work-case { padding: 2rem; border-inline-end: 1px solid var(--border); }
+  .work-case:first-child { padding-inline-start: 0; }
+  .work-case:last-child { padding-inline-end: 0; border-inline-end: 0; }
+}
+
+.world-invite { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1.5rem; padding: 2rem 0; border-block: 1px solid var(--border); }
+.world-invite__label { margin: 0 0 .6rem; color: var(--accent); font: .7rem var(--font-mono); text-transform: uppercase; letter-spacing: .12em; }
+.world-invite h2 { margin: 0; font: 400 clamp(1.5rem, 4vw, 2rem) var(--font-display); }
+.world-invite p:last-child { color: var(--text-muted); font-size: .9rem; margin: .6rem 0 0; }
+.world-invite__link { display: inline-flex; align-items: center; gap: 1.5rem; min-height: 3rem; color: var(--accent); font-size: .85rem; }
+.world-invite__link:focus-visible, .contact__cta:focus-visible, .explore__link:focus-visible { outline: 2px solid var(--accent); outline-offset: 5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .contact__title, .contact__caret { animation: none; }
+  .contact__cta, .explore__link, .explore__arrow, .reveal { transition: none; }
+  .reveal { opacity: 1; transform: none; }
+  .contact__cta:hover, .explore__link:hover .explore__arrow { transform: none; }
+  .explore__link:hover { padding-left: .5rem; }
+}

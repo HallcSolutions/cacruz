@@ -35,6 +35,35 @@ describe('buildDeployScript', () => {
     expect(lines[lines.length - 1]).toContain('appcraftiva.com');
   });
 
+  for (const [store, host] of [
+    ['appStoreUrl', 'apps.apple.com'],
+    ['playStoreUrl', 'play.google.com'],
+  ] as const) {
+    it(`ends live for an app published only through ${store} (R19)`, () => {
+      const product = { ...SOON_PRODUCT, [store]: `https://${host}/app/chranta` };
+      const lines = buildDeployScript(product);
+      expect(lines.at(-1)).toBe(`● LIVE → ${host}`);
+    });
+  }
+
+  it('prefers the website over both store destinations (R19)', () => {
+    const lines = buildDeployScript({
+      ...LIVE_PRODUCT,
+      appStoreUrl: 'https://apps.apple.com/app/chranta',
+      playStoreUrl: 'https://play.google.com/store/apps/chranta',
+    });
+    expect(lines.at(-1)).toBe('● LIVE → appcraftiva.com');
+  });
+
+  it('prefers App Store when there is no website and both stores exist (R19)', () => {
+    const lines = buildDeployScript({
+      ...SOON_PRODUCT,
+      appStoreUrl: 'https://apps.apple.com/app/chranta',
+      playStoreUrl: 'https://play.google.com/store/apps/chranta',
+    });
+    expect(lines.at(-1)).toBe('● LIVE → apps.apple.com');
+  });
+
   // R64 — sin URL pública termina como "coming soon", nunca con enlace
   it('ends as coming soon when there is no public url (R64)', () => {
     const lines = buildDeployScript(SOON_PRODUCT);

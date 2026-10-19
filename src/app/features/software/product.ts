@@ -1,4 +1,4 @@
-/** Un producto real construido por Christian; sin `url` aún no es público (R64). */
+/** Un producto real de Christian; web o tienda indican un destino público (R64, R19). */
 export interface Product {
   id: string;
   name: string;

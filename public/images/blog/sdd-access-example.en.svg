@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 400" role="img" aria-labelledby="visual-title visual-description"><title id="visual-title">SDD: from an example to a reviewed specification</title><desc id="visual-description">The empty-password example becomes part of a visual document. Its requirements are completed and approved before the document is handed to the coding agent.</desc><defs>
+    <linearGradient id="background" x2="1" y2="1">
+      <stop stop-color="#0d0b16" />
+      <stop offset="1" stop-color="#181329" />
+    </linearGradient>
+    <linearGradient id="panel" x2="1" y2="1">
+      <stop stop-color="#1c172b" />
+      <stop offset="1" stop-color="#110e1b" />
+    </linearGradient>
+    <symbol id="person" viewBox="0 0 64 64">
+      <circle cx="32" cy="20" r="11" />
+      <path d="M12 57v-8c0-11 9-18 20-18s20 7 20 18v8" />
+    </symbol>
+    <symbol id="key" viewBox="0 0 64 64">
+      <circle cx="21" cy="25" r="13" />
+      <path d="m31 34 22 22m-8-8 8-8m-16 0 8-8" />
+      <circle cx="17" cy="21" r="2" fill="currentColor" stroke="none" />
+    </symbol>
+    <symbol id="lock" viewBox="0 0 64 64">
+      <path d="M19 28v-9a13 13 0 0 1 26 0v9" />
+      <rect x="12" y="28" width="40" height="29" rx="8" />
+      <path d="M32 39v8" />
+    </symbol>
+    <symbol id="check" viewBox="0 0 32 32">
+      <path d="m7 16 6 6L26 9" />
+    </symbol>
+    <symbol id="cross" viewBox="0 0 32 32">
+      <path d="m9 9 14 14m0-14L9 23" />
+    </symbol>
+    <symbol id="alert" viewBox="0 0 32 32">
+      <path d="M16 5 29 27H3Z" stroke-linejoin="round" />
+      <path d="M16 12v6m0 4v.2" />
+    </symbol>
+    <symbol id="arrow" viewBox="0 0 32 32">
+      <path d="M5 16h22m-8-8 8 8-8 8" />
+    </symbol>
+    <symbol id="refactor" viewBox="0 0 40 40">
+      <path d="M9 16a12 12 0 0 1 21-5l3 4m0-10v10H23M31 24a12 12 0 0 1-21 5l-3-4m0 10V25h10" />
+    </symbol>
+    <symbol id="robot" viewBox="0 0 100 120">
+      <path d="M50 20V8m-8 0h16" />
+      <rect x="17" y="22" width="66" height="47" rx="16" fill="#241c38" />
+      <circle cx="36" cy="44" r="4" fill="#a78bfa" stroke="none" />
+      <circle cx="64" cy="44" r="4" fill="#a78bfa" stroke="none" />
+      <path d="M39 57h22M28 74v29m44-29v29M28 83l-13 9m57-9 13 9M37 104v11m26-11v11" />
+      <rect x="29" y="73" width="42" height="31" rx="9" fill="#181329" />
+      <path d="m46 83-6 6 6 6m8-12 6 6-6 6" />
+    </symbol>
+    <symbol id="mini-spec" viewBox="0 0 48 62">
+      <path d="M5 2h27l11 11v47H5Z" fill="#211a34" />
+      <path d="M31 2v12h12M13 22h21M13 30h21M13 38h12" />
+      <circle cx="33" cy="47" r="9" fill="#12362e" stroke="#34d399" />
+      <path d="m29 47 3 3 6-7" stroke="#34d399" />
+    </symbol>
+  </defs>
+  <style>
+    svg { --ease-out: cubic-bezier(.23,1,.32,1); --ease-in-out: cubic-bezier(.77,0,.175,1); }
+    .card { fill: url(#panel); stroke: #3a3052; stroke-width: 1.5; }
+    .label { fill: #ece7fb; font: 600 32px ui-monospace,monospace; letter-spacing: 2px; }
+    .ink { fill: none; stroke: #c9bff0; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; }
+    .muted { stroke: #66567f; }
+    .violet { stroke: #a78bfa; }
+    .green { stroke: #34d399; }
+    .red { stroke: #fb7185; }
+    .join { fill: none; stroke: #66567f; stroke-width: 2; stroke-linecap: round; }
+    .tile { fill: #171222; stroke: #66567f; stroke-width: 1.8; }
+    .node { fill: #211a34; stroke: #a78bfa; stroke-width: 2; }
+    .dot { fill: #a78bfa; }
+    .packet { animation: model-packet 12s var(--ease-in-out) infinite; }
+    .rule-error { animation: rule-error 12s var(--ease-out) infinite; }
+    .model-focus { animation: model-focus 12s var(--ease-out) infinite; }
+    .cursor { animation: click-form 12s var(--ease-in-out) infinite; }
+    .click-ring { transform-box: fill-box; transform-origin: center; animation: click-ring 12s var(--ease-out) infinite; }
+    .form-error { animation: form-error 12s var(--ease-out) infinite; }
+    .conversation { animation: conversation 12s var(--ease-out) infinite; }
+    .spec-row-one { animation: row-one 12s var(--ease-out) infinite; }
+    .spec-row-two { animation: row-two 12s var(--ease-out) infinite; }
+    .spec-row-three { animation: row-three 12s var(--ease-out) infinite; }
+    .approval { animation: approval 12s var(--ease-out) infinite; }
+    .delivery { animation: delivery 12s var(--ease-in-out) infinite; }
+    .agent-ready { animation: agent-ready 12s var(--ease-out) infinite; }
+    .test-red { animation: test-red 12s var(--ease-out) infinite; }
+    .test-green { animation: test-green 12s var(--ease-out) infinite; }
+    .code-piece { animation: code-piece 12s var(--ease-out) infinite; }
+    .code-piece-two { animation-delay: .2s; }
+    .code-piece-three { animation-delay: .4s; }
+    .tidy-first { animation: tidy-first 12s var(--ease-in-out) infinite; }
+    .tidy-second { animation: tidy-second 12s var(--ease-in-out) infinite; }
+    .tidy-third { animation: tidy-third 12s var(--ease-in-out) infinite; }
+    .refactor-active { animation: refactor-active 12s var(--ease-out) infinite; }
+    @keyframes model-packet {
+      0%,8% { transform: translateX(0); opacity: 0; }
+      13% { opacity: 1; }
+      30%,39% { transform: translateX(53px); opacity: 1; }
+      47%,100% { transform: translateX(53px); opacity: 0; }
+    }
+    @keyframes rule-error { 0%,28%,96%,100% { opacity: 0; } 35%,89% { opacity: 1; } }
+    @keyframes model-focus { 0%,22%,96%,100% { opacity: .2; } 32%,89% { opacity: 1; } }
+    @keyframes click-form {
+      0%,10%,94%,100% { transform: translate(0,0); }
+      30%,82% { transform: translate(-25px,-26px); }
+    }
+    @keyframes click-ring {
+      0%,31% { opacity: 0; transform: scale(.95); }
+      34% { opacity: .9; transform: scale(1); }
+      43%,100% { opacity: 0; transform: scale(1.3); }
+    }
+    @keyframes form-error { 0%,34%,96%,100% { opacity: 0; } 41%,89% { opacity: 1; } }
+    @keyframes conversation { 0%,4%,94%,100% { opacity: .3; } 12%,30% { opacity: 1; } 45%,85% { opacity: .5; } }
+    @keyframes row-one { 0%,5%,98%,100% { opacity: .15; } 14%,92% { opacity: 1; } }
+    @keyframes row-two { 0%,19%,98%,100% { opacity: .15; } 28%,92% { opacity: 1; } }
+    @keyframes row-three { 0%,32%,98%,100% { opacity: .15; } 41%,92% { opacity: 1; } }
+    @keyframes approval { 0%,44%,98%,100% { opacity: 0; } 51%,92% { opacity: 1; } }
+    @keyframes delivery {
+      0%,53% { opacity: 0; transform: translate(0,0); }
+      58% { opacity: 1; transform: translate(0,0); }
+      76% { opacity: 1; transform: translate(92px,-20px); }
+      82%,100% { opacity: 0; transform: translate(108px,-20px); }
+    }
+    @keyframes agent-ready { 0%,75%,98%,100% { opacity: 0; } 81%,92% { opacity: 1; } }
+    @keyframes test-red { 0%,33% { opacity: 1; } 43%,92% { opacity: 0; } 98%,100% { opacity: 1; } }
+    @keyframes test-green { 0%,43%,98%,100% { opacity: 0; } 51%,92% { opacity: 1; } }
+    @keyframes code-piece { 0%,20%,98%,100% { opacity: 0; transform: translateY(7px); } 32%,92% { opacity: 1; transform: translateY(0); } }
+    @keyframes tidy-first { 0%,65%,100% { transform: translateX(0); } 76%,93% { transform: translateX(16px); } }
+    @keyframes tidy-second { 0%,65%,100% { transform: translateX(0); } 76%,93% { transform: translateX(-12px); } }
+    @keyframes tidy-third { 0%,65%,100% { transform: translateX(0); } 76%,93% { transform: translateX(8px); } }
+    @keyframes refactor-active { 0%,65%,98%,100% { opacity: .18; } 76%,93% { opacity: 1; } }
+
+.section-label { fill: #ece7fb; font: 600 78px ui-monospace,monospace; letter-spacing: 2px; }
+</style>
+
+  <rect width="1000" height="400" rx="22" fill="url(#background)" /><rect class="card" x="18" y="18" width="964" height="364" rx="22" /><text class="section-label" x="60" y="225">SDD</text><path d="M290 80v240" fill="none" stroke="#3a3052" stroke-width="1.5" /><g transform="translate(340 -56) scale(1.35)"><circle class="node" cx="62" cy="192" r="32" />
+    <use href="#person" x="37" y="164" width="50" height="50" class="ink violet" />
+    <path class="join" d="M96 192h64m136 0h53" />
+    <use href="#arrow" x="119" y="179" width="26" height="26" class="ink muted" />
+    <use href="#arrow" x="308" y="179" width="26" height="26" class="ink muted" />
+    <g class="ink muted">
+      <path d="M43 97h80v48H90l-14 13v-13H43Z" fill="#211a34" />
+      <rect x="54" y="110" width="35" height="20" rx="4" />
+      <use href="#alert" x="96" y="109" width="20" height="20" class="ink red" />
+    </g>
+    <path d="M168 83h96l30 30v181H168Z" fill="#211a34" stroke="#a78bfa" stroke-width="2.5" stroke-linejoin="round" />
+    <path class="ink violet" d="M264 83v31h30" />
+    <path d="M185 130h68" stroke="#66567f" stroke-width="4" stroke-linecap="round" />
+    <g class="spec-row-one ink">
+      <use href="#person" x="181" y="145" width="24" height="24" />
+      <path class="muted" d="M217 151h57m-57 11h43" />
+    </g>
+    <g class="spec-row-two ink">
+      <rect x="184" y="187" width="45" height="26" rx="5" stroke="#a78bfa" />
+      <use href="#key" x="188" y="192" width="16" height="16" class="muted" />
+      <use href="#arrow" x="232" y="190" width="21" height="21" class="muted" />
+      <use href="#alert" x="259" y="188" width="23" height="23" class="red" />
+    </g>
+    <g class="spec-row-three ink muted">
+      <rect x="184" y="233" width="13" height="13" rx="3" />
+      <path d="M207 239h58M184 262h49" />
+    </g>
+    <g class="approval">
+      <circle cx="285" cy="280" r="22" fill="#12362e" stroke="#34d399" stroke-width="2" />
+      <use href="#check" x="271" y="266" width="28" height="28" class="ink green" />
+    </g>
+    <use href="#robot" x="344" y="137" width="92" height="111" class="ink violet" />
+    <g class="delivery">
+      <use href="#mini-spec" x="263" y="207" width="35" height="45" class="ink violet" />
+    </g>
+    <g class="agent-ready">
+      <circle cx="390" cy="274" r="17" fill="#12362e" stroke="#34d399" stroke-width="2" />
+      <use href="#check" x="378" y="262" width="24" height="24" class="ink green" />
+    </g>
+  </g></svg>

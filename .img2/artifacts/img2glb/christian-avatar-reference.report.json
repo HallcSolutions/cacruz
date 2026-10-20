@@ -1,0 +1,9 @@
+{
+  "plugin": "img2glb",
+  "input": "/Users/christiancruz/Desktop/Repositorios/cacruz/specs/002-developer-monster-encounter/christian-avatar-reference.png",
+  "glb": "/Users/christiancruz/Desktop/Repositorios/cacruz/.img2/artifacts/img2glb/christian-avatar-reference.glb",
+  "extensionsRequired": [],
+  "compressed": false,
+  "meshes": 1,
+  "materials": 1
+}

@@ -1,0 +1,422 @@
+{
+  "slug": "sdd-bdd-tdd-ddd-when-to-use-each",
+  "date": "2026-10-20",
+  "title": {
+    "es": "SDD, BDD, TDD y DDD: qué pregunta responde cada uno y por qué los combino",
+    "en": "SDD, BDD, TDD and DDD: which question each one answers and why I combine them"
+  },
+  "summary": {
+    "es": "Qué aportan DDD, BDD, SDD y TDD al desarrollar con agentes de IA, cómo se complementan y qué flujo configura Chalc. Ejemplos de dominio, comportamiento, especificación y pruebas, con sus fuentes y límites.",
+    "en": "What DDD, BDD, SDD and TDD contribute to AI-assisted development, how they complement each other and which workflow Chalc configures. Examples of domain modeling, behavior, specifications and tests, with sources and limits."
+  },
+  "tags": [
+    "sdd",
+    "bdd",
+    "tdd",
+    "ddd",
+    "metodología"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "En mi trabajo con agentes de IA uso Chalc para organizar especificaciones, tareas y comprobaciones. Esta nota explica cómo se relaciona ese flujo con ideas de SDD, BDD, TDD y DDD. Son enfoques con alcances distintos: no forman una cadena de etapas obligatorias. Para compararlos usaré el ejemplo de una pantalla de acceso."
+      },
+      {
+        "kind": "quote",
+        "text": "Dominio, ejemplos, especificación y pruebas pueden contribuir al mismo cambio. Revisar uno de esos aspectos puede llevar a revisar los demás."
+      },
+      {
+        "kind": "heading",
+        "text": "DDD: entender el negocio y representarlo en el software"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Qué es: DDD significa Domain-Driven Design, diseño guiado por el dominio. El dominio es la actividad del negocio que el software debe representar. Diseño el sistema junto a quienes conocen esa actividad y construyo un modelo: conceptos, reglas y relaciones expresados en código, con un lenguaje compartido.",
+          "Para qué sirve: ayuda a decidir qué responsabilidad tiene cada parte del sistema y a qué parte corresponde cada regla. Resulta especialmente útil cuando el negocio tiene reglas complejas o cambia con frecuencia. Así puedo revisar cómo afecta una nueva regla al modelo y a sus límites. [Martin Fowler, 2020](https://martinfowler.com/bliki/DomainDrivenDesign.html) explica el enfoque.",
+          "Ejemplo: si acordamos que una cuenta bloqueada no puede iniciar sesión, el modelo debe representar sus estados y la regla que permite o rechaza el acceso. Ese acuerdo orienta las responsabilidades de la cuenta y su relación con el acceso al sistema.",
+          "En Chalc: la plantilla de especificación incluye conceptos, contexto, historias, requisitos y dudas. Ese registro puede apoyar el vocabulario compartido. Aplicar DDD implica además modelar las reglas y delimitar sus contextos con quienes conocen el negocio; esas decisiones de diseño requieren trabajo del equipo."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ddd-access-example.es.svg",
+        "caption": "Regla del ejemplo: una cuenta bloqueada no permite iniciar sesión."
+      },
+      {
+        "kind": "heading",
+        "text": "BDD: acordar el comportamiento con ejemplos"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Qué es: BDD significa Behavior-Driven Development, desarrollo guiado por comportamiento. Es una forma de colaborar entre quienes conocen el negocio, desarrollan y prueban el software. Acordamos cómo debe funcionar una característica mediante ejemplos concretos que después podemos automatizar como pruebas. [Dan North, 2006](https://dannorth.net/blog/introducing-bdd/) explica su origen en el trabajo con TDD. La [guía de Cucumber](https://cucumber.io/docs/bdd/) describe sus prácticas de descubrimiento, formulación y automatización.",
+          "Para qué sirve: permite descubrir dudas antes de implementar. Una frase como «validar el acceso» deja preguntas abiertas; conversar sobre ejemplos aclara qué espera la persona usuaria y qué resultado debemos comprobar.",
+          "Ejemplo: acordamos que, si alguien envía el formulario sin contraseña, debe ver un error junto al campo. Ese caso concreta el comportamiento esperado y sirve de referencia para comprobar la implementación.",
+          "En Chalc: las plantillas conservan historias y requisitos. Aquí uso Gherkin como ejemplo de formulación del comportamiento esperado. El trabajo de BDD incluye descubrir y acordar esos ejemplos con las personas implicadas y conectarlos con pruebas; ese proceso colaborativo va más allá de rellenar una plantilla."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/bdd-access-example.es.svg",
+        "caption": "Un ejemplo acordado: enviar el formulario sin contraseña y ver el aviso."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "# language: es",
+          "Característica: validar el inicio de sesión",
+          "  Escenario: contraseña vacía",
+          "    Dado que estoy en la pantalla de acceso",
+          "    Cuando envío el formulario sin contraseña",
+          "    Entonces veo el error junto al campo"
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "SDD: conservar el acuerdo que guía la implementación"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Qué es: SDD significa Spec-Driven Development, desarrollo guiado por especificación. Antes de implementar, escribo y reviso una especificación (spec): un documento que explica qué debe hacer el software, por qué se necesita, qué incluye el cambio y cómo comprobaremos que cumple lo acordado. Ese documento guía el trabajo de las personas y de la IA.",
+          "Para qué sirve: hace explícitas las decisiones que un agente necesita para trabajar y deja visibles las preguntas pendientes. También ofrece una referencia para revisar el resultado. La especificación ayuda a reducir ambigüedades; su cumplimiento debe comprobarse con pruebas y revisión.",
+          "Ejemplo: convierto «validar el acceso» en un requisito identificado como R2: al enviar el formulario sin contraseña, el sistema debe mostrar un error junto al campo. Así queda escrito un resultado concreto que puedo verificar.",
+          "En Chalc: el método SDD establece constitución, especificación, plan, tareas e implementación con TDD. La spec conserva historias, requisitos con identificador, alcance y dudas. Es el orden de trabajo definido por Chalc; SDD tiene otras variantes, como explica [Birgitta Böckeler, 2025](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html)."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-access-example.es.svg",
+        "caption": "El comportamiento acordado se convierte en una especificación para el agente."
+      },
+      {
+        "kind": "paragraph",
+        "text": "EARS es una notación para redactar requisitos. La [guía de Alistair Mavin](https://alistairmavin.com/ears/) incluye requisitos incondicionales (`The <system name> shall <response>`) y patrones para eventos (`WHEN`), estados (`WHILE`), funcionalidades opcionales (`WHERE`) y comportamientos no deseados (`IF … THEN`). Las plantillas de Chalc recogen estos cuatro últimos patrones. En el caso de R2, el requisito y el escenario expresan el mismo comportamiento; después derivo las pruebas que lo comprueban."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ears-vs-gherkin.es.svg",
+        "caption": "El ejemplo acordado y el requisito R2 se conectan con la prueba que verifica el resultado."
+      },
+      {
+        "kind": "heading",
+        "text": "TDD: usar una prueba para guiar el siguiente cambio"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Qué es: TDD significa Test-Driven Development, desarrollo guiado por pruebas. Es una técnica para construir software en ciclos pequeños: escribo una prueba para el siguiente comportamiento, confirmo que falla por la razón esperada, implemento lo necesario para que pase y refactorizo el código para reorganizarlo sin cambiar su comportamiento. [Martin Fowler, 2023](https://martinfowler.com/bliki/TestDrivenDevelopment.html) describe este ciclo.",
+          "Para qué sirve: obliga a concretar el resultado esperado y a pensar cómo se usará el código antes de implementarlo. Las pruebas dan una respuesta rápida sobre ese comportamiento y pueden detectar regresiones cuando modifico el sistema.",
+          "Ejemplo: primero escribo una prueba que espera el error junto al campo al enviar una contraseña vacía. Compruebo que falla porque falta ese comportamiento, implemento la validación y ejecuto la prueba de nuevo. Después reorganizo el código manteniendo las pruebas en verde.",
+          "En Chalc: vinculo las pruebas con el requisito que comprueban, como R2, para revisar el trabajo del agente. Reviso también los casos de prueba y las aserciones, es decir, las comprobaciones del resultado. La utilidad de una prueba depende de lo que verifica. Las pruebas escritas después también pueden detectar errores; en TDD las uso desde el inicio para guiar el desarrollo."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/tdd-access-example.es.svg",
+        "caption": "La prueba falla, se implementa el cambio y se reorganiza el código mientras la prueba sigue en verde."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "R2 — WHEN el usuario envía el formulario sin contraseña",
+          "     THE SYSTEM SHALL mostrar el error junto al campo",
+          "",
+          "it('muestra el error junto al campo (R2)')   ✗ rojo",
+          "→ implementación mínima                    ✓ verde",
+          "→ refactor                                 ✓ verde",
+          "→ comprobaciones adicionales de Chalc"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Las pruebas de mutación comprueban si las pruebas detectan cambios introducidos en el código. El método de Chalc las pide cuando hay código al que aplicarlas y su gate usa, por defecto, un umbral del 80 %, configurable por proyecto. Es una política de la herramienta, no una regla de TDD ni una garantía de ausencia de errores. Un mutante superviviente necesita revisión: puede señalar un caso sin cubrir o ser equivalente al código original, como explica [Stryker](https://stryker-mutator.io/docs/stryker-js/disable-mutants/). Lo desarrollo en [por qué escribo el test primero](/daily/why-the-test-comes-first)."
+      },
+      {
+        "kind": "heading",
+        "text": "Cómo se complementan en un mismo cambio"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-story-layers.es.svg",
+        "caption": "Cuatro aportes sobre el mismo caso. Las conexiones muestran relación, no una secuencia entre metodologías."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "DDD aporta el modelo: qué significa cuenta, qué estados tiene y qué reglas gobiernan su acceso. Ese modelo evoluciona al aprender más del negocio.",
+          "BDD aporta el acuerdo sobre el comportamiento: las personas implicadas concretan ejemplos como el aviso que debe aparecer al enviar una contraseña vacía.",
+          "SDD aporta una especificación que guía el cambio. En el ejemplo, R2 registra el comportamiento acordado; en Chalc, las tareas se vinculan con esos requisitos.",
+          "TDD aporta el ciclo de desarrollo: una prueba falla por el comportamiento pendiente, se implementa lo necesario para pasarla y se refactoriza. Las nuevas dudas pueden llevar a revisar los ejemplos, el modelo o la especificación."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Por qué amplío una historia antes de delegarla a la IA"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Una historia expresa quién quiere algo y para qué. Los ejemplos y criterios de aceptación aclaran los detalles: ¿qué pasa con una contraseña vacía?, ¿cuándo se bloquea una cuenta?, ¿entra «recordarme» en este cambio? Personas y agentes pueden asumir respuestas distintas si dejamos esos puntos abiertos. En mi flujo, las decisiones pendientes se marcan y se resuelven antes de implementar lo afectado. La spec conserva lo acordado para que el equipo y el agente puedan consultarlo y revisarlo."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-to-spec.es.svg",
+        "caption": "La historia se concreta en decisiones, requisitos completos y preguntas por resolver."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuánto utilizo cada enfoque"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Adapto el esfuerzo al riesgo y a la complejidad. Profundizo en el modelo de dominio cuando entender y cambiar las reglas lo requiere. Para trabajar con BDD, elijo cómo descubrir, documentar y comprobar los ejemplos con las personas implicadas; Cucumber es una opción de herramienta. Mantengo la spec tan pequeña como permita el cambio y amplío el detalle donde haya ambigüedad. Un prototipo puede ayudar a explorar una duda, y el resultado sigue necesitando validación antes de entregarse. Estas son decisiones de aplicación, no una secuencia universal entre las cuatro siglas."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-when-to-use.es.svg",
+        "caption": "Ajusto modelado, documentación y pruebas según el riesgo y la complejidad."
+      },
+      {
+        "kind": "heading",
+        "text": "Otras prácticas que complementan el trabajo"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "ATDD, Acceptance Test-Driven Development: negocio, desarrollo y pruebas acuerdan pruebas de aceptación antes de implementar. Un requisito EARS puede servir de base para ellas; ejecutarlas requiere código de prueba o un procedimiento de comprobación. [Agile Alliance](https://agilealliance.org/glossary/atdd/) explica el enfoque y su relación con BDD.",
+          "Evaluaciones de agentes de IA: permiten comprobar resultados y comportamientos del agente con casos y criterios definidos. Pueden combinar comprobaciones de código, evaluación con modelos y revisión humana, según la tarea. Complementan las pruebas de software; [Anthropic, 2026](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) describe sus componentes y sus límites.",
+          "DDT, Data-Driven Testing: ejecuto una lógica de prueba con distintas filas de datos. Puede utilizarse dentro de TDD o con pruebas escritas después. [test.each de Vitest](https://vitest.dev/api/test#test-each) muestra una implementación concreta.",
+          "FDD, Feature-Driven Development: es un proceso de desarrollo organizado alrededor de funcionalidades con valor para el cliente. Su alcance es distinto al de una notación de requisitos o una técnica para escribir pruebas. [Scott Ambler](https://agilemodeling.com/essays/fdd.htm) describe sus actividades y su carácter iterativo."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-other-acronyms.es.svg",
+        "caption": "ATDD, evaluaciones de IA, pruebas con datos y FDD: objetivos y alcances diferentes."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html) — Martin Fowler, 2020: modelo de dominio, lenguaje común y contextos.",
+          "[Introducing BDD](https://dannorth.net/blog/introducing-bdd/) — Dan North, 2006: su evolución a partir del trabajo con TDD y la conexión con el lenguaje del dominio.",
+          "[Behaviour-Driven Development](https://cucumber.io/docs/bdd/) — Cucumber: descubrimiento, formulación y automatización como prácticas colaborativas.",
+          "[EARS](https://alistairmavin.com/ears/) — Alistair Mavin: sintaxis y patrones para redactar requisitos.",
+          "[Understanding Spec-Driven Development](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Birgitta Böckeler, 2025: diferencias entre enfoques y herramientas de SDD.",
+          "[Test Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) — Martin Fowler, 2023: el ciclo rojo, verde y refactorización.",
+          "[Acceptance Test Driven Development](https://agilealliance.org/glossary/atdd/) — Agile Alliance: pruebas de aceptación acordadas antes de implementar.",
+          "[Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — Anthropic, 2026: evaluaciones con distintos tipos de comprobación.",
+          "[test.each](https://vitest.dev/api/test#test-each) — Vitest: pruebas parametrizadas.",
+          "[Feature-driven development](https://agilemodeling.com/essays/fdd.htm) — Scott Ambler: funcionalidades, modelado y entrega incremental en FDD.",
+          "[Stryker: mutantes equivalentes](https://stryker-mutator.io/docs/stryker-js/disable-mutants/) — por qué un mutante superviviente puede conservar el comportamiento original.",
+          "[Chalc en mis proyectos](/projects) y [el recorrido de una funcionalidad](/daily/from-one-sentence-to-a-closed-feature) — cómo llevo especificación, implementación, revisión y evidencia al trabajo diario."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "In my work with AI agents, I use Chalc to organize specifications, tasks and checks. This note explains how that workflow relates to ideas from SDD, BDD, TDD and DDD. These approaches have different scopes: they do not form a mandatory chain of stages. I will compare them using an example sign-in screen."
+      },
+      {
+        "kind": "quote",
+        "text": "Domain modeling, examples, specifications and tests can contribute to the same change. Revisiting one of these aspects may lead us to revisit the others."
+      },
+      {
+        "kind": "heading",
+        "text": "DDD: understand the business and represent it in software"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "What it is: DDD means Domain-Driven Design. The domain is the business activity the software needs to represent. I design the system with people who understand that activity and build a model: concepts, rules and relationships expressed in code, using a shared language.",
+          "What it is for: it helps decide each part of the system’s responsibilities and where each rule belongs. It is especially useful when business rules are complex or change frequently. I can then examine how a new rule affects the model and its boundaries. [Martin Fowler, 2020](https://martinfowler.com/bliki/DomainDrivenDesign.html) explains the approach.",
+          "Example: if we agree that a locked account cannot sign in, the model needs to represent its states and the rule that allows or denies access. This agreement guides the account’s responsibilities and its relationship with access to the system.",
+          "In Chalc: the specification template includes concepts, context, stories, requirements and questions. This record can support a shared vocabulary. Applying DDD also involves modeling rules and defining their contexts with people who understand the business; those design decisions require the team’s work."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ddd-access-example.en.svg",
+        "caption": "The example rule: a locked account cannot sign in."
+      },
+      {
+        "kind": "heading",
+        "text": "BDD: agree on behavior through examples"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "What it is: BDD means Behavior-Driven Development. It is a way for people who understand the business, develop software and test it to collaborate. We agree on how a feature should work through concrete examples that we can later automate as tests. [Dan North, 2006](https://dannorth.net/blog/introducing-bdd/) explains its origins in work with TDD. The [Cucumber guide](https://cucumber.io/docs/bdd/) describes its discovery, formulation and automation practices.",
+          "What it is for: it helps uncover questions before implementation. A phrase such as “validate sign-in” leaves questions open; discussing examples clarifies what the user expects and which result we need to check.",
+          "Example: we agree that someone submitting the form with no password should see an error next to the field. This case makes the expected behavior concrete and becomes a reference for checking the implementation.",
+          "In Chalc: the templates preserve stories and requirements. Here I use Gherkin as an example of how to formulate expected behavior. BDD involves discovering and agreeing on those examples with the people involved and connecting them to tests; that collaborative process extends beyond filling in a template."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/bdd-access-example.en.svg",
+        "caption": "An agreed example: submit the form with an empty password and see the warning."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "Feature: validate sign-in",
+          "  Scenario: empty password",
+          "    Given I am on the sign-in screen",
+          "    When I submit the form with no password",
+          "    Then I see the error next to the field"
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "SDD: preserve the agreement that guides implementation"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "What it is: SDD means Spec-Driven Development. Before implementation, I write and review a specification, or spec: a document explaining what the software should do, why it is needed, what the change includes and how we will recognize that it meets the agreement. This document guides the work of people and AI.",
+          "What it is for: it makes the decisions an agent needs explicit and keeps open questions visible. It also provides a reference for reviewing the result. The specification helps reduce ambiguity; tests and review are still needed to check compliance.",
+          "Example: I turn “validate sign-in” into a requirement identified as R2: when the form is submitted with no password, the system must show an error next to the field. This records a concrete result that I can verify.",
+          "In Chalc: the SDD method defines constitution, specification, plan, tasks and implementation with TDD. The spec preserves stories, identified requirements, scope and questions. This is the workflow defined by Chalc; SDD has other variants, as [Birgitta Böckeler, 2025](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) explains."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sdd-access-example.en.svg",
+        "caption": "The agreed behavior becomes a specification for the agent."
+      },
+      {
+        "kind": "paragraph",
+        "text": "EARS is a notation for writing requirements. [Alistair Mavin’s guide](https://alistairmavin.com/ears/) includes ubiquitous requirements (`The <system name> shall <response>`) and patterns for events (`WHEN`), states (`WHILE`), optional features (`WHERE`) and unwanted behavior (`IF … THEN`). Chalc’s templates include these last four patterns. For R2, the requirement and the scenario express the same behavior; I then derive tests to check it."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ears-vs-gherkin.en.svg",
+        "caption": "The agreed example and requirement R2 connect to the test that checks the result."
+      },
+      {
+        "kind": "heading",
+        "text": "TDD: use a test to guide the next change"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "What it is: TDD means Test-Driven Development. It is a technique for building software in small cycles: I write a test for the next behavior, confirm that it fails for the expected reason, implement enough to pass it and refactor the code to improve its structure while preserving its behavior. [Martin Fowler, 2023](https://martinfowler.com/bliki/TestDrivenDevelopment.html) describes this cycle.",
+          "What it is for: it requires me to make the expected result concrete and consider how the code will be used before implementing it. Tests give quick feedback about that behavior and can detect regressions when I change the system.",
+          "Example: first I write a test expecting the error next to the field when an empty password is submitted. I check that it fails because that behavior is missing, implement the validation and run the test again. I then reorganize the code while keeping the tests green.",
+          "In Chalc: I link tests to the requirement they check, such as R2, to review an agent’s work. I also review the test cases and assertions, meaning the checks of the result. A test’s usefulness depends on what it verifies. Tests written afterwards can also detect bugs; in TDD I use them from the start to guide development."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/tdd-access-example.en.svg",
+        "caption": "The test fails, the change is implemented and the code is reorganized while the test stays green."
+      },
+      {
+        "kind": "terminal",
+        "lines": [
+          "R2 — WHEN the user submits the form with no password",
+          "     THE SYSTEM SHALL show the error next to the field",
+          "",
+          "it('shows the error next to the field (R2)')   ✗ red",
+          "→ minimum implementation                       ✓ green",
+          "→ refactor                                     ✓ green",
+          "→ additional Chalc checks"
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mutation testing checks whether tests detect changes introduced into the code. Chalc’s method calls for it when there is applicable code, and its gate uses a default threshold of 80%, configurable per project. This is a tool policy, not a TDD rule or a guarantee of bug-free software. A surviving mutant needs review: it may reveal an uncovered case or be equivalent to the original code, as [Stryker](https://stryker-mutator.io/docs/stryker-js/disable-mutants/) explains. I discuss this further in [why I write the test first](/daily/why-the-test-comes-first)."
+      },
+      {
+        "kind": "heading",
+        "text": "How they complement each other in one change"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-story-layers.en.svg",
+        "caption": "Four contributions to the same case. The connections show relationships, not a sequence of methodologies."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "DDD contributes the model: what an account means, its states and the rules governing access. The model evolves as we learn more about the business.",
+          "BDD contributes agreement on behavior: the people involved work out examples such as the warning that should appear when an empty password is submitted.",
+          "SDD contributes a specification that guides the change. In the example, R2 records the agreed behavior; in Chalc, tasks are linked to those requirements.",
+          "TDD contributes the development cycle: a test fails because behavior is missing, enough code is implemented to pass it, and the code is refactored. New questions may lead us to revisit the examples, model or specification."
+        ]
+      },
+      {
+        "kind": "heading",
+        "text": "Why I expand a story before delegating it to AI"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A story expresses who wants something and why. Examples and acceptance criteria clarify details: what happens with an empty password, when is an account locked, and is “remember me” included? People and agents can make different assumptions when those points remain open. In my workflow, pending decisions are flagged and resolved before the affected behavior is implemented. The spec preserves the agreement so that the team and the agent can consult and review it."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/story-to-spec.en.svg",
+        "caption": "The story becomes concrete decisions, full requirements and questions to resolve."
+      },
+      {
+        "kind": "heading",
+        "text": "How much of each approach I use"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I adapt the effort to risk and complexity. I develop the domain model further when understanding and changing the rules requires it. For BDD, I choose how to discover, document and check examples with the people involved; Cucumber is one tool option. I keep the spec as small as the change allows and add detail where ambiguity matters. A prototype can help explore a question, and the result still needs validation before delivery. These are application choices, not a universal sequence among the four acronyms."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-when-to-use.en.svg",
+        "caption": "I adapt modeling, documentation and tests to risk and complexity."
+      },
+      {
+        "kind": "heading",
+        "text": "Other practices that complement the work"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "ATDD, Acceptance Test-Driven Development: business, development and testing participants agree on acceptance tests before implementation. An EARS requirement can provide a basis for them; running them requires test code or a checking procedure. [Agile Alliance](https://agilealliance.org/glossary/atdd/) explains the approach and its relationship to BDD.",
+          "AI agent evaluations: check the agent’s outcomes and behavior against defined cases and criteria. They can combine code-based checks, model-based grading and human review, depending on the task. They complement software tests; [Anthropic, 2026](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) describes their components and limits.",
+          "DDT, Data-Driven Testing: run the same test logic with different rows of data. It can be used within TDD or with tests written afterwards. [Vitest’s test.each](https://vitest.dev/api/test#test-each) is one implementation.",
+          "FDD, Feature-Driven Development: a development process organized around features that deliver customer value. Its scope differs from a requirements notation or a test-writing technique. [Scott Ambler](https://agilemodeling.com/essays/fdd.htm) describes its activities and iterative nature."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/dd-other-acronyms.en.svg",
+        "caption": "ATDD, AI evaluations, data-driven tests and FDD: different goals and scopes."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Domain Driven Design](https://martinfowler.com/bliki/DomainDrivenDesign.html) — Martin Fowler, 2020: domain models, shared language and contexts.",
+          "[Introducing BDD](https://dannorth.net/blog/introducing-bdd/) — Dan North, 2006: its evolution from work with TDD and its connection to domain language.",
+          "[Behaviour-Driven Development](https://cucumber.io/docs/bdd/) — Cucumber: discovery, formulation and automation as collaborative practices.",
+          "[EARS](https://alistairmavin.com/ears/) — Alistair Mavin: syntax and patterns for requirements.",
+          "[Understanding Spec-Driven Development](https://martinfowler.com/articles/exploring-gen-ai/sdd-3-tools.html) — Birgitta Böckeler, 2025: differences among SDD approaches and tools.",
+          "[Test Driven Development](https://martinfowler.com/bliki/TestDrivenDevelopment.html) — Martin Fowler, 2023: red, green and refactoring.",
+          "[Acceptance Test Driven Development](https://agilealliance.org/glossary/atdd/) — Agile Alliance: acceptance tests agreed before implementation.",
+          "[Demystifying evals for AI agents](https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents) — Anthropic, 2026: evaluations combining different kinds of checks.",
+          "[test.each](https://vitest.dev/api/test#test-each) — Vitest: parameterized tests.",
+          "[Feature-driven development](https://agilemodeling.com/essays/fdd.htm) — Scott Ambler: features, modeling and incremental delivery in FDD.",
+          "[Stryker: equivalent mutants](https://stryker-mutator.io/docs/stryker-js/disable-mutants/) — why a surviving mutant can preserve the original behavior.",
+          "[Chalc in my projects](/projects) and [the journey of a feature](/daily/from-one-sentence-to-a-closed-feature) — how I connect specification, implementation, review and evidence in daily work."
+        ]
+      }
+    ]
+  }
+}

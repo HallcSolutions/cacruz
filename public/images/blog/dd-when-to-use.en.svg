@@ -1,0 +1,51 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="When to use each technique and when not to">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+  </defs>
+  <style>
+    .pulse { animation: pulse 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .d1 { animation-delay: .4s; } .d2 { animation-delay: .8s; } .d3 { animation-delay: 1.2s; } .d4 { animation-delay: 1.6s; }
+    @keyframes pulse { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    .blink { animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="27" fill="#ece7fb">How much detail the problem needs</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">start from the problem, not from the acronym</text>
+  <text x="60" y="112" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">THE PROBLEM</text><text x="470" y="112" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">IT HELPS WITH…</text><text x="740" y="112" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">ADAPT THE EFFORT</text>
+  <g class="pulse d1">
+    <rect x="40" y="126" width="920" height="60" rx="10" fill="#14101f" stroke="#453768" stroke-width="1.5"/>
+    <text x="60" y="162" font-family="Georgia, serif" font-size="20" fill="#a78bfa" text-anchor="start" font-weight="normal">DDD</text>
+    <text x="130" y="152" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">The terminology is ambiguous</text>
+    <text x="130" y="172" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">business and code speak different languages</text>
+    <text x="470" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">models with complex rules</text>
+    <text x="740" y="162" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" text-anchor="start" font-weight="normal">simple model if sufficient</text>
+  </g>
+  <g class="pulse d2">
+    <rect x="40" y="198" width="920" height="60" rx="10" fill="#14101f" stroke="#453768" stroke-width="1.5"/>
+    <text x="60" y="234" font-family="Georgia, serif" font-size="20" fill="#a78bfa" text-anchor="start" font-weight="normal">BDD</text>
+    <text x="130" y="224" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Is this what the business asked for?</text>
+    <text x="130" y="244" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">missing an example everyone can read</text>
+    <text x="470" y="234" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">agreed examples</text>
+    <text x="740" y="234" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" text-anchor="start" font-weight="normal">BDD without Cucumber</text>
+  </g>
+  <g class="pulse d3">
+    <rect x="40" y="270" width="920" height="60" rx="10" fill="#14101f" stroke="#453768" stroke-width="1.5"/>
+    <text x="60" y="306" font-family="Georgia, serif" font-size="20" fill="#a78bfa" text-anchor="start" font-weight="normal">SDD</text>
+    <text x="130" y="296" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">AI may assume missing details</text>
+    <text x="130" y="316" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">nobody remembers what it should do</text>
+    <text x="470" y="306" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">scope and traceability</text>
+    <text x="740" y="306" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" text-anchor="start" font-weight="normal">brief spec while exploring</text>
+  </g>
+  <g class="pulse d4">
+    <rect x="40" y="342" width="920" height="60" rx="10" fill="#14101f" stroke="#453768" stroke-width="1.5"/>
+    <text x="60" y="378" font-family="Georgia, serif" font-size="20" fill="#a78bfa" text-anchor="start" font-weight="normal">TDD</text>
+    <text x="130" y="368" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">I need tests to guide the change</text>
+    <text x="130" y="388" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">tests that check expectations</text>
+    <text x="470" y="378" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">behavior and design</text>
+    <text x="740" y="378" font-family="ui-monospace, monospace" font-size="12" fill="#fb7185" text-anchor="start" font-weight="normal">small test-first cycles</text>
+  </g>
+</svg>

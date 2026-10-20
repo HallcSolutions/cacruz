@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="Other approaches and practices: goals and scope">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+  </defs>
+  <style>
+    .pulse { animation: pulse 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .d1 { animation-delay: .4s; } .d2 { animation-delay: .8s; } .d3 { animation-delay: 1.2s; } .d4 { animation-delay: 1.6s; }
+    @keyframes pulse { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    .blink { animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="27" fill="#ece7fb">Other approaches and practices</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">related practices that address different needs</text>
+  <text x="60" y="108" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">NAME</text><text x="470" y="108" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">RELATED TO…</text><text x="740" y="108" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">WHAT IT IS</text>
+  <g class="pulse d1">
+    <rect x="40" y="120" width="920" height="56" rx="10" fill="#14101f" stroke="#453768" stroke-opacity="1" stroke-width="1.5"/>
+    <text x="60" y="154" font-family="Georgia, serif" font-size="19" fill="#a78bfa" text-anchor="start" font-weight="normal">ATDD</text>
+    <text x="150" y="144" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Acceptance Test-Driven Development</text>
+    <text x="150" y="163" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">acceptance tests written together, up front</text>
+    <text x="470" y="154" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0" text-anchor="start" font-weight="normal">related to BDD</text>
+    <text x="740" y="154" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">development method</text>
+  </g>
+  <g class="pulse d2">
+    <rect x="40" y="186" width="920" height="56" rx="10" fill="#14101f" stroke="#453768" stroke-opacity="1" stroke-width="1.5"/>
+    <text x="60" y="220" font-family="Georgia, serif" font-size="19" fill="#a78bfa" text-anchor="start" font-weight="normal">Evals</text>
+    <text x="150" y="210" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">AI agent evaluations</text>
+    <text x="150" y="229" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">cases and criteria for AI evaluation</text>
+    <text x="470" y="220" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0" text-anchor="start" font-weight="normal">complements tests</text>
+    <text x="740" y="220" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">evaluation practice</text>
+  </g>
+  <g class="pulse d3">
+    <rect x="40" y="252" width="920" height="56" rx="10" fill="#14101f" stroke="#453768" stroke-opacity="1" stroke-width="1.5"/>
+    <text x="60" y="286" font-family="Georgia, serif" font-size="19" fill="#a78bfa" text-anchor="start" font-weight="normal">DDT</text>
+    <text x="150" y="276" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Data-Driven Testing</text>
+    <text x="150" y="295" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">the same test, a table of data</text>
+    <text x="470" y="286" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0" text-anchor="start" font-weight="normal">any test suite</text>
+    <text x="740" y="286" font-family="ui-monospace, monospace" font-size="12" fill="#fbbf24" text-anchor="start" font-weight="normal">testing technique</text>
+  </g>
+  <g class="pulse d4">
+    <rect x="40" y="318" width="920" height="56" rx="10" fill="#14101f" stroke="#453768" stroke-opacity="1" stroke-width="1.5"/>
+    <text x="60" y="352" font-family="Georgia, serif" font-size="19" fill="#a78bfa" text-anchor="start" font-weight="normal">FDD</text>
+    <text x="150" y="342" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Feature-Driven Development</text>
+    <text x="150" y="361" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="start" font-weight="normal">process organized around features</text>
+    <text x="470" y="352" font-family="ui-monospace, monospace" font-size="12" fill="#c9bff0" text-anchor="start" font-weight="normal">feature-based delivery</text>
+    <text x="740" y="352" font-family="ui-monospace, monospace" font-size="12" fill="#34d399" text-anchor="start" font-weight="normal">team process</text>
+  </g>
+
+</svg>

@@ -1,5 +1,24 @@
 [
   {
+    "slug": "sdd-bdd-tdd-ddd-when-to-use-each",
+    "date": "2026-10-20",
+    "title": {
+      "es": "SDD, BDD, TDD y DDD: qué pregunta responde cada uno y por qué los combino",
+      "en": "SDD, BDD, TDD and DDD: which question each one answers and why I combine them"
+    },
+    "summary": {
+      "es": "Qué aportan DDD, BDD, SDD y TDD al desarrollar con agentes de IA, cómo se complementan y qué flujo configura Chalc. Ejemplos de dominio, comportamiento, especificación y pruebas, con sus fuentes y límites.",
+      "en": "What DDD, BDD, SDD and TDD contribute to AI-assisted development, how they complement each other and which workflow Chalc configures. Examples of domain modeling, behavior, specifications and tests, with sources and limits."
+    },
+    "tags": [
+      "sdd",
+      "bdd",
+      "tdd",
+      "ddd",
+      "metodología"
+    ]
+  },
+  {
     "slug": "from-one-sentence-to-a-closed-feature",
     "date": "2026-10-09",
     "title": {

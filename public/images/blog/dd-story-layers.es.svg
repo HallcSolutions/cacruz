@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 470" role="img" aria-labelledby="title description">
+  <title id="title">Cuatro enfoques que aportan al mismo cambio</title>
+  <desc id="description">DDD, BDD, SDD y TDD se relacionan con el mismo ejemplo de acceso. Cada uno ocupa una tarjeta conectada al caso central, sin flechas entre metodologías. DDD aporta modelo y reglas; BDD, ejemplos acordados; SDD, requisitos explícitos; TDD, un ciclo de prueba, implementación y refactorización.</desc>
+  <defs>
+    <linearGradient id="background" x2="1" y2="1">
+      <stop stop-color="#0d0b16"/>
+      <stop offset="1" stop-color="#181329"/>
+    </linearGradient>
+  </defs>
+  <style>
+    .card { fill:#171222; stroke:#453768; stroke-width:1.8; }
+    .relation { fill:none; stroke:#66567f; stroke-width:2; }
+    .icon { fill:none; stroke:#a78bfa; stroke-width:2.5; stroke-linecap:round; stroke-linejoin:round; }
+    .label { font:18px ui-monospace,monospace; fill:#ece7fb; }
+    .acronym { font:600 26px ui-monospace,monospace; fill:#a78bfa; }
+    .signal { animation:signal 4s cubic-bezier(.77,0,.175,1) infinite; }
+    @keyframes signal { 0%,100% { opacity:.4; } 50% { opacity:1; } }
+  </style>
+  <rect width="1000" height="470" rx="18" fill="url(#background)"/>
+  <text x="40" y="43" font-family="Georgia,serif" font-size="28" fill="#ece7fb">Un mismo cambio, cuatro aportes</text>
+  <text x="40" y="73" font-family="ui-monospace,monospace" font-size="14" fill="#8a7fb0">Dominio · ejemplos · especificación · pruebas</text>
+
+  <path class="relation" d="M390 170 449 225M610 170 551 225M390 340 449 285M610 340 551 285"/>
+  <g class="signal" fill="#a78bfa">
+    <circle cx="420" cy="198" r="4"/>
+    <circle cx="580" cy="198" r="4"/>
+    <circle cx="420" cy="312" r="4"/>
+    <circle cx="580" cy="312" r="4"/>
+  </g>
+  <circle cx="500" cy="255" r="59" fill="#211a34" stroke="#a78bfa" stroke-width="2"/>
+  <g class="icon">
+    <path d="M489 246v-8a11 11 0 0 1 22 0v8"/>
+    <rect x="482" y="246" width="36" height="27" rx="7"/>
+    <path d="M500 256v8"/>
+  </g>
+  <text x="500" y="294" text-anchor="middle" font-family="ui-monospace,monospace" font-size="14" fill="#c9bff0">Acceso</text>
+
+  <rect class="card" x="40" y="108" width="350" height="126" rx="18"/>
+  <text class="acronym" x="64" y="149">DDD</text>
+  <text class="label" x="64" y="185">Modelo y reglas</text>
+  <g class="icon">
+    <rect x="315" y="143" width="26" height="26" rx="6"/>
+    <circle cx="304" cy="192" r="9"/>
+    <circle cx="351" cy="192" r="9"/>
+    <path d="M328 169v11m0 0h-24v3m24-3h23v3"/>
+  </g>
+
+  <rect class="card" x="610" y="108" width="350" height="126" rx="18"/>
+  <text class="acronym" x="634" y="149">BDD</text>
+  <text class="label" x="634" y="185">Ejemplos acordados</text>
+  <g class="icon">
+    <path d="M883 144h48v31h-17l-11 10v-10h-20Z"/>
+    <circle cx="899" cy="157" r="2" fill="#a78bfa"/>
+    <circle cx="916" cy="157" r="2" fill="#a78bfa"/>
+    <path d="M891 198h32"/>
+  </g>
+
+  <rect class="card" x="40" y="276" width="350" height="126" rx="18"/>
+  <text class="acronym" x="64" y="317">SDD</text>
+  <text class="label" x="64" y="353">Requisitos explícitos</text>
+  <g class="icon">
+    <path d="M309 303h28l15 15v51h-43Z"/>
+    <path d="M337 303v15h15M319 331h23m-23 11h23m-23 11h13"/>
+  </g>
+
+  <rect class="card" x="610" y="276" width="350" height="126" rx="18"/>
+  <text class="acronym" x="634" y="317">TDD</text>
+  <text class="label" x="634" y="353">Ciclo de pruebas</text>
+  <g fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+    <circle cx="896" cy="320" r="11" stroke="#fb7185"/>
+    <path d="m892 316 8 8m0-8-8 8" stroke="#fb7185"/>
+    <circle cx="924" cy="351" r="11" stroke="#34d399"/>
+    <path d="m919 351 4 4 7-8" stroke="#34d399"/>
+    <path d="M891 364a22 22 0 0 1-7-29m-1-8v10h10" stroke="#a78bfa"/>
+  </g>
+
+  <text x="500" y="441" text-anchor="middle" font-family="ui-monospace,monospace" font-size="14" fill="#8a7fb0">Los aportes se pueden combinar y revisar durante el desarrollo.</text>
+</svg>

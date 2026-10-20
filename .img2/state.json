@@ -1,0 +1,28 @@
+{
+  "plugins": {
+    "img2glb": {
+      "lastGenerate": {
+        "artifacts": [
+          ".img2/artifacts/img2glb/christian-avatar-reference.glb",
+          ".img2/artifacts/img2glb/christian-avatar-reference.report.json"
+        ],
+        "at": "2026-09-17T15:57:47.235430+00:00",
+        "input": "/Users/christiancruz/Desktop/Repositorios/cacruz/specs/002-developer-monster-encounter/christian-avatar-reference.png",
+        "seed": 0,
+        "space": "trellis-community/TRELLIS",
+        "stem": "christian-avatar-reference"
+      },
+      "lastProbe": {
+        "at": "2026-09-17T15:54:13.518355+00:00",
+        "input": "/Users/christiancruz/Desktop/Repositorios/cacruz/specs/002-developer-monster-encounter/christian-avatar-reference.png",
+        "stem": "christian-avatar-reference",
+        "wouldEmit": [
+          ".img2/artifacts/img2glb/christian-avatar-reference.glb",
+          ".img2/artifacts/img2glb/christian-avatar-reference.report.json"
+        ]
+      }
+    }
+  },
+  "version": 1,
+  "workspace": "/Users/christiancruz/Desktop/Repositorios/cacruz"
+}

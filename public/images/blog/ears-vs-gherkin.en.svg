@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-label="The same requirement written in Gherkin and in EARS">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+  </defs>
+  <style>
+    .pulse { animation: pulse 4s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+    .d1 { animation-delay: .4s; } .d2 { animation-delay: .8s; } .d3 { animation-delay: 1.2s; } .d4 { animation-delay: 1.6s; }
+    @keyframes pulse { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+    .flow { stroke-dasharray: 6 8; animation: flow 1.6s linear infinite; }
+    @keyframes flow { to { stroke-dashoffset: -28; } }
+    .blink { animation: blink 2.4s ease-in-out infinite; }
+    @keyframes blink { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="44" font-family="Georgia, serif" font-size="27" fill="#ece7fb">The same behavior, two notations</text>
+  <text x="40" y="70" font-family="ui-monospace, monospace" font-size="13.5" fill="#8a7fb0">An agreed example and a requirement can guide the same test</text>
+  <g class="pulse">
+    <rect x="40" y="100" width="400" height="210" rx="12" fill="#14101f" stroke="#453768" stroke-width="2"/>
+    <text x="60" y="130" font-family="ui-monospace, monospace" font-size="15" fill="#c9bff0" text-anchor="start" font-weight="bold">Example · Gherkin</text>
+    <text x="60" y="150" font-family="ui-monospace, monospace" font-size="10.5" fill="#6b5f86" text-anchor="start" font-weight="normal">example scenario</text>
+    <text x="60" y="184" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa" text-anchor="start" font-weight="normal">Scenario: empty password</text>
+    <text x="60" y="206" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Given I see the sign-in form</text>
+    <text x="60" y="228" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">When I submit with no password</text>
+    <text x="60" y="250" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">Then I see the error</text>
+    <text x="60" y="272" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">  next to the field</text>
+  </g>
+  <g class="pulse">
+    <rect x="560" y="100" width="400" height="210" rx="12" fill="#14101f" stroke="#453768" stroke-width="2"/>
+    <text x="580" y="130" font-family="ui-monospace, monospace" font-size="15" fill="#c9bff0" text-anchor="start" font-weight="bold">Requirement · EARS</text>
+    <text x="580" y="150" font-family="ui-monospace, monospace" font-size="10.5" fill="#6b5f86" text-anchor="start" font-weight="normal">identified requirement</text>
+    <text x="580" y="184" font-family="ui-monospace, monospace" font-size="12.5" fill="#a78bfa" text-anchor="start" font-weight="normal">R2</text>
+    <text x="580" y="206" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">WHEN the user submits the</text>
+    <text x="580" y="228" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">  form with no password</text>
+    <text x="580" y="250" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">THE SYSTEM SHALL show</text>
+    <text x="580" y="272" font-family="ui-monospace, monospace" font-size="12.5" fill="#ece7fb" text-anchor="start" font-weight="normal">  the error next to the field</text>
+  </g>
+  <path class="flow" d="M240 310 C240 360 440 360 480 372" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+  <path class="flow" d="M760 310 C760 360 560 360 520 372" fill="none" stroke="#a78bfa" stroke-width="2.5"/>
+  <rect x="250" y="372" width="500" height="56" rx="12" fill="#10241d" stroke="#34d399" stroke-width="2"/>
+  <text x="500" y="397" font-family="ui-monospace, monospace" font-size="13" fill="#34d399" text-anchor="middle" font-weight="normal">it('shows the error next to the field (R2)')</text>
+  <text x="500" y="417" font-family="ui-monospace, monospace" font-size="11" fill="#8a7fb0" text-anchor="middle" font-weight="normal">I derive a test from the agreement; notation alone does not run it.</text>
+  <text x="480" y="210" font-family="Georgia, serif" font-size="40" fill="#a78bfa" text-anchor="middle" font-weight="normal">=</text>
+  <text x="500" y="232" font-family="ui-monospace, monospace" font-size="10.5" fill="#8a7fb0" text-anchor="middle" font-weight="normal">same behavior</text>
+</svg>

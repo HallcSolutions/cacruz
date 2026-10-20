@@ -74,3 +74,12 @@ de tener tests que **fallen** (Red).
 Plantillas en `specs/_template/`. Para una feature nueva: copia `_template/` a `specs/NNN-nombre/`.
 La carpeta oficial siempre es `specs/` en plural. Si está disponible, usa `chalc spec` solo para preparar la carpeta y archivos vacíos; no redacta la spec.
 <!-- chalc:end -->
+
+## 🧹 Archivos temporales de Stryker — NUNCA se guardan
+
+- `.stryker-tmp/` y `reports/mutation/` **nunca** se commitean ni se suben: deben estar en `.gitignore`. Antes de cada commit revisa `git status` y que no aparezcan.
+- **Después de cada `git commit` + `git push` exitoso, borra los temporales de Stryker** (pueden ocupar varios GB):
+  ```
+  find . -name node_modules -prune -o -type d -name .stryker-tmp -prune -exec rm -rf {} +
+  ```
+- Si una ejecución de Stryker se interrumpe o termina, borra también su `.stryker-tmp/` en cuanto acabe.

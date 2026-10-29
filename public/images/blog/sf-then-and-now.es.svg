@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="460" viewBox="0 0 1000 460" role="img" aria-labelledby="title description" xml:lang="es">
+  <title id="title">La experiencia debe llegar al siguiente trabajo</title>
+  <desc id="description">De acumular entre proyectos a aprender entre tareas</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/></marker>
+    <marker id="good" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .stage { animation: reveal 8s ease-in-out infinite; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.8s linear infinite; }
+    .pulse { animation: pulse 4s ease-in-out infinite; }
+    @keyframes reveal { 0%,100% { opacity:.72; } 12%,75% { opacity:1; } }
+    @keyframes dash { to { stroke-dashoffset:-56; } }
+    @keyframes pulse { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text x="40" y="52" font-family="Georgia, serif" font-size="30" fill="#ece7fb" text-anchor="start">La experiencia debe llegar al siguiente trabajo</text>
+  <text x="40" y="82" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0" text-anchor="start">De acumular entre proyectos a aprender entre tareas</text>
+  <g class="stage" style="animation-delay:0.0s"><rect x="40" y="122" width="445" height="206" rx="14" fill="#181329" fill-opacity=".5" stroke="#453768" stroke-width="1.5"/><text x="64" y="160" font-family="ui-monospace, monospace" font-size="21" fill="#ece7fb" text-anchor="start">Fábrica clásica</text></g><text x="64" y="207" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Métodos + componentes</text><text x="64" y="242" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Experiencia entre proyectos</text><text x="64" y="277" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Formación + reutilización</text><g class="stage" style="animation-delay:0.8s"><rect x="515" y="122" width="445" height="206" rx="14" fill="#181329" fill-opacity=".5" stroke="#453768" stroke-width="1.5"/><text x="539" y="160" font-family="ui-monospace, monospace" font-size="21" fill="#ece7fb" text-anchor="start">Mi fábrica con IA</text></g><text x="539" y="207" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Hallazgo + regla + prueba</text><text x="539" y="242" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Memoria entre tareas</text><text x="539" y="277" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">El siguiente agente la recibe</text><path d="M485 224 H509" fill="none" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#arrow)"/><rect x="100" y="360" width="800" height="62" rx="14" fill="#a78bfa" fill-opacity=".05" stroke="#a78bfa" stroke-width="1.5"/><text x="500" y="398" font-family="ui-monospace, monospace" font-size="17" fill="#a78bfa" text-anchor="middle">Yo quiero conservar lo aprendido en cada vuelta</text>
+</svg>

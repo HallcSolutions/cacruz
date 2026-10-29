@@ -1,0 +1,409 @@
+{
+  "slug": "an-ai-software-factory-that-you-sign",
+  "date": "2026-10-29",
+  "title": {
+    "es": "Software Factory con IA: agentes que aprenden de cada vuelta",
+    "en": "An AI software factory: agents that learn from every loop"
+  },
+  "summary": {
+    "es": "Una Software Factory con IA mejora cuando cada vuelta deja una lección escrita que la siguiente lee y comprueba. Así conecto en chalc los fallos, la memoria del proyecto y los controles de calidad. Más agentes no acumulan experiencia por sí solos; yo decido qué aprendizajes se convierten en reglas.",
+    "en": "An AI software factory improves when each loop leaves a written lesson that the next one reads and checks. In chalc, I connect failures, project memory and quality gates. More agents do not accumulate experience on their own; I decide which lessons become rules."
+  },
+  "tags": [
+    "ia",
+    "software-factory",
+    "chalc",
+    "sdd",
+    "calidad"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Un agente que comete el mismo error dos veces no está en una fábrica: está en un chat. Puedo ponerle más agentes, revisores y pasos; si la siguiente vuelta empieza sin lo aprendido en la anterior, solo he organizado el olvido."
+      },
+      {
+        "kind": "quote",
+        "text": "Para mí, una Software Factory con IA existe cuando lo que aprende un agente en una vuelta cambia cómo trabaja el siguiente."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-overview.es.svg",
+        "caption": "Cada vuelta debe dejar dos cosas: una entrega comprobada y una lección que cambie la siguiente. Sin ese retorno, tengo producción de código, pero no una fábrica que aprende."
+      },
+      {
+        "kind": "heading",
+        "text": "Corregir un reembolso no basta si el siguiente agente lo olvida"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Retomo los reembolsos parciales con aprobación del supervisor de [mi nota sobre una funcionalidad completa](/daily/from-one-sentence-to-a-closed-feature). El negocio permite varias devoluciones, pero su suma nunca puede superar el pago. La pantalla puede funcionar y esa regla seguir rota."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Uso este caso para mostrar qué exijo de una vuelta de la fábrica. Una prueba de mutación estropea el código a propósito: si quito el control del saldo y ninguna prueba falla, ese cambio artificial sobrevive. La suite solo comprobaba una devolución válida; no detectaba que faltaba el límite."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "El fallo revela un hueco concreto: falta comprobar el acumulado. Un revisor también puede encontrarlo leyendo el requisito y la prueba.",
+          "Refuerzo la suite: con el mutante activo, la prueba nueva falla porque acepta el exceso. Restauro el control y compruebo el rechazo sin registrar otra devolución. Compruebo también que devolver el saldo exacto sigue permitido.",
+          "La revisión deja en `.chalc/review.md`: «Regla aprendida (dinero): probar que el acumulado de devoluciones no supere el pago y que el saldo exacto sí se permita». La prueba queda en el repositorio junto al código.",
+          "La captura guarda esa regla al cerrar la tarea. La siguiente funcionalidad permite devolver los gastos de envío y declara el concepto `dinero`. El advisor le entrega la lección: el agente prueba desde el principio el exceso y el saldo exacto, y el revisor comprueba esos casos."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahí está la diferencia que me importa. Arreglar el reembolso salva esta entrega; conservar y volver a comprobar la lección cambia las que vienen. El recorrido necesita un retorno explícito desde el hallazgo hasta la siguiente tarea:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-learning-loop.es.svg",
+        "caption": "El fallo deja de ser trabajo perdido cuando produce una regla con una prueba y un lector en la siguiente vuelta. Corregir sin transmitir la lección deja abierto el mismo hueco."
+      },
+      {
+        "kind": "heading",
+        "text": "Una lección cuenta cuando puede fallar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "«Ten más cuidado con los montos» no me sirve. «Rechaza una devolución que supere el saldo, sin guardar un nuevo registro» sí: puedo escribir una prueba que falle cuando se incumpla. Una lección necesita decir qué error evita, dónde se aprendió y cómo voy a detectar que volvió."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Cada tarea, fallo, hallazgo de revisión, mutante superviviente o corrección mía debe dejar por escrito lo que enseñó. Si el mutante descubre un caso omitido, lo convierto en una prueba y una regla de revisión. Si yo aclaro que solo un supervisor puede aprobar, esa decisión entra primero en la especificación y después en las pruebas. Decirlo en el chat no lo conserva."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En [reglas que pueden fallar](/daily/rules-that-can-fail) defendí lo mismo para la arquitectura: una frontera entre carpetas se protege comprobando las importaciones. Ahora le exijo eso al aprendizaje. No doy por aprendida una lección porque el agente escriba «entendido»; le pido una comprobación que pueda contradecirlo."
+      },
+      {
+        "kind": "heading",
+        "text": "chalc guarda la experiencia y la recupera por concepto"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El modelo no trae memoria de mis chats anteriores. La fábrica se la da en archivos. En [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), mi herramienta para preparar repositorios, ese mecanismo ya existe: captura lo que dejó el ciclo y lo recupera cuando otra tarea lo necesita. Lo conté en [el recorrido completo de una funcionalidad](/daily/from-one-sentence-to-a-closed-feature); aquí está la parte que hace que las vueltas se conecten."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Los roles escriben `Regla aprendida (<concepto>): …` en `.chalc/review.md`. La captura lee esas líneas; no inventa una lección a partir de todo el chat. Una tarea marcada `[bug]` clasifica las reglas capturadas como aprendizaje de un fallo.",
+          "`node .chalc/memory.mjs capture` guarda las entradas en `.chalc/memory/memory.jsonl`, con su origen: spec, tarea, rol y commit. También conserva las excepciones de seguridad que el portón aceptó con un motivo. Una excepción queda como decisión, no como regla general.",
+          "`.chalc/memory/concepts.json` conserva los conceptos y sinónimos aprendidos. Así «monto», «tarifa» y «money» pueden remitir a `dinero`. El agente puede consultar los conceptos con `node .chalc/memory.mjs concepts` y declararlos en la línea `Conceptos:` de `spec.md`.",
+          "`.chalc/next.mjs`, el advisor que señala la siguiente acción, relaciona la tarea y sus requisitos con esos conceptos. Al responder `work_task` o `call_role`, entrega hasta cinco entradas pertinentes. No vuelca todo el historial en cada conversación.",
+          "El rol debe responder a cada regla recibida: `cumple` o `no cumple`, con archivo y línea; o `no aplica`, con motivo. Si falta una confirmación, el advisor responde `ask_human`. Una regla cuyo código cambió aparece como posiblemente desactualizada."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "Este reparto evita confundir guardar con aprender. `memory.jsonl` conserva la experiencia; el advisor la pone delante de quien la necesita; la revisión exige una respuesta. El script comprueba que esa respuesta esté documentada. Yo sigo teniendo que juzgar si la regla y la prueba dicen algo útil."
+      },
+      {
+        "kind": "heading",
+        "text": "Las fábricas acumulaban experiencia; yo la quiero en cada vuelta"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Michael A. Cusumano (1991)](https://academic.oup.com/book/52424) estudió las fábricas de software de Hitachi, Toshiba, NEC y Fujitsu. En el prefacio describe métodos, formación, controles y reutilización para aprovechar una serie de proyectos, en vez de construir desde cero para cada cliente. Lo que me interesa de esa historia es conservar experiencia para el siguiente trabajo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Mi apuesta con la IA es llevar esa acumulación a cada vuelta: una tarea enseña algo y la siguiente recibe la lección. Si solo automatizo la escritura, acelero la producción y conservo el mismo olvido. Esta es la continuidad que busco con aquellas fábricas:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-then-and-now.es.svg",
+        "caption": "La experiencia debe viajar al siguiente trabajo. Con agentes, hago explícito ese viaje entre tareas mediante archivos, recuperación por concepto y comprobaciones."
+      },
+      {
+        "kind": "heading",
+        "text": "Aprender entre vueltas no exige volver a entrenar el modelo"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Noah Shinn y otros (Reflexion, 2023)](https://arxiv.org/abs/2303.11366) hicieron que los agentes reflexionaran sobre los resultados y conservaran ese texto en una memoria para los siguientes intentos, sin actualizar los pesos del modelo. De ahí tomo una idea concreta: el fallo tiene que cambiar el contexto del próximo intento. Repetir la misma orden no conserva lo aprendido."
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Guanzhi Wang y otros (Voyager, 2023)](https://arxiv.org/abs/2305.16291) construyeron en Minecraft una biblioteca creciente de habilidades ejecutables que el agente recupera y reutiliza. Yo quiero esa acumulación en mi repositorio: pruebas y reglas que el siguiente cambio pueda aprovechar. No me basta con archivar conversaciones que nadie vuelve a abrir."
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Justin Young (Anthropic, 2025)](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents) documentó cómo un archivo `claude-progress.txt` y el historial de Git permiten retomar sesiones. En chalc separo además el progreso de la lección: `tasks.md` dice qué falta; la memoria dice qué no debo volver a olvidar. Retomar una tarea y mejorar la siguiente son obligaciones distintas."
+      },
+      {
+        "kind": "heading",
+        "text": "Los controles convierten la lección en una condición para avanzar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Guardar una mala conclusión también acumula errores. Por eso conservo el harness: el entorno de instrucciones, herramientas, archivos y controles que gobierna el trabajo del agente. En [skills, MCP y harness](/daily/skills-mcp-harness) expliqué sus piezas; en [el debate sobre el harness](/daily/the-harness-back-and-forth) defendí que las verificaciones no caducan porque salga un modelo más capaz. Aquí las necesito para distinguir una lección de una ocurrencia."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En chalc, la especificación sigue siendo el acuerdo que manda. El reembolso recorre esta línea, y la memoria conecta una tarea cerrada con la siguiente:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-factory-line.es.svg",
+        "caption": "Las pruebas y la revisión comprueban el cambio actual. La captura conserva lo aprendido antes de pasar a la siguiente tarea. Aprobar la entrega sigue siendo mi decisión."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Leo la constitución y escribo `spec.md`: qué debe pasar y por qué. En el reembolso, R1 fija el límite del acumulado. `plan.md` propone cómo construirlo y necesita mi aprobación; `tasks.md` reparte el trabajo y lo traza a sus requisitos.",
+          "El agente escribe la prueba antes del código, la ve fallar y añade lo mínimo para pasarla. Refactoriza y ejecuta mutación. Si sobrevive el mutante que elimina el límite, refuerza la prueba antes de continuar.",
+          "`.chalc/gate.mjs` ejecuta los controles configurados y deja `.chalc/gate.md` para leer los resultados y `.chalc/gate.state.json` para identificar lo comprobado. Cambiar después el código exige renovar la evidencia.",
+          "Los roles de seguridad y revisión dejan sus hallazgos en `.chalc/review.md`. El advisor pide corregir y volver a medir cuando corresponde. Al cerrar la tarea, `tick_task` pide ejecutar la captura de memoria antes de marcar la casilla.",
+          "El endurecedor revisa la funcionalidad completa. El cierre `done` pide otra captura para conservar también lo que enseñó esa revisión final. Yo reviso el resultado, la evidencia y las lecciones antes de aceptar la entrega."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "El modelo nunca decide cuándo está terminado. El advisor comprueba el estado del proceso y yo decido si el producto cumple lo que necesitábamos. Ni un «listo» en el chat ni un informe de la semana pasada sustituyen la evidencia del cambio que voy a entregar. Ese es el punto de [cerrar una tarea con evidencia](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "Más agentes no sustituyen una experiencia compartida"
+      },
+      {
+        "kind": "paragraph",
+        "text": "La promesa de «software en minutos sin personas» sigue siendo [la misma trampa](/daily/the-software-in-minutes-trap). Repartir un error entre más agentes no lo corrige. Yo empiezo por el flujo más simple que pueda comprobar y separo roles cuando necesito otra mirada. Lo que se acumula es el aprendizaje comprobado; el número de agentes no lo produce."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Los [worktrees por historia](/daily/a-desk-per-story-with-worktrees) y [los carriles de API, web y móvil](/daily/one-contract-three-lanes) sirven para separar trabajo y compartir un contrato. No hacen que un hallazgo viaje solo a la siguiente tarea. Para eso necesito la memoria del repositorio y alguien que compruebe que la lección se aplicó."
+      },
+      {
+        "kind": "heading",
+        "text": "Mi trabajo es decidir qué aprendizajes merecen ser reglas"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El agente puede proponer una lección; yo decido si merece gobernar otros cambios. Una excepción para un cliente no se convierte por accidente en la política de todos. Reviso su motivo, su alcance y la prueba que la sostiene. También retiro reglas que ya no sirven: acumular instrucciones viejas es otra forma de perder el contexto."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Eso me exige entender el negocio y discutir lo que devuelve la herramienta, como conté en [miedo, pereza y la herramienta](/daily/fear-laziness-and-the-tool). Y exige evaluar, no solo generar, que es lo que defiendo en [qué hace un ingeniero de IA](/daily/what-an-ai-engineer-actually-does). Este es el reparto de trabajo que quiero sostener:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-human-role.es.svg",
+        "caption": "Los agentes encuentran, proponen y comprueban. Yo decido qué lección se conserva como regla de trabajo y si acepto el producto que salió de esa vuelta."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Ahora, cuando cierro una tarea, también reviso qué va a recibir quien haga la siguiente. Si el reembolso enseñó algo y solo quedó en nuestra conversación, todavía me falta trabajo. Quiero poder abrir la regla, encontrar la prueba y ver que el siguiente agente las usó. Así estoy construyendo [mis proyectos](/projects); si quieres llevar ese ciclo a tu equipo, lo hablamos en [para empresas](/for-companies)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc-cli-adapter](https://github.com/ChristianCruzArango/chalc-cli-adapter) — Christian Cruz Arango, 2026: README y código de la captura en `catalog/memory/lib/capture.mjs`, la recuperación en `catalog/memory/lib/recall.mjs` y las confirmaciones en `catalog/next/lib/checklist.mjs`.",
+          "[Reflexion: Language Agents with Verbal Reinforcement Learning](https://arxiv.org/abs/2303.11366) — Noah Shinn y otros, 2023: conservar reflexiones sobre los resultados para los siguientes intentos, sin cambiar los pesos del modelo.",
+          "[Voyager: An Open-Ended Embodied Agent with Large Language Models](https://arxiv.org/abs/2305.16291) — Guanzhi Wang y otros, 2023: una biblioteca de habilidades ejecutables que crece y se reutiliza en tareas posteriores.",
+          "[Effective harnesses for long-running agents](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents) — Justin Young, Anthropic, 2025: progreso escrito y recuperación del contexto entre sesiones.",
+          "[Japan’s Software Factories: A Challenge to U.S. Management](https://academic.oup.com/book/52424) — Michael A. Cusumano, 1991: organización y reutilización entre proyectos; el [prefacio disponible en la vista previa](https://api.pageplace.de/preview/DT0400.9780195362848_A23604152/preview-9780195362848_A23604152.pdf) explica esa acumulación."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "An agent that makes the same mistake twice is working in a chat, not a factory. I can add agents, reviewers and steps; if the next loop starts without what the previous one learned, I have built a process that forgets."
+      },
+      {
+        "kind": "quote",
+        "text": "For me, an AI software factory exists when what an agent learns in one loop changes how the next agent works."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-overview.en.svg",
+        "caption": "Every loop must leave two things: a checked delivery and a lesson that changes the next loop. Without that return path, I have code production, but no factory that learns."
+      },
+      {
+        "kind": "heading",
+        "text": "Fixing a refund is not enough if the next agent forgets"
+      },
+      {
+        "kind": "paragraph",
+        "text": "I am returning to the partial refunds with supervisor approval from [my note on a complete feature](/daily/from-one-sentence-to-a-closed-feature). The business allows multiple refunds, but their total must never exceed the payment. The screen can work while that rule is still broken."
+      },
+      {
+        "kind": "paragraph",
+        "text": "I use this case to show what I require from a factory loop. A mutation test deliberately breaks the code: if I remove the balance check and no test fails, that artificial change survives. The suite only checked a valid refund; it did not detect the missing limit."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "The failure reveals a specific gap: the accumulated amount needs checking. A reviewer can also find it by reading the requirement and the test.",
+          "I strengthen the suite: with the mutant active, the new test fails because it accepts the excess. I restore the check and verify rejection without recording another refund. I also check that refunding the exact remaining balance is still allowed.",
+          "The review leaves this in `.chalc/review.md`: \"Learned rule (dinero): test that accumulated refunds never exceed the payment and that the exact remaining balance is allowed.\" The test stays in the repository alongside the code.",
+          "Capture stores that rule when the task closes. The next feature allows refunding shipping costs and declares the `dinero` concept. The advisor delivers the lesson: the agent tests excess and exact balance from the start, and the reviewer checks those cases."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "That is the difference I care about. Fixing the refund saves this delivery; keeping and checking the lesson again changes the deliveries that follow. The process needs an explicit return path from the finding to the next task:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-learning-loop.en.svg",
+        "caption": "A failure stops being wasted work when it produces a rule with a test and a reader in the next loop. Fixing without passing on the lesson leaves the same gap open."
+      },
+      {
+        "kind": "heading",
+        "text": "A lesson counts when it can fail"
+      },
+      {
+        "kind": "paragraph",
+        "text": "\"Be more careful with amounts\" is useless to me. \"Reject a refund that exceeds the balance without saving a new record\" works: I can write a test that fails when it is violated. A lesson needs to say which error it prevents, where it came from and how I will detect its return."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Every task, failure, review finding, surviving mutant or correction from me must leave what it taught in writing. If the mutant reveals an omitted case, I turn it into a test and a review rule. If I clarify that only a supervisor can approve, that decision goes into the specification first and then into the tests. Saying it in a chat does not preserve it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In [rules that can fail](/daily/rules-that-can-fail), I made the same argument about architecture: a boundary between folders is protected by checking imports. Now I demand the same of learning. I do not count a lesson as learned because an agent writes \"understood\"; I require a check that can prove it wrong."
+      },
+      {
+        "kind": "heading",
+        "text": "chalc writes experience down and retrieves it by concept"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The model has no memory of my previous chats. The factory gives it that memory in files. In [chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter), my tool for preparing repositories, that mechanism already exists: it captures what a loop left behind and retrieves it when another task needs it. I described it in [the complete feature journey](/daily/from-one-sentence-to-a-closed-feature); this is the part that connects the loops."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Roles write `Learned rule (<concept>): …` in `.chalc/review.md`. Capture reads those lines; it does not invent a lesson from the whole chat. A task marked `[bug]` classifies captured rules as lessons from a bug.",
+          "`node .chalc/memory.mjs capture` stores entries in `.chalc/memory/memory.jsonl`, with their origin: spec, task, role and commit. It also preserves security exceptions the gate accepted with a reason. An exception stays a decision, not a general rule.",
+          "`.chalc/memory/concepts.json` preserves learned concepts and synonyms. This lets \"monto\", \"tarifa\" and \"money\" resolve to `dinero`. The agent can look up concepts with `node .chalc/memory.mjs concepts` and declare them on the `Concepts:` line in `spec.md`.",
+          "`.chalc/next.mjs`, the advisor that identifies the next action, matches the task and its requirements to those concepts. When it returns `work_task` or `call_role`, it delivers up to five relevant entries. It does not dump the entire history into every conversation.",
+          "The role must respond to each received rule: `complies` or `violates`, with a file and line; or `n/a` (not applicable), with a reason. If a confirmation is missing, the advisor returns `ask_human`. A rule whose code has changed is flagged as possibly stale."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "This division keeps storage from being confused with learning. `memory.jsonl` preserves experience; the advisor puts it in front of whoever needs it; review requires a response. The script checks that the response is documented. I still have to judge whether the rule and the test say something useful."
+      },
+      {
+        "kind": "heading",
+        "text": "Factories accumulated experience; I want it in every loop"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Michael A. Cusumano (1991)](https://academic.oup.com/book/52424) studied the software factories at Hitachi, Toshiba, NEC and Fujitsu. His preface describes methods, training, quality controls and reuse that benefited a series of projects, rather than building from scratch for every customer. What interests me in that history is preserving experience for the next job."
+      },
+      {
+        "kind": "paragraph",
+        "text": "My bet with AI is to bring that accumulation into every loop: one task teaches something and the next receives the lesson. If I only automate writing, I speed up production while keeping the same forgetting. This is the connection I want with those factories:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-then-and-now.en.svg",
+        "caption": "Experience must travel to the next job. With agents, I make that journey between tasks explicit through files, retrieval by concept and checks."
+      },
+      {
+        "kind": "heading",
+        "text": "Learning between loops does not require retraining the model"
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Noah Shinn and colleagues (Reflexion, 2023)](https://arxiv.org/abs/2303.11366) had agents reflect on results and keep that text in memory for later attempts without updating model weights. I take a concrete idea from this: the failure must change the context of the next attempt. Repeating the same instruction does not preserve what was learned."
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Guanzhi Wang and colleagues (Voyager, 2023)](https://arxiv.org/abs/2305.16291) built a growing library of executable skills in Minecraft that the agent retrieves and reuses. I want that accumulation in my repository: tests and rules that the next change can use. Archiving conversations that nobody opens again is not enough for me."
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Justin Young (Anthropic, 2025)](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents) documented how a `claude-progress.txt` file and Git history let agents resume sessions. In chalc, I also separate progress from lessons: `tasks.md` says what remains; memory says what I must not forget again. Resuming a task and improving the next one are separate obligations."
+      },
+      {
+        "kind": "heading",
+        "text": "Gates turn a lesson into a condition for moving forward"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Storing a bad conclusion also accumulates errors. That is why I keep the harness: the environment of instructions, tools, files and checks that governs the agent's work. In [skills, MCP and harness](/daily/skills-mcp-harness), I explained its parts; in [the harness debate](/daily/the-harness-back-and-forth), I argued that verification does not expire when a more capable model arrives. Here I need it to tell a lesson from a guess."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In chalc, the specification remains the agreement that governs the work. The refund follows this line, and memory connects a closed task to the next one:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-factory-line.en.svg",
+        "caption": "Tests and review check the current change. Capture preserves what was learned before the next task begins. Accepting delivery remains my decision."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "I read the constitution and write `spec.md`: what must happen and why. For the refund, R1 sets the accumulated limit. `plan.md` proposes how to build it and needs my approval; `tasks.md` divides the work and traces it to requirements.",
+          "The agent writes the test before the code, sees it fail and adds the minimum needed to pass. It refactors and runs mutation testing. If the mutant that removes the limit survives, it strengthens the test before continuing.",
+          "`.chalc/gate.mjs` runs the configured checks and leaves `.chalc/gate.md` for reading the results and `.chalc/gate.state.json` for identifying what was checked. Changing the code afterward requires fresh evidence.",
+          "Security and review roles leave their findings in `.chalc/review.md`. The advisor requests fixes and another measurement when needed. When closing the task, `tick_task` requests memory capture before the checkbox is ticked.",
+          "The hardener reviews the complete feature. The `done` action requests another capture to preserve what that final review taught. I review the outcome, evidence and lessons before accepting delivery."
+        ]
+      },
+      {
+        "kind": "paragraph",
+        "text": "The model never decides when the work is done. The advisor checks the state of the process, and I decide whether the product meets our needs. Neither \"done\" in a chat nor last week's report replaces evidence for the change I am about to deliver. That is the point of [closing a task with evidence](/daily/close-a-task-with-evidence)."
+      },
+      {
+        "kind": "heading",
+        "text": "More agents cannot replace shared experience"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The promise of \"software in minutes without people\" remains [the same trap](/daily/the-software-in-minutes-trap). Distributing an error among more agents does not fix it. I start with the simplest flow I can check and separate roles when I need another perspective. What accumulates is checked learning; the number of agents does not produce it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "[Worktrees per story](/daily/a-desk-per-story-with-worktrees) and [API, web and mobile lanes](/daily/one-contract-three-lanes) separate work and share a contract. They do not make a finding travel to the next task on its own. For that, I need repository memory and someone to check that the lesson was applied."
+      },
+      {
+        "kind": "heading",
+        "text": "My job is deciding which lessons deserve to become rules"
+      },
+      {
+        "kind": "paragraph",
+        "text": "The agent can propose a lesson; I decide whether it deserves to govern other changes. An exception for one customer must not accidentally become everyone's policy. I review its reason, scope and supporting test. I also retire rules that no longer apply: accumulating stale instructions is another way to lose context."
+      },
+      {
+        "kind": "paragraph",
+        "text": "That requires understanding the business and challenging what the tool returns, as I described in [fear, laziness and the tool](/daily/fear-laziness-and-the-tool). It also requires evaluation, not just generation, which is what I argue in [what an AI engineer actually does](/daily/what-an-ai-engineer-actually-does). This is the division of work I want to maintain:"
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/sf-human-role.en.svg",
+        "caption": "Agents find, propose and check. I decide which lesson becomes a working rule and whether to accept the product that came out of that loop."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Now, when I close a task, I also review what the next agent will receive. If the refund taught us something and it only stayed in our conversation, I still have work to do. I want to open the rule, find the test and see that the next agent used them. This is how I am building [my projects](/projects); if you want to bring that loop to your team, visit [for companies](/for-companies) and we can talk."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[chalc-cli-adapter](https://github.com/ChristianCruzArango/chalc-cli-adapter) — Christian Cruz Arango, 2026: README and code for capture in `catalog/memory/lib/capture.mjs`, retrieval in `catalog/memory/lib/recall.mjs` and confirmations in `catalog/next/lib/checklist.mjs`.",
+          "[Reflexion: Language Agents with Verbal Reinforcement Learning](https://arxiv.org/abs/2303.11366) — Noah Shinn and colleagues, 2023: preserving reflections on results for later attempts without changing model weights.",
+          "[Voyager: An Open-Ended Embodied Agent with Large Language Models](https://arxiv.org/abs/2305.16291) — Guanzhi Wang and colleagues, 2023: a library of executable skills that grows and is reused in later tasks.",
+          "[Effective harnesses for long-running agents](https://www.anthropic.com/research/effective-harnesses-for-long-running-agents) — Justin Young, Anthropic, 2025: written progress and context recovery between sessions.",
+          "[Japan's Software Factories: A Challenge to U.S. Management](https://academic.oup.com/book/52424) — Michael A. Cusumano, 1991: organization and reuse across projects; the [preface in the preview](https://api.pageplace.de/preview/DT0400.9780195362848_A23604152/preview-9780195362848_A23604152.pdf) explains that accumulation."
+        ]
+      }
+    ]
+  }
+}

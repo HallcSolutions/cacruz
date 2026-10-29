@@ -1,5 +1,24 @@
 [
   {
+    "slug": "an-ai-software-factory-that-you-sign",
+    "date": "2026-10-29",
+    "title": {
+      "es": "Software Factory con IA: agentes que aprenden de cada vuelta",
+      "en": "An AI software factory: agents that learn from every loop"
+    },
+    "summary": {
+      "es": "Una Software Factory con IA mejora cuando cada vuelta deja una lección escrita que la siguiente lee y comprueba. Así conecto en chalc los fallos, la memoria del proyecto y los controles de calidad. Más agentes no acumulan experiencia por sí solos; yo decido qué aprendizajes se convierten en reglas.",
+      "en": "An AI software factory improves when each loop leaves a written lesson that the next one reads and checks. In chalc, I connect failures, project memory and quality gates. More agents do not accumulate experience on their own; I decide which lessons become rules."
+    },
+    "tags": [
+      "ia",
+      "software-factory",
+      "chalc",
+      "sdd",
+      "calidad"
+    ]
+  },
+  {
     "slug": "sdd-bdd-tdd-ddd-when-to-use-each",
     "date": "2026-10-20",
     "title": {

@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="627" viewBox="0 0 1200 627" role="img" aria-labelledby="title description" xml:lang="en">
+  <title id="title">Every loop teaches. The next one learns.</title>
+  <desc id="description">Every loop leaves a lesson for the next agent</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#a78bfa"/></marker>
+    <marker id="good" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8 z" fill="#34d399"/></marker>
+  </defs>
+  <style>
+    .stage { animation: reveal 8s ease-in-out infinite; }
+    .flow { stroke-dasharray: 6 8; animation: dash 1.8s linear infinite; }
+    .pulse { animation: pulse 4s ease-in-out infinite; }
+    @keyframes reveal { 0%,100% { opacity:.72; } 12%,75% { opacity:1; } }
+    @keyframes dash { to { stroke-dashoffset:-56; } }
+    @keyframes pulse { 0%,100% { opacity:.5; } 50% { opacity:1; } }
+  </style>
+  <rect width="1200" height="627" fill="url(#bg)"/>
+  <rect x="64" y="100" width="4" height="245" fill="#a78bfa" class="pulse"/><text x="96" y="125" font-family="ui-monospace, monospace" font-size="18" fill="#a78bfa" text-anchor="start">AI SOFTWARE FACTORY</text><text x="96" y="207" font-family="Georgia, serif" font-size="56" fill="#ece7fb" text-anchor="start">Every loop teaches.</text><text x="96" y="276" font-family="Georgia, serif" font-size="56" fill="#a78bfa" text-anchor="start">The next one learns.</text><text x="96" y="332" font-family="ui-monospace, monospace" font-size="20" fill="#8a7fb0" text-anchor="start">Learning is written, read and checked.</text><g class="stage" style="animation-delay:0.0s"><rect x="64" y="402" width="340" height="133" rx="14" fill="#181329" fill-opacity=".5" stroke="#453768" stroke-width="1.5"/><text x="88" y="436" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0" text-anchor="start">01</text><text x="88" y="477" font-family="Georgia, serif" font-size="30" fill="#ece7fb" text-anchor="start">Failure</text><text x="88" y="511" font-family="ui-monospace, monospace" font-size="17" fill="#8a7fb0" text-anchor="start">review finds it</text></g><g class="stage" style="animation-delay:0.7s"><rect x="430" y="402" width="340" height="133" rx="14" fill="#181329" fill-opacity=".5" stroke="#453768" stroke-width="1.5"/><text x="454" y="436" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0" text-anchor="start">02</text><text x="454" y="477" font-family="Georgia, serif" font-size="30" fill="#ece7fb" text-anchor="start">Written lesson</text><text x="454" y="511" font-family="ui-monospace, monospace" font-size="17" fill="#8a7fb0" text-anchor="start">rule + test + origin</text></g><g class="stage" style="animation-delay:1.4s"><rect x="796" y="402" width="340" height="133" rx="14" fill="#a78bfa" fill-opacity=".05" stroke="#a78bfa" stroke-width="1.5"/><text x="820" y="436" font-family="ui-monospace, monospace" font-size="15" fill="#8a7fb0" text-anchor="start">03</text><text x="820" y="477" font-family="Georgia, serif" font-size="30" fill="#a78bfa" text-anchor="start">Next loop</text><text x="820" y="511" font-family="ui-monospace, monospace" font-size="17" fill="#8a7fb0" text-anchor="start">the agent reads and checks</text></g><path d="M410 470 H424" fill="none" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#arrow)"/><path d="M776 470 H790" fill="none" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#arrow)"/><text x="64" y="589" font-family="ui-monospace, monospace" font-size="16" fill="#8a7fb0" text-anchor="start">Christian Cruz Arango · cacruz.com/daily · 2026-10-29</text>
+<path d="M966 541 V557 H234 V541" fill="none" stroke="#a78bfa" stroke-width="2" class="flow" marker-end="url(#arrow)"/>
+</svg>

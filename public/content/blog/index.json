@@ -1,5 +1,24 @@
 [
   {
+    "slug": "ai-engineering-interview-questions",
+    "date": "2026-11-03",
+    "title": {
+      "es": "Cómo dirigir agentes de IA: contexto, calidad y control de errores",
+      "en": "How to direct AI agents: context, quality and error handling"
+    },
+    "summary": {
+      "es": "Del primer cambio a un incidente en producción: cómo dar contexto a un agente, revisar su código, controlar los tokens y poner límites a sus acciones. Una guía práctica para entender qué se comprueba y por qué.",
+      "en": "From the first change to a production incident: how to give an agent context, review its code, manage tokens and set limits on its actions. A practical guide to what gets checked and why."
+    },
+    "tags": [
+      "ia",
+      "agentes",
+      "entrevistas",
+      "calidad",
+      "ingeniería"
+    ]
+  },
+  {
     "slug": "an-ai-software-factory-that-you-sign",
     "date": "2026-10-29",
     "title": {

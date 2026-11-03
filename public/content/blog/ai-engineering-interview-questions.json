@@ -1,0 +1,753 @@
+{
+  "slug": "ai-engineering-interview-questions",
+  "date": "2026-11-03",
+  "title": {
+    "es": "Cómo dirigir agentes de IA: contexto, calidad y control de errores",
+    "en": "How to direct AI agents: context, quality and error handling"
+  },
+  "summary": {
+    "es": "Del primer cambio a un incidente en producción: cómo dar contexto a un agente, revisar su código, controlar los tokens y poner límites a sus acciones. Una guía práctica para entender qué se comprueba y por qué.",
+    "en": "From the first change to a production incident: how to give an agent context, review its code, manage tokens and set limits on its actions. A practical guide to what gets checked and why."
+  },
+  "tags": [
+    "ia",
+    "agentes",
+    "entrevistas",
+    "calidad",
+    "ingeniería"
+  ],
+  "body": {
+    "es": [
+      {
+        "kind": "paragraph",
+        "text": "Un agente termina un cambio, las pruebas pasan y el equipo lo lleva a producción. Horas después, algo falla. La IA participó en el desarrollo; ahora el equipo necesita recuperar el servicio, entender el problema y evitar que se repita."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Esta nota muestra cómo dirigir la IA en cada etapa: qué información darle, qué pedirle y cómo comprobar lo que entrega. Los ejemplos se pueden adaptar a distintos lenguajes, sistemas y herramientas."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-interview-loop.es.svg",
+        "caption": "El recorrido completo: una tarea clara, contexto útil, cambios verificables y una persona responsable de la decisión."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuando el cambio llega a producción y algo falla"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si después de un cambio empiezan a fallar los pedidos, la IA puede ayudar a investigar: comparar la versión desplegada con la anterior, relacionar los errores con los archivos modificados y proponer dónde reproducir el fallo. Para hacerlo necesita los síntomas, la hora aproximada, registros relevantes sin datos sensibles y la identificación de la versión desplegada. Su respuesta es una hipótesis que el equipo debe contrastar con evidencia."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Contener: el equipo detiene el despliegue o desactiva la función afectada si es seguro. Revisa qué usuarios y datos pueden estar afectados.",
+          "Investigar con IA: entrega al agente los errores y cambios disponibles; pídele que señale archivos, evidencias y posibles causas, con acceso de solo lectura.",
+          "Comprobar y recuperar: reproduce el fallo, verifica si la causa propuesta es real y decide la mitigación. Después comprueba el servicio y añade una prueba que detecte la regresión."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-incident.es.svg",
+        "caption": "El agente ayuda a investigar; el equipo dirige la recuperación y verifica el impacto."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Una instrucción concreta para el agente, adaptada a los datos disponibles:"
+      },
+      {
+        "kind": "quote",
+        "text": "Después del despliegue, algunos pedidos fallan. Analiza estos errores y el cambio de la versión anterior a la actual en modo de solo lectura. Identifica los archivos que podrían estar relacionados, la evidencia a favor y en contra de cada hipótesis y cómo reproducir el fallo. Si falta información, indícala. No despliegues, reviertas ni modifiques datos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si el agente señala que una validación rechaza pedidos válidos, el equipo comprueba esa ruta con un caso real o una reproducción segura. Solo después decide cómo corregir y recuperar los datos afectados."
+      },
+      {
+        "kind": "heading",
+        "text": "La calidad empieza antes del código"
+      },
+      {
+        "kind": "paragraph",
+        "text": "No existe una garantía absoluta de calidad. El riesgo se reduce con requisitos verificables, revisión humana y pruebas proporcionales al cambio. [GitHub advierte](https://docs.github.com/en/copilot/tutorials/write-tests) que las pruebas generadas pueden no cubrir todos los escenarios y deben revisarse."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Definir la regla: la suma de reembolsos no puede superar el pago original.",
+          "Comprobarla: probar un importe válido, el saldo exacto y un exceso; revisar código y pruebas antes de integrar el cambio."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-quality.es.svg",
+        "caption": "La persona define la regla; la IA propone pruebas y el equipo comprueba que detecten fallos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "La IA puede proponer pruebas a partir de un requisito, pero el desarrollador debe revisar si los casos representan el comportamiento esperado y ejecutarlos con las herramientas del proyecto."
+      },
+      {
+        "kind": "quote",
+        "text": "A partir de esta regla de negocio, identifica casos válidos, límites y errores. Propón pruebas que fallen si la regla se incumple; explica qué comportamiento comprueba cada una antes de cambiar la implementación."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El equipo revisa los casos, observa que una prueba detecta el comportamiento incorrecto y vuelve a ejecutarla tras la corrección. Una prueba que pasa no demuestra que cubra todos los escenarios."
+      },
+      {
+        "kind": "heading",
+        "text": "El contexto que el agente necesita para no adivinar"
+      },
+      {
+        "kind": "paragraph",
+        "text": "El contexto es la información disponible para el modelo: instrucciones, conversación, archivos y resultados de herramientas. Su ventana tiene un límite. Si falta una regla de negocio, la respuesta puede sonar convincente y aun así ser incorrecta. [Anthropic explica](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) cómo seleccionar y conservar información útil."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Instrucción al agente: «Implementa reembolsos parciales. La suma no puede superar el pago; revisa el saldo exacto y el exceso. Indica qué archivos y pruebas utilizaste».",
+          "Pedir evidencia: qué archivos consultó, qué pruebas ejecutó y qué decisiones siguen sin resolver; contrastarlo con el repositorio."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-context.es.svg",
+        "caption": "El agente trabaja con el objetivo y las fuentes pertinentes, sin cargar todo el proyecto."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Para una tarea concreta, el desarrollador entrega el objetivo, las reglas y los archivos que conoce; permite al agente buscar lo que falta. El contexto se ajusta según lo que la tarea necesita."
+      },
+      {
+        "kind": "quote",
+        "text": "Implementa este requisito respetando la arquitectura existente. Primero identifica los archivos y las reglas relevantes; indica qué información te falta. Después propone un plan y las pruebas necesarias. No supongas rutas ni versiones."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se comprueba que los archivos y las reglas citadas existen y corresponden a la tarea. Si falta información, se aporta antes de aceptar la solución."
+      },
+      {
+        "kind": "heading",
+        "text": "Una fábrica de software con agentes y responsabilidades claras"
+      },
+      {
+        "kind": "paragraph",
+        "text": "En esta nota, una fábrica de software con agentes es una forma de organizar tareas, responsabilidades y controles; no se presenta como un estándar único. Más agentes no garantizan calidad: pueden repetir errores o duplicar trabajo. [Anthropic recomienda](https://www.anthropic.com/research/building-effective-agents) empezar con la solución más sencilla y añadir complejidad cuando haga falta."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Separar responsabilidades: una persona define el resultado esperado; un agente propone el cambio y otro paso lo revisa.",
+          "Poner un control entre etapas: si las pruebas fallan, el cambio vuelve a revisión en vez de avanzar a su aceptación."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-factory.es.svg",
+        "caption": "Cada etapa recibe un resultado verificable y solo avanza cuando se cumplen sus controles."
+      },
+      {
+        "kind": "paragraph",
+        "text": "En una fábrica con agentes, el desarrollador define responsabilidades y criterios de paso. Puede usar un agente para implementar y otra revisión para detectar errores; la coordinación debe dejar resultados comprobables."
+      },
+      {
+        "kind": "quote",
+        "text": "Para este requisito, separa análisis, implementación y revisión. Para cada etapa indica responsable, archivos de entrada, resultado esperado y comprobaciones. Si una comprobación falla, devuelve la tarea para corregirla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El equipo verifica que las pruebas se ejecutaron, que la revisión corresponde al cambio y que los criterios de aceptación se cumplen. La separación de roles no garantiza independencia por sí sola."
+      },
+      {
+        "kind": "heading",
+        "text": "Cada token debe aportar algo útil"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un token es una unidad en la que el modelo divide y procesa texto. Puede ser una palabra, parte de ella o un signo; el [tokenizador de OpenAI](https://platform.openai.com/tokenizer) muestra un ejemplo. El consumo puede afectar el costo, la latencia y el espacio de contexto, según el producto."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Medir una tarea: registrar tokens de entrada y salida, costo y si el resultado cumplió el requisito.",
+          "Comparar: repetir los mismos casos con menos contexto o con otro modelo y conservar la opción que mantenga la calidad necesaria."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-tokens.es.svg",
+        "caption": "El ahorro se evalúa junto con la calidad, usando métricas reales de la herramienta."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El desarrollador consulta el uso que proporciona la herramienta y compara intentos sobre la misma tarea. Puede pedir al agente que encuentre contexto relevante sin adjuntar archivos completos desde el inicio."
+      },
+      {
+        "kind": "quote",
+        "text": "Antes de implementar, identifica los archivos estrictamente necesarios para este requisito y explica por qué. Consulta fragmentos concretos cuando sea posible y conserva las reglas de negocio y las pruebas relevantes."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se comparan consumo, costo y resultados con los mismos casos. Resumir demasiado puede eliminar información importante; la caché y su efecto dependen del proveedor."
+      },
+      {
+        "kind": "heading",
+        "text": "Una respuesta convincente también puede ser falsa"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Una alucinación es contenido falso o inventado que puede parecer convincente, como una cita inexistente. [OpenAI explica](https://openai.com/index/why-language-models-hallucinate/) que un modelo puede responder con seguridad aun cuando se equivoca. Consultar fuentes y ejecutar pruebas reduce el riesgo, pero no elimina todos los errores."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Ante una API propuesta, buscar su nombre en la documentación de la versión instalada y comprobar un uso pequeño.",
+          "Instrucción al agente: «Indica qué documentación respalda esa API y verifica que exista en la versión instalada. Si no puedes comprobarlo, dilo»."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-hallucination.es.svg",
+        "caption": "Una respuesta de la IA se contrasta con la fuente y con una comprobación reproducible."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si el agente propone una API o afirma que una regla existe, el desarrollador le pide la fuente exacta y la contrasta con la versión instalada o con los archivos del proyecto."
+      },
+      {
+        "kind": "quote",
+        "text": "Para cada API que propones, indica la versión y enlaza la documentación oficial o señala el archivo donde aparece. Si no puedes verificarla, dilo. Propón una comprobación reproducible antes de usarla."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El desarrollador abre la fuente, confirma que corresponde a la versión y ejecuta la comprobación. Una referencia generada puede ser incorrecta o no existir."
+      },
+      {
+        "kind": "heading",
+        "text": "El recorrido de una tarea asistida por IA"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un workflow, o flujo de trabajo, es una secuencia de pasos. En la distinción que usa [Anthropic](https://www.anthropic.com/research/building-effective-agents), un workflow sigue rutas predefinidas; un agente puede decidir dinámicamente sus pasos y herramientas dentro de los límites establecidos."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Una persona describe la regla de negocio; el agente propone casos; el equipo los revisa antes de implementar.",
+          "Al terminar, se ejecutan las comprobaciones y una persona revisa el cambio y decide si se acepta."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-workflow.es.svg",
+        "caption": "La IA participa en el flujo; la persona mantiene la decisión de aceptación."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un flujo asistido por IA puede comenzar con un requisito y terminar en una revisión. El desarrollador define qué pasos se automatizan, cuáles requieren supervisión y qué evidencia debe producir cada uno."
+      },
+      {
+        "kind": "quote",
+        "text": "Para esta funcionalidad, enumera los pasos desde el requisito hasta la revisión. Propón pruebas antes de implementar, muestra los cambios y reporta los resultados reales de las comprobaciones. No marques la tarea como aceptada sin revisión."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se revisan los cambios, la salida real de las pruebas y los requisitos pendientes. Si una prueba no pudo ejecutarse, se registra en vez de darla por aprobada."
+      },
+      {
+        "kind": "heading",
+        "text": "Las señales de alerta que deja el código"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Un code smell es una señal de que puede existir un problema más profundo, no una prueba de fallo. [Martin Fowler explica](https://martinfowler.com/bliki/CodeSmell.html) que incluso un método largo puede estar justificado. Una API inventada o un error silenciado también pueden ser defectos concretos."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Revisar una función extensa: si mezcla cálculo, acceso a datos y mensajes, comprobar si separar responsabilidades aclara el cambio.",
+          "Buscar duplicación y errores silenciados; confirmar con pruebas que cualquier corrección conserva el comportamiento esperado."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-smells.es.svg",
+        "caption": "La IA señala riesgos y el desarrollador decide cuáles son reales y cómo corregirlos."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El desarrollador puede pedir al agente que revise un cambio generado y señale duplicación, responsabilidades mezcladas o errores silenciados. Cada observación debe comprobarse en el código y su contexto."
+      },
+      {
+        "kind": "quote",
+        "text": "Revisa este cambio frente al requisito. Señala duplicación, funciones con responsabilidades mezcladas y errores silenciados; para cada hallazgo indica archivo, ubicación, consecuencia y una mejora pequeña. No cambies el código todavía."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Se abre cada ubicación, se descartan falsos positivos y se comprueba con pruebas que la corrección conserva el comportamiento esperado."
+      },
+      {
+        "kind": "heading",
+        "text": "Cuando se termina el espacio o se alcanza un límite"
+      },
+      {
+        "kind": "paragraph",
+        "text": "«Quedarse sin tokens» puede referirse a límites diferentes. Si se llena la ventana de contexto, se puede guardar un resumen con el objetivo, las decisiones, los archivos modificados, las pruebas y el siguiente paso; después, según la herramienta, se compacta el historial o se inicia una sesión nueva y se verifica el estado real del proyecto. Si se alcanza un límite temporal de solicitudes o tokens por minuto, puede ser necesario esperar y reintentar según las indicaciones del proveedor. Si se agota una cuota o un presupuesto, hay que revisar las condiciones de la cuenta o continuar manualmente. La [documentación de límites de Anthropic](https://platform.claude.com/docs/en/api/rate-limits) ofrece un ejemplo de límites temporales en una API. Un resumen puede omitir detalles: los archivos y las comprobaciones siguen siendo esenciales."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Antes de llegar al límite: dividir el trabajo en tareas pequeñas, cargar solo los archivos necesarios y consultar fragmentos concretos de registros. Conviene guardar decisiones y pendientes durante el trabajo, no esperar a perder el contexto.",
+          "Si se llena el contexto: pedir al agente un relevo con objetivo, decisiones, archivos modificados, pruebas y siguiente paso; guardarlo y comenzar una sesión nueva o compactar, según la herramienta. Al retomar, contrastarlo con el repositorio.",
+          "Si aparece un límite temporal: revisar el mensaje del proveedor, reducir la frecuencia o la concurrencia y esperar el tiempo indicado antes de reintentar. En una integración, conviene usar esperas crecientes y comprobar que un reintento no repita una operación con efectos, como un cobro.",
+          "Si el problema es el costo: medir el consumo por tarea, evitar contexto innecesario y comparar modelos con los mismos casos de prueba. Si el proveedor ofrece caché de instrucciones o contexto repetido, evaluar su precio y condiciones: puede reducir el costo de entrada, pero no amplía automáticamente la ventana de contexto.",
+          "Si se agotó la cuota o el presupuesto: consultar cuándo se renueva y qué opciones ofrece el plan. Una persona autorizada puede valorar un cambio de límite o plan tras revisar el costo; mientras tanto, se puede continuar manualmente o pausar la tarea."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-limits.es.svg",
+        "caption": "El relevo conserva el avance; la respuesta depende de qué límite se alcanzó."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Si la ventana de contexto se acerca al límite, el desarrollador pide un relevo antes de iniciar otra sesión. Si el límite es de solicitudes o presupuesto, revisa las condiciones del proveedor: una sesión nueva no necesariamente lo resuelve."
+      },
+      {
+        "kind": "quote",
+        "text": "Prepara un relevo para continuar esta tarea: objetivo, reglas, decisiones tomadas, archivos modificados, pruebas ejecutadas con resultado, pendientes y siguiente paso. Señala lo que no hayas podido comprobar."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Al retomar, se contrasta el resumen con el estado real de los archivos y las pruebas. Ante un límite temporal se espera según el proveedor; ante una cuota agotada se revisa el plan o se continúa manualmente."
+      },
+      {
+        "kind": "heading",
+        "text": "Los límites que protegen al sistema"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Los guardrails son medidas que limitan acciones o comprueban entradas y resultados. Un riesgo es la inyección de instrucciones: texto externo que intenta desviar al agente de su tarea. La [guía de seguridad de OpenAI](https://developers.openai.com/api/docs/guides/agent-builder-safety) describe controles para reducir ese riesgo."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Para una tarea de revisión, conceder solo las herramientas y permisos necesarios; reservar el despliegue para una acción aprobada.",
+          "Tratar el contenido externo como datos: validar qué información puede llegar a las herramientas y revisar los registros de acciones."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-guardrails.es.svg",
+        "caption": "Los permisos se aplican en la herramienta que ejecuta la acción, no solo en el texto del prompt."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El desarrollador configura qué puede hacer el agente en el entorno: por ejemplo, leer archivos y ejecutar pruebas, mientras que desplegar requiere un control adicional. Las instrucciones ayudan, pero los permisos deben aplicarse técnicamente."
+      },
+      {
+        "kind": "quote",
+        "text": "Para esta tarea, identifica las herramientas y datos mínimos necesarios. Propón dónde aplicar permisos, validación y aprobación humana para acciones sensibles. Señala cómo tratarías instrucciones presentes en contenido externo."
+      },
+      {
+        "kind": "paragraph",
+        "text": "El equipo verifica en el entorno real que las acciones no autorizadas se rechazan, que los datos externos no se convierten en instrucciones y que las solicitudes sensibles siguen el flujo de aprobación."
+      },
+      {
+        "kind": "heading",
+        "text": "El trabajo continúa después de generar código"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Trabajar con agentes exige entender el riesgo, tomar decisiones concretas y comprobar sus resultados. Para profundizar en cómo se coordinan estos controles, se puede leer la nota sobre [una fábrica de software con IA](/daily/an-ai-software-factory-that-you-sign) y la guía de [arquitecturas de IA](/daily/ai-architectures-people-use)."
+      },
+      {
+        "kind": "heading",
+        "text": "Para leer más"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Respuesta a incidentes · Google SRE](https://sre.google/workbook/incident-response/): explica cómo coordinarse para mitigar un incidente y recuperar el servicio.",
+          "[Pruebas con GitHub Copilot · GitHub Docs](https://docs.github.com/en/copilot/tutorials/write-tests): recuerda revisar las pruebas generadas y cubrir casos adicionales.",
+          "[Ingeniería de contexto · Anthropic](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents): describe cómo seleccionar y mantener información útil para agentes.",
+          "[Construcción de agentes efectivos · Anthropic](https://www.anthropic.com/research/building-effective-agents): compara flujos predefinidos y agentes, con sus costos y compromisos.",
+          "[Tokenizer · OpenAI](https://platform.openai.com/tokenizer): muestra cómo se divide el texto en tokens.",
+          "[Por qué los modelos alucinan · OpenAI](https://openai.com/index/why-language-models-hallucinate/): analiza las respuestas falsas y la incertidumbre.",
+          "[Code Smell · Martin Fowler](https://martinfowler.com/bliki/CodeSmell.html): explica qué significa una señal de alerta y por qué requiere contexto.",
+          "[Límites de uso · Anthropic](https://platform.claude.com/docs/en/api/rate-limits): muestra cómo funcionan los límites temporales de su API.",
+          "[Seguridad de agentes · OpenAI](https://developers.openai.com/api/docs/guides/agent-builder-safety): describe la inyección de instrucciones y controles para reducir el riesgo.",
+          "[Caché de instrucciones · Anthropic](https://platform.claude.com/docs/en/build-with-claude/prompt-caching): explica cómo reutilizar contexto y consultar sus condiciones de uso."
+        ]
+      }
+    ],
+    "en": [
+      {
+        "kind": "paragraph",
+        "text": "An agent finishes a change, tests pass and the team releases it to production. Hours later, something fails. AI helped with development; now the team needs to restore service, understand the problem and prevent it from happening again."
+      },
+      {
+        "kind": "paragraph",
+        "text": "This note shows how to direct AI at each stage: what information to provide, what to ask for and how to check its output. The examples can be adapted to different languages, systems and tools."
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/ai-interview-loop.en.svg",
+        "caption": "The complete journey: a clear task, useful context, verifiable changes and a person responsible for the decision."
+      },
+      {
+        "kind": "heading",
+        "text": "When a change reaches production and something breaks"
+      },
+      {
+        "kind": "paragraph",
+        "text": "If orders begin failing after a change, AI can help investigate: compare the deployed version with the previous one, relate errors to changed files and suggest where to reproduce the failure. It needs the symptoms, approximate time, relevant logs without sensitive data and the deployed version identifier. Its answer is a hypothesis the team must check against evidence."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Contain: the team stops the rollout or disables the affected feature if it is safe, and checks which users and data may be affected.",
+          "Investigate with AI: provide the agent with available errors and changes; ask it to identify files, evidence and possible causes, with read-only access.",
+          "Verify and recover: reproduce the failure, check whether the proposed cause is real and decide on mitigation. Then verify the service and add a regression test."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-incident.en.svg",
+        "caption": "The agent helps investigate; the team directs recovery and verifies the impact."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A concrete instruction for the agent, adapted to the information available:"
+      },
+      {
+        "kind": "quote",
+        "text": "After deployment, some orders fail. Analyze these errors and the change from the previous version to the current one in read-only mode. Identify files that may be related, evidence for and against each hypothesis, and how to reproduce the failure. State what information is missing. Do not deploy, roll back or modify data."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If the agent suggests a validation rejects valid orders, the team checks that path with a real case or a safe reproduction. Only then does it decide how to fix the issue and recover affected data."
+      },
+      {
+        "kind": "heading",
+        "text": "Quality starts before the code"
+      },
+      {
+        "kind": "paragraph",
+        "text": "There is no absolute quality guarantee. Risk is reduced through verifiable requirements, human review and checks proportional to the change. [GitHub cautions](https://docs.github.com/en/copilot/tutorials/write-tests) that generated tests may not cover every scenario and should be reviewed."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Define the rule: total refunds cannot exceed the original payment.",
+          "Check it: test a valid amount, the exact remaining balance and an excess; review both code and tests before integration."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-quality.en.svg",
+        "caption": "A person defines the rule; AI proposes tests and the team checks that they catch failures."
+      },
+      {
+        "kind": "paragraph",
+        "text": "AI can suggest tests from a requirement, but the developer must check whether the cases represent expected behavior and run them with the project’s tools."
+      },
+      {
+        "kind": "quote",
+        "text": "From this business rule, identify valid cases, boundaries and errors. Propose tests that fail when the rule is violated; explain the behavior each test checks before changing the implementation."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The team reviews the cases, observes that a test detects incorrect behavior and runs it again after the fix. A passing test does not establish coverage of every scenario."
+      },
+      {
+        "kind": "heading",
+        "text": "The context an agent needs to avoid guessing"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Context is the information available to the model: instructions, conversation, files and tool results. Its window has a limit. If a business rule is missing, an answer can sound convincing and still be wrong. [Anthropic explains](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents) how to select and preserve useful information."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Agent instruction: “Implement partial refunds. The total cannot exceed the payment; check the exact balance and an excess. State which files and tests you used.”",
+          "Ask for evidence: files consulted, tests run and unresolved decisions; check the answer against the repository."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-context.en.svg",
+        "caption": "The agent receives the goal and relevant sources without loading the entire project."
+      },
+      {
+        "kind": "paragraph",
+        "text": "For a specific task, the developer supplies the goal, rules and known files, allowing the agent to find what is missing. Context is adjusted to the task’s needs."
+      },
+      {
+        "kind": "quote",
+        "text": "Implement this requirement while respecting the existing architecture. First identify relevant files and rules; state what information is missing. Then propose a plan and necessary tests. Do not assume paths or versions."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Check that cited files and rules exist and apply to the task. Supply missing information before accepting the solution."
+      },
+      {
+        "kind": "heading",
+        "text": "A software factory with agents and clear responsibilities"
+      },
+      {
+        "kind": "paragraph",
+        "text": "In this note, a software factory with agents is a way to organize tasks, responsibilities and controls; it is not presented as a single standard. More agents do not guarantee quality: they can repeat mistakes or duplicate work. [Anthropic recommends](https://www.anthropic.com/research/building-effective-agents) starting simple and adding complexity when needed."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Separate responsibilities: a person defines the expected result; an agent proposes a change and another step reviews it.",
+          "Place a check between stages: if tests fail, the change returns for review instead of advancing to acceptance."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-factory.en.svg",
+        "caption": "Each stage receives a verifiable result and advances only when its checks are met."
+      },
+      {
+        "kind": "paragraph",
+        "text": "In a factory with agents, the developer defines responsibilities and stage criteria. One agent can implement and another review can look for errors; coordination must leave verifiable results."
+      },
+      {
+        "kind": "quote",
+        "text": "For this requirement, separate analysis, implementation and review. For each stage identify its owner, input files, expected result and checks. If a check fails, return the task for correction."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The team verifies that tests ran, the review applies to the change and acceptance criteria are met. Separate roles do not by themselves guarantee independence."
+      },
+      {
+        "kind": "heading",
+        "text": "Every token should contribute something useful"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A token is a unit into which a model divides and processes text. It may be a word, part of one or a punctuation mark; the [OpenAI tokenizer](https://platform.openai.com/tokenizer) shows an example. Usage can affect cost, latency and context space, depending on the product."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Measure a task: record input and output tokens, cost and whether the result met the requirement.",
+          "Compare: repeat the same cases with less context or another model and keep the option that meets the required quality."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-tokens.en.svg",
+        "caption": "Savings are evaluated together with quality using actual tool metrics."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The developer checks usage reported by the tool and compares attempts at the same task. The agent can be asked to find relevant context without attaching entire files at the outset."
+      },
+      {
+        "kind": "quote",
+        "text": "Before implementing, identify the files strictly necessary for this requirement and explain why. Consult specific excerpts when possible and retain relevant business rules and tests."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Compare usage, cost and results using the same cases. Excessive summarization can remove important information; caching and its effect depend on the provider."
+      },
+      {
+        "kind": "heading",
+        "text": "A convincing answer can still be wrong"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A hallucination is false or invented content that can sound convincing, such as a nonexistent citation. [OpenAI explains](https://openai.com/index/why-language-models-hallucinate/) that a model can answer confidently even when wrong. Checking sources and running tests reduces risk, but does not eliminate every error."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "For a suggested API, look up its name in the documentation for the installed version and check a small usage example.",
+          "Agent instruction: “Identify the documentation supporting that API and verify it exists in the installed version. If you cannot verify it, say so.”"
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-hallucination.en.svg",
+        "caption": "An AI response is checked against its source and a reproducible check."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If an agent proposes an API or claims a rule exists, the developer requests the exact source and checks it against the installed version or project files."
+      },
+      {
+        "kind": "quote",
+        "text": "For each API you propose, give the version and link to official documentation or identify the file where it appears. If you cannot verify it, say so. Propose a reproducible check before using it."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The developer opens the source, confirms it matches the version and runs the check. A generated reference can be wrong or nonexistent."
+      },
+      {
+        "kind": "heading",
+        "text": "The journey of an AI-assisted task"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A workflow is a sequence of steps. In the distinction used by [Anthropic](https://www.anthropic.com/research/building-effective-agents), a workflow follows predefined paths; an agent can dynamically decide its steps and tools within established limits."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "A person describes the business rule; the agent proposes cases; the team reviews them before implementation.",
+          "When finished, checks run and a person reviews the change and decides whether to accept it."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-workflow.en.svg",
+        "caption": "AI participates in the workflow; a person retains the acceptance decision."
+      },
+      {
+        "kind": "paragraph",
+        "text": "An AI-assisted workflow can begin with a requirement and end in review. The developer defines which steps are automated, which need supervision and what evidence each should produce."
+      },
+      {
+        "kind": "quote",
+        "text": "For this feature, list the steps from requirement through review. Propose tests before implementation, show the changes and report actual check results. Do not mark the task accepted without review."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Review the changes, actual test output and outstanding requirements. If a test could not run, record it instead of reporting it as passed."
+      },
+      {
+        "kind": "heading",
+        "text": "Warning signs in the code"
+      },
+      {
+        "kind": "paragraph",
+        "text": "A code smell is a sign that a deeper problem may exist, not proof of a defect. [Martin Fowler explains](https://martinfowler.com/bliki/CodeSmell.html) that even a long method may be justified. An invented API or a swallowed error can also be an actual defect."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Review a long function: if it mixes calculation, data access and messages, check whether separating responsibilities clarifies the change.",
+          "Look for duplication and swallowed errors; use tests to confirm that a correction preserves the expected behavior."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-smells.en.svg",
+        "caption": "AI flags risks and the developer decides which are real and how to fix them."
+      },
+      {
+        "kind": "paragraph",
+        "text": "A developer can ask an agent to review a generated change for duplication, mixed responsibilities or swallowed errors. Each observation must be checked in code and context."
+      },
+      {
+        "kind": "quote",
+        "text": "Review this change against the requirement. Flag duplication, functions with mixed responsibilities and swallowed errors; for each finding give the file, location, consequence and a small improvement. Do not change the code yet."
+      },
+      {
+        "kind": "paragraph",
+        "text": "Open each location, discard false positives and use tests to verify that a correction preserves expected behavior."
+      },
+      {
+        "kind": "heading",
+        "text": "When context runs out or a limit is reached"
+      },
+      {
+        "kind": "paragraph",
+        "text": "“Running out of tokens” can refer to different limits. If the context window fills up, a summary can record the goal, decisions, changed files, tests and next step; depending on the tool, the history can then be compacted or a new session started and the actual project state verified. If a temporary requests-per-minute or tokens-per-minute limit is reached, it may be necessary to wait and retry according to the provider’s instructions. If a quota or budget is exhausted, the account conditions must be reviewed or work continued manually. [Anthropic’s rate-limit documentation](https://platform.claude.com/docs/en/api/rate-limits) gives an example of temporary API limits. A summary can omit details, so files and checks remain essential."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "Before reaching a limit: split work into smaller tasks, load only the files needed and inspect specific log excerpts. Save decisions and outstanding work as the task progresses instead of waiting until context is lost.",
+          "If context fills up: ask the agent for a handoff with the goal, decisions, changed files, tests and next step; save it and start a new session or compact, depending on the tool. On resuming, check it against the repository.",
+          "If a temporary rate limit appears: check the provider’s message, reduce request frequency or concurrency and wait for the indicated time before retrying. In an integration, use increasing delays and check that a retry cannot repeat an action with side effects, such as a charge.",
+          "If cost is the concern: measure usage per task, avoid unnecessary context and compare models using the same test cases. If the provider offers caching for repeated instructions or context, evaluate its pricing and conditions: it may reduce input cost, but does not automatically expand the context window.",
+          "If a quota or budget is exhausted: check when it resets and what options the plan offers. An authorized person can consider changing the limit or plan after reviewing the cost; meanwhile, the task can continue manually or be paused."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-limits.en.svg",
+        "caption": "The handoff preserves progress; the response depends on which limit was reached."
+      },
+      {
+        "kind": "paragraph",
+        "text": "If the context window nears its limit, the developer requests a handoff before starting another session. For a rate or budget limit, the provider’s conditions apply: a new session may not resolve it."
+      },
+      {
+        "kind": "quote",
+        "text": "Prepare a handoff to continue this task: goal, rules, decisions, changed files, tests run and results, outstanding work and next step. Identify anything you could not verify."
+      },
+      {
+        "kind": "paragraph",
+        "text": "On resuming, compare the summary with the actual files and tests. For a temporary limit, wait according to the provider; for an exhausted quota, review the plan or continue manually."
+      },
+      {
+        "kind": "heading",
+        "text": "The boundaries that protect the system"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Guardrails are measures that constrain actions or check inputs and outputs. One risk is prompt injection: external text that tries to divert an agent from its task. [OpenAI’s safety guide](https://developers.openai.com/api/docs/guides/agent-builder-safety) describes controls that reduce this risk."
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "For a review task, grant only the tools and permissions needed; reserve deployment for an approved action.",
+          "Treat external content as data: validate what information can reach tools and review action logs."
+        ]
+      },
+      {
+        "kind": "image",
+        "src": "images/blog/agent-example-guardrails.en.svg",
+        "caption": "Permissions are enforced by the executing tool, not just by text in a prompt."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The developer configures what the agent may do in the environment: for example, read files and run tests, while deployment requires an additional control. Instructions help, but permissions must be technically enforced."
+      },
+      {
+        "kind": "quote",
+        "text": "For this task, identify the minimum tools and data needed. Propose where to enforce permissions, validation and human approval for sensitive actions. Explain how you would handle instructions in external content."
+      },
+      {
+        "kind": "paragraph",
+        "text": "The team verifies in the real environment that unauthorized actions are rejected, external data is not treated as instructions and sensitive requests follow the approval flow."
+      },
+      {
+        "kind": "heading",
+        "text": "The work continues after code is generated"
+      },
+      {
+        "kind": "paragraph",
+        "text": "Working with agents requires understanding risk, making concrete decisions and checking their results. For more on coordinating these controls, see the notes on [an AI software factory](/daily/an-ai-software-factory-that-you-sign) and [AI architectures](/daily/ai-architectures-people-use)."
+      },
+      {
+        "kind": "heading",
+        "text": "Further reading"
+      },
+      {
+        "kind": "steps",
+        "items": [
+          "[Incident response · Google SRE](https://sre.google/workbook/incident-response/): how to coordinate mitigation and restore service.",
+          "[Writing tests with GitHub Copilot · GitHub Docs](https://docs.github.com/en/copilot/tutorials/write-tests): why generated tests need review and additional cases.",
+          "[Effective context engineering · Anthropic](https://www.anthropic.com/research/effective-context-engineering-for-ai-agents): selecting and maintaining useful information for agents.",
+          "[Building effective agents · Anthropic](https://www.anthropic.com/research/building-effective-agents): predefined workflows and agents, including costs and tradeoffs.",
+          "[Tokenizer · OpenAI](https://platform.openai.com/tokenizer): how text is split into tokens.",
+          "[Why language models hallucinate · OpenAI](https://openai.com/index/why-language-models-hallucinate/): analyzes false answers and uncertainty.",
+          "[Code Smell · Martin Fowler](https://martinfowler.com/bliki/CodeSmell.html): explains warning signs and why they require context.",
+          "[Rate limits · Anthropic](https://platform.claude.com/docs/en/api/rate-limits): describes temporary limits in its API.",
+          "[Agent safety · OpenAI](https://developers.openai.com/api/docs/guides/agent-builder-safety): describes prompt injection and controls to reduce the risk.",
+          "[Prompt caching · Anthropic](https://platform.claude.com/docs/en/build-with-claude/prompt-caching): explains how to reuse context and check its usage conditions."
+        ]
+      }
+    ]
+  }
+}

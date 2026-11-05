@@ -1,11 +1,14 @@
 Generación: herramienta integrada image_gen (sin CLI).
-Archivo final: flyer.es.png
+Archivos finales: flyer.es.png y flyer.en.png
 Artículo: https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
 
 Texto alternativo para LinkedIn:
 Flyer sobre cómo ahorrar tokens con modelos económicos. Un harness reúne contexto útil, herramientas, pruebas y evidencia. Dentro, un modelo potente planifica, uno económico desarrolla y corrige, y otro potente revisa. Una flecha devuelve los hallazgos de revisión al desarrollador. Invita a leer la guía de Christian Cruz Arango en cacruz.com.
 
-Prompt utilizado:
+English alt text for LinkedIn:
+Flyer about saving tokens with lower-cost models. A harness brings together useful context, tools, tests, and evidence. Inside, a stronger model plans, a lower-cost model builds and fixes, and a stronger model reviews. A return arrow sends review findings back to the developer. The flyer invites readers to Christian Cruz Arango's full guide at cacruz.com.
+
+Prompt utilizado para español:
 Use case: ads-marketing.
 Asset type: finished single-image LinkedIn flyer in Spanish, portrait 4:5, around 1200 × 1500 px. Deliver only the flat full-bleed graphic, no device mockup.
 Primary request: promote Christian Cruz Arango's educational development note about saving tokens by equipping economical AI coding models with a robust harness, orchestrating bounded tasks, and reviewing evidence. This is a polished editorial technology poster, clear for developers, not a generic AI ad.
@@ -31,3 +34,27 @@ económicos"
 "Christian Cruz Arango"
 "cacruz.com/daily/spend-fewer-tokens-with-a-model-team"
 Constraints: prioritize readable exact typography and clean intentional composition. Last URL may be small but must fit fully within margins as two balanced lines if needed. No numeric savings, no fake benchmark, no robots, no humanoids, no coins, no invented company logos, no provider names, no dollar symbols, no watermark. No glossy neon cyberpunk, no chaotic small labels. The flyer should feel like the publication cover of a careful engineer explaining a reproducible workflow.
+
+Prompt utilizado para inglés (edición del flyer español):
+Use case: text-localization.
+Edit target: the attached Spanish LinkedIn flyer.
+Create the English edition of this exact flyer. Preserve its portrait proportions, purple and green palette, subtle grid, editorial serif headline, three-card flow, icons, harness frame, correction arrow, CTA block, margins and overall visual hierarchy. Change ONLY the language, with minimal typographic reflow to fit English naturally. Keep the author's name and article URL unchanged. Do not add logos, numbers, promises, objects, or watermarks. Output a finished flat full-bleed graphic, not a mockup.
+Replace every Spanish text with the following exact English text and no other words:
+Top eyebrow: "DEVELOPMENT NOTES"
+Headline, large, natural three-line composition: "How I save tokens
+with lower-cost
+models"
+Subtitle: "Savings start before I call the model."
+Harness label: "HARNESS"
+Harness line: "Useful context · Tools · Tests · Evidence"
+Left card label: "STRONGER MODEL"
+Left card action: "Plans"
+Middle card label: "LOWER-COST MODEL"
+Middle card action: "Builds and fixes"
+Right card label: "STRONGER MODEL"
+Right card action: "Reviews"
+Lower learning strip: "How I equip models, orchestrate work and review code."
+CTA: "Read the full guide at cacruz.com"
+Author: "Christian Cruz Arango"
+Footer: "cacruz.com/daily/spend-fewer-tokens-with-a-model-team"
+Make all typography sharp, correctly spelled, and legible at phone-feed size. Keep the entire footer URL within the canvas.

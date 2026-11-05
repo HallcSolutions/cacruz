@@ -1,0 +1,32 @@
+A cheap call can turn into an expensive task.
+
+I am changing how I develop with AI: a lower-cost model implements and fixes; a stronger one prepares the work and reviews the result.
+
+Savings start before I call the model.
+
+First, I equip the developer with the project architecture, working instructions—skills—tools, clear requirements, and tests. A harness then controls what context it receives, what it can execute, and what evidence it returns.
+
+A harness is the program that makes this workflow run. A well-equipped lower-cost model can deliver something closer to the requirements than a stronger model working from an ambiguous request. That needs checking on real tasks, not judging by the model name.
+
+One example from the note: email validation.
+
+→ The developer receives R1 and R2: reject “ana@” and allow “ana@example.com”.
+→ The reviewer compares changes with those requirements and looks for concrete failures.
+→ Findings return to the developer; the correction is then reviewed and checks are run.
+
+In the guide, I explain how I am building this with Chalc:
+
+• How I equip the developer to request verifiable code.
+• What the orchestrator does and what each agent receives.
+• How I review code, tests, and reports.
+• Which benefits I seek and when corrections consume the savings.
+• How I distinguish using fewer tokens from paying less for them.
+
+My measure is the full cost per accepted task, including failed attempts and my review time.
+
+Read the complete note, with examples, diagrams, and sources:
+https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
+
+What has helped you more: switching models or preparing their work better?
+
+#ArtificialIntelligence #SoftwareDevelopment #AIAgents #HarnessEngineering #SoftwareQuality #Chalc

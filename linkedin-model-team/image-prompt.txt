@@ -1,60 +1,34 @@
-Generación: herramienta integrada image_gen (sin CLI).
+Generación y edición: herramienta integrada image_gen (sin CLI).
 Archivos finales: flyer.es.png y flyer.en.png
 Artículo: https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
 
-Texto alternativo para LinkedIn:
-Flyer sobre cómo ahorrar tokens con modelos económicos. Un harness reúne contexto útil, herramientas, pruebas y evidencia. Dentro, un modelo potente planifica, uno económico desarrolla y corrige, y otro potente revisa. Una flecha devuelve los hallazgos de revisión al desarrollador. Invita a leer la guía de Christian Cruz Arango en cacruz.com.
+Reparto vigente, confirmado por el autor:
+El potente prepara el plan al inicio. El económico completa todo el desarrollo. Solo al terminar se entrega el conjunto al potente para revisar y corregir. El potente no supervisa cada paso del económico.
+
+Texto alternativo para LinkedIn, español:
+Flyer sobre el ahorro de tokens con modelos económicos. Un harness contiene contexto útil, herramientas, pruebas y evidencia. Tres tarjetas muestran las fases: modelo potente planifica; modelo económico desarrolla todo; modelo potente revisa y corrige. Las flechas avanzan de una fase a la siguiente; no hay una flecha que devuelva las correcciones al económico. La revisión potente empieza cuando todo el desarrollo está terminado. Autor: Christian Cruz Arango. Enlace a la guía en cacruz.com.
 
 English alt text for LinkedIn:
-Flyer about saving tokens with lower-cost models. A harness brings together useful context, tools, tests, and evidence. Inside, a stronger model plans, a lower-cost model builds and fixes, and a stronger model reviews. A return arrow sends review findings back to the developer. The flyer invites readers to Christian Cruz Arango's full guide at cacruz.com.
+Flyer about saving tokens with lower-cost models. A harness contains useful context, tools, tests, and evidence. Three cards show the phases: a stronger model plans; a lower-cost model completes development; a stronger model reviews and fixes. Arrows advance between phases; no arrow sends fixes back to the lower-cost model. Stronger-model review starts only after development is finished. Author: Christian Cruz Arango. Links to the guide at cacruz.com.
 
-Prompt utilizado para español:
-Use case: ads-marketing.
-Asset type: finished single-image LinkedIn flyer in Spanish, portrait 4:5, around 1200 × 1500 px. Deliver only the flat full-bleed graphic, no device mockup.
-Primary request: promote Christian Cruz Arango's educational development note about saving tokens by equipping economical AI coding models with a robust harness, orchestrating bounded tasks, and reviewing evidence. This is a polished editorial technology poster, clear for developers, not a generic AI ad.
-Scene/backdrop: deep near-black purple #0d0b16 to #181329 gradient, restrained faint technical grid, finely drawn flow lines. Palette: violet #a78bfa, warm off-white #ece7fb, muted purple #8a7fb0, emerald #34d399. Crisp typography, rich negative space, professional editorial art direction.
-Composition: strong top-left aligned typographic hierarchy, substantial margins, very large attractive headline. Below, a designed central workflow with three distinct elegant cards connected by arrows: strong model plans, economical model builds, strong model reviews. A fine return arrow from review to development expresses corrections. The surrounding harness is shown as a subtle frame supporting all three, not as a fourth AI model. Give the economical developer a green accent and the others violet. Below workflow, one compact benefit/learning strip and clear call to read the article. Footer with the author and web address.
-Typography: large contemporary editorial serif headline combined with clean highly readable sans-serif and sparing monospace labels. All copy must be spelled correctly with accents and remain readable in a phone feed. Use only the following exact text, with natural line breaks. Do not add any extra words.
-Text (verbatim):
-"NOTAS DE DESARROLLO"
-"Cómo ahorro tokens
-con modelos
-económicos"
-"El ahorro empieza antes de llamar al modelo."
-"MODELO POTENTE"
-"Planifica"
-"MODELO ECONÓMICO"
-"Desarrolla y corrige"
-"MODELO POTENTE"
-"Revisa"
-"HARNESS"
-"Contexto útil · Herramientas · Pruebas · Evidencia"
-"Cómo equiparlos, orquestarlos y revisar su código."
-"Lee la guía completa en cacruz.com"
-"Christian Cruz Arango"
-"cacruz.com/daily/spend-fewer-tokens-with-a-model-team"
-Constraints: prioritize readable exact typography and clean intentional composition. Last URL may be small but must fit fully within margins as two balanced lines if needed. No numeric savings, no fake benchmark, no robots, no humanoids, no coins, no invented company logos, no provider names, no dollar symbols, no watermark. No glossy neon cyberpunk, no chaotic small labels. The flyer should feel like the publication cover of a careful engineer explaining a reproducible workflow.
+Prompts finales de edición:
 
-Prompt utilizado para inglés (edición del flyer español):
-Use case: text-localization.
-Edit target: the attached Spanish LinkedIn flyer.
-Create the English edition of this exact flyer. Preserve its portrait proportions, purple and green palette, subtle grid, editorial serif headline, three-card flow, icons, harness frame, correction arrow, CTA block, margins and overall visual hierarchy. Change ONLY the language, with minimal typographic reflow to fit English naturally. Keep the author's name and article URL unchanged. Do not add logos, numbers, promises, objects, or watermarks. Output a finished flat full-bleed graphic, not a mockup.
-Replace every Spanish text with the following exact English text and no other words:
-Top eyebrow: "DEVELOPMENT NOTES"
-Headline, large, natural three-line composition: "How I save tokens
-with lower-cost
-models"
-Subtitle: "Savings start before I call the model."
-Harness label: "HARNESS"
-Harness line: "Useful context · Tools · Tests · Evidence"
-Left card label: "STRONGER MODEL"
-Left card action: "Plans"
-Middle card label: "LOWER-COST MODEL"
-Middle card action: "Builds and fixes"
-Right card label: "STRONGER MODEL"
-Right card action: "Reviews"
-Lower learning strip: "How I equip models, orchestrate work and review code."
-CTA: "Read the full guide at cacruz.com"
-Author: "Christian Cruz Arango"
-Footer: "cacruz.com/daily/spend-fewer-tokens-with-a-model-team"
-Make all typography sharp, correctly spelled, and legible at phone-feed size. Keep the entire footer URL within the canvas.
+Idioma: es
+Use case: precise-object-edit and text correction.
+Edit the attached Spanish LinkedIn flyer to correct the work allocation and handoff timing. Keep the entire existing design, portrait format, background, colors, author, exact article URL, headline, CTA, harness frame, icons and all other text unchanged.
+Make ONLY these changes:
+1. In the central green lower-cost-model card, replace "Desarrolla y corrige" with the exact text "Desarrolla todo". This model only develops the complete deliverable.
+2. In the right purple stronger-model card, replace "Revisa" with the exact text "Revisa y corrige", using two balanced readable lines.
+3. Replace the subtitle "El ahorro empieza antes de llamar al modelo." with the exact text "El potente revisa al terminar todo el desarrollo." Reflow minimally if needed to remain legible.
+4. REMOVE the entire green return arrow below the cards that currently points from the right card back to the middle card. Leave that space clean. Keep the two horizontal arrows between cards. Final review and corrections must not point back to the economical model.
+All remaining text must be exactly preserved, including accents and cacruz.com/daily/spend-fewer-tokens-with-a-model-team. No new words, no extra labels, no additional arrows, no watermark. Make this a clean targeted edit with no design drift.
+
+Idioma: en
+Use case: precise-object-edit and text correction.
+Edit the attached English LinkedIn flyer to correct the work allocation and handoff timing. Keep the entire existing design, portrait format, background, colors, author, exact article URL, headline, CTA, harness frame, icons and all other text unchanged.
+Make ONLY these changes:
+1. In the central green lower-cost-model card, replace "Builds and fixes" with the exact text "Completes development". This model only develops the complete deliverable. Use two balanced readable lines.
+2. In the right purple stronger-model card, replace "Reviews" with the exact text "Reviews and fixes", using two balanced readable lines.
+3. Replace the subtitle "Savings start before I call the model." with the exact text "The stronger model reviews after development is complete." Reflow minimally if needed to remain legible.
+4. REMOVE the entire green return arrow below the cards that currently points from the right card back to the middle card. Leave that space clean. Keep the two horizontal arrows between cards. Final review and corrections must not point back to the lower-cost model.
+All remaining text must be exactly preserved, including cacruz.com/daily/spend-fewer-tokens-with-a-model-team. No new words, no extra labels, no additional arrows, no watermark. Make this a clean targeted edit with no design drift.

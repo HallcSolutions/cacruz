@@ -6,8 +6,8 @@
     "en": "How I cut token waste with well-equipped lower-cost models"
   },
   "summary": {
-    "es": "Cómo preparo a un desarrollador de IA económico para que entregue código verificable: equipamiento, órdenes, orquestación y revisión. Un ejemplo completo con Chalc, las ventajas que busco, las desventajas que asumo y cómo compruebo si el ahorro compensa.",
-    "en": "How I prepare a lower-cost AI developer to deliver verifiable code: equipment, instructions, orchestration, and review. A complete Chalc example, the benefits I seek, the drawbacks I accept, and how I check whether the savings pay off."
+    "es": "El modelo económico completa el desarrollo; el potente prepara el plan y vuelve al final para revisar y corregir la entrega completa. Cómo lo equipo con un harness, cómo coordino ese relevo y qué ventajas, límites y costes compruebo antes de aceptar el trabajo.",
+    "en": "The lower-cost model completes development; the stronger model prepares the plan and returns at the end to review and fix the complete deliverable. How I equip the developer with a harness, coordinate that handoff, and check benefits, limits, and costs before accepting the work."
   },
   "tags": [
     "ia",
@@ -20,7 +20,7 @@
     "es": [
       {
         "kind": "paragraph",
-        "text": "Mi ahorro empieza antes de llamar al modelo. Reviso cómo está equipado el proyecto y preparo un recorrido con requisitos claros, contexto útil, herramientas y verificaciones. Con esa base, reparto el trabajo según su dificultad: un modelo económico desarrolla y otro más potente planifica o revisa cuando hace falta. **No es solo enviar tareas a un modelo más barato: un harness robusto puede ayudarlo a entregar mejores resultados y evitar vueltas innecesarias.** La oportunidad de ahorrar mucho está en combinar una tarifa menor con un entorno que reduzca lo que tiene que adivinar, repetir y corregir."
+        "text": "Mi reparto tiene un momento de relevo muy concreto: el modelo económico desarrolla hasta completar la entrega; el potente prepara el plan al principio y vuelve al final para revisar y corregir. **No hago que el potente supervise cada archivo, cada herramienta o cada paso del desarrollador.** Mientras se desarrolla, el harness entrega las tareas y conserva el estado por código. Ahí está el truco: concentro el trabajo de mayor volumen en el modelo económico y reservo el de mayor coste para preparar y cerrar. Para que funcione, equipo al desarrollador con requisitos claros, contexto útil, herramientas y pruebas. El ahorro depende tanto de esa preparación como de cuándo llamo a cada modelo."
       },
       {
         "kind": "quote",
@@ -39,16 +39,16 @@
       {
         "kind": "steps",
         "items": [
-          "**Líder:** interpreta mi objetivo, aclara dudas y prepara los requisitos y el plan que yo apruebo. Reservo un modelo más capaz para estas decisiones cuando la tarea lo necesita.",
-          "**Desarrollador:** recibe una tarea delimitada y sus requisitos. Escribe pruebas y código; consulta lo que no sabe y devuelve cambios y evidencia de lo ejecutado. Empiezo con un modelo económico y evalúo si resuelve bien ese trabajo.",
-          "**Revisor:** contrasta los cambios con la especificación y las reglas, sin editar el código. Puede usar el mismo modelo potente del líder en un turno dedicado a revisión. Devuelve problemas concretos que el desarrollador corrige.",
-          "**Orquestador:** toma el plan aprobado y reparte encargos concretos. Por ejemplo, entrega al desarrollador «implementa la validación de correo de R1 y R2», con las rutas y reglas que debe seguir. Pasa los cambios y los requisitos al revisor. Si este detecta que se acepta “ana@”, devuelve ese fallo al desarrollador para que lo corrija y luego pide otra revisión. Guarda qué se ejecutó y qué sigue pendiente. En mi flujo con Chalc, el líder redacta el plan y las órdenes; el programa las entrega, recoge los resultados y coordina esas rondas. Así reservo el modelo potente para planificar y revisar, mientras el económico implementa y corrige."
+          "**Líder:** el modelo potente aclara el objetivo y prepara los requisitos y el plan antes del desarrollo. Yo los apruebo. Ese trabajo queda escrito para que el desarrollador pueda ejecutar el conjunto sin pedir al líder una nueva orden por cada acción.",
+          "**Desarrollador:** el modelo económico ejecuta las tareas del plan, escribe pruebas y código y reúne los resultados hasta completar la entrega. En mi reparto, su responsabilidad es desarrollar; las correcciones posteriores a la revisión final las hace el potente.",
+          "**Revisor y corrector:** cuando el desarrollo está terminado, el modelo potente recibe el conjunto de cambios, los requisitos y la evidencia. Primero revisa y señala fallos; después realiza las correcciones necesarias en un turno de edición y vuelve a comprobar el resultado. Revisión y edición son fases distintas, aunque las haga el mismo modelo.",
+          "**Orquestador:** entrega al económico las tareas del plan aprobado, una detrás de otra, y guarda el avance. Por ejemplo: preparar los tests de correo, implementar la validación y ejecutar las comprobaciones acordadas. Cuando el desarrollador ha completado ese trabajo, reúne el cambio y lo entrega al potente para la revisión final. Si “ana@” se acepta, la corrección queda en esa fase final con el potente. Los cambios de tarea durante el desarrollo los coordina el programa; no invoco un modelo potente para dirigir cada lectura o edición."
         ]
       },
       {
         "kind": "image",
         "src": "images/blog/model-team-token-savings.es.svg",
-        "caption": "La base del reparto es un proyecto bien equipado y un harness que entregue contexto, controle herramientas y exija evidencia. El modelo económico ejecuta tareas acotadas; el potente aporta criterio donde hace falta. Es un esquema, no una medición de consumo."
+        "caption": "Tres fases: el potente prepara; el económico completa el desarrollo; el potente revisa y corrige al final. El harness coordina las tareas intermedias sin convertir cada paso en otra consulta al potente. Es un esquema, no una medición de consumo."
       },
       {
         "kind": "heading",
@@ -77,11 +77,11 @@
         "kind": "steps",
         "items": [
           "**Configuro los roles:** `chalc config-ia cli` permite escoger proveedor y modelo para líder, desarrollador y revisor. Sin diferenciarlos pueden usar el mismo modelo base. La elección del candidato económico es explícita; Chalc no descubre automáticamente el más barato.",
-          "**Apruebo un plan entendible:** dentro de `chalc-cli`, `/plan <objetivo>` activa el recorrido del equipo. El líder propone requisitos y tareas; yo reviso si representan lo que pedí. Al aprobarlos quedan guardados. Un mensaje directo va al desarrollador y no activa por sí solo todo el equipo.",
-          "**Entrego una tarea a la vez:** cada paso recibe su orden, su sección de la spec y contexto seleccionado. Respeto dependencias: primero el contrato o la regla, después sus consumidores. Los pasos que redactan especificaciones vuelven al líder. Si cambia el alcance, actualizo lo acordado antes de continuar.",
-          "**Conservo el estado fuera de la conversación:** el programa registra avances en `.chalc/plan.md`. En pasos que exigen cambios, comprueba actividad de herramientas antes de marcarlos; eso prueba ejecución, no corrección funcional. `/plan` sin argumento permite retomar un plan pendiente sin pagar otra elaboración.",
-          "**Cierro el circuito de corrección:** el revisor recibe requisitos, checklist y cambios. Sus hallazgos vuelven al desarrollador y las rondas se registran en `.chalc/review.md`. El flujo incluye la verificación de compilación o análisis que tenga configurada y permitida. Las pruebas y la mutación del portón son comprobaciones adicionales; una verificación omitida sigue pendiente.",
-          "**Escalo cuando hace falta:** si aparece una decisión difícil o las correcciones repiten el mismo fallo, reviso la orden y el contexto; después puedo asignar más capacidad o intervenir yo. En Chalc este cambio es explícito. Evito prolongar el circuito por inercia: cada ronda cuesta tokens y tiempo."
+          "**Apruebo el plan antes de desarrollar:** el líder propone requisitos y tareas; compruebo que representan mi objetivo y los apruebo. Ese es el encargo inicial del potente. Las decisiones de alcance deben quedar resueltas aquí para no necesitarlo detrás de cada acción. Si surge un bloqueo real o cambia el requisito, paro y aclaro lo pendiente; eso es una excepción, no una supervisión constante.",
+          "**Dejo ejecutar el desarrollo completo:** el económico recibe una tarea a la vez, su sección de la spec y el contexto seleccionado, y continúa con las siguientes hasta completar el trabajo aprobado. El harness controla el orden y las dependencias. No envío cada archivo ni cada tarea terminada a una revisión potente. Los documentos que gobiernan el desarrollo se preparan antes; un cambio de especificación exige volver a acordarlo.",
+          "**Conservo el estado fuera de la conversación:** `.chalc/plan.md` permite retomar un plan pendiente sin pedir otra planificación. En la [shell de Chalc](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/commands.mjs), `executePlan` recorre las tareas y reúne las rutas tocadas; `runReviewTurn` se llama después de que ese ejecutor vuelve, no dentro de cada paso. Si la ejecución se interrumpe, compruebo los pendientes: salir del bucle no significa haber completado la entrega.",
+          "**Entrego el resultado completo al potente:** revisa el conjunto contra los requisitos y realiza las correcciones finales. La shell registra la revisión y la verificación configurada en `.chalc/review.md`; tests y mutación aportan evidencia adicional. Hay un detalle importante de su implementación actual: el revisor es de solo lectura y las correcciones vuelven al rol implementador. Para aplicar mi reparto, esa fase de implementación debe usar el modelo potente. Elegir un revisor potente no cambia automáticamente el modelo que corrige.",
+          "**No confundo una fase con una sola llamada:** planificar o revisar puede requerir varias llamadas y lecturas. Lo que evito es repetir la intervención del potente durante todo el desarrollo. El relevo ocurre al entregar el conjunto terminado; los errores de pruebas durante el desarrollo llegan al económico como resultados de herramientas dentro de su trabajo de implementación."
         ]
       },
       {
@@ -108,29 +108,29 @@
       },
       {
         "kind": "paragraph",
-        "text": "Uso un ejemplo pequeño para que se entienda el recorrido. Quiero validar el correo de un formulario de contacto. **R1:** cuando está vacío o incompleto, como “ana@”, el formulario muestra un error y no envía. **R2:** con “ana@example.com”, permite el envío. Estos casos ilustran el contrato; no pretenden definir toda la validación posible de una dirección de correo. Antes de delegar acuerdo las reglas que faltan. El líder prepara la tarea y yo la apruebo. El desarrollador recibe una orden parecida a esta:"
+        "text": "Uso un ejemplo pequeño: validar el correo de un formulario de contacto. **R1:** vacío o incompleto, como “ana@”, muestra un error y no envía. **R2:** con “ana@example.com”, permite el envío. Son ejemplos del contrato, no toda la definición posible de un correo válido. El potente prepara el encargo y yo lo apruebo. El económico completa las pruebas, la implementación y las comprobaciones acordadas antes de entregar el conjunto. Solo entonces entra el potente a revisar y, si encuentra fallos, corregir. La orden de desarrollo puede organizarse así:"
       },
       {
         "kind": "terminal",
         "lines": [
-          "EJEMPLO DE ORDEN · no es la salida de una ejecución",
-          "Tarea T1 → R1 y R2 de la spec aprobada.",
-          "Trabaja en el formulario de contacto existente.",
+          "EJEMPLO DE ENCARGO · no es la salida de una ejecución",
+          "Completa el desarrollo de R1 y R2 en el formulario existente.",
           "Lee la arquitectura y el README de su carpeta.",
-          "Reutiliza el validador y el patrón de errores del proyecto.",
-          "No añadas dependencias ni cambies el contrato de envío.",
-          "Primero: tests para vacío, ana@ y ana@example.com.",
-          "Tras aprobarlos, confirma el fallo y escribe el mínimo código.",
-          "Entrega el diff, los comandos, sus resultados y los pendientes."
+          "T1: prepara tests para vacío, ana@ y ana@example.com.",
+          "Tras aprobarlos, confirma el fallo antes de implementar.",
+          "T2: implementa usando el validador y patrón de errores existentes.",
+          "T3: ejecuta los checks acordados y reúne la evidencia.",
+          "Sin dependencias nuevas ni cambios al contrato de envío.",
+          "Entrega el conjunto terminado; la revisión potente va después."
         ]
       },
       {
         "kind": "steps",
         "items": [
-          "**Reviso el comportamiento:** doy al revisor la spec aprobada, el cambio respecto de la versión anterior —el diff— y los tests. Si el desarrollador solo comprueba que existe una arroba, “ana@” podría pasar. El hallazgo útil sería: “R1 no se cumple: se admite el correo incompleto; falta cubrir ese caso”. El revisor identifica el archivo y la causa; una opinión como “mejorar la validación” no basta.",
+          "**Reviso al terminar el desarrollo:** doy al potente la spec aprobada, el conjunto de cambios respecto de la versión anterior —el diff— y los resultados de pruebas. Si el económico solo comprobó que existe una arroba, “ana@” podría pasar. Un hallazgo concreto es: “R1 no se cumple: se admite el correo incompleto; falta cubrir ese caso”. Esa revisión se hace sobre la entrega, no después de cada lectura, edición o archivo.",
           "**Reviso la forma de integrarlo:** compruebo imports y archivos reales, reutilización del validador, responsabilidades y dependencias. Pregunto si hay código sin usar, cambios fuera del alcance o duplicación que el proyecto ya resolvía. La revisión pide correcciones concretas ligadas al contrato o a las reglas, no preferencias personales.",
           "**Compruebo evidencia ejecutada:** reviso que los tests cubran R1 y R2 y que sus comandos hayan terminado con éxito sobre los cambios actuales. La compilación detecta otros fallos de integración. La mutación altera temporalmente el código para comprobar si los tests detectan errores; en mi proyecto exijo al menos 80% en la lógica crítica. Ninguna de esas señales garantiza ausencia de bugs por sí sola.",
-          "**Devuelvo y vuelvo a revisar:** el desarrollador recibe el hallazgo, añade o corrige la prueba y repara la implementación. Después se repiten las comprobaciones afectadas y se revisa el cambio corregido. Antes de aceptar, contrasto el informe del portón y, cuando corresponde, pruebo el comportamiento de la aplicación. Si falta una comprobación, lo registro como pendiente."
+          "**Corrige el potente y compruebo el cierre:** con los hallazgos reunidos, el modelo potente corrige la prueba que falte y la implementación necesaria en un turno con permiso de edición. Después se ejecutan las comprobaciones afectadas y se verifica el resultado corregido. No devuelvo esas correcciones finales al económico. Antes de aceptar, leo el informe del portón y, cuando corresponde, pruebo la aplicación; una comprobación omitida queda pendiente."
         ]
       },
       {
@@ -140,6 +140,7 @@
       {
         "kind": "steps",
         "items": [
+          "**El potente no dirige cada paso:** el económico hace las llamadas y usa las herramientas necesarias para completar el desarrollo. El programa entrega las siguientes tareas a partir del plan guardado. Ahí evito intervenciones repetidas del modelo más caro; la revisión potente espera a la entrega completa.",
           "**Contexto por tarea:** el desarrollador recibe una orden y su sección de requisitos; el modo enfocado omite orientación general y selecciona contenido pertinente. Conserva contexto del proyecto: no trabaja a ciegas ni recibe únicamente una frase.",
           "**Herramientas bajo demanda:** envío un índice compacto. En el caso de MCP, el esquema completo de una herramienta se obtiene con `describe` antes de usarla. Así evito repetir todos los esquemas aunque la tarea solo necesite una herramienta.",
           "**Referencias recuperables:** CCR reemplaza salidas voluminosas por una vista previa y una referencia. El original queda temporalmente en memoria local y se puede recuperar con `recall`. No es compresión mágica ni memoria permanente: recuperar el contenido también consume contexto y la referencia puede caducar.",
@@ -160,7 +161,7 @@
       {
         "kind": "steps",
         "items": [
-          "**Menor coste de ejecución:** puedo mover trabajo repetitivo y bien definido a una tarifa menor y reservar capacidad para las decisiones difíciles. El ahorro final depende de cuántos intentos y revisiones haga falta pagar.",
+          "**Concentro las llamadas caras al inicio y al final:** el potente prepara y luego revisa y corrige la entrega completa. El volumen de implementación queda en el económico. Si llamara al potente para aprobar cada paso, cambiaría esta cuenta. El ahorro real incluye lo que cueste la fase final.",
           "**Menos ambigüedad para el desarrollador:** las rutas, los requisitos y los patrones ya están escritos. Eso puede evitar exploraciones repetidas y cambios que luego tengo que deshacer; lo compruebo en las tareas reales.",
           "**Resultados más consistentes:** tareas distintas pasan por el mismo método, reglas y comprobaciones. El criterio de aceptación no cambia porque cambie el proveedor o el modelo.",
           "**Trabajo que puedo auditar y retomar:** quedan órdenes, cambios, hallazgos e informes. Si algo falla o la sesión termina, puedo localizar la tarea y continuar con su estado guardado.",
@@ -175,7 +176,7 @@
         "kind": "steps",
         "items": [
           "**Preparación y mantenimiento:** escribir requisitos útiles, mantener las skills y comprobar el equipador lleva trabajo. Un harness con reglas contradictorias o desactualizadas puede propagar errores entre tareas.",
-          "**Sobrecoste de coordinación:** cada rol necesita instrucciones, contexto y llamadas. Para un cambio pequeño, poner a trabajar a todo el equipo puede costar más que resolverlo con un único modelo.",
+          "**Sobrecoste de coordinación:** cada rol necesita instrucciones, contexto y llamadas. Meter al potente en cada tarea o cada edición puede comerse el ahorro que busco al dejarlo para el cierre. Para un cambio pequeño, incluso las fases de preparación y revisión pueden costar más que usar un solo modelo.",
           "**Correcciones que se comen el ahorro:** un modelo de menor tarifa puede necesitar más intentos o no resolver la tarea. Si no converge, reformulo, cambio el reparto o intervengo; una llamada barata repetida muchas veces puede acabar cara.",
           "**Un plan equivocado se multiplica:** el desarrollador puede seguir fielmente una instrucción mala. Por eso reviso el contrato antes de ejecutar y no confío en que un modelo más caro arregle una regla de negocio que nunca quedó clara.",
           "**La revisión tiene límites:** otro rol puede repetir el mismo error; su contexto y el material que ve están acotados. Un “OK” no demuestra que haya comprobado todo. Contrasto los hallazgos con requisitos, pruebas e informes reales.",
@@ -191,7 +192,7 @@
         "lines": [
           "EJEMPLO HIPOTÉTICO · mismas tareas y mismos tokens",
           "Coste inicial normalizado:                 100 unidades",
-          "Planificación y revisión, al mismo precio:  20 unidades",
+          "Plan y revisión/corrección final:  20 unidades",
           "Ejecución: 80 unidades / precio 5× menor =  16 unidades",
           "Coste del reparto:                    20 + 16 = 36",
           "Diferencia:                         (100 - 36) / 100 = 64%",
@@ -234,7 +235,7 @@
         "kind": "steps",
         "items": [
           "[Chalc: repositorio y documentación](https://github.com/ChristianCruzArango/chalc-cli-adapter) — Christian Cruz, estado local revisado el 5 de noviembre de 2026. El README distingue equipamiento, configuración por rol, shell y portón de calidad; la versión publicada puede diferir de mi copia local.",
-          "[El equipador](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/equip.mjs), [el contexto por rol](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/sessionturns.mjs) y [las órdenes por tarea](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/engine/plan.mjs) — permiten seguir qué se instala y qué recibe cada puesto.",
+          "[El equipador](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/equip.mjs), [el recorrido de la shell](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/commands.mjs), [el ejecutor de tareas](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/turns.mjs) y [el cierre de calidad](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/quality.mjs) — muestran cuándo se entrega al revisor y qué rol ejecuta las correcciones; conviene distinguirlo del reparto de modelos que yo decido aplicar.",
           "[Las instrucciones del revisor](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/prompts/reviewer.prompt.xml), [el presupuesto del prompt](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/engine/budgeter.mjs), [CCR](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/ccr.mjs) y [el consumo](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/tokenreport.mjs) — muestran cómo se revisa, se acota contexto y se contabiliza el uso.",
           "[Optimizing for cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence) — Anthropic, documentación consultada en noviembre de 2026. Explica caché, esfuerzo, coste por tarea y los casos donde delegar sale peor.",
           "[Harness-aware evaluation of plugins](https://developers.openai.com/cookbook/examples/partners/harness_aware_plugin_evals/harness_aware_plugin_evals) — OpenAI Cookbook, consultado en noviembre de 2026. Enseña a evaluar herramientas, bucle propio y harness de producto con los mismos casos y declara los límites de sus resultados.",
@@ -246,7 +247,7 @@
     "en": [
       {
         "kind": "paragraph",
-        "text": "My savings start before calling the model. I review how the project is equipped and prepare a workflow with clear requirements, useful context, tools, and verification. With that foundation, I allocate work by difficulty: a lower-cost model develops, while a stronger one plans or reviews when needed. **It takes more than sending tasks to a cheaper model: a robust harness can help it deliver better results and avoid unnecessary rounds.** The opportunity for substantial savings comes from combining a lower rate with an environment that reduces what it has to guess, repeat, and correct."
+        "text": "My allocation has a specific handoff: the lower-cost model develops until the deliverable is complete; the stronger model prepares the plan at the start and returns at the end to review and fix. **I do not have the stronger model supervise every file, tool call, or development step.** During development, the harness delivers tasks and retains state through code. That is the key: concentrate high-volume work in the lower-cost model and reserve the more expensive one for preparation and closure. To make this work, I equip the developer with clear requirements, useful context, tools, and tests. Savings depend on that preparation and on when I call each model."
       },
       {
         "kind": "quote",
@@ -265,16 +266,16 @@
       {
         "kind": "steps",
         "items": [
-          "**Leader:** interprets my goal, clarifies questions, and prepares requirements and a plan for my approval. I reserve a stronger model for these decisions when the task needs it.",
-          "**Developer:** receives a bounded task and its requirements. It writes tests and code, consults what it does not know, and returns changes and execution evidence. I start with a lower-cost model and evaluate whether it handles that work well.",
-          "**Reviewer:** checks changes against the specification and rules without editing code. It can use the leader’s stronger model in a dedicated review turn. It returns concrete problems for the developer to fix.",
-          "**Orchestrator:** takes the approved plan and assigns concrete work. For example, it gives the developer “implement email validation for R1 and R2,” together with the paths and rules to follow. It passes changes and requirements to the reviewer. If the reviewer finds that “ana@” is accepted, it returns that finding to the developer for correction and then requests another review. It records what ran and what remains outstanding. In my Chalc workflow, the leader writes the plan and instructions; the program delivers them, collects results, and coordinates those rounds. This reserves the stronger model for planning and review while the lower-cost one implements and fixes."
+          "**Leader:** the stronger model clarifies the goal and prepares requirements and a plan before development. I approve them. That work stays written down so the developer can execute the whole without asking the leader for a new instruction for every action.",
+          "**Developer:** the lower-cost model executes plan tasks, writes tests and code, and collects results until the deliverable is complete. In my allocation, its responsibility is development; the stronger model handles corrections after the final review.",
+          "**Reviewer and fixer:** once development is finished, the stronger model receives the full set of changes, requirements, and evidence. It first reviews and identifies faults, then makes necessary corrections in an editing turn and checks the result again. Review and editing are separate phases even when the same model handles both.",
+          "**Orchestrator:** delivers approved plan tasks to the lower-cost model, one after another, and saves progress. For example: prepare email tests, implement validation, and run the agreed checks. When the developer completes that work, it collects the changes and hands them to the stronger model for final review. If “ana@” is accepted, fixing it stays in that final phase with the stronger model. The program coordinates task transitions during development; I do not invoke a stronger model to direct each read or edit."
         ]
       },
       {
         "kind": "image",
         "src": "images/blog/model-team-token-savings.en.svg",
-        "caption": "The foundation is a well-equipped project and a harness that supplies context, controls tools, and requires evidence. The lower-cost model executes bounded tasks; the stronger model provides judgment where needed. This is a diagram, not a usage measurement."
+        "caption": "Three phases: the stronger model prepares; the lower-cost model completes development; the stronger model reviews and fixes at the end. The harness coordinates intermediate tasks without turning every step into another stronger-model call. This is a diagram, not a usage measurement."
       },
       {
         "kind": "heading",
@@ -303,11 +304,11 @@
         "kind": "steps",
         "items": [
           "**Configure the roles:** `chalc config-ia cli` selects a provider and model for leader, developer, and reviewer. Without differentiation, they can use the same base model. Choosing the lower-cost candidate is explicit; Chalc does not automatically discover the cheapest.",
-          "**Approve an understandable plan:** inside `chalc-cli`, `/plan <goal>` activates the team workflow. The leader proposes requirements and tasks; I check that they represent my request. Approval saves them. A direct message goes to the developer and does not activate the full team by itself.",
-          "**Deliver one task at a time:** each step receives its instruction, spec section, and selected context. Respect dependencies: establish the contract or rule before its consumers. Specification-authoring steps return to the leader. If scope changes, update the agreement before continuing.",
-          "**Keep state outside the conversation:** the program records progress in `.chalc/plan.md`. On steps requiring changes, it checks tool activity before marking completion; that establishes execution, not functional correctness. `/plan` without an argument resumes a pending plan without paying for its creation again.",
-          "**Close the correction loop:** the reviewer receives requirements, the checklist, and changes. Findings return to the developer, and rounds are logged in `.chalc/review.md`. The workflow includes its configured and permitted build or analysis verification. Gate tests and mutation are additional checks; skipped verification remains outstanding.",
-          "**Escalate when needed:** if a hard decision appears or corrections repeat the same failure, review the instruction and context; then allocate more capability or step in myself. In Chalc this change is explicit. Avoid extending the loop out of habit: every round costs tokens and time."
+          "**Approve the plan before development:** the leader proposes requirements and tasks; I check that they represent my goal and approve them. That is the stronger model’s initial assignment. Scope decisions should be resolved here so it is not needed behind every action. If a real blocker or requirement change appears, stop and clarify what remains; that is an exception, not constant supervision.",
+          "**Let the full development run:** the lower-cost model receives one task at a time, its spec section, and selected context, then continues through the remaining tasks until the approved work is complete. The harness controls order and dependencies. I do not send each file or finished task to a stronger-model review. Governing documents are prepared beforehand; a specification change requires a renewed agreement.",
+          "**Keep state outside the conversation:** `.chalc/plan.md` resumes a pending plan without requesting another plan. In the [Chalc shell](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/commands.mjs), `executePlan` traverses tasks and collects touched paths; `runReviewTurn` is called after that executor returns, not within each step. If execution is interrupted, check outstanding tasks: exiting the loop does not mean the deliverable is complete.",
+          "**Hand the complete result to the stronger model:** it reviews the whole against requirements and makes final corrections. The shell logs review and configured verification in `.chalc/review.md`; tests and mutation provide additional evidence. One detail of its current implementation matters: the reviewer is read-only, and corrections return to the implementing role. To apply my allocation, that implementation phase must use the stronger model. Selecting a stronger reviewer does not automatically change the model that fixes.",
+          "**Do not confuse a phase with one call:** planning or review can require several calls and reads. What I avoid is repeating stronger-model involvement throughout development. The handoff happens when the finished whole is delivered; test failures during development reach the lower-cost model as tool results within its implementation work."
         ]
       },
       {
@@ -334,29 +335,29 @@
       },
       {
         "kind": "paragraph",
-        "text": "A small example makes the workflow concrete. I want email validation in a contact form. **R1:** when empty or incomplete, such as “ana@”, the form shows an error and does not submit. **R2:** with “ana@example.com”, submission is allowed. These cases illustrate the contract; they do not define every possible email validation rule. Before delegating, I agree on missing rules. The leader prepares the task, and I approve it. The developer receives an instruction like this:"
+        "text": "A small example: validate email in a contact form. **R1:** empty or incomplete input, such as “ana@”, shows an error and does not submit. **R2:** “ana@example.com” allows submission. These are contract examples, not a complete definition of a valid email. The stronger model prepares the assignment, and I approve it. The lower-cost model completes tests, implementation, and agreed checks before delivering the whole. Only then does the stronger model review and, if it finds faults, fix them. Development instructions can be organized like this:"
       },
       {
         "kind": "terminal",
         "lines": [
-          "EXAMPLE INSTRUCTION · not output from an actual run",
-          "Task T1 → R1 and R2 in the approved spec.",
-          "Work in the existing contact form.",
+          "EXAMPLE ASSIGNMENT · not output from an actual run",
+          "Complete R1 and R2 development in the existing form.",
           "Read the architecture and its folder README.",
-          "Reuse the project validator and error pattern.",
-          "Add no dependencies; do not change the submission contract.",
-          "First: tests for empty, ana@, and ana@example.com.",
-          "After approval, confirm failure and write minimum code.",
-          "Deliver the diff, commands, results, and outstanding work."
+          "T1: prepare tests for empty, ana@, and ana@example.com.",
+          "After approval, confirm failure before implementation.",
+          "T2: implement with the existing validator and error pattern.",
+          "T3: run agreed checks and collect the evidence.",
+          "No new dependencies or changes to the submission contract.",
+          "Deliver the finished whole; stronger-model review comes later."
         ]
       },
       {
         "kind": "steps",
         "items": [
-          "**Review behavior:** give the reviewer the approved spec, the changes against the previous version—the diff—and tests. If the developer checks only for an at sign, “ana@” could pass. A useful finding would be: “R1 is unmet: incomplete email is accepted; this case lacks coverage.” The reviewer identifies the file and cause; an opinion such as “improve validation” is insufficient.",
+          "**Review after development finishes:** give the stronger model the approved spec, the full changes against the previous version—the diff—and test results. If the lower-cost model checked only for an at sign, “ana@” could pass. A concrete finding is: “R1 is unmet: incomplete email is accepted; this case lacks coverage.” Review covers the deliverable, not every read, edit, or file as it happens.",
           "**Review integration:** check real imports and files, reuse of the validator, responsibilities, and dependencies. Look for unused code, out-of-scope changes, or duplication of something the project already solves. Review requests concrete corrections tied to the contract or rules, not personal preferences.",
           "**Check executed evidence:** verify that tests cover R1 and R2 and their commands succeeded on the current changes. Building catches other integration failures. Mutation temporarily alters code to check whether tests detect faults; my project requires at least 80% on critical logic. None of these signals alone guarantees the absence of bugs.",
-          "**Return and review again:** the developer receives the finding, adds or corrects the test, and repairs the implementation. Repeat affected checks and review the corrected change. Before acceptance, inspect the gate report and, where appropriate, try the application behavior. Record missing checks as outstanding."
+          "**The stronger model fixes, and I check closure:** with findings collected, the stronger model corrects missing tests and necessary implementation in a turn with editing permission. Affected checks then run, and the corrected result is verified. I do not send those final corrections back to the lower-cost model. Before acceptance, read the gate report and, where appropriate, try the application; skipped checks remain outstanding."
         ]
       },
       {
@@ -366,6 +367,7 @@
       {
         "kind": "steps",
         "items": [
+          "**The stronger model does not direct each step:** the lower-cost model makes the calls and uses the tools needed to complete development. The program delivers subsequent tasks from the saved plan. This avoids repeated involvement of the more expensive model; stronger-model review waits for the complete deliverable.",
           "**Context per task:** the developer receives one instruction and its requirements section; focused mode omits general orientation and selects relevant content. It retains project context: it neither works blind nor receives only a single sentence.",
           "**Tools on demand:** I send a compact index. For MCP, a tool's full schema is obtained with `describe` before use. That avoids repeating every schema when the task only needs one tool.",
           "**Recoverable references:** CCR replaces large outputs with a preview and a reference. The original stays temporarily in local memory and can be retrieved with `recall`. This is neither magical compression nor permanent memory: retrieval consumes context too, and references can expire.",
@@ -386,7 +388,7 @@
       {
         "kind": "steps",
         "items": [
-          "**Lower execution cost:** move repetitive, well-defined work to a lower rate and reserve capability for difficult decisions. Final savings depend on how many attempts and reviews must be paid for.",
+          "**Concentrate expensive calls at the start and end:** the stronger model prepares, then reviews and fixes the complete deliverable. Implementation volume stays with the lower-cost model. Calling the stronger model to approve each step would change that calculation. Real savings include the cost of the final phase.",
           "**Less ambiguity for the developer:** paths, requirements, and patterns are already written. This can avoid repeated exploration and changes I later undo; I check it on real tasks.",
           "**More consistent results:** different tasks follow the same method, rules, and checks. Acceptance criteria do not change when the provider or model changes.",
           "**Auditable, resumable work:** instructions, changes, findings, and reports remain available. If something fails or the session ends, locate the task and continue from saved state.",
@@ -401,7 +403,7 @@
         "kind": "steps",
         "items": [
           "**Preparation and maintenance:** writing useful requirements, maintaining skills, and checking equipment takes work. A harness with contradictory or outdated rules can propagate mistakes between tasks.",
-          "**Coordination overhead:** each role needs instructions, context, and calls. For a small change, involving the whole team can cost more than using a single model.",
+          "**Coordination overhead:** each role needs instructions, context, and calls. Involving the stronger model in every task or edit can consume the savings I seek by reserving it for closure. For a small change, even preparation and review phases can cost more than using one model.",
           "**Corrections can consume the savings:** a lower-rate model may need more attempts or fail to solve the task. If it does not converge, reframe, reallocate, or step in; a cheap call repeated many times can become expensive.",
           "**A wrong plan multiplies:** the developer can faithfully follow bad instructions. Review the contract before execution; a more expensive model cannot reliably fix a business rule that was never made clear.",
           "**Review has limits:** another role can repeat the same mistake; its context and review material are bounded. An “OK” does not establish that everything was checked. Compare findings with requirements, tests, and actual reports.",
@@ -417,7 +419,7 @@
         "lines": [
           "HYPOTHETICAL EXAMPLE · same tasks and token counts",
           "Normalized initial cost:                  100 units",
-          "Planning and review, unchanged rate:        20 units",
+          "Plan and final review/fixes:        20 units",
           "Execution: 80 units / 5× cheaper rate =     16 units",
           "Team cost:                            20 + 16 = 36",
           "Difference:                         (100 - 36) / 100 = 64%",
@@ -460,7 +462,7 @@
         "kind": "steps",
         "items": [
           "[Chalc: repository and documentation](https://github.com/ChristianCruzArango/chalc-cli-adapter) — Christian Cruz, local state reviewed November 5, 2026. The README distinguishes equipment, per-role configuration, shell, and quality gate; the published version may differ from my local copy.",
-          "[The equipment tool](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/equip.mjs), [per-role context](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/sessionturns.mjs), and [per-task instructions](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/engine/plan.mjs) — trace what is installed and what each role receives.",
+          "[The equipment tool](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/commands/equip.mjs), [the shell workflow](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/commands.mjs), [the task executor](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/turns.mjs), and [quality closure](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/shell/quality.mjs) — show when review starts and which role executes fixes; distinguish this from the model allocation I choose to apply.",
           "[Reviewer instructions](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/prompts/reviewer.prompt.xml), [the prompt budget](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/cli/engine/budgeter.mjs), [CCR](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/ccr.mjs), and [usage accounting](https://github.com/ChristianCruzArango/chalc-cli-adapter/blob/develop/lib/tokenreport.mjs) — show how review, context limits, and usage accounting work.",
           "[Optimizing for cost and intelligence](https://platform.claude.com/docs/en/about-claude/models/optimizing-for-cost-and-intelligence) — Anthropic, documentation accessed November 2026. Covers caching, effort, cost per task, and cases where delegation does worse.",
           "[Harness-aware evaluation of plugins](https://developers.openai.com/cookbook/examples/partners/harness_aware_plugin_evals/harness_aware_plugin_evals) — OpenAI Cookbook, accessed November 2026. Evaluates tools, a standalone loop, and a product harness on shared cases, stating the limits of its results.",

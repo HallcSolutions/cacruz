@@ -24,29 +24,28 @@
   <text class="sub" x="40" y="77">Mi reparto de roles · el volumen de ejecución puede ir a un modelo económico</text>
   <g class="pulse">
     <rect x="40" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
-    <text class="label" x="60" y="140">01 / LÍDER</text>
+    <text class="label" x="60" y="140">01 / PLAN INICIAL</text>
     <text x="60" y="176" font-size="15">Modelo potente</text>
     <text x="60" y="214" font-size="12">Aclara y prepara el plan</text>
-    <text class="detail" x="60" y="241">Yo reviso antes de ejecutar</text>
+    <text class="detail" x="60" y="241">Antes de escribir código</text>
   </g>
   <path class="wire" d="M309 188 H357" marker-end="url(#arrow)"/>
   <g class="pulse later">
     <rect x="370" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#34d399" stroke-width="1.5"/>
-    <text class="label green" x="390" y="140">02 / DESARROLLADOR</text>
+    <text class="label green" x="390" y="140">02 / DESARROLLO</text>
     <text x="390" y="176" font-size="14">Modelo económico</text>
-    <text x="390" y="214" font-size="12">Una tarea + sus requisitos</text>
-    <text class="detail" x="390" y="241">Lee, prueba, edita y corrige</text>
+    <text x="390" y="214" font-size="12">Ejecuta todo el plan</text>
+    <text class="detail" x="390" y="241">Completa el desarrollo</text>
   </g>
   <path class="wire" d="M639 188 H687" marker-end="url(#arrow)"/>
   <g class="pulse last">
     <rect x="700" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
-    <text class="label" x="720" y="140">03 / REVISOR</text>
+    <text class="label" x="720" y="140">03 / REVISIÓN FINAL</text>
     <text x="720" y="176" font-size="15">Modelo potente</text>
-    <text x="720" y="214" font-size="12">Requisitos + cambios</text>
-    <text class="detail" x="720" y="241">Hallazgos → desarrollador</text>
+    <text x="720" y="214" font-size="12">Entrega completa + requisitos</text>
+    <text class="detail" x="720" y="241" font-size="11">El potente revisa y corrige</text>
   </g>
-  <path class="wire" d="M830 274 V294 H500 V276" marker-end="url(#arrow)"/>
-  <text class="detail" x="500" y="317" text-anchor="middle">Correcciones concretas; cada ronda también cuesta</text>
+  <text class="detail" x="500" y="317" text-anchor="middle">La revisión potente empieza al completar el desarrollo.</text>
   <rect x="40" y="340" width="920" height="70" rx="12" fill="none" stroke="#453768"/>
   <text class="label" x="60" y="367">HARNESS / EL PROGRAMA GOBIERNA EL RECORRIDO</text>
   <text x="60" y="392" font-size="13">Estado guardado · herramientas · revisión · verificaciones reales</text>

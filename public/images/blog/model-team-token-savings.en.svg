@@ -24,29 +24,28 @@
   <text class="sub" x="40" y="77">My role allocation · execution volume can go to a lower-cost model</text>
   <g class="pulse">
     <rect x="40" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
-    <text class="label" x="60" y="140">01 / LEADER</text>
+    <text class="label" x="60" y="140">01 / INITIAL PLAN</text>
     <text x="60" y="176" font-size="15">Stronger model</text>
     <text x="60" y="214" font-size="12">Clarifies and prepares a plan</text>
-    <text class="detail" x="60" y="241">I review before execution</text>
+    <text class="detail" x="60" y="241">Before writing code</text>
   </g>
   <path class="wire" d="M309 188 H357" marker-end="url(#arrow)"/>
   <g class="pulse later">
     <rect x="370" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#34d399" stroke-width="1.5"/>
-    <text class="label green" x="390" y="140">02 / DEVELOPER</text>
+    <text class="label green" x="390" y="140">02 / DEVELOPMENT</text>
     <text x="390" y="176" font-size="14">Lower-cost model</text>
-    <text x="390" y="214" font-size="12">One task + its requirements</text>
-    <text class="detail" x="390" y="241">Reads, tests, edits and fixes</text>
+    <text x="390" y="214" font-size="12">Executes the whole plan</text>
+    <text class="detail" x="390" y="241">Completes development</text>
   </g>
   <path class="wire" d="M639 188 H687" marker-end="url(#arrow)"/>
   <g class="pulse last">
     <rect x="700" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
-    <text class="label" x="720" y="140">03 / REVIEWER</text>
+    <text class="label" x="720" y="140">03 / FINAL REVIEW</text>
     <text x="720" y="176" font-size="15">Stronger model</text>
-    <text x="720" y="214" font-size="12">Requirements + changes</text>
-    <text class="detail" x="720" y="241">Findings → developer</text>
+    <text x="720" y="214" font-size="12">Full delivery + requirements</text>
+    <text class="detail" x="720" y="241" font-size="11">Stronger model reviews + fixes</text>
   </g>
-  <path class="wire" d="M830 274 V294 H500 V276" marker-end="url(#arrow)"/>
-  <text class="detail" x="500" y="317" text-anchor="middle">Concrete fixes; every round also has a cost</text>
+  <text class="detail" x="500" y="317" text-anchor="middle">Stronger-model review starts after development is complete.</text>
   <rect x="40" y="340" width="920" height="70" rx="12" fill="none" stroke="#453768"/>
   <text class="label" x="60" y="367">HARNESS / THE PROGRAM CONTROLS THE WORKFLOW</text>
   <text x="60" y="392" font-size="13">Saved state · tools · review · real verification</text>

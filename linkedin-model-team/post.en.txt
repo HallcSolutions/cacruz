@@ -1,32 +1,28 @@
-A cheap call can turn into an expensive task.
+The stronger model returns when development is finished.
 
-I am changing how I develop with AI: a lower-cost model implements and fixes; a stronger one prepares the work and reviews the result.
+That is the change I am making in AI-assisted development:
 
-Savings start before I call the model.
+1. A stronger model prepares requirements and the plan.
+2. A lower-cost model carries out the full development assignment.
+3. Once finished, the stronger model receives the complete deliverable to review and fix.
 
-First, I equip the developer with the project architecture, working instructions—skills—tools, clear requirements, and tests. A harness then controls what context it receives, what it can execute, and what evidence it returns.
+I do not call the stronger model after every file, tool action, or task. Doing that would mean paying for its involvement throughout the workflow.
 
-A harness is the program that makes this workflow run. A well-equipped lower-cost model can deliver something closer to the requirements than a stronger model working from an ambiguous request. That needs checking on real tasks, not judging by the model name.
+While the lower-cost model develops, the harness delivers tasks, retains state, and supplies context and tools. The stronger model waits for the final handoff.
+
+But the approach needs preparation: documented architecture, working instructions—skills—concrete requirements, and tests that actually run. A good environment can help the lower-cost model deliver something closer to the requirements than a stronger model working from an ambiguous request.
 
 One example from the note: email validation.
 
-→ The developer receives R1 and R2: reject “ana@” and allow “ana@example.com”.
-→ The reviewer compares changes with those requirements and looks for concrete failures.
-→ Findings return to the developer; the correction is then reviewed and checks are run.
+→ The lower-cost model completes the tests and implementation for R1 and R2.
+→ The stronger model reviews the deliverable and checks whether “ana@” is accepted when it should be rejected.
+→ If there is a fault, the stronger model fixes it and the result is verified.
 
-In the guide, I explain how I am building this with Chalc:
+In the guide, I explain how I equip the developer, coordinate the handoff, what Chalc does, and what depends on my model allocation. I also cover benefits, drawbacks, and measuring full cost per accepted task.
 
-• How I equip the developer to request verifiable code.
-• What the orchestrator does and what each agent receives.
-• How I review code, tests, and reports.
-• Which benefits I seek and when corrections consume the savings.
-• How I distinguish using fewer tokens from paying less for them.
-
-My measure is the full cost per accepted task, including failed attempts and my review time.
-
-Read the complete note, with examples, diagrams, and sources:
+Read the note, with diagrams, examples, and sources:
 https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
 
-What has helped you more: switching models or preparing their work better?
+Do you use the stronger model to review every step or the complete deliverable?
 
 #ArtificialIntelligence #SoftwareDevelopment #AIAgents #HarnessEngineering #SoftwareQuality #Chalc

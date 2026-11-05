@@ -1,32 +1,28 @@
-Una llamada barata puede terminar en una tarea cara.
+El modelo potente vuelve cuando el desarrollo está terminado.
 
-Estoy cambiando cómo desarrollo con IA: un modelo económico implementa y corrige; uno más potente prepara el trabajo y revisa el resultado.
+Ese es el cambio que estoy haciendo al desarrollar con IA:
 
-El ahorro empieza antes de llamar al modelo.
+1. Un modelo potente prepara los requisitos y el plan.
+2. Un modelo económico ejecuta todo el desarrollo con ese encargo.
+3. Al terminar, el potente recibe la entrega completa para revisar y corregir.
 
-Primero equipo al desarrollador con la arquitectura del proyecto, instrucciones de trabajo —skills—, herramientas, requisitos claros y pruebas. Después, un harness controla qué contexto recibe, qué puede ejecutar y qué evidencia devuelve.
+No llamo al potente después de cada archivo, cada herramienta o cada tarea. Si lo hiciera, pagaría su intervención durante todo el recorrido.
 
-Un harness es el programa que hace funcionar ese recorrido. Un modelo económico bien equipado puede entregar un resultado más ajustado que uno potente trabajando con una petición ambigua. Eso se comprueba con tareas reales, no con el nombre del modelo.
+Mientras el económico desarrolla, el harness entrega las tareas, conserva el estado y le da contexto y herramientas. El potente espera al relevo final.
+
+Pero el truco necesita preparación: arquitectura documentada, instrucciones de trabajo —skills—, requisitos concretos y pruebas que se ejecuten de verdad. Un buen entorno puede ayudar al económico a entregar un resultado más ajustado que un modelo potente trabajando con una petición ambigua.
 
 Un ejemplo de la nota: validar un correo.
 
-→ El desarrollador recibe R1 y R2: rechazar «ana@» y permitir «ana@example.com».
-→ El revisor compara los cambios con esos requisitos y busca fallos concretos.
-→ Si encuentra uno, vuelve al desarrollador; después se revisa la corrección y se ejecutan las comprobaciones.
+→ El económico completa las pruebas y la implementación de R1 y R2.
+→ El potente revisa la entrega y detecta si «ana@» se admite cuando debería rechazarse.
+→ Si hay un fallo, el potente lo corrige y se comprueba el resultado.
 
-En la guía cuento cómo lo estoy montando con Chalc:
+En la guía explico cómo equipo al desarrollador, cómo coordino el relevo, qué hace Chalc y qué depende de mi reparto de modelos. También cuento ventajas, desventajas y cómo medir el coste completo por tarea aceptada.
 
-• Cómo equipo al desarrollador para pedirle código verificable.
-• Qué hace el orquestador y qué recibe cada agente.
-• Cómo reviso el código, los tests y los informes.
-• Qué ventajas busco y cuándo las correcciones se comen el ahorro.
-• Cómo distingo consumir menos tokens de pagar menos por ellos.
-
-Mi medida es el coste completo por tarea aceptada, contando también los intentos fallidos y mi tiempo de revisión.
-
-La nota completa, con ejemplos, diagramas y fuentes:
+La nota, con diagramas, ejemplos y fuentes:
 https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
 
-¿Qué te ha ayudado más: cambiar de modelo o preparar mejor el trabajo que le entregas?
+¿Revisas con el modelo potente cada paso o la entrega completa?
 
 #InteligenciaArtificial #DesarrolloDeSoftware #AgentesDeIA #HarnessEngineering #CalidadDeSoftware #Chalc

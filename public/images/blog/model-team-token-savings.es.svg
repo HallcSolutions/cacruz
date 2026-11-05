@@ -1,0 +1,54 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-labelledby="title description" lang="es">
+  <title id="title">La capacidad va donde hace falta decidir</title>
+  <desc id="description">Mi reparto de roles · el volumen de ejecución puede ir a un modelo económico. Menor tarifa y menor cantidad de tokens se comprueban por separado.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#a78bfa"/></marker>
+  </defs>
+  <style>
+    text { font-family: ui-monospace, monospace; fill: #ece7fb; }
+    .title { font-family: Georgia, serif; font-size: 29px; }
+    .sub { fill: #8a7fb0; font-size: 13px; }
+    .label { fill: #a78bfa; font-size: 14px; }
+    .green { fill: #34d399; }
+    .detail { font-size: 12px; fill: #8a7fb0; }
+    .wire { stroke: #a78bfa; stroke-width: 2; stroke-dasharray: 5 7; fill: none; animation: flow 2s linear infinite; }
+    .pulse { animation: pulse 3.6s ease-in-out infinite; }
+    .later { animation-delay: 1.2s; }
+    .last { animation-delay: 2.4s; }
+    @keyframes flow { to { stroke-dashoffset: -48; } }
+    @keyframes pulse { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text class="title" x="40" y="48">La capacidad va donde hace falta decidir</text>
+  <text class="sub" x="40" y="77">Mi reparto de roles · el volumen de ejecución puede ir a un modelo económico</text>
+  <g class="pulse">
+    <rect x="40" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
+    <text class="label" x="60" y="140">01 / LÍDER</text>
+    <text x="60" y="176" font-size="15">Modelo potente</text>
+    <text x="60" y="214" font-size="12">Aclara y prepara el plan</text>
+    <text class="detail" x="60" y="241">Yo reviso antes de ejecutar</text>
+  </g>
+  <path class="wire" d="M309 188 H357" marker-end="url(#arrow)"/>
+  <g class="pulse later">
+    <rect x="370" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#34d399" stroke-width="1.5"/>
+    <text class="label green" x="390" y="140">02 / DESARROLLADOR</text>
+    <text x="390" y="176" font-size="14">Modelo económico</text>
+    <text x="390" y="214" font-size="12">Una tarea + sus requisitos</text>
+    <text class="detail" x="390" y="241">Lee, prueba, edita y corrige</text>
+  </g>
+  <path class="wire" d="M639 188 H687" marker-end="url(#arrow)"/>
+  <g class="pulse last">
+    <rect x="700" y="111" width="260" height="155" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
+    <text class="label" x="720" y="140">03 / REVISOR</text>
+    <text x="720" y="176" font-size="15">Modelo potente</text>
+    <text x="720" y="214" font-size="12">Requisitos + cambios</text>
+    <text class="detail" x="720" y="241">Hallazgos → desarrollador</text>
+  </g>
+  <path class="wire" d="M830 274 V294 H500 V276" marker-end="url(#arrow)"/>
+  <text class="detail" x="500" y="317" text-anchor="middle">Correcciones concretas; cada ronda también cuesta</text>
+  <rect x="40" y="340" width="920" height="70" rx="12" fill="none" stroke="#453768"/>
+  <text class="label" x="60" y="367">HARNESS / EL PROGRAMA GOBIERNA EL RECORRIDO</text>
+  <text x="60" y="392" font-size="13">Estado guardado · herramientas · revisión · verificaciones reales</text>
+  <text class="sub" x="40" y="441">Menor tarifa y menor cantidad de tokens se comprueban por separado.</text>
+</svg>

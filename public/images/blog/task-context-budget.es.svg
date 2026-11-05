@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-labelledby="title description" lang="es">
+  <title id="title">El contexto entra por necesidad</title>
+  <desc id="description">Esquema de selección · los anchos de las cajas no representan consumo medido. Menos ruido ayuda solo si conservo la información que exige la tarea.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#a78bfa"/></marker>
+  </defs>
+  <style>
+    text { font-family: ui-monospace, monospace; fill: #ece7fb; }
+    .title { font-family: Georgia, serif; font-size: 29px; }
+    .sub { fill: #8a7fb0; font-size: 13px; }
+    .label { fill: #a78bfa; font-size: 14px; }
+    .green { fill: #34d399; }
+    .detail { font-size: 12px; fill: #8a7fb0; }
+    .wire { stroke: #a78bfa; stroke-width: 2; stroke-dasharray: 5 7; fill: none; animation: flow 2s linear infinite; }
+    .pulse { animation: pulse 3.6s ease-in-out infinite; }
+    .later { animation-delay: 1.2s; }
+    .last { animation-delay: 2.4s; }
+    @keyframes flow { to { stroke-dashoffset: -48; } }
+    @keyframes pulse { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text class="title" x="40" y="48">El contexto entra por necesidad</text>
+  <text class="sub" x="40" y="77">Esquema de selección · los anchos de las cajas no representan consumo medido</text>
+  <rect x="40" y="110" width="310" height="166" rx="14" fill="#181329" stroke="#453768" stroke-width="1.5"/>
+  <text class="label" x="60" y="139">DISPONIBLE EN EL PROYECTO</text>
+  <text x="60" y="176" font-size="13">Spec + reglas + arquitectura</text>
+  <text x="60" y="201" font-size="13">Skills y referencias</text>
+  <text x="60" y="226" font-size="13">Herramientas y esquemas</text>
+  <text x="60" y="251" font-size="13">Resultados voluminosos</text>
+  <path class="wire" d="M359 194 H402" marker-end="url(#arrow)"/>
+  <g class="pulse">
+    <rect x="415" y="110" width="170" height="166" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
+    <text class="label" x="435" y="139">SELECCIÓN</text>
+    <text x="435" y="180" font-size="13">Tarea actual</text>
+    <text x="435" y="210" font-size="13">Relevancia</text>
+    <text x="435" y="240" font-size="13">Presupuesto</text>
+  </g>
+  <path class="wire" d="M594 194 H637" marker-end="url(#arrow)"/>
+  <rect x="650" y="110" width="310" height="166" rx="14" fill="#181329" stroke="#34d399" stroke-width="1.5"/>
+  <text class="label green" x="670" y="139">PROMPT DEL PASO</text>
+  <text x="670" y="176" font-size="13">Contexto del proyecto</text>
+  <text x="670" y="201" font-size="13">Orden + sección de la spec</text>
+  <text x="670" y="226" font-size="13">Índices + detalle elegido</text>
+  <text x="670" y="251" font-size="13">Pasos recientes + refs CCR</text>
+  <path class="wire" d="M805 284 V300 H195 V284" marker-end="url(#arrow)"/>
+  <text class="detail" x="500" y="325" text-anchor="middle">read / describe / recall → recuperar solo lo necesario</text>
+  <rect x="40" y="349" width="920" height="61" rx="12" fill="none" stroke="#453768"/>
+  <text class="label" x="60" y="375">PRESUPUESTO ORIENTATIVO ≠ LÍMITE DE FACTURACIÓN</text>
+  <text class="detail" x="60" y="396">Recuperar contenido cuesta tokens. Las referencias pueden caducar.</text>
+  <text class="sub" x="40" y="441">Menos ruido ayuda solo si conservo la información que exige la tarea.</text>
+</svg>

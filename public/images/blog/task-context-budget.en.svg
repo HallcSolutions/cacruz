@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 460" role="img" aria-labelledby="title description" lang="en">
+  <title id="title">Context enters when it is needed</title>
+  <desc id="description">Selection diagram · box widths do not represent measured token usage. Less noise helps only if I retain the information the task requires.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0d0b16"/><stop offset="1" stop-color="#181329"/></linearGradient>
+    <marker id="arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><path d="M0 0 L8 4 L0 8Z" fill="#a78bfa"/></marker>
+  </defs>
+  <style>
+    text { font-family: ui-monospace, monospace; fill: #ece7fb; }
+    .title { font-family: Georgia, serif; font-size: 29px; }
+    .sub { fill: #8a7fb0; font-size: 13px; }
+    .label { fill: #a78bfa; font-size: 14px; }
+    .green { fill: #34d399; }
+    .detail { font-size: 12px; fill: #8a7fb0; }
+    .wire { stroke: #a78bfa; stroke-width: 2; stroke-dasharray: 5 7; fill: none; animation: flow 2s linear infinite; }
+    .pulse { animation: pulse 3.6s ease-in-out infinite; }
+    .later { animation-delay: 1.2s; }
+    .last { animation-delay: 2.4s; }
+    @keyframes flow { to { stroke-dashoffset: -48; } }
+    @keyframes pulse { 0%,100% { opacity: .65; } 50% { opacity: 1; } }
+  </style>
+  <rect width="1000" height="460" fill="url(#bg)"/>
+  <text class="title" x="40" y="48">Context enters when it is needed</text>
+  <text class="sub" x="40" y="77">Selection diagram · box widths do not represent measured token usage</text>
+  <rect x="40" y="110" width="310" height="166" rx="14" fill="#181329" stroke="#453768" stroke-width="1.5"/>
+  <text class="label" x="60" y="139">AVAILABLE IN THE PROJECT</text>
+  <text x="60" y="176" font-size="13">Spec + rules + architecture</text>
+  <text x="60" y="201" font-size="13">Skills and references</text>
+  <text x="60" y="226" font-size="13">Tools and schemas</text>
+  <text x="60" y="251" font-size="13">Large results</text>
+  <path class="wire" d="M359 194 H402" marker-end="url(#arrow)"/>
+  <g class="pulse">
+    <rect x="415" y="110" width="170" height="166" rx="14" fill="#181329" stroke="#a78bfa" stroke-width="1.5"/>
+    <text class="label" x="435" y="139">SELECTION</text>
+    <text x="435" y="180" font-size="13">Current task</text>
+    <text x="435" y="210" font-size="13">Relevance</text>
+    <text x="435" y="240" font-size="13">Budget</text>
+  </g>
+  <path class="wire" d="M594 194 H637" marker-end="url(#arrow)"/>
+  <rect x="650" y="110" width="310" height="166" rx="14" fill="#181329" stroke="#34d399" stroke-width="1.5"/>
+  <text class="label green" x="670" y="139">STEP PROMPT</text>
+  <text x="670" y="176" font-size="13">Project context</text>
+  <text x="670" y="201" font-size="13">Instruction + spec section</text>
+  <text x="670" y="226" font-size="13">Indexes + selected detail</text>
+  <text x="670" y="251" font-size="13">Recent steps + CCR refs</text>
+  <path class="wire" d="M805 284 V300 H195 V284" marker-end="url(#arrow)"/>
+  <text class="detail" x="500" y="325" text-anchor="middle">read / describe / recall → retrieve only what is needed</text>
+  <rect x="40" y="349" width="920" height="61" rx="12" fill="none" stroke="#453768"/>
+  <text class="label" x="60" y="375">APPROXIMATE BUDGET ≠ BILLING CAP</text>
+  <text class="detail" x="60" y="396">Retrieval costs tokens. References can expire.</text>
+  <text class="sub" x="40" y="441">Less noise helps only if I retain the information the task requires.</text>
+</svg>

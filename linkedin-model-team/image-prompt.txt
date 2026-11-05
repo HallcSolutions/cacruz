@@ -1,0 +1,33 @@
+Generación: herramienta integrada image_gen (sin CLI).
+Archivo final: flyer.es.png
+Artículo: https://cacruz.com/daily/spend-fewer-tokens-with-a-model-team
+
+Texto alternativo para LinkedIn:
+Flyer sobre cómo ahorrar tokens con modelos económicos. Un harness reúne contexto útil, herramientas, pruebas y evidencia. Dentro, un modelo potente planifica, uno económico desarrolla y corrige, y otro potente revisa. Una flecha devuelve los hallazgos de revisión al desarrollador. Invita a leer la guía de Christian Cruz Arango en cacruz.com.
+
+Prompt utilizado:
+Use case: ads-marketing.
+Asset type: finished single-image LinkedIn flyer in Spanish, portrait 4:5, around 1200 × 1500 px. Deliver only the flat full-bleed graphic, no device mockup.
+Primary request: promote Christian Cruz Arango's educational development note about saving tokens by equipping economical AI coding models with a robust harness, orchestrating bounded tasks, and reviewing evidence. This is a polished editorial technology poster, clear for developers, not a generic AI ad.
+Scene/backdrop: deep near-black purple #0d0b16 to #181329 gradient, restrained faint technical grid, finely drawn flow lines. Palette: violet #a78bfa, warm off-white #ece7fb, muted purple #8a7fb0, emerald #34d399. Crisp typography, rich negative space, professional editorial art direction.
+Composition: strong top-left aligned typographic hierarchy, substantial margins, very large attractive headline. Below, a designed central workflow with three distinct elegant cards connected by arrows: strong model plans, economical model builds, strong model reviews. A fine return arrow from review to development expresses corrections. The surrounding harness is shown as a subtle frame supporting all three, not as a fourth AI model. Give the economical developer a green accent and the others violet. Below workflow, one compact benefit/learning strip and clear call to read the article. Footer with the author and web address.
+Typography: large contemporary editorial serif headline combined with clean highly readable sans-serif and sparing monospace labels. All copy must be spelled correctly with accents and remain readable in a phone feed. Use only the following exact text, with natural line breaks. Do not add any extra words.
+Text (verbatim):
+"NOTAS DE DESARROLLO"
+"Cómo ahorro tokens
+con modelos
+económicos"
+"El ahorro empieza antes de llamar al modelo."
+"MODELO POTENTE"
+"Planifica"
+"MODELO ECONÓMICO"
+"Desarrolla y corrige"
+"MODELO POTENTE"
+"Revisa"
+"HARNESS"
+"Contexto útil · Herramientas · Pruebas · Evidencia"
+"Cómo equiparlos, orquestarlos y revisar su código."
+"Lee la guía completa en cacruz.com"
+"Christian Cruz Arango"
+"cacruz.com/daily/spend-fewer-tokens-with-a-model-team"
+Constraints: prioritize readable exact typography and clean intentional composition. Last URL may be small but must fit fully within margins as two balanced lines if needed. No numeric savings, no fake benchmark, no robots, no humanoids, no coins, no invented company logos, no provider names, no dollar symbols, no watermark. No glossy neon cyberpunk, no chaotic small labels. The flyer should feel like the publication cover of a careful engineer explaining a reproducible workflow.

@@ -1,5 +1,24 @@
 [
   {
+    "slug": "spend-fewer-tokens-with-a-model-team",
+    "date": "2026-11-05",
+    "title": {
+      "es": "Cómo ahorro tokens con modelos económicos bien equipados",
+      "en": "How I cut token waste with well-equipped lower-cost models"
+    },
+    "summary": {
+      "es": "Cómo preparo a un desarrollador de IA económico para que entregue código verificable: equipamiento, órdenes, orquestación y revisión. Un ejemplo completo con Chalc, las ventajas que busco, las desventajas que asumo y cómo compruebo si el ahorro compensa.",
+      "en": "How I prepare a lower-cost AI developer to deliver verifiable code: equipment, instructions, orchestration, and review. A complete Chalc example, the benefits I seek, the drawbacks I accept, and how I check whether the savings pay off."
+    },
+    "tags": [
+      "ia",
+      "tokens",
+      "orquestación",
+      "harness",
+      "chalc"
+    ]
+  },
+  {
     "slug": "ai-engineering-interview-questions",
     "date": "2026-11-03",
     "title": {
